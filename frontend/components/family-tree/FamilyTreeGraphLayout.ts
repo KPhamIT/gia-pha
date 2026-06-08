@@ -335,6 +335,7 @@ function buildFlowEdges(
       target: targetId.toString(),
       type: 'step',
       animated: false,
+      data: { relationshipId: relationship.id },
     });
   });
 

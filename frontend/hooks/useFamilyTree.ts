@@ -3,52 +3,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FamilyTreeData, Person } from '@/components/types/family-tree-types';
 import { getRootPerson } from '@/utils/family-tree-utils';
+import { api } from '@/lib/api';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 const ALLOW_PUBLIC_ACCESS = process.env.NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS === 'true';
 
-type FetchOptions = RequestInit;
-
-type MeResponse = {
-  person?: {
-    id: number;
-  };
-};
-
-export function useFamilyTree(
-  apiBase = API_BASE,
-  allowPublicAccess = ALLOW_PUBLIC_ACCESS,
-) {
+export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
   const [treeData, setTreeData] = useState<FamilyTreeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchWithAuth = useCallback(
-    async (path: string, options: FetchOptions = {}) => {
-      const token = localStorage.getItem('family-tree-token');
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      } as Record<string, string>;
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${apiBase}${path}`, {
-        ...options,
-        headers,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Lỗi API');
-      }
-
-      return response.json();
-    },
-    [apiBase],
-  );
 
   const loadFamilyTree = useCallback(async () => {
     try {
@@ -60,7 +22,7 @@ export function useFamilyTree(
       const token = localStorage.getItem('family-tree-token');
       if (token) {
         try {
-          const meResponse = (await fetchWithAuth('/auth/me')) as MeResponse;
+          const meResponse = await api.auth.me();
           if (meResponse?.person?.id) {
             personId = meResponse.person.id;
           }
@@ -71,8 +33,8 @@ export function useFamilyTree(
 
       if (!personId && allowPublicAccess) {
         try {
-          const personsResponse = (await fetchWithAuth('/person')) as Person[];
-          const rootPerson = getRootPerson(personsResponse);
+          const persons = await api.person.list();
+          const rootPerson = getRootPerson(persons as Person[]);
           personId = rootPerson?.id ?? null;
         } catch (err) {
           console.error('Error fetching persons:', err);
@@ -85,7 +47,7 @@ export function useFamilyTree(
         return;
       }
 
-      const treeResponse = (await fetchWithAuth(`/person/${personId}/tree`)) as FamilyTreeData;
+      const treeResponse = await api.person.getTree(personId);
       setTreeData(treeResponse);
     } catch (err) {
       console.error('Error fetching family tree:', err);
@@ -94,7 +56,7 @@ export function useFamilyTree(
     } finally {
       setLoading(false);
     }
-  }, [allowPublicAccess, fetchWithAuth]);
+  }, [allowPublicAccess]);
 
   useEffect(() => {
     void loadFamilyTree();

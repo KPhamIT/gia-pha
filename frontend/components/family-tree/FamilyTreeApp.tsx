@@ -10,6 +10,7 @@ import FamilyTreeGraph from './FamilyTreeGraph';
 import NodeActionModal from './NodeActionModal';
 import { AuthResponse, FamilyTreeData, Person, RelationshipType } from '../types/family-tree-types';
 import { getRootPerson } from '@/utils/family-tree-utils';
+import { api } from '@/lib/api';
 
 declare global {
   interface Window {
@@ -18,7 +19,6 @@ declare global {
   }
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 const ALLOW_PUBLIC_ACCESS = process.env.NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS === 'true';
 
 type ProfileFormState = {
@@ -79,36 +79,13 @@ export default function FamilyTreeApp() {
     }
   }, [token]);
 
-  const fetchWithAuth = async (path: string, options: RequestInit = {}) => {
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    } as Record<string, string>;
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || 'Lỗi API');
-    }
-
-    return response.json();
-  };
-
   const refreshApp = async () => {
     setLoading(true);
     try {
-      let meResponse: any = null;
+      let meResponse: Awaited<ReturnType<typeof api.auth.me>> | null = null;
       if (token || ALLOW_PUBLIC_ACCESS) {
         try {
-          meResponse = await fetchWithAuth('/auth/me');
+          meResponse = await api.auth.me();
         } catch {
           meResponse = null;
         }
@@ -131,7 +108,7 @@ export default function FamilyTreeApp() {
         setRootId(meResponse.person.id);
       }
 
-      const personsResponse = await fetchWithAuth('/person');
+      const personsResponse = await api.person.list();
       setPersons(personsResponse);
 
       if (!meResponse?.person && ALLOW_PUBLIC_ACCESS) {
@@ -162,7 +139,7 @@ export default function FamilyTreeApp() {
 
   const loadFamilyTree = async (personId: number) => {
     try {
-      const treeResponse = await fetchWithAuth(`/person/${personId}/tree`);
+      const treeResponse = await api.person.getTree(personId);
       setTreeData(treeResponse);
     } catch (error) {
       console.error(error);
@@ -249,18 +226,7 @@ export default function FamilyTreeApp() {
   const handleFacebookToken = async (accessToken: string) => {
     try {
       setMessage(null);
-      const response = await fetch(`${API_BASE}/auth/facebook`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Lỗi đăng nhập Facebook');
-      }
-
-      const data: AuthResponse = await response.json();
+      const data = await api.auth.loginFacebook(accessToken);
       saveLocalToken(data.accessToken);
       setUser(data.user);
       setPerson(data.person);
@@ -273,7 +239,7 @@ export default function FamilyTreeApp() {
       setRootId(data.person.id);
       setMessage('Đăng nhập thành công');
       await loadFamilyTree(data.person.id);
-      const personsResponse = await fetchWithAuth('/person');
+      const personsResponse = await api.person.list();
       setPersons(personsResponse);
     } catch (error) {
       setMessage((error as Error).message || 'Lỗi khi xác thực với backend');
@@ -300,10 +266,7 @@ export default function FamilyTreeApp() {
 
     try {
       setLoading(true);
-      const updated = await fetchWithAuth(`/person/${person.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(profileForm),
-      });
+      const updated = await api.person.update(person.id, profileForm);
       setPerson(updated);
       setMessage('Hồ sơ đã được cập nhật');
       await loadFamilyTree(updated.id);
@@ -328,10 +291,7 @@ export default function FamilyTreeApp() {
         generation: newPersonForm.generation ? Number(newPersonForm.generation) : undefined,
         branch: newPersonForm.branch ? Number(newPersonForm.branch) : 1,
       };
-      const created = await fetchWithAuth('/person', {
-        method: 'POST',
-        body: JSON.stringify(body),
-      });
+      const created = await api.person.create(body);
       setPersons((current) => [...current, created]);
       setNewPersonForm({ fullName: '', gender: '', birthDate: '', avatar: '', generation: '', branch: '' });
       setMessage('Đã tạo người mới');
@@ -355,13 +315,10 @@ export default function FamilyTreeApp() {
 
     try {
       setLoading(true);
-      await fetchWithAuth('/relationship', {
-        method: 'POST',
-        body: JSON.stringify({
-          fromId: person.id,
-          toId: relationTargetId,
-          type: relationType,
-        }),
+      await api.relationship.create({
+        fromId: person.id,
+        toId: relationTargetId,
+        type: relationType,
       });
       setMessage('Đã tạo quan hệ gia đình');
       await refreshApp();
@@ -402,37 +359,22 @@ export default function FamilyTreeApp() {
         generation: childData.generation,
         branch: childData.branch ? Number(childData.branch) : 1,
       };
-      const created = await fetchWithAuth('/person', {
-        method: 'POST',
-        body: JSON.stringify(body),
-      });
+      const created = await api.person.create(body);
       setPersons((current) => [...current, created]);
 
-      // Create parent-child relationship, avoid duplicates
       try {
-        const allRels = await fetchWithAuth('/relationship');
-        const exists = (allRels as any[]).some((r) =>
-          r.type === 'CHILD' && ((r.fromId === childData.parentId && r.toId === created.id) || (r.fromId === created.id && r.toId === childData.parentId)),
+        const allRels = await api.relationship.list();
+        const exists = allRels.some(
+          (r) =>
+            r.type === 'CHILD' &&
+            ((r.fromId === childData.parentId && r.toId === created.id) ||
+              (r.fromId === created.id && r.toId === childData.parentId)),
         );
         if (!exists) {
-          await fetchWithAuth('/relationship', {
-            method: 'POST',
-            body: JSON.stringify({
-              fromId: childData.parentId,
-              toId: created.id,
-              type: 'CHILD',
-            }),
-          });
+          await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
         }
-      } catch (e) {
-        await fetchWithAuth('/relationship', {
-          method: 'POST',
-          body: JSON.stringify({
-            fromId: childData.parentId,
-            toId: created.id,
-            type: 'CHILD',
-          }),
-        });
+      } catch {
+        await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
       }
 
       setMessage('Đã tạo con và thiết lập quan hệ');
@@ -506,7 +448,7 @@ export default function FamilyTreeApp() {
               <div className="text-sm text-slate-500">Gốc: {treeRoot?.fullName ?? 'Không xác định'}</div>
             </div>
             <div className="h-[600px] w-full overflow-hidden rounded-lg border border-slate-200">
-              <FamilyTreeGraph 
+              <FamilyTreeGraph
                 treeData={treeData}
                 onNodeClick={handleNodeClick}
                 selectedNodeId={selectedNodeId}

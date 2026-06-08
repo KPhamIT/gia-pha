@@ -8,6 +8,7 @@ import { Person } from '@/components/types/family-tree-types';
 import FamilyTreeSettings from '@/components/family-tree/FamilyTreeSettings';
 import Icon from '@/components/icons/Icon';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
+import { api } from '@/lib/api';
 
 export default function FamilyTreePage() {
   const router = useRouter();
@@ -37,24 +38,6 @@ export default function FamilyTreePage() {
     localStorage.setItem('family-tree-theme', theme);
   }, [theme]);
 
-  const fetchWithAuth = async (path: string, options: RequestInit = {}) => {
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const token = localStorage.getItem('family-tree-token');
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    } as Record<string, string>;
-
-    if (token) headers.Authorization = `Bearer ${token}`;
-
-    const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-    if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(txt || 'Lỗi API');
-    }
-    return response.json();
-  };
-
   const handleCreateChild = async (childData: {
     fullName: string;
     gender: string;
@@ -75,27 +58,21 @@ export default function FamilyTreePage() {
         branch: childData.branch ? Number(childData.branch) : 1,
       };
 
-      const created = await fetchWithAuth('/person', {
-        method: 'POST',
-        body: JSON.stringify(body),
-      });
+      const created = await api.person.create(body);
 
       try {
-        const allRels = await fetchWithAuth('/relationship');
-        const exists = (allRels as any[]).some((r) =>
-          r.type === 'CHILD' && ((r.fromId === childData.parentId && r.toId === created.id) || (r.fromId === created.id && r.toId === childData.parentId)),
+        const allRels = await api.relationship.list();
+        const exists = allRels.some(
+          (r) =>
+            r.type === 'CHILD' &&
+            ((r.fromId === childData.parentId && r.toId === created.id) ||
+              (r.fromId === created.id && r.toId === childData.parentId)),
         );
         if (!exists) {
-          await fetchWithAuth('/relationship', {
-            method: 'POST',
-            body: JSON.stringify({ fromId: childData.parentId, toId: created.id, type: 'CHILD' }),
-          });
+          await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
         }
-      } catch (e) {
-        await fetchWithAuth('/relationship', {
-          method: 'POST',
-          body: JSON.stringify({ fromId: childData.parentId, toId: created.id, type: 'CHILD' }),
-        });
+      } catch {
+        await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
       }
 
       setSelectedNode(null);
@@ -167,9 +144,12 @@ export default function FamilyTreePage() {
       </div>
 
       <div className="h-screen">
-        <FamilyTreeGraph treeData={treeData} layoutConfig={layoutConfig} onNodeClick={(personId, person) => {
-          setSelectedNode(person);
-        }} />
+        <FamilyTreeGraph
+          key={`${treeData.root.id}-${treeData.relationships.length}`}
+          treeData={treeData}
+          layoutConfig={layoutConfig}
+          onNodeClick={(_personId, person) => { setSelectedNode(person); }}
+        />
       </div>
 
       {showSettings ? (

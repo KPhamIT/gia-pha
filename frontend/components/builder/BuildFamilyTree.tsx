@@ -12,8 +12,7 @@ import {
 import { Person, RelationshipType } from '../types/family-tree-types';
 import { getRootPerson } from '@/utils/family-tree-utils';
 import PersonActionModal from './PersonActionModal';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+import { api } from '@/lib/api';
 
 type RelatedPerson = Person & { relationshipId: number };
 
@@ -131,17 +130,7 @@ export default function BuildFamilyTree() {
   async function fetchPersons() {
     try {
       setLoading(true);
-      const token = localStorage.getItem('family-tree-token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${API_BASE}/person`, { headers });
-      if (!response.ok) throw new Error('Failed to fetch persons');
-      const data = await response.json();
+      const data = await api.person.list();
       setPersons(data);
       const initialPerson = getRootPerson(data);
       if (initialPerson) {
@@ -162,19 +151,8 @@ export default function BuildFamilyTree() {
 
   async function fetchRelationships(personId: number) {
     try {
-      const token = localStorage.getItem('family-tree-token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
+      const treeData = await api.person.getTree(personId) as PersonTreeResponse;
 
-      const response = await fetch(`${API_BASE}/person/${personId}/tree`, { headers });
-      if (!response.ok) throw new Error('Failed to fetch relationships');
-      const treeData = (await response.json()) as PersonTreeResponse;
-
-      // Lọc các mối quan hệ trực tiếp
       const directFatherRel = treeData.relationships.find(
         (r) => r.toId === personId && r.type === 'FATHER'
       );
@@ -251,57 +229,36 @@ export default function BuildFamilyTree() {
     try {
       setLoading(true);
 
-      // For ancestor action, only allow when single target and that target has a father
       if (action === 'ANCESTOR_FATHER') {
         if (targets.length !== 1) {
           setMessage('Hành động ông chỉ hỗ trợ cho một người tại một thời điểm');
         } else {
-          // fetch target's tree to find their father
           const target = targets[0];
-          const token = localStorage.getItem('family-tree-token');
-          const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-          if (token) headers.Authorization = `Bearer ${token}`;
-          const resp = await fetch(`${API_BASE}/person/${target.id}/tree`, { headers });
-          if (!resp.ok) throw new Error('Không thể lấy thông tin người để thêm ông');
-          const treeData = await resp.json() as PersonTreeResponse;
+          const treeData = await api.person.getTree(target.id) as PersonTreeResponse;
           const directFatherRel = treeData.relationships.find((r) => r.toId === target.id && r.type === 'FATHER');
           if (!directFatherRel) {
             setMessage('Vui lòng thêm bố trước khi thêm ông cho người này');
           } else {
-            // create relation: actionPerson -> father
-            const payload = { fromId: actionPerson.id, toId: directFatherRel.from.id, type: 'FATHER' };
-            const token2 = localStorage.getItem('family-tree-token');
-            const headers2: Record<string, string> = { 'Content-Type': 'application/json' };
-            if (token2) headers2.Authorization = `Bearer ${token2}`;
-            const response = await fetch(`${API_BASE}/relationship`, { method: 'POST', headers: headers2, body: JSON.stringify(payload) });
-            if (!response.ok) throw new Error('Lỗi khi tạo quan hệ ông');
+            await api.relationship.create({ fromId: actionPerson.id, toId: directFatherRel.from.id, type: 'FATHER' });
             setMessage('Đã thêm ông thành công');
           }
         }
       } else {
-        // For FATHER/MOTHER/CHILD apply for each selected target
-        const token = localStorage.getItem('family-tree-token');
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (token) headers.Authorization = `Bearer ${token}`;
-
         console.log("handlePersonAction===================>", { action, actionPerson, targets });
 
         for (const target of targets) {
           let fromId = actionPerson.id;
           let toId = target.id;
 
-
           if (action === 'CHILD') {
             fromId = target.id;
             toId = actionPerson.id;
           }
 
-          const payload = { fromId, toId, type: action };
-          const response = await fetch(`${API_BASE}/relationship`, { method: 'POST', headers, body: JSON.stringify(payload) });
-          if (!response.ok) {
-            const text = await response.text();
-            console.error('create relationship failed', { status: response.status, text });
-            // continue to next target
+          try {
+            await api.relationship.create({ fromId, toId, type: action });
+          } catch (err) {
+            console.error('create relationship failed', err);
           }
         }
 
@@ -353,25 +310,6 @@ export default function BuildFamilyTree() {
     setActivePerson(null);
   };
 
-  const deleteRelationship = async (relationshipId: number) => {
-    const token = localStorage.getItem('family-tree-token');
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE}/relationship/${relationshipId}`, {
-      method: 'DELETE',
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error('Lỗi khi xóa quan hệ');
-    }
-  };
-
   const handleDrop = async (draggedPerson: Person, dropZone: RelationshipType) => {
     if (!selectedPerson) return;
 
@@ -385,13 +323,6 @@ export default function BuildFamilyTree() {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('family-tree-token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
 
       let finalFromId = fromId;
       let finalToId = toId;
@@ -401,25 +332,10 @@ export default function BuildFamilyTree() {
         finalToId = fromId;
       }
 
-      const payload = {
-        fromId: finalFromId,
-        toId: finalToId,
-        type: dropZone,
-      };
+      const payload = { fromId: finalFromId, toId: finalToId, type: dropZone };
       console.debug('handleDrop payload', payload);
 
-      const response = await fetch(`${API_BASE}/relationship`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload),
-      });
-      console.debug('handleDrop response', { status: response.status, ok: response.ok });
-
-      if (!response.ok) {
-        const text = await response.text();
-        console.error('handleDrop failed response text', text);
-        throw new Error('Lỗi khi tạo quan hệ');
-      }
+      await api.relationship.create(payload);
 
       setMessage('Đã tạo quan hệ thành công');
       await fetchRelationships(selectedPerson.id);
@@ -443,33 +359,11 @@ export default function BuildFamilyTree() {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('family-tree-token');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
 
-      const payload = {
-        fromId: draggedPerson.id,
-        toId: father.id,
-        type: 'FATHER',
-      };
+      const payload = { fromId: draggedPerson.id, toId: father.id, type: 'FATHER' as RelationshipType };
       console.debug('handleAncestorDrop payload', payload);
 
-      const response = await fetch(`${API_BASE}/relationship`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload),
-      });
-      console.debug('handleAncestorDrop response', { status: response.status, ok: response.ok });
-
-      if (!response.ok) {
-        const text = await response.text();
-        console.error('handleAncestorDrop failed response text', text);
-        throw new Error('Lỗi khi tạo quan hệ');
-      }
+      await api.relationship.create(payload);
 
       setMessage('Đã tạo quan hệ ông thành công');
       await fetchRelationships(selectedPerson.id);
@@ -520,7 +414,7 @@ export default function BuildFamilyTree() {
 
     try {
       setLoading(true);
-      await deleteRelationship(relationshipId);
+      await api.relationship.delete(relationshipId);
       setMessage('Đã xóa quan hệ thành công');
       await fetchRelationships(selectedPerson.id);
     } catch (err) {
