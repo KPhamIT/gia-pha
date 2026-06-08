@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+enum RelationshipType {
+  FATHER
+  MOTHER
+  SPOUSE
+  CHILD
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String?  @unique
+  provider    String
+  providerId  String   @unique
+
+  person      Person?
+
+  createdAt   DateTime @default(now())
+}
+
+model Organization {
+  id          Int      @id @default(autoincrement())
+  name        String
+
+  persons     Person[]
+
+  createdAt   DateTime @default(now())
+}
+
+model Person {
+  id              Int @id @default(autoincrement())
+
+  organizationId  Int
+
+  userId          Int? @unique
+
+  fullName        String
+
+  gender          String?
+
+  birthDate       DateTime?
+
+  avatar          String?
+
+  generation      Int?
+
+  branch          Int? @default(1)
+
+  organization    Organization @relation(fields: [organizationId], references: [id])
+
+  user            User? @relation(fields: [userId], references: [id])
+
+  fromRelations   Relationship[] @relation("fromPerson")
+
+  toRelations     Relationship[] @relation("toPerson")
+
+  createdAt       DateTime @default(now())
+}
+
+model Relationship {
+  id        Int @id @default(autoincrement())
+
+  fromId    Int
+
+  toId      Int
+
+  type      RelationshipType
+
+  from      Person @relation("fromPerson", fields: [fromId], references: [id])
+
+  to        Person @relation("toPerson", fields: [toId], references: [id])
+
+  createdAt DateTime @default(now())
+}

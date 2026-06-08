@@ -1,0 +1,10 @@
+packages:
+  - backend
+  - frontend
+allowBuilds:
+  '@nestjs/core': false
+  '@prisma/engines': true
+  bcrypt: true
+  prisma: true
+  sharp: true
+  unrs-resolver: false
