@@ -1,0 +1,80 @@
+import type { RelationshipType } from '@/components/types/family-tree-types';
+
+export const UI = {
+  // Page metadata
+  PAGE_TITLE: 'Gia phả',
+  PAGE_DESCRIPTION: 'Cây gia phả',
+
+  // Status messages
+  LOADING: 'Đang tải cây gia đình...',
+  NO_DATA: 'Không có dữ liệu cây gia đình',
+  ERROR_TITLE: 'Lỗi',
+  RETRY: 'Thử lại',
+
+  // Error messages
+  ERR_FETCH_USER: 'Không thể lấy dữ liệu người dùng',
+  ERR_FETCH_DATA: 'Không thể tải dữ liệu',
+  ERR_DELETE: 'Lỗi khi xóa',
+  ERR_CREATE_CHILD: 'Lỗi khi tạo con',
+  ERR_SAVE_RELATIONSHIP: 'Lỗi khi lưu quan hệ',
+  ERR_CREATE_PERSON: 'Lỗi khi tạo người mới',
+  ERR_DELETE_RELATIONSHIP: 'Lỗi khi xóa quan hệ:',
+
+  // Action modal
+  OPTIONS_FOR: 'Tùy chọn cho',
+  ADD_CHILD_FOR: 'Thêm con cho',
+  DELETE_IRREVERSIBLE: 'Hành động này không thể hoàn tác.',
+
+  // Form labels & placeholders
+  CHILD_NAME: 'Tên con',
+  GENDER: 'Giới tính',
+  BIRTH_DATE: 'Ngày sinh',
+  NAME_PLACEHOLDER: 'Nhập tên',
+  GENDER_PLACEHOLDER: '-- Chọn giới tính --',
+  GENDER_MALE: 'Nam',
+  GENDER_FEMALE: 'Nữ',
+  CHILD_NAME_REQUIRED: 'Vui lòng nhập tên con',
+
+  // Node display
+  GENDER_UNKNOWN: 'Giới tính chưa cập nhật',
+  BIRTH_DATE_UNKNOWN: 'Chưa có',
+  DEFAULT_NEW_PERSON: 'Người mới',
+
+  // Edge
+  DELETE_LINK: 'Xóa liên kết',
+
+  // Settings panel
+  SETTINGS_TITLE: 'Cài đặt',
+  SETTINGS_XY_HINT: 'Khoảng cách X / Y',
+  CLOSE_SETTINGS: 'Đóng cài đặt',
+  DISPLAY_MODE: 'Chế độ hiển thị',
+  THEME_DARK: 'Tối',
+  THEME_LIGHT: 'Sáng',
+  SWITCH_TO_LIGHT: 'Chuyển sang chế độ sáng',
+  SWITCH_TO_DARK: 'Chuyển sang chế độ tối',
+  H_GAP_LABEL: 'Khoảng cách ngang',
+  V_GAP_LABEL: 'Khoảng cách dọc',
+
+  // Node appearance
+  NODE_BG_COLOR: 'Màu nền thẻ',
+  NODE_TEXT_COLOR: 'Màu chữ thẻ',
+
+  // Save settings
+  SAVE_SETTINGS: 'Lưu cài đặt',
+  SAVING_SETTINGS: 'Đang lưu...',
+  SAVE_SETTINGS_SUCCESS: 'Đã lưu',
+  ERR_SAVE_SETTINGS: 'Lỗi khi lưu cài đặt',
+
+  // Connect relationship modal
+  SELECT_RELATIONSHIP: 'Chọn loại quan hệ',
+  SAVING: 'Đang lưu...',
+  SAVE: 'Lưu',
+  CANCEL: 'Hủy',
+} as const;
+
+export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
+  FATHER: 'Bố',
+  MOTHER: 'Mẹ',
+  CHILD: 'Con',
+  SPOUSE: 'Vợ/Chồng',
+};

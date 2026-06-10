@@ -38,9 +38,12 @@ export class RelationshipService {
     if (existing) {
       return existing;
     }
-    
 
-    console.log('Creating relationship', { fromId: dto.fromId, toId: dto.toId, type: dto.type });
+    console.log('Creating relationship', {
+      fromId: dto.fromId,
+      toId: dto.toId,
+      type: dto.type,
+    });
 
     const relationship = await this.prisma.relationship.create({
       data: {
@@ -51,7 +54,6 @@ export class RelationshipService {
     });
 
     console.log('Created relationship', relationship);
-
 
     // const reverseType = this.getReverseType(dto.type, fromPerson, toPerson);
 
@@ -118,7 +120,7 @@ export class RelationshipService {
   private getReverseType(
     type: RelationshipType,
     fromPerson: { gender?: string | null },
-    toPerson: { gender?: string | null },
+    _toPerson: { gender?: string | null },
   ): RelationshipType | null {
     if (type === RelationshipType.SPOUSE) {
       return RelationshipType.SPOUSE;

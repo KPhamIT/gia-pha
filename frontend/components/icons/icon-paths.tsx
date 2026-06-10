@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type IconName = 'settings' | 'close' | 'chevronRight' | 'user' | 'home' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check';
+export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save';
 
 export interface IconDefinition {
   viewBox: string;
@@ -23,28 +23,6 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
       <>
         <path d="M18 6 6 18" />
         <path d="M6 6l12 12" />
-      </>
-    ),
-  },
-  chevronRight: {
-    viewBox: '0 0 24 24',
-    paths: <path d="m9 18 6-6-6-6" />,
-  },
-  user: {
-    viewBox: '0 0 24 24',
-    paths: (
-      <>
-        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
-        <path d="M4 20v-1a6 6 0 0 1 12 0v1" />
-      </>
-    ),
-  },
-  home: {
-    viewBox: '0 0 24 24',
-    paths: (
-      <>
-        <path d="M3 10.5 12 3l9 7.5" />
-        <path d="M6 10.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8.5" />
       </>
     ),
   },
@@ -105,6 +83,16 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
   check: {
     viewBox: '0 0 24 24',
     paths: <path d="M20 6 9 17l-5-5" />,
+  },
+  save: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+        <path d="M17 21v-8H7v8" />
+        <path d="M7 3v5h8" />
+      </>
+    ),
   },
   alertTriangle: {
     viewBox: '0 0 24 24',

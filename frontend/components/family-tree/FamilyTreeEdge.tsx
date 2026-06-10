@@ -1,11 +1,12 @@
 'use client';
 
-import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath, useReactFlow } from '@xyflow/react';
+import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from '@xyflow/react';
 import type { EdgeProps } from '@xyflow/react';
-import { api } from '@/lib/api';
+import type { FamilyTreeEdgeData } from '../types/family-tree-types';
+import { deleteRelationshipById } from '@/lib/family-tree/mutations';
+import { UI } from '@/lib/constants/ui-strings';
 
 export default function FamilyTreeEdge({
-  id,
   sourceX,
   sourceY,
   targetX,
@@ -15,7 +16,7 @@ export default function FamilyTreeEdge({
   data,
   selected,
 }: EdgeProps) {
-  const { setEdges } = useReactFlow();
+  const edgeData = data as FamilyTreeEdgeData | undefined;
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -26,15 +27,15 @@ export default function FamilyTreeEdge({
     targetPosition,
   });
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const relationshipId = (data as Record<string, unknown>)?.relationshipId as number | undefined;
-    if (!relationshipId) return;
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (!edgeData?.relationshipId) return;
+
     try {
-      await api.relationship.delete(relationshipId);
-      setEdges((eds) => eds.filter((edge) => edge.id !== id));
-    } catch (err) {
-      console.error('Lỗi khi xóa quan hệ:', err);
+      await deleteRelationshipById(edgeData.relationshipId);
+      edgeData.onRelationshipRemoved?.(edgeData.relationshipId);
+    } catch (error) {
+      console.error(UI.ERR_DELETE_RELATIONSHIP, error);
     }
   };
 
@@ -54,7 +55,7 @@ export default function FamilyTreeEdge({
               : 'border-slate-300 text-slate-400 opacity-0 group-hover:opacity-100'
           }`}
           onClick={handleDelete}
-          title="Xóa liên kết"
+          title={UI.DELETE_LINK}
         >
           ×
         </button>

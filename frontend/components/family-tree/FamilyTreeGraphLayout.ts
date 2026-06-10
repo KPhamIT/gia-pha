@@ -11,6 +11,8 @@ type Coordinates = Map<number, { x: number; y: number }>;
 export type FamilyTreeLayoutConfig = {
   horizontalGap?: number;
   verticalStep?: number;
+  nodeBgColor?: string;
+  nodeTextColor?: string;
 };
 
 const NODE_WIDTH = 260;
@@ -267,7 +269,13 @@ function computeCoordinates(
   return coordinates;
 }
 
-function buildFlowNodes(persons: Person[], rootId: number, coordinates: Coordinates) {
+function buildFlowNodes(
+  persons: Person[],
+  rootId: number,
+  coordinates: Coordinates,
+  nodeBgColor?: string,
+  nodeTextColor?: string,
+) {
   return persons.map((person) => {
     const pos = coordinates.get(person.id) || { x: 0, y: 0 };
     return {
@@ -281,6 +289,8 @@ function buildFlowNodes(persons: Person[], rootId: number, coordinates: Coordina
         isRoot: person.id === rootId,
         personId: person.id,
         person,
+        nodeBgColor,
+        nodeTextColor,
       },
       position: pos,
     } as Node;
@@ -341,7 +351,7 @@ export function buildFamilyTreeGraph(treeData: FamilyTreeData, config: FamilyTre
     horizontalGap,
     verticalStep,
   );
-  const nodes = buildFlowNodes(persons, root.id, coordinates);
+  const nodes = buildFlowNodes(persons, root.id, coordinates, config.nodeBgColor, config.nodeTextColor);
   const edges = buildFlowEdges(effectiveRelationships);
 
   return { nodes, edges };

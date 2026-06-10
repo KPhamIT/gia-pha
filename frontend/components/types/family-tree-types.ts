@@ -32,3 +32,36 @@ export type AuthResponse = {
   user: { id: number; email: string | null; provider: string };
   person: Person;
 };
+
+export type ThemeMode = 'light' | 'dark';
+
+export type LayoutConfig = {
+  horizontalGap: number;
+  verticalStep: number;
+  nodeBgColor: string;
+  nodeTextColor: string;
+};
+
+export type CreateChildInput = {
+  fullName: string;
+  gender?: string;
+  birthDate?: string;
+  avatar?: string;
+  generation?: number | null;
+  branch?: number | null;
+};
+
+export type CreateChildFormInput = {
+  fullName: string;
+  gender: string;
+  birthDate: string;
+  avatar: string;
+  generation?: number;
+  branch?: string;
+  parentId: number;
+};
+
+export type FamilyTreeEdgeData = {
+  relationshipId?: number;
+  onRelationshipRemoved?: (relationshipId: number) => void;
+};

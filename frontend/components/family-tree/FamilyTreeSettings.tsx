@@ -1,19 +1,20 @@
 'use client';
 
 import { Dispatch, SetStateAction } from 'react';
+import type { LayoutConfig, ThemeMode } from '../types/family-tree-types';
 import Icon from '../icons/Icon';
-
-interface LayoutConfig {
-  horizontalGap: number;
-  verticalStep: number;
-}
+import { UI } from '@/lib/constants/ui-strings';
 
 interface FamilyTreeSettingsProps {
   layoutConfig: LayoutConfig;
   setLayoutConfig: Dispatch<SetStateAction<LayoutConfig>>;
-  theme: 'light' | 'dark';
-  setTheme: Dispatch<SetStateAction<'light' | 'dark'>>;
+  theme: ThemeMode;
+  setTheme: Dispatch<SetStateAction<ThemeMode>>;
   onClose: () => void;
+  onSave: () => void;
+  saving?: boolean;
+  saveSuccess?: boolean;
+  saveError?: string | null;
 }
 
 export default function FamilyTreeSettings({
@@ -22,6 +23,10 @@ export default function FamilyTreeSettings({
   theme,
   setTheme,
   onClose,
+  onSave,
+  saving = false,
+  saveSuccess = false,
+  saveError = null,
 }: FamilyTreeSettingsProps) {
   return (
     <>
@@ -36,8 +41,8 @@ export default function FamilyTreeSettings({
         >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-slate-900">Cài đặt</h2>
-              <p className="mt-1 text-xs text-slate-500">Khoảng cách X / Y</p>
+              <h2 className="text-base font-semibold text-slate-900">{UI.SETTINGS_TITLE}</h2>
+              <p className="mt-1 text-xs text-slate-500">{UI.SETTINGS_XY_HINT}</p>
             </div>
             <Icon
               path="close"
@@ -45,7 +50,7 @@ export default function FamilyTreeSettings({
               buttonProps={{
                 onClick: onClose,
                 className: 'grid h-9 w-9 place-items-center rounded-full border border-slate-200 text-slate-600 transition hover:bg-slate-100',
-                'aria-label': 'Đóng cài đặt',
+                'aria-label': UI.CLOSE_SETTINGS,
               }}
               width={16}
               height={16}
@@ -57,9 +62,9 @@ export default function FamilyTreeSettings({
 
           <div className="mt-5 space-y-4">
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-              Chế độ hiển thị
+              {UI.DISPLAY_MODE}
               <div className="mt-2 flex items-center gap-3 rounded-2xl border border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
-                <span>{theme === 'dark' ? 'Tối' : 'Sáng'}</span>
+                <span>{theme === 'dark' ? UI.THEME_DARK : UI.THEME_LIGHT}</span>
                 <Icon
                   path={theme === 'dark' ? 'sun' : 'moon'}
                   asButton
@@ -67,7 +72,7 @@ export default function FamilyTreeSettings({
                     onClick: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
                     className:
                       'ml-auto rounded-full border border-slate-300 bg-white p-2 text-slate-900 transition hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-700',
-                    'aria-label': `Chuyển sang chế độ ${theme === 'dark' ? 'sáng' : 'tối'}`,
+                    'aria-label': theme === 'dark' ? UI.SWITCH_TO_LIGHT : UI.SWITCH_TO_DARK,
                   }}
                   width={18}
                   height={18}
@@ -78,7 +83,7 @@ export default function FamilyTreeSettings({
             </label>
 
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-              Khoảng cách ngang
+              {UI.H_GAP_LABEL}
               <input
                 type="number"
                 min={0}
@@ -95,7 +100,7 @@ export default function FamilyTreeSettings({
             </label>
 
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-              Khoảng cách dọc
+              {UI.V_GAP_LABEL}
               <input
                 type="number"
                 min={0}
@@ -110,6 +115,57 @@ export default function FamilyTreeSettings({
                 className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-slate-500"
               />
             </label>
+
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+              {UI.NODE_BG_COLOR}
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="color"
+                  value={layoutConfig.nodeBgColor}
+                  onChange={(event) => setLayoutConfig((prev) => ({ ...prev, nodeBgColor: event.target.value }))}
+                  className="h-8 w-8 cursor-pointer rounded border border-slate-300"
+                />
+                <span className="font-mono text-xs text-slate-500">{layoutConfig.nodeBgColor}</span>
+              </div>
+            </label>
+
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+              {UI.NODE_TEXT_COLOR}
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="color"
+                  value={layoutConfig.nodeTextColor}
+                  onChange={(event) => setLayoutConfig((prev) => ({ ...prev, nodeTextColor: event.target.value }))}
+                  className="h-8 w-8 cursor-pointer rounded border border-slate-300"
+                />
+                <span className="font-mono text-xs text-slate-500">{layoutConfig.nodeTextColor}</span>
+              </div>
+            </label>
+          </div>
+
+          <div className="mt-6 border-t border-slate-200 pt-4 dark:border-slate-700">
+            {saveError ? (
+              <p className="mb-2 text-xs text-red-500">{saveError}</p>
+            ) : null}
+            <button
+              type="button"
+              onClick={onSave}
+              disabled={saving}
+              className={`flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-medium text-white transition disabled:opacity-50 ${
+                saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
+              }`}
+            >
+              <Icon
+                path={saveSuccess ? 'check' : 'save'}
+                width={16}
+                height={16}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                pointer={false}
+              />
+              {saving ? UI.SAVING_SETTINGS : saveSuccess ? UI.SAVE_SETTINGS_SUCCESS : UI.SAVE_SETTINGS}
+            </button>
           </div>
         </div>
       </div>

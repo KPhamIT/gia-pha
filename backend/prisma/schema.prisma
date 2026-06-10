@@ -22,14 +22,23 @@ enum RelationshipType {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String?  @unique
+  id          Int          @id @default(autoincrement())
+  email       String?      @unique
   provider    String
-  providerId  String   @unique
+  providerId  String       @unique
 
   person      Person?
+  settings    UserSettings?
 
   createdAt   DateTime @default(now())
+}
+
+model UserSettings {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  data      Json     @default("{}")
+  user      User     @relation(fields: [userId], references: [id])
+  updatedAt DateTime @updatedAt
 }
 
 model Organization {

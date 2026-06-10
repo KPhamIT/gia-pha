@@ -1,21 +1,21 @@
 'use client';
 
-import { Person } from '../types/family-tree-types';
 import { useState } from 'react';
+import type { CreateChildFormInput, Person } from '../types/family-tree-types';
 import Icon from '../icons/Icon';
+import { UI } from '@/lib/constants/ui-strings';
+
+const EMPTY_CHILD_FORM = {
+  fullName: '',
+  gender: '',
+  birthDate: '',
+  avatar: '',
+};
 
 type NodeActionModalProps = {
   node: Person;
   onClose: () => void;
-  onCreateChild: (childData: {
-    fullName: string;
-    gender: string;
-    birthDate: string;
-    avatar: string;
-    generation?: number;
-    branch?: string;
-    parentId: number;
-  }) => void;
+  onCreateChild: (childData: CreateChildFormInput) => void;
   onDeleteNode: () => void;
   loading?: boolean;
 };
@@ -29,27 +29,22 @@ export default function NodeActionModal({
 }: NodeActionModalProps) {
   const [showChildForm, setShowChildForm] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  const [childForm, setChildForm] = useState({
-    fullName: '',
-    gender: '',
-    birthDate: '',
-    avatar: '',
-  });
+  const [childForm, setChildForm] = useState(EMPTY_CHILD_FORM);
 
-  const handleCreateChild = async () => {
+  const handleCreateChild = () => {
     if (!childForm.fullName.trim()) {
-      alert('Vui lòng nhập tên con');
+      alert(UI.CHILD_NAME_REQUIRED);
       return;
     }
 
     onCreateChild({
       ...childForm,
-      generation: node.generation ? node.generation + 1 : 1,
+      generation: node.generation != null ? node.generation + 1 : 1,
       branch: node.branch != null ? String(node.branch) : '1',
       parentId: node.id,
     });
 
-    setChildForm({ fullName: '', gender: '', birthDate: '', avatar: '' });
+    setChildForm(EMPTY_CHILD_FORM);
   };
 
   return (
@@ -63,7 +58,7 @@ export default function NodeActionModal({
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-900">Xóa {node.fullName}?</p>
-                <p className="text-xs text-slate-500">Hành động này không thể hoàn tác.</p>
+                <p className="text-xs text-slate-500">{UI.DELETE_IRREVERSIBLE}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -89,7 +84,7 @@ export default function NodeActionModal({
           <>
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <p className="text-lg font-semibold text-slate-900">Tùy chọn cho</p>
+                <p className="text-lg font-semibold text-slate-900">{UI.OPTIONS_FOR}</p>
                 <p className="text-base font-semibold text-slate-900">{node.fullName}</p>
                 {node.generation != null && (
                   <p className="text-sm text-slate-500">Đời thứ {node.generation}</p>
@@ -127,7 +122,7 @@ export default function NodeActionModal({
           <>
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <p className="text-lg font-semibold text-slate-900">Thêm con cho</p>
+                <p className="text-lg font-semibold text-slate-900">{UI.ADD_CHILD_FOR}</p>
                 <p className="text-base font-semibold text-slate-900">{node.fullName}</p>
               </div>
               <button
@@ -141,43 +136,37 @@ export default function NodeActionModal({
 
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">
-                  Tên con
-                </label>
+                <label className="mb-1 block text-sm font-semibold text-slate-700">{UI.CHILD_NAME}</label>
                 <input
                   type="text"
                   value={childForm.fullName}
-                  onChange={(e) => setChildForm({ ...childForm, fullName: e.target.value })}
-                  placeholder="Nhập tên"
+                  onChange={(event) => setChildForm({ ...childForm, fullName: event.target.value })}
+                  placeholder={UI.NAME_PLACEHOLDER}
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none"
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">
-                  Giới tính
-                </label>
+                <label className="mb-1 block text-sm font-semibold text-slate-700">{UI.GENDER}</label>
                 <select
                   value={childForm.gender}
-                  onChange={(e) => setChildForm({ ...childForm, gender: e.target.value })}
+                  onChange={(event) => setChildForm({ ...childForm, gender: event.target.value })}
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none"
                   disabled={loading}
                 >
-                  <option value="">-- Chọn giới tính --</option>
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
+                  <option value="">{UI.GENDER_PLACEHOLDER}</option>
+                  <option value={UI.GENDER_MALE}>{UI.GENDER_MALE}</option>
+                  <option value={UI.GENDER_FEMALE}>{UI.GENDER_FEMALE}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">
-                  Ngày sinh
-                </label>
+                <label className="mb-1 block text-sm font-semibold text-slate-700">{UI.BIRTH_DATE}</label>
                 <input
                   type="date"
                   value={childForm.birthDate}
-                  onChange={(e) => setChildForm({ ...childForm, birthDate: e.target.value })}
+                  onChange={(event) => setChildForm({ ...childForm, birthDate: event.target.value })}
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none"
                   disabled={loading}
                 />

@@ -69,17 +69,22 @@ export class AuthService {
       throw new UnauthorizedException('Facebook token invalid');
     }
 
-    const profile = await response.json();
+    const raw = (await response.json()) as {
+      id?: string;
+      email?: string;
+      name?: string;
+      picture?: { data?: { url?: string } };
+    };
 
-    if (!profile?.id) {
+    if (!raw?.id) {
       throw new UnauthorizedException('Facebook profile is missing id');
     }
 
     return {
-      id: profile.id,
-      email: profile.email ?? null,
-      name: profile.name ?? 'Facebook user',
-      pictureUrl: profile.picture?.data?.url ?? null,
+      id: raw.id,
+      email: raw.email ?? null,
+      name: raw.name ?? 'Facebook user',
+      pictureUrl: raw.picture?.data?.url ?? null,
     };
   }
 

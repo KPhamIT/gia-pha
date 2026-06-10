@@ -12,6 +12,10 @@ import { FacebookLoginDto } from './dto/facebook-login.dto.js';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
 import { PersonService } from '../person/person.service.js';
 
+interface AuthenticatedRequest {
+  user?: { id: number; email: string | null; provider: string };
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -26,7 +30,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async me(@Request() req: any) {
+  async me(@Request() req: AuthenticatedRequest) {
     const user = req.user;
     if (user) {
       const person = await this.personService.findByUserId(user.id);

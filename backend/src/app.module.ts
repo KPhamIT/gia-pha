@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { PersonModule } from './person/person.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { RelationshipModule } from './relationship/relationship.module.js';
+import { SettingsModule } from './settings/settings.module.js';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RelationshipModule } from './relationship/relationship.module.js';
     PersonModule,
     AuthModule,
     RelationshipModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

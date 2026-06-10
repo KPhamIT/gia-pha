@@ -1,0 +1,154 @@
+'use client';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
+import type { Connection, Edge, EdgeChange, FinalConnectionState, Node, NodeChange } from '@xyflow/react';
+import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/FamilyTreeGraphLayout';
+import type { FamilyTreeData, Person, Relationship, RelationshipType } from '@/components/types/family-tree-types';
+import { createChildPerson, createRelationship } from '@/lib/family-tree/mutations';
+import { getErrorMessage } from '@/utils/errors';
+import { UI } from '@/lib/constants/ui-strings';
+
+type UseFamilyTreeGraphOptions = {
+  treeData: FamilyTreeData;
+  layoutConfig?: FamilyTreeLayoutConfig;
+  selectedNodeId?: number | null;
+  onNodeClick?: (personId: number, person: Person) => void;
+  onPersonAdded?: (person: Person, relationship: Relationship) => void;
+  onRelationshipAdded?: (relationship: Relationship) => void;
+  onRelationshipRemoved?: (relationshipId: number) => void;
+};
+
+export function useFamilyTreeGraph({
+  treeData,
+  layoutConfig,
+  selectedNodeId,
+  onNodeClick,
+  onPersonAdded,
+  onRelationshipAdded,
+  onRelationshipRemoved,
+}: UseFamilyTreeGraphOptions) {
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
+  const [pendingType, setPendingType] = useState<RelationshipType>('CHILD');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const graph = buildFamilyTreeGraph(treeData, layoutConfig);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNodes(graph.nodes);
+    setEdges(graph.edges);
+  }, [treeData, layoutConfig]);
+
+  const enhancedNodes = useMemo(
+    () =>
+      nodes.map((node) => ({
+        ...node,
+        selected: node.id === String(selectedNodeId),
+        data: {
+          ...node.data,
+          onNodeClick: () => {
+            const person = (node.data as { person?: Person }).person;
+            if (onNodeClick && person) {
+              onNodeClick(person.id, person);
+            }
+          },
+        },
+      })),
+    [nodes, onNodeClick, selectedNodeId],
+  );
+
+  const enhancedEdges = useMemo(
+    () =>
+      edges.map((edge) => ({
+        ...edge,
+        data: {
+          ...edge.data,
+          onRelationshipRemoved,
+        },
+      })),
+    [edges, onRelationshipRemoved],
+  );
+
+  const onNodesChange = useCallback(
+    (changes: NodeChange<Node>[]) => {
+      setNodes((currentNodes) => applyNodeChanges(changes, currentNodes));
+    },
+    [],
+  );
+
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    const nonRemoveChanges = changes.filter((change) => change.type !== 'remove');
+    if (nonRemoveChanges.length > 0) {
+      setEdges((currentEdges) => applyEdgeChanges(nonRemoveChanges, currentEdges));
+    }
+  }, []);
+
+  const onConnect = useCallback((connection: Connection) => {
+    setSaveError(null);
+    setPendingConnection(connection);
+    setPendingType('CHILD');
+  }, []);
+
+  const cancelConnection = useCallback(() => {
+    setPendingConnection(null);
+    setSaveError(null);
+  }, []);
+
+  const confirmConnection = useCallback(async () => {
+    if (!pendingConnection) return;
+
+    const fromId = Number(pendingConnection.source);
+    const toId = Number(pendingConnection.target);
+
+    try {
+      setSaving(true);
+      setSaveError(null);
+      const relationship = await createRelationship(fromId, toId, pendingType);
+      onRelationshipAdded?.(relationship);
+      setPendingConnection(null);
+    } catch (error) {
+      setSaveError(getErrorMessage(error, UI.ERR_SAVE_RELATIONSHIP));
+    } finally {
+      setSaving(false);
+    }
+  }, [onRelationshipAdded, pendingConnection, pendingType]);
+
+  const onConnectEnd = useCallback(
+    (_event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+      if (connectionState.isValid || !connectionState.fromNode) {
+        return;
+      }
+
+      const parentPerson = connectionState.fromNode.data.person as Person;
+
+      void (async () => {
+        try {
+          const result = await createChildPerson(parentPerson, { fullName: UI.DEFAULT_NEW_PERSON });
+          onPersonAdded?.(result.person, result.relationship);
+        } catch (error) {
+          setSaveError(getErrorMessage(error, UI.ERR_CREATE_PERSON));
+        }
+      })();
+    },
+    [onPersonAdded],
+  );
+
+  return {
+    enhancedNodes,
+    enhancedEdges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    onConnectEnd,
+    pendingConnection,
+    pendingType,
+    setPendingType,
+    saving,
+    saveError,
+    confirmConnection,
+    cancelConnection,
+  };
+}
