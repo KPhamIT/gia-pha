@@ -1,0 +1,53 @@
+'use client';
+
+import { RelationshipType } from '../types/family-tree-types';
+
+const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
+  FATHER: 'Bố',
+  MOTHER: 'Mẹ',
+  CHILD: 'Con',
+  SPOUSE: 'Vợ/Chồng',
+};
+
+type Props = {
+  pendingType: RelationshipType;
+  saving: boolean;
+  saveError: string | null;
+  onTypeChange: (type: RelationshipType) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
+
+export default function ConnectRelationshipModal({ pendingType, saving, saveError, onTypeChange, onConfirm, onCancel }: Props) {
+  return (
+    <div className="absolute bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-xl">
+      <p className="mb-3 text-sm font-semibold text-slate-700">Chọn loại quan hệ</p>
+      <div className="flex items-center gap-3">
+        <select
+          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          value={pendingType}
+          onChange={(e) => onTypeChange(e.target.value as RelationshipType)}
+        >
+          {(Object.keys(RELATIONSHIP_LABELS) as RelationshipType[]).map((type) => (
+            <option key={type} value={type}>{RELATIONSHIP_LABELS[type]}</option>
+          ))}
+        </select>
+        <button
+          onClick={onConfirm}
+          disabled={saving}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {saving ? 'Đang lưu...' : 'Lưu'}
+        </button>
+        <button
+          onClick={onCancel}
+          disabled={saving}
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+        >
+          Hủy
+        </button>
+      </div>
+      {saveError && <p className="mt-2 text-xs text-red-500">{saveError}</p>}
+    </div>
+  );
+}

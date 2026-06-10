@@ -7,6 +7,7 @@ export type Person = {
   generation?: number | null;
   branch?: number | null;
   userId?: number | null;
+  organizationId?: number | null;
 };
 
 export type RelationshipType = 'FATHER' | 'MOTHER' | 'SPOUSE' | 'CHILD';

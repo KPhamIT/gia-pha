@@ -38,6 +38,20 @@ export default function FamilyTreePage() {
     localStorage.setItem('family-tree-theme', theme);
   }, [theme]);
 
+  const handleDeleteNode = async () => {
+    if (!selectedNode) return;
+    try {
+      setModalLoading(true);
+      await api.person.delete(selectedNode.id);
+      setSelectedNode(null);
+      await reload();
+    } catch (err) {
+      alert((err as Error).message || 'Lỗi khi xóa');
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
   const handleCreateChild = async (childData: {
     fullName: string;
     gender: string;
@@ -69,13 +83,12 @@ export default function FamilyTreePage() {
               (r.fromId === created.id && r.toId === childData.parentId)),
         );
         if (!exists) {
-          await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
+          await api.relationship.create({ fromId: created.id, toId: childData.parentId, type: 'CHILD' });
         }
       } catch {
-        await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
+        await api.relationship.create({ fromId: created.id, toId: childData.parentId, type: 'CHILD' });
       }
 
-      setSelectedNode(null);
       await reload();
     } catch (err) {
       console.error(err);
@@ -166,6 +179,7 @@ export default function FamilyTreePage() {
           node={selectedNode}
           onClose={() => setSelectedNode(null)}
           onCreateChild={handleCreateChild}
+          onDeleteNode={handleDeleteNode}
           loading={modalLoading}
         />
       )}

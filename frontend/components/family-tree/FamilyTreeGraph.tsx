@@ -1,14 +1,16 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
-import { ReactFlow, Background, Controls, addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
-import type { Connection, EdgeChange } from '@xyflow/react';
+import { useMemo, useState, useCallback, useRef } from 'react';
+import { ReactFlow, ReactFlowProvider, Background, Controls, addEdge, applyEdgeChanges, applyNodeChanges, useReactFlow } from '@xyflow/react';
+import type { Connection, EdgeChange, Node, NodeChange, FinalConnectionState } from '@xyflow/react';
 import FamilyTreeEdge from './FamilyTreeEdge';
+import ConnectRelationshipModal from './ConnectRelationshipModal';
 import '@xyflow/react/dist/style.css';
 import { FamilyTreeData, Person, RelationshipType } from '../types/family-tree-types';
 import FamilyTreeNode from './FamilyTreeNode';
 import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from './FamilyTreeGraphLayout';
 import { api } from '@/lib/api';
+import { useCreateChild } from '@/hooks/useCreateChild';
 
 type FamilyTreeGraphProps = {
   treeData: FamilyTreeData;
@@ -17,14 +19,7 @@ type FamilyTreeGraphProps = {
   selectedNodeId?: number | null;
 };
 
-const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
-  FATHER: 'Bố',
-  MOTHER: 'Mẹ',
-  CHILD: 'Con',
-  SPOUSE: 'Vợ/Chồng',
-};
-
-export default function FamilyTreeGraph({
+function FamilyTreeGraphInner({
   treeData,
   layoutConfig,
   onNodeClick,
@@ -41,6 +36,9 @@ export default function FamilyTreeGraph({
   const [pendingType, setPendingType] = useState<RelationshipType>('CHILD');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const reactFlowWrapper = useRef(null);
+  const { screenToFlowPosition } = useReactFlow();
+  const { createChild } = useCreateChild();
 
   const enhancedNodes = useMemo(() => {
     return nodes.map((node) => ({
@@ -59,12 +57,13 @@ export default function FamilyTreeGraph({
   }, [nodes, selectedNodeId, onNodeClick]);
 
   const onNodesChange = useCallback(
-    (changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
+    (changes: NodeChange<Node>[]) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     [],
   );
+
   const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    // Chỉ xử lý non-remove changes — việc xóa do nút × trong FamilyTreeEdge đảm nhận
     const nonRemoveChanges = changes.filter((c) => c.type !== 'remove');
+
     if (nonRemoveChanges.length > 0) {
       setEdges((eds) => applyEdgeChanges(nonRemoveChanges, eds));
     }
@@ -93,8 +92,55 @@ export default function FamilyTreeGraph({
     }
   };
 
+  const onConnectEnd = useCallback(
+    (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+      if (!connectionState.isValid && connectionState.fromNode) {
+        const { clientX, clientY } =
+          'changedTouches' in event ? event.changedTouches[0] : event;
+        const position = screenToFlowPosition({ x: clientX, y: clientY });
+        const fromNodeId = connectionState.fromNode.id;
+        const fromId = Number(fromNodeId);
+
+        (async () => {
+          try {
+            if (!connectionState.fromNode) return
+
+            const { person, relationship } = await createChild(fromId, { fullName: 'Người mới' }, connectionState.fromNode.data.person as Person);
+
+            setNodes((nds) => nds.concat({
+              id: person.id.toString(),
+              type: 'default',
+              position,
+              data: {
+                fullName: person.fullName,
+                avatar: person.avatar,
+                gender: person.gender,
+                birthDate: person.birthDate,
+                isRoot: false,
+                personId: person.id,
+                person,
+              },
+              origin: [0.5, 0.0] as [number, number],
+            }));
+            setEdges((eds) =>
+              eds.concat({
+                id: relationship.id.toString(),
+                source:  person.id.toString() ,
+                target: fromNodeId,
+                data: { relationshipId: relationship.id },
+              }),
+            );
+          } catch (err) {
+            setSaveError(err instanceof Error ? err.message : 'Lỗi khi tạo người mới');
+          }
+        })();
+      }
+    },
+    [screenToFlowPosition, createChild],
+  );
+
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden wrapper" ref={reactFlowWrapper}>
       <ReactFlow
         nodes={enhancedNodes}
         edges={edges}
@@ -106,42 +152,30 @@ export default function FamilyTreeGraph({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onConnectEnd={onConnectEnd}
       >
         <Background color="#f1f5f9" gap={16} />
         <Controls position="bottom-right" />
       </ReactFlow>
 
       {pendingConnection && (
-        <div className="absolute bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-xl">
-          <p className="mb-3 text-sm font-semibold text-slate-700">Chọn loại quan hệ</p>
-          <div className="flex items-center gap-3">
-            <select
-              className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
-              value={pendingType}
-              onChange={(e) => setPendingType(e.target.value as RelationshipType)}
-            >
-              {(Object.keys(RELATIONSHIP_LABELS) as RelationshipType[]).map((type) => (
-                <option key={type} value={type}>{RELATIONSHIP_LABELS[type]}</option>
-              ))}
-            </select>
-            <button
-              onClick={handleConfirmConnection}
-              disabled={saving}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-            >
-              {saving ? 'Đang lưu...' : 'Lưu'}
-            </button>
-            <button
-              onClick={() => { setPendingConnection(null); setSaveError(null); }}
-              disabled={saving}
-              className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
-            >
-              Hủy
-            </button>
-          </div>
-          {saveError && <p className="mt-2 text-xs text-red-500">{saveError}</p>}
-        </div>
+        <ConnectRelationshipModal
+          pendingType={pendingType}
+          saving={saving}
+          saveError={saveError}
+          onTypeChange={setPendingType}
+          onConfirm={handleConfirmConnection}
+          onCancel={() => { setPendingConnection(null); setSaveError(null); }}
+        />
       )}
     </div>
+  );
+}
+
+export default function FamilyTreeGraph(props: FamilyTreeGraphProps) {
+  return (
+    <ReactFlowProvider>
+      <FamilyTreeGraphInner {...props} />
+    </ReactFlowProvider>
   );
 }

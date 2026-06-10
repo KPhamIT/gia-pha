@@ -87,6 +87,9 @@ export class PersonService {
   }
 
   async remove(id: number) {
+    await this.prisma.relationship.deleteMany({
+      where: { OR: [{ fromId: id }, { toId: id }] },
+    });
     return this.prisma.person.delete({ where: { id } });
   }
 

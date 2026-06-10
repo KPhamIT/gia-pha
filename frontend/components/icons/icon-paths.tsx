@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type IconName = 'settings' | 'close' | 'chevronRight' | 'user' | 'home' | 'sun' | 'moon';
+export type IconName = 'settings' | 'close' | 'chevronRight' | 'user' | 'home' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check';
 
 export interface IconDefinition {
   viewBox: string;
@@ -69,6 +69,50 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
     paths: (
       <>
         <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
+      </>
+    ),
+  },
+  trash: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M3 6h18" />
+        <path d="M8 6V4h8v2" />
+        <path d="M19 6 18 20H6L5 6" />
+      </>
+    ),
+  },
+  userPlus: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M19 8v6" />
+        <path d="M22 11h-6" />
+      </>
+    ),
+  },
+  arrowLeft: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M19 12H5" />
+        <path d="m12 19-7-7 7-7" />
+      </>
+    ),
+  },
+  check: {
+    viewBox: '0 0 24 24',
+    paths: <path d="M20 6 9 17l-5-5" />,
+  },
+  alertTriangle: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
       </>
     ),
   },

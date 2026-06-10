@@ -231,7 +231,7 @@ function computeCoordinates(
     for (let i = 0; i < children.length; i++) {
       const childId = children[i];
       const plannedWidth = childWidths[i];
-      const childWidth = layoutNode(childId, currentLeft);
+      layoutNode(childId, currentLeft);
       const childX = coordinates.get(childId)?.x ?? currentLeft;
 
       childXPositions.push(childX);
@@ -289,36 +289,16 @@ function buildFlowNodes(persons: Person[], rootId: number, coordinates: Coordina
 
 function buildFlowEdges(
   relationships: Relationship[],
-  allRelationships: Relationship[],
 ) {
   const flowEdges: Edge[] = [];
-  const processedSpouses = new Set<string>();
   const processedEdges = new Set<string>();
 
   relationships.forEach((relationship) => {
-    if (relationship.type === 'SPOUSE') {
-      const key = [relationship.fromId, relationship.toId].sort().join('-');
-
-      if (processedSpouses.has(key)) return;
-      processedSpouses.add(key);
-    }
 
     let sourceId = relationship.fromId;
     let targetId = relationship.toId;
 
-    if (relationship.type === 'FATHER' || relationship.type === 'MOTHER') {
-      sourceId = relationship.toId;
-      targetId = relationship.fromId;
-    }
-
     if (relationship.type === 'CHILD') {
-      const hasParentEdge = allRelationships.some(
-        (other) =>
-          (other.type === 'FATHER' || other.type === 'MOTHER') &&
-          other.fromId === relationship.toId &&
-          other.toId === relationship.fromId,
-      );
-      if (hasParentEdge) return;
       sourceId = relationship.fromId;
       targetId = relationship.toId;
     }
@@ -362,7 +342,7 @@ export function buildFamilyTreeGraph(treeData: FamilyTreeData, config: FamilyTre
     verticalStep,
   );
   const nodes = buildFlowNodes(persons, root.id, coordinates);
-  const edges = buildFlowEdges(effectiveRelationships, relationships);
+  const edges = buildFlowEdges(effectiveRelationships);
 
   return { nodes, edges };
 }

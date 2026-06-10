@@ -11,6 +11,7 @@ import NodeActionModal from './NodeActionModal';
 import { AuthResponse, FamilyTreeData, Person, RelationshipType } from '../types/family-tree-types';
 import { getRootPerson } from '@/utils/family-tree-utils';
 import { api } from '@/lib/api';
+import { useCreateChild } from '@/hooks/useCreateChild';
 
 declare global {
   interface Window {
@@ -42,6 +43,7 @@ export default function FamilyTreeApp() {
   const [rootId, setRootId] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { createChild } = useCreateChild();
   const [profileForm, setProfileForm] = useState<ProfileFormState>({
     fullName: '',
     gender: '',
@@ -351,39 +353,18 @@ export default function FamilyTreeApp() {
   }) => {
     try {
       setLoading(true);
-      const body = {
+      await createChild(childData.parentId, {
         fullName: childData.fullName,
         gender: childData.gender,
         birthDate: childData.birthDate,
         avatar: childData.avatar,
         generation: childData.generation,
         branch: childData.branch ? Number(childData.branch) : 1,
-      };
-      const created = await api.person.create(body);
-      setPersons((current) => [...current, created]);
-
-      try {
-        const allRels = await api.relationship.list();
-        const exists = allRels.some(
-          (r) =>
-            r.type === 'CHILD' &&
-            ((r.fromId === childData.parentId && r.toId === created.id) ||
-              (r.fromId === created.id && r.toId === childData.parentId)),
-        );
-        if (!exists) {
-          await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
-        }
-      } catch {
-        await api.relationship.create({ fromId: childData.parentId, toId: created.id, type: 'CHILD' });
-      }
-
+      });
       setMessage('Đã tạo con và thiết lập quan hệ');
-      setSelectedNodeId(null);
-      setNodeActionPerson(null);
       await refreshApp();
     } catch (error) {
       setMessage((error as Error).message || 'Lỗi khi tạo con');
-      console.error(error);
     } finally {
       setLoading(false);
     }

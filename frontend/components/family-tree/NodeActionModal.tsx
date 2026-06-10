@@ -2,6 +2,7 @@
 
 import { Person } from '../types/family-tree-types';
 import { useState } from 'react';
+import Icon from '../icons/Icon';
 
 type NodeActionModalProps = {
   node: Person;
@@ -15,6 +16,7 @@ type NodeActionModalProps = {
     branch?: string;
     parentId: number;
   }) => void;
+  onDeleteNode: () => void;
   loading?: boolean;
 };
 
@@ -22,9 +24,11 @@ export default function NodeActionModal({
   node,
   onClose,
   onCreateChild,
+  onDeleteNode,
   loading = false,
 }: NodeActionModalProps) {
   const [showChildForm, setShowChildForm] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [childForm, setChildForm] = useState({
     fullName: '',
     gender: '',
@@ -41,18 +45,47 @@ export default function NodeActionModal({
     onCreateChild({
       ...childForm,
       generation: node.generation ? node.generation + 1 : 1,
-      branch: node.branch || '1',
+      branch: node.branch != null ? String(node.branch) : '1',
       parentId: node.id,
     });
 
     setChildForm({ fullName: '', gender: '', birthDate: '', avatar: '' });
-    setShowChildForm(false);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 p-4">
       <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200">
-        {!showChildForm ? (
+        {showConfirmDelete ? (
+          <>
+            <div className="mb-4 flex items-center gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-100 text-red-600">
+                <Icon path="alertTriangle" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Xóa {node.fullName}?</p>
+                <p className="text-xs text-slate-500">Hành động này không thể hoàn tác.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirmDelete(false)}
+                className="grid place-items-center rounded-2xl border border-slate-300 py-3 text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+                disabled={loading}
+              >
+                <Icon path="arrowLeft" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+              </button>
+              <button
+                type="button"
+                onClick={onDeleteNode}
+                className="grid place-items-center rounded-2xl bg-red-600 py-3 text-white transition hover:bg-red-700 disabled:opacity-50"
+                disabled={loading}
+              >
+                <Icon path="trash" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+              </button>
+            </div>
+          </>
+        ) : !showChildForm ? (
           <>
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
@@ -67,18 +100,26 @@ export default function NodeActionModal({
                 onClick={onClose}
                 className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
               >
-                ✕
+                <Icon path="close" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
               </button>
             </div>
 
-            <div className="grid gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setShowChildForm(true)}
-                className="rounded-2xl bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                className="grid place-items-center rounded-2xl bg-green-600 py-3 text-white transition hover:bg-green-700 disabled:opacity-50"
                 disabled={loading}
               >
-                Thêm con
+                <Icon path="userPlus" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowConfirmDelete(true)}
+                className="grid place-items-center rounded-2xl bg-red-50 py-3 text-red-600 transition hover:bg-red-100 disabled:opacity-50"
+                disabled={loading}
+              >
+                <Icon path="trash" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
               </button>
             </div>
           </>
@@ -94,7 +135,7 @@ export default function NodeActionModal({
                 onClick={() => setShowChildForm(false)}
                 className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
               >
-                ✕
+                <Icon path="close" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
               </button>
             </div>
 
@@ -146,18 +187,18 @@ export default function NodeActionModal({
                 <button
                   type="button"
                   onClick={() => setShowChildForm(false)}
-                  className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+                  className="grid place-items-center rounded-2xl border border-slate-300 py-3 text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
                   disabled={loading}
                 >
-                  Hủy
+                  <Icon path="arrowLeft" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
                 </button>
                 <button
                   type="button"
                   onClick={handleCreateChild}
-                  className="rounded-2xl bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                  className="grid place-items-center rounded-2xl bg-green-600 py-3 text-white transition hover:bg-green-700 disabled:opacity-50"
                   disabled={loading}
                 >
-                  {loading ? 'Đang tạo...' : 'Tạo con'}
+                  <Icon path="check" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
                 </button>
               </div>
             </div>
