@@ -8,6 +8,7 @@ import ConnectRelationshipModal from './ConnectRelationshipModal';
 import FamilyTreeNode from './FamilyTreeNode';
 import type { FamilyTreeLayoutConfig } from './FamilyTreeGraphLayout';
 import { useFamilyTreeGraph } from '@/hooks/useFamilyTreeGraph';
+import '@xyflow/react/dist/base.css';
 
 export type FamilyTreeGraphProps = {
   treeData: FamilyTreeData;
@@ -27,9 +28,9 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
       <ReactFlow
         nodes={graph.enhancedNodes}
         edges={graph.enhancedEdges}
-        nodeTypes={{ default: FamilyTreeNode }}
+        nodeTypes={{ custom: FamilyTreeNode }}
         edgeTypes={{ default: FamilyTreeEdge, step: FamilyTreeEdge }}
-        minZoom={0.1}
+        minZoom={0.01}
         fitView
         deleteKeyCode={null}
         onNodesChange={graph.onNodesChange}
