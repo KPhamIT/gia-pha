@@ -1,0 +1,37 @@
+.spinner {
+  --uib-size: 40px;
+  --uib-track-color: #facc15;
+  --uib-car-color: #facc15;
+  --uib-track-opacity: 0.28;
+  --uib-speed: 1.4s;
+  height: var(--uib-size);
+  width: var(--uib-size);
+  transform-origin: center;
+  overflow: visible;
+}
+
+.car {
+  fill: none;
+  stroke: var(--uib-car-color);
+  stroke-dasharray: 15, 85;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: loading-spinner-travel var(--uib-speed) linear infinite;
+  will-change: stroke-dasharray, stroke-dashoffset;
+}
+
+.track {
+  fill: none;
+  stroke: var(--uib-track-color);
+  opacity: var(--uib-track-opacity);
+}
+
+@keyframes loading-spinner-travel {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -100;
+  }
+}

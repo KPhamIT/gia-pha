@@ -1,6 +1,7 @@
 'use client';
 
 import { RelationshipType } from '../types/family-tree-types';
+import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI, RELATIONSHIP_LABELS } from '@/lib/constants/ui-strings';
 
 type Props = {
@@ -29,9 +30,16 @@ export default function ConnectRelationshipModal({ pendingType, saving, saveErro
         <button
           onClick={onConfirm}
           disabled={saving}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="inline-flex min-w-[88px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
         >
-          {saving ? UI.SAVING : UI.SAVE}
+          {saving ? (
+            <>
+              <LoadingSpinner size={18} label={UI.SAVING} />
+              {UI.SAVING}
+            </>
+          ) : (
+            UI.SAVE
+          )}
         </button>
         <button
           onClick={onCancel}

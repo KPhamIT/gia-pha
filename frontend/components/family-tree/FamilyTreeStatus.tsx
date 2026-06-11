@@ -1,4 +1,5 @@
 import type { ThemeMode } from '@/components/types/family-tree-types';
+import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { getMutedTextClass, getPageShellClass } from '@/utils/theme';
 import { UI } from '@/lib/constants/ui-strings';
 
@@ -20,7 +21,9 @@ export default function FamilyTreeStatus({
   if (type === 'loading') {
     return (
       <div className={shellClass}>
-        <div className={`text-lg ${getMutedTextClass(theme)}`}>{UI.LOADING}</div>
+        <div className="flex flex-col items-center gap-4">
+          <LoadingSpinner size={48} label={UI.LOADING} />
+        </div>
       </div>
     );
   }

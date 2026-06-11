@@ -3,6 +3,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import type { LayoutConfig, ThemeMode } from '../types/family-tree-types';
 import Icon from '../icons/Icon';
+import LoadingSpinner from '../icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
 
 interface FamilyTreeSettingsProps {
@@ -155,15 +156,19 @@ export default function FamilyTreeSettings({
                 saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
               }`}
             >
-              <Icon
-                path={saveSuccess ? 'check' : 'save'}
-                width={16}
-                height={16}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                pointer={false}
-              />
+              {saving ? (
+                <LoadingSpinner size={18} label={UI.SAVING_SETTINGS} />
+              ) : (
+                <Icon
+                  path={saveSuccess ? 'check' : 'save'}
+                  width={16}
+                  height={16}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  pointer={false}
+                />
+              )}
               {saving ? UI.SAVING_SETTINGS : saveSuccess ? UI.SAVE_SETTINGS_SUCCESS : UI.SAVE_SETTINGS}
             </button>
           </div>

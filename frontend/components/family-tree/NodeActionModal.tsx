@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { CreateChildFormInput, Person } from '../types/family-tree-types';
 import Icon from '../icons/Icon';
+import LoadingSpinner from '../icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
 
 const EMPTY_CHILD_FORM = {
@@ -49,7 +50,12 @@ export default function NodeActionModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 p-4">
-      <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200">
+      <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200">
+        {loading ? (
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/80">
+            <LoadingSpinner size={40} label={UI.SAVING} />
+          </div>
+        ) : null}
         {showConfirmDelete ? (
           <>
             <div className="mb-4 flex items-center gap-3">
