@@ -42,7 +42,7 @@ export default function FamilyTreeNode({ data, selected, id }: FamilyTreeNodePro
         backgroundColor: data.nodeBgColor ?? '#ffffff',
         color: data.nodeTextColor ?? '#0f172a',
       }}
-      className={`cursor-pointer w-full h-full transition-all hover:shadow-lg ${
+      className={`px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 ${
         selected
           ? 'border-blue-500 shadow-lg ring-2 ring-blue-200'
           : 'border-slate-200 shadow-sm hover:border-blue-300'

@@ -47,6 +47,7 @@ export function useFamilyTreeGraph({
       nodes.map((node) => ({
         ...node,
         selected: node.id === String(selectedNodeId),
+        type: 'custom',
         data: {
           ...node.data,
           onNodeClick: () => {
