@@ -8,6 +8,7 @@ import {
   addRelationshipToTree,
   removePersonFromTree,
   removeRelationshipFromTree,
+  updatePersonInTree,
 } from '@/utils/family-tree-utils';
 import { api } from '@/lib/api';
 import { getErrorMessage } from '@/utils/errors';
@@ -63,6 +64,10 @@ export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
     setTreeData((prev) => (prev ? removeRelationshipFromTree(prev, relationshipId) : prev));
   }, []);
 
+  const updatePerson = useCallback((person: Person) => {
+    setTreeData((prev) => (prev ? updatePersonInTree(prev, person) : prev));
+  }, []);
+
   return {
     treeData,
     loading,
@@ -72,5 +77,6 @@ export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
     removePerson,
     addRelationship,
     removeRelationship,
+    updatePerson,
   };
 }

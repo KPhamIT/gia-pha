@@ -6,6 +6,7 @@ import type { FamilyTreeData, Person, Relationship } from '../types/family-tree-
 import FamilyTreeEdge from './FamilyTreeEdge';
 import ConnectRelationshipModal from './ConnectRelationshipModal';
 import FamilyTreeNode from './FamilyTreeNode';
+import GraphViewportController from './GraphViewportController';
 import type { FamilyTreeLayoutConfig } from './FamilyTreeGraphLayout';
 import { useFamilyTreeGraph } from '@/hooks/useFamilyTreeGraph';
 import '@xyflow/react/dist/base.css';
@@ -15,6 +16,8 @@ export type FamilyTreeGraphProps = {
   layoutConfig?: FamilyTreeLayoutConfig;
   onNodeClick?: (personId: number, person: Person) => void;
   selectedNodeId?: number | null;
+  focusNodeId?: number | null;
+  centerTreeKey?: number;
   onPersonAdded?: (person: Person, relationship: Relationship) => void;
   onRelationshipAdded?: (relationship: Relationship) => void;
   onRelationshipRemoved?: (relationshipId: number) => void;
@@ -32,6 +35,7 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         edgeTypes={{ default: FamilyTreeEdge, step: FamilyTreeEdge }}
         minZoom={0.01}
         fitView
+        onlyRenderVisibleElements
         deleteKeyCode={null}
         onNodesChange={graph.onNodesChange}
         onEdgesChange={graph.onEdgesChange}
@@ -40,6 +44,10 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
       >
         <Background color="#f1f5f9" gap={16} />
         <Controls position="bottom-right" />
+        <GraphViewportController
+          focusNodeId={props.focusNodeId}
+          centerTreeKey={props.centerTreeKey}
+        />
       </ReactFlow>
 
       {graph.saveError ? (

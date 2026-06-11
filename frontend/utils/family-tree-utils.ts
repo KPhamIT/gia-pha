@@ -88,3 +88,19 @@ export function removeRelationshipFromTree(
     ),
   };
 }
+
+export function updatePersonInTree(treeData: FamilyTreeData, updated: Person): FamilyTreeData {
+  const persons = treeData.persons.map((person) =>
+    person.id === updated.id ? { ...person, ...updated } : person,
+  );
+
+  const relationships = treeData.relationships.map((relationship) => ({
+    ...relationship,
+    from: relationship.from.id === updated.id ? { ...relationship.from, ...updated } : relationship.from,
+    to: relationship.to.id === updated.id ? { ...relationship.to, ...updated } : relationship.to,
+  }));
+
+  const root = treeData.root.id === updated.id ? { ...treeData.root, ...updated } : treeData.root;
+
+  return { root, persons, relationships };
+}

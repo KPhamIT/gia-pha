@@ -45,10 +45,9 @@ export function usePersonActions({
           branch: input.branch ? Number(input.branch) : undefined,
         });
         addPerson(person, relationship);
-        setSelectedNode(null);
       }, UI.ERR_CREATE_CHILD);
     },
-    [addPerson, run, selectedNode, setSelectedNode],
+    [addPerson, run, selectedNode],
   );
 
   return { deleteNode, createChild, loading };
