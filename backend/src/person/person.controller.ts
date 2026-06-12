@@ -11,6 +11,7 @@ import {
 import { PersonService } from './person.service.js';
 import { CreatePersonDto } from './dto/create-person.dto.js';
 import { UpdatePersonDto } from './dto/update-person.dto.js';
+import { UpdatePersonDetailDto } from './dto/update-person-detail.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 @Controller('person')
@@ -33,9 +34,23 @@ export class PersonController {
     return this.personService.getFamilyGraph(+id);
   }
 
+  @Get(':id/detail')
+  getPersonDetail(@Param('id') id: string) {
+    return this.personService.getPersonDetail(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.personService.findOne(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/detail')
+  updatePersonDetail(
+    @Param('id') id: string,
+    @Body() updatePersonDetailDto: UpdatePersonDetailDto,
+  ) {
+    return this.personService.updatePersonDetail(+id, updatePersonDetailDto);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,18 +1,32 @@
+import { Type } from 'class-transformer';
 import {
   IsDateString,
   IsInt,
-  IsNotEmpty,
   IsOptional,
   IsString,
-  IsUrl,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
-export class CreatePersonDto {
-  @IsNotEmpty()
+export class GraveInfoDto {
+  @IsOptional()
   @IsString()
-  fullName: string;
+  cemetery?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+}
+
+export class UpdatePersonDetailDto {
+  @IsOptional()
+  @IsString()
+  fullName?: string;
 
   @IsOptional()
   @IsString()
@@ -23,7 +37,11 @@ export class CreatePersonDto {
   birthDate?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsDateString()
+  deathDate?: string;
+
+  @IsOptional()
+  @IsString()
   avatar?: string;
 
   @IsOptional()
@@ -37,10 +55,6 @@ export class CreatePersonDto {
   @Min(1)
   @Max(3)
   branch?: number;
-
-  @IsOptional()
-  @IsDateString()
-  deathDate?: string;
 
   @IsOptional()
   @IsString()
@@ -71,12 +85,11 @@ export class CreatePersonDto {
   achievements?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  organizationId?: number;
+  @IsString()
+  biography?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  userId?: number;
+  @ValidateNested()
+  @Type(() => GraveInfoDto)
+  graveInfo?: GraveInfoDto;
 }

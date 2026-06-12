@@ -41,3 +41,23 @@ export async function createRelationship(
 export async function deleteRelationshipById(relationshipId: number): Promise<void> {
   await api.relationship.delete(relationshipId);
 }
+
+export async function createStandalonePerson(
+  organizationId: number | null | undefined,
+  data: { fullName: string; gender?: string; birthDate?: string },
+): Promise<Person> {
+  const body: CreatePersonDto = {
+    fullName: data.fullName,
+    gender: data.gender || undefined,
+    birthDate: data.birthDate || undefined,
+    organizationId: organizationId ?? undefined,
+  };
+  return api.person.create(body);
+}
+
+export async function updatePersonDetail(
+  personId: number,
+  data: Parameters<typeof api.person.updateDetail>[1],
+) {
+  return api.person.updateDetail(personId, data);
+}

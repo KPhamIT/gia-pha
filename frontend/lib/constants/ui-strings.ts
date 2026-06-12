@@ -70,6 +70,50 @@ export const UI = {
   SAVING: 'Đang lưu...',
   SAVE: 'Lưu',
   CANCEL: 'Hủy',
+
+  // Person detail
+  ERR_FETCH_DETAIL: 'Không thể tải thông tin người',
+  ERR_UPDATE_PERSON: 'Lỗi khi cập nhật thông tin',
+  PERSON_INFO: 'Thông tin',
+  RELATIONSHIPS: 'Quan hệ',
+  BIOGRAPHY: 'Tiểu sử',
+  GRAVE_INFO: 'Mộ phần',
+  FATHER: 'Cha',
+  MOTHER: 'Mẹ',
+  SPOUSE: 'Vợ/Chồng',
+  CHILDREN: 'Con',
+  NO_INFO: 'Chưa có thông tin',
+  NO_BIOGRAPHY: 'Chưa có tiểu sử',
+  NO_GRAVE_INFO: 'Chưa có thông tin mộ phần',
+  EDIT_PERSON: 'Chỉnh sửa',
+  DEATH_DATE: 'Ngày mất',
+  BIRTH_PLACE: 'Nơi sinh',
+  CURRENT_LOCATION: 'Nơi ở hiện tại',
+  EDUCATION: 'Học vấn',
+  OCCUPATION: 'Nghề nghiệp',
+  RELIGION: 'Tôn giáo',
+  ETHNICITY: 'Dân tộc',
+  ACHIEVEMENTS: 'Thành tích',
+  CEMETERY: 'Nghĩa trang',
+  GRAVE_ADDRESS: 'Địa chỉ mộ',
+  GRAVE_NOTES: 'Ghi chú mộ phần',
+
+  // Edit form sections
+  SECTION_BASIC: 'Thông tin cơ bản',
+  SECTION_FAMILY: 'Thông tin gia đình',
+  SECTION_LOCATION: 'Thông tin địa điểm',
+  SECTION_BIOGRAPHY: 'Tiểu sử',
+  SECTION_ACHIEVEMENTS: 'Thành tích',
+  SECTION_GRAVE: 'Thông tin mộ phần',
+
+  // FAB & search
+  ADD_PERSON: 'Thêm người',
+  SEARCH_PERSON: 'Tìm kiếm',
+  CENTER_TREE: 'Căn giữa cây',
+  SEARCH_PLACEHOLDER: 'Nhập tên để tìm...',
+  NO_SEARCH_RESULTS: 'Không tìm thấy kết quả',
+  ADD_CHILD: 'Thêm con',
+  DELETE_PERSON: 'Xóa',
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

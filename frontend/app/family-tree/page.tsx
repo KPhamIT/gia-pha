@@ -1,23 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import FamilyTreeGraph from '@/components/family-tree/FamilyTreeGraph';
-import NodeActionModal from '@/components/family-tree/NodeActionModal';
+import PersonDetailSheet from '@/components/family-tree/PersonDetailSheet';
+import EditPersonSheet from '@/components/family-tree/EditPersonSheet';
+import AddChildSheet from '@/components/family-tree/AddChildSheet';
+import AddPersonSheet from '@/components/family-tree/AddPersonSheet';
+import SearchSheet from '@/components/family-tree/SearchSheet';
+import TreeFab from '@/components/family-tree/TreeFab';
 import FamilyTreeSettings from '@/components/family-tree/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/FamilyTreeStatus';
 import Icon from '@/components/icons/Icon';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
 import { useLayoutConfig } from '@/hooks/useLayoutConfig';
 import { usePersonActions } from '@/hooks/usePersonActions';
+import { usePersonDetail } from '@/hooks/usePersonDetail';
 import { useTheme } from '@/hooks/useTheme';
 import { useSettings } from '@/hooks/useSettings';
+import { useAsyncAction } from '@/hooks/useAsyncAction';
 import type { UserSettings } from '@/lib/api/modules/settings';
-import type { Person, ThemeMode } from '@/components/types/family-tree-types';
+import type { Person, ThemeMode, UpdatePersonDetailInput } from '@/components/types/family-tree-types';
+import { createStandalonePerson, updatePersonDetail } from '@/lib/family-tree/mutations';
 import { getPageShellClass } from '@/utils/theme';
+import { UI } from '@/lib/constants/ui-strings';
+
+type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
 
 export default function FamilyTreePage() {
-  const { treeData, loading, error, reload, addPerson, removePerson, addRelationship, removeRelationship } =
-    useFamilyTree();
+  const {
+    treeData,
+    loading,
+    error,
+    reload,
+    addPerson,
+    removePerson,
+    addRelationship,
+    removeRelationship,
+    updatePerson,
+  } = useFamilyTree();
   const { theme, setTheme } = useTheme();
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
 
@@ -33,15 +53,85 @@ export default function FamilyTreePage() {
       }));
     },
   });
-  const [selectedNode, setSelectedNode] = useState<Person | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
 
+  const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Person | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
+  const [centerTreeKey, setCenterTreeKey] = useState(0);
+
+  const { detail, loading: detailLoading, error: detailError, reload: reloadDetail } = usePersonDetail(selectedPersonId);
+  const { loading: actionLoading, run: runAction } = useAsyncAction();
   const { createChild, deleteNode, loading: modalLoading } = usePersonActions({
     selectedNode,
-    setSelectedNode,
+    setSelectedNode: (node) => {
+      setSelectedNode(node);
+      if (!node) {
+        setSelectedPersonId(null);
+        setViewMode(null);
+      }
+    },
     addPerson,
     removePerson,
   });
+
+  const openPersonDetail = useCallback((person: Person) => {
+    setSelectedNode(person);
+    setSelectedPersonId(person.id);
+    setFocusNodeId(person.id);
+    setViewMode('detail');
+  }, []);
+
+  const closeAllSheets = useCallback(() => {
+    setSelectedPersonId(null);
+    setSelectedNode(null);
+    setViewMode(null);
+  }, []);
+
+  const handleSavePerson = useCallback(
+    async (data: UpdatePersonDetailInput) => {
+      if (!selectedPersonId) return;
+
+      await runAction(async () => {
+        const updated = await updatePersonDetail(selectedPersonId, data);
+        updatePerson(updated.person);
+        setSelectedNode(updated.person);
+        reloadDetail();
+        setViewMode('detail');
+      }, UI.ERR_UPDATE_PERSON);
+    },
+    [reloadDetail, runAction, selectedPersonId, updatePerson],
+  );
+
+  const handleAddStandalonePerson = useCallback(
+    async (data: { fullName: string; gender: string; birthDate: string }) => {
+      if (!treeData) return;
+
+      await runAction(async () => {
+        const person = await createStandalonePerson(treeData.root.organizationId, data);
+        addPerson(person);
+        setShowSearch(false);
+        setViewMode(null);
+        openPersonDetail(person);
+      }, UI.ERR_CREATE_PERSON);
+    },
+    [addPerson, openPersonDetail, runAction, treeData],
+  );
+
+  const handleDeleteConfirm = useCallback(async () => {
+    await deleteNode();
+    setViewMode(null);
+  }, [deleteNode]);
+
+  const handleSearchSelect = useCallback(
+    (person: Person) => {
+      setShowSearch(false);
+      openPersonDetail(person);
+    },
+    [openPersonDetail],
+  );
 
   if (loading) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
@@ -57,14 +147,14 @@ export default function FamilyTreePage() {
 
   return (
     <div className={`min-h-screen ${getPageShellClass(theme)}`}>
-      <div className="fixed right-4 top-4 z-20">
+      <div className="fixed right-4 top-4 z-20 pt-[env(safe-area-inset-top)]">
         <button
           type="button"
           onClick={() => setShowSettings(true)}
-          className={`grid h-11 w-11 place-items-center rounded-full border shadow-sm transition ${
+          className={`grid h-11 w-11 place-items-center rounded-full border shadow-sm active:opacity-80 ${
             theme === 'dark'
-              ? 'border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800'
-              : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+              ? 'border-slate-700 bg-slate-900 text-slate-100'
+              : 'border-slate-200 bg-white text-slate-700'
           }`}
           aria-label="Cài đặt layout"
         >
@@ -80,11 +170,20 @@ export default function FamilyTreePage() {
         </button>
       </div>
 
+      <TreeFab
+        onAddPerson={() => setViewMode('addPerson')}
+        onSearch={() => setShowSearch(true)}
+        onCenterTree={() => setCenterTreeKey((key) => key + 1)}
+      />
+
       <div className="h-screen">
         <FamilyTreeGraph
           treeData={treeData}
           layoutConfig={layoutConfig}
-          onNodeClick={(_personId, person) => setSelectedNode(person)}
+          selectedNodeId={selectedPersonId}
+          focusNodeId={focusNodeId}
+          centerTreeKey={centerTreeKey}
+          onNodeClick={(_personId, person) => openPersonDetail(person)}
           onPersonAdded={addPerson}
           onRelationshipAdded={addRelationship}
           onRelationshipRemoved={removeRelationship}
@@ -105,14 +204,101 @@ export default function FamilyTreePage() {
         />
       ) : null}
 
-      {selectedNode ? (
-        <NodeActionModal
-          node={selectedNode}
-          onClose={() => setSelectedNode(null)}
-          onCreateChild={createChild}
-          onDeleteNode={deleteNode}
+      {showSearch ? (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 z-40 bg-slate-900/30"
+            onClick={() => setShowSearch(false)}
+            aria-label={UI.CANCEL}
+          />
+          <SearchSheet
+            persons={treeData.persons}
+            onClose={() => setShowSearch(false)}
+            onSelect={handleSearchSelect}
+          />
+        </>
+      ) : null}
+
+      {viewMode === 'detail' && selectedPersonId != null ? (
+        <PersonDetailSheet
+          detail={detail}
+          loading={detailLoading}
+          error={detailError}
+          onClose={closeAllSheets}
+          onEdit={() => setViewMode('edit')}
+          onAddChild={() => setViewMode('addChild')}
+          onDelete={() => setViewMode('deleteConfirm')}
+          onSelectPerson={(personId) => {
+            const person = treeData.persons.find((p) => p.id === personId);
+            if (person) openPersonDetail(person);
+          }}
+        />
+      ) : null}
+
+      {viewMode === 'edit' && selectedPersonId != null ? (
+        <EditPersonSheet
+          detail={detail}
+          loading={detailLoading}
+          saving={actionLoading}
+          onClose={() => setViewMode('detail')}
+          onSave={handleSavePerson}
+        />
+      ) : null}
+
+      {viewMode === 'addChild' && selectedNode ? (
+        <AddChildSheet
+          parent={selectedNode}
+          onClose={() => setViewMode('detail')}
+          onCreateChild={async (input) => {
+            await createChild(input);
+            setViewMode('detail');
+            reloadDetail();
+          }}
           loading={modalLoading}
         />
+      ) : null}
+
+      {viewMode === 'addPerson' ? (
+        <AddPersonSheet
+          onClose={() => setViewMode(null)}
+          onSubmit={handleAddStandalonePerson}
+          loading={actionLoading}
+        />
+      ) : null}
+
+      {viewMode === 'deleteConfirm' && selectedNode ? (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/30 p-4 pb-[env(safe-area-inset-bottom)]">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-100 text-red-600">
+                <Icon path="alertTriangle" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Xóa {selectedNode.fullName}?</p>
+                <p className="text-xs text-slate-500">{UI.DELETE_IRREVERSIBLE}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setViewMode('detail')}
+                className="rounded-2xl border border-slate-300 py-3 text-sm font-medium text-slate-700 active:bg-slate-50"
+                disabled={modalLoading}
+              >
+                {UI.CANCEL}
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                className="rounded-2xl bg-red-600 py-3 text-sm font-medium text-white active:bg-red-700 disabled:opacity-50"
+                disabled={modalLoading}
+              >
+                {UI.DELETE_PERSON}
+              </button>
+            </div>
+          </div>
+        </div>
       ) : null}
     </div>
   );

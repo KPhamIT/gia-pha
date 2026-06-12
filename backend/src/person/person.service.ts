@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreatePersonDto } from './dto/create-person.dto.js';
 import { UpdatePersonDto } from './dto/update-person.dto.js';
+import { UpdatePersonDetailDto } from './dto/update-person-detail.dto.js';
 
 @Injectable()
 export class PersonService {
@@ -37,9 +38,19 @@ export class PersonService {
       birthDate: createPersonDto.birthDate
         ? new Date(createPersonDto.birthDate)
         : undefined,
+      deathDate: createPersonDto.deathDate
+        ? new Date(createPersonDto.deathDate)
+        : undefined,
       avatar: createPersonDto.avatar,
       generation: Number.isNaN(generation) ? undefined : generation,
       branch: createPersonDto.branch,
+      birthPlace: createPersonDto.birthPlace,
+      currentLocation: createPersonDto.currentLocation,
+      education: createPersonDto.education,
+      occupation: createPersonDto.occupation,
+      religion: createPersonDto.religion,
+      ethnicity: createPersonDto.ethnicity,
+      achievements: createPersonDto.achievements,
       organizationId:
         organization?.id ?? (await this.getDefaultOrganization()).id,
       userId: createPersonDto.userId,
@@ -80,10 +91,75 @@ export class PersonService {
         birthDate: updatePersonDto.birthDate
           ? new Date(updatePersonDto.birthDate)
           : updatePersonDto.birthDate,
+        deathDate: updatePersonDto.deathDate
+          ? new Date(updatePersonDto.deathDate)
+          : updatePersonDto.deathDate,
         generation: Number.isNaN(generation) ? undefined : generation,
         branch: updatePersonDto.branch,
       },
     });
+  }
+
+  async getPersonDetail(id: number) {
+    const person = await this.prisma.person.findUnique({
+      where: { id },
+      include: { biography: true, graveInfo: true },
+    });
+    if (!person) {
+      throw new NotFoundException('Person not found');
+    }
+
+    const relationships = await this.prisma.relationship.findMany({
+      where: { OR: [{ fromId: id }, { toId: id }] },
+      include: { from: true, to: true },
+    });
+
+    return { person, relationships };
+  }
+
+  async updatePersonDetail(id: number, dto: UpdatePersonDetailDto) {
+    await this.findOne(id);
+
+    const { biography, graveInfo, ...personFields } = dto;
+
+    const generation =
+      personFields.generation != null
+        ? Number(personFields.generation)
+        : undefined;
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.person.update({
+        where: { id },
+        data: {
+          ...personFields,
+          birthDate: personFields.birthDate
+            ? new Date(personFields.birthDate)
+            : personFields.birthDate,
+          deathDate: personFields.deathDate
+            ? new Date(personFields.deathDate)
+            : personFields.deathDate,
+          generation: Number.isNaN(generation) ? undefined : generation,
+        },
+      });
+
+      if (biography !== undefined) {
+        await tx.biography.upsert({
+          where: { personId: id },
+          create: { personId: id, content: biography },
+          update: { content: biography },
+        });
+      }
+
+      if (graveInfo !== undefined) {
+        await tx.graveInfo.upsert({
+          where: { personId: id },
+          create: { personId: id, ...graveInfo },
+          update: graveInfo,
+        });
+      }
+    });
+
+    return this.getPersonDetail(id);
   }
 
   async remove(id: number) {
