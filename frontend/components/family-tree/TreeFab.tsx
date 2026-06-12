@@ -4,20 +4,27 @@ import { useState } from 'react';
 import Icon from '@/components/icons/Icon';
 import { UI } from '@/lib/constants/ui-strings';
 
-type FabAction = 'add' | 'search' | 'center';
+type FabAction = 'add' | 'search' | 'center' | 'book';
 
 type TreeFabProps = {
   onAddPerson: () => void;
   onSearch: () => void;
   onCenterTree: () => void;
+  onOpenBook: () => void;
 };
 
-export default function TreeFab({ onAddPerson, onSearch, onCenterTree }: TreeFabProps) {
+export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBook }: TreeFabProps) {
   const [open, setOpen] = useState(false);
 
-  const actions: { id: FabAction; label: string; icon: 'plus' | 'search' | 'center'; onClick: () => void }[] = [
+  const actions: {
+    id: FabAction;
+    label: string;
+    icon: 'plus' | 'search' | 'center' | 'book';
+    onClick: () => void;
+  }[] = [
     { id: 'add', label: UI.ADD_PERSON, icon: 'plus', onClick: onAddPerson },
     { id: 'search', label: UI.SEARCH_PERSON, icon: 'search', onClick: onSearch },
+    { id: 'book', label: UI.VIEW_GENEALOGY_BOOK, icon: 'book', onClick: onOpenBook },
     { id: 'center', label: UI.CENTER_TREE, icon: 'center', onClick: onCenterTree },
   ];
 
