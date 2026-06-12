@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { PersonDetail } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import Icon from '@/components/icons/Icon';
@@ -9,6 +9,13 @@ import { UI } from '@/lib/constants/ui-strings';
 import { extractPersonRelationships, formatDate } from '@/utils/person-relationships';
 
 type DetailTab = 'info' | 'relationships' | 'biography' | 'grave';
+
+const TABS: { id: DetailTab; label: string }[] = [
+  { id: 'info', label: UI.PERSON_INFO },
+  { id: 'relationships', label: UI.RELATIONSHIPS },
+  { id: 'biography', label: UI.BIOGRAPHY },
+  { id: 'grave', label: UI.GRAVE_INFO },
+];
 
 type PersonDetailSheetProps = {
   detail: PersonDetail | null;
@@ -74,14 +81,10 @@ export default function PersonDetailSheet({
 }: PersonDetailSheetProps) {
   const [tab, setTab] = useState<DetailTab>('info');
   const person = detail?.person;
-  const relations = detail ? extractPersonRelationships(detail.person.id, detail.relationships) : null;
-
-  const tabs: { id: DetailTab; label: string }[] = [
-    { id: 'info', label: UI.PERSON_INFO },
-    { id: 'relationships', label: UI.RELATIONSHIPS },
-    { id: 'biography', label: UI.BIOGRAPHY },
-    { id: 'grave', label: UI.GRAVE_INFO },
-  ];
+  const relations = useMemo(
+    () => (detail ? extractPersonRelationships(detail.person.id, detail.relationships) : null),
+    [detail],
+  );
 
   return (
     <FullScreenSheet
@@ -114,7 +117,7 @@ export default function PersonDetailSheet({
           </div>
 
           <nav className="flex overflow-x-auto border-b border-slate-200">
-            {tabs.map((item) => (
+            {TABS.map((item) => (
               <button
                 key={item.id}
                 type="button"

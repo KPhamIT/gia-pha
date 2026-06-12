@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { LayoutConfig } from '@/components/types/family-tree-types';
 
 const DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
-  horizontalGap: 1,
+  horizontalGap: 15,
   verticalStep: 220,
   nodeBgColor: '#ffffff',
   nodeTextColor: '#0f172a',

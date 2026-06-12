@@ -15,8 +15,9 @@ export type FamilyTreeLayoutConfig = {
   nodeTextColor?: string;
 };
 
-const NODE_WIDTH = 260;
-const DEFAULT_HORIZONTAL_GAP = 40;
+const NODE_WIDTH = 80;
+export const NODE_HEIGHT = 120;
+const DEFAULT_HORIZONTAL_GAP = 15;
 const DEFAULT_VERTICAL_STEP = 220;
 
 function getEffectiveRelationships(relationships: Relationship[]) {

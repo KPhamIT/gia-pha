@@ -16,6 +16,7 @@ import { useFamilyTree } from '@/hooks/useFamilyTree';
 import { useLayoutConfig } from '@/hooks/useLayoutConfig';
 import { usePersonActions } from '@/hooks/usePersonActions';
 import { usePersonDetail } from '@/hooks/usePersonDetail';
+import { usePersonDetailStore } from '@/store/personDetailStore';
 import { useTheme } from '@/hooks/useTheme';
 import { useSettings } from '@/hooks/useSettings';
 import { useAsyncAction } from '@/hooks/useAsyncAction';
@@ -65,6 +66,7 @@ export default function FamilyTreePage() {
   const [centerTreeKey, setCenterTreeKey] = useState(0);
 
   const { detail, loading: detailLoading, error: detailError, reload: reloadDetail } = usePersonDetail(selectedPersonId);
+  const { updateDetail: storeUpdateDetail } = usePersonDetailStore();
   const { loading: actionLoading, run: runAction } = useAsyncAction();
   const { createChild, deleteNode, loading: modalLoading } = usePersonActions({
     selectedNode,
@@ -86,6 +88,40 @@ export default function FamilyTreePage() {
     setViewMode('detail');
   }, []);
 
+  const handleNodeClick = useCallback((_personId: number, person: Person) => openPersonDetail(person), [openPersonDetail]);
+  const handleOpenSettings = useCallback(() => setShowSettings(true), []);
+  const handleOpenSearch = useCallback(() => setShowSearch(true), []);
+  const handleOpenBook = useCallback(() => setShowBook(true), []);
+  const handleCenterTree = useCallback(() => setCenterTreeKey((k) => k + 1), []);
+  const handleCloseSettings = useCallback(() => setShowSettings(false), []);
+  const handleCloseSearch = useCallback(() => setShowSearch(false), []);
+  const handleCloseBook = useCallback(() => setShowBook(false), []);
+  const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
+  const handleCloseAddPerson = useCallback(() => setViewMode(null), []);
+  const handleOpenEdit = useCallback(() => setViewMode('edit'), []);
+  const handleOpenAddChild = useCallback(() => setViewMode('addChild'), []);
+  const handleOpenDeleteConfirm = useCallback(() => setViewMode('deleteConfirm'), []);
+  const handleBackToDetail = useCallback(() => setViewMode('detail'), []);
+  const handleSaveSettings = useCallback(
+    () => saveSettings({ theme, ...layoutConfig }),
+    [layoutConfig, saveSettings, theme],
+  );
+  const handleSelectPerson = useCallback(
+    (personId: number) => {
+      const person = treeData?.persons.find((p) => p.id === personId);
+      if (person) openPersonDetail(person);
+    },
+    [openPersonDetail, treeData?.persons],
+  );
+  const handleCreateChild = useCallback(
+    async (input: Parameters<typeof createChild>[0]) => {
+      await createChild(input);
+      setViewMode('detail');
+      reloadDetail();
+    },
+    [createChild, reloadDetail],
+  );
+
   const closeAllSheets = useCallback(() => {
     setSelectedPersonId(null);
     setSelectedNode(null);
@@ -100,11 +136,11 @@ export default function FamilyTreePage() {
         const updated = await updatePersonDetail(selectedPersonId, data);
         updatePerson(updated.person);
         setSelectedNode(updated.person);
-        reloadDetail();
+        storeUpdateDetail(selectedPersonId, updated);
         setViewMode('detail');
       }, UI.ERR_UPDATE_PERSON);
     },
-    [reloadDetail, runAction, selectedPersonId, updatePerson],
+    [runAction, selectedPersonId, storeUpdateDetail, updatePerson],
   );
 
   const handleAddStandalonePerson = useCallback(
@@ -152,7 +188,7 @@ export default function FamilyTreePage() {
       <div className="fixed right-4 top-4 z-20 pt-[env(safe-area-inset-top)]">
         <button
           type="button"
-          onClick={() => setShowSettings(true)}
+          onClick={handleOpenSettings}
           className={`grid h-11 w-11 place-items-center rounded-full border shadow-sm active:opacity-80 ${
             theme === 'dark'
               ? 'border-slate-700 bg-slate-900 text-slate-100'
@@ -173,10 +209,10 @@ export default function FamilyTreePage() {
       </div>
 
       <TreeFab
-        onAddPerson={() => setViewMode('addPerson')}
-        onSearch={() => setShowSearch(true)}
-        onOpenBook={() => setShowBook(true)}
-        onCenterTree={() => setCenterTreeKey((key) => key + 1)}
+        onAddPerson={handleOpenAddPerson}
+        onSearch={handleOpenSearch}
+        onOpenBook={handleOpenBook}
+        onCenterTree={handleCenterTree}
       />
 
       <div className="h-screen">
@@ -186,7 +222,7 @@ export default function FamilyTreePage() {
           selectedNodeId={selectedPersonId}
           focusNodeId={focusNodeId}
           centerTreeKey={centerTreeKey}
-          onNodeClick={(_personId, person) => openPersonDetail(person)}
+          onNodeClick={handleNodeClick}
           onPersonAdded={addPerson}
           onRelationshipAdded={addRelationship}
           onRelationshipRemoved={removeRelationship}
@@ -199,8 +235,8 @@ export default function FamilyTreePage() {
           setLayoutConfig={setLayoutConfig}
           theme={theme}
           setTheme={setTheme}
-          onClose={() => setShowSettings(false)}
-          onSave={() => saveSettings({ theme, ...layoutConfig })}
+          onClose={handleCloseSettings}
+          onSave={handleSaveSettings}
           saving={savingSettings}
           saveSuccess={saveSuccess}
           saveError={settingsSaveError}
@@ -210,7 +246,7 @@ export default function FamilyTreePage() {
       {showBook ? (
         <GenealogyBookViewer
           persons={treeData.persons}
-          onClose={() => setShowBook(false)}
+          onClose={handleCloseBook}
           onPersonUpdated={updatePerson}
         />
       ) : null}
@@ -220,12 +256,12 @@ export default function FamilyTreePage() {
           <button
             type="button"
             className="fixed inset-0 z-40 bg-slate-900/30"
-            onClick={() => setShowSearch(false)}
+            onClick={handleCloseSearch}
             aria-label={UI.CANCEL}
           />
           <SearchSheet
             persons={treeData.persons}
-            onClose={() => setShowSearch(false)}
+            onClose={handleCloseSearch}
             onSelect={handleSearchSelect}
           />
         </>
@@ -237,13 +273,10 @@ export default function FamilyTreePage() {
           loading={detailLoading}
           error={detailError}
           onClose={closeAllSheets}
-          onEdit={() => setViewMode('edit')}
-          onAddChild={() => setViewMode('addChild')}
-          onDelete={() => setViewMode('deleteConfirm')}
-          onSelectPerson={(personId) => {
-            const person = treeData.persons.find((p) => p.id === personId);
-            if (person) openPersonDetail(person);
-          }}
+          onEdit={handleOpenEdit}
+          onAddChild={handleOpenAddChild}
+          onDelete={handleOpenDeleteConfirm}
+          onSelectPerson={handleSelectPerson}
         />
       ) : null}
 
@@ -252,7 +285,7 @@ export default function FamilyTreePage() {
           detail={detail}
           loading={detailLoading}
           saving={actionLoading}
-          onClose={() => setViewMode('detail')}
+          onClose={handleBackToDetail}
           onSave={handleSavePerson}
         />
       ) : null}
@@ -260,19 +293,15 @@ export default function FamilyTreePage() {
       {viewMode === 'addChild' && selectedNode ? (
         <AddChildSheet
           parent={selectedNode}
-          onClose={() => setViewMode('detail')}
-          onCreateChild={async (input) => {
-            await createChild(input);
-            setViewMode('detail');
-            reloadDetail();
-          }}
+          onClose={handleBackToDetail}
+          onCreateChild={handleCreateChild}
           loading={modalLoading}
         />
       ) : null}
 
       {viewMode === 'addPerson' ? (
         <AddPersonSheet
-          onClose={() => setViewMode(null)}
+          onClose={handleCloseAddPerson}
           onSubmit={handleAddStandalonePerson}
           loading={actionLoading}
         />
@@ -293,7 +322,7 @@ export default function FamilyTreePage() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setViewMode('detail')}
+                onClick={handleBackToDetail}
                 className="rounded-2xl border border-slate-300 py-3 text-sm font-medium text-slate-700 active:bg-slate-50"
                 disabled={modalLoading}
               >

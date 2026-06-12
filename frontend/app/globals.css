@@ -1,5 +1,85 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "VNI-Thufap";
+  src: url("/fonts/VNI-Thufap3.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "VNI-Thufap2";
+  src: url("/fonts/VNI-Thufap2.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "VNI-Thufapfan";
+  src: url("/fonts/VNI-Thufapfan.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "VNI-Thuphap";
+  src: url("/fonts/VNI-Thuphap.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thuphap-Thanh-Cong";
+  src: url("/fonts/THUPHAPTHANHCONG3a.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thuphap-Xuan";
+  src: url("/fonts/ThuphapXuan.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "vnithufap";
+  src: url("/fonts/vnithufap.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "vnithufap2";
+  src: url("/fonts/vnithufap2.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "vnithufapfan";
+  src: url("/fonts/vnithufapfan.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "vnithuphapslogan";
+  src: url("/fonts/vnithuphapslogan.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,6 +90,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-noto-serif: var(--font-noto-serif);
+  --font-open-sans: var(--font-open-sans);
+  --font-vni-thufap: "VNI-Thufap", serif;
+  --font-vni-thufap2: "VNI-Thufap2", serif;
+  --font-vni-thufapfan: "VNI-Thufapfan", serif;
+  --font-vni-thuphap: "VNI-Thuphap", serif;
+  --font-thuphap-thanhcong: "Thuphap-Thanh-Cong", serif;
+  --font-thuphap-xuan: "Thuphap-Xuan", serif;
+  --font-vnithufap: "vnithufap", serif;
+  --font-vnithufap2: "vnithufap2", serif;
+  --font-vnithufapfan: "vnithufapfan", serif;
+  --font-vnithuphapslogan: "vnithuphapslogan", serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +114,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-noto-serif), serif;
 }

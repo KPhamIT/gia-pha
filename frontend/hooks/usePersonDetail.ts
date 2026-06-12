@@ -1,38 +1,23 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import type { PersonDetail } from '@/components/types/family-tree-types';
-import { api } from '@/lib/api';
-import { getErrorMessage } from '@/utils/errors';
+import { useCallback, useEffect } from 'react';
+import { usePersonDetailStore } from '@/store/personDetailStore';
 import { UI } from '@/lib/constants/ui-strings';
 
 export function usePersonDetail(personId: number | null) {
-  const [detail, setDetail] = useState<PersonDetail | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async (id: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.person.getDetail(id);
-      setDetail(data);
-    } catch (err) {
-      setError(getErrorMessage(err, UI.ERR_FETCH_DETAIL));
-      setDetail(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { details, status, loadAll, reloadOne } = usePersonDetailStore();
 
   useEffect(() => {
-    if (personId == null) {
-      setDetail(null);
-      setError(null);
-      return;
-    }
-    void load(personId);
-  }, [personId, load]);
+    void loadAll();
+  }, [loadAll]);
 
-  return { detail, loading, error, reload: () => personId != null && load(personId) };
+  const detail = personId != null ? (details[personId] ?? null) : null;
+  const loading = (status === 'idle' || status === 'loading') && detail == null;
+  const error = status === 'error' ? UI.ERR_FETCH_DETAIL : null;
+
+  const reload = useCallback(() => {
+    if (personId != null) void reloadOne(personId);
+  }, [personId, reloadOne]);
+
+  return { detail, loading, error, reload };
 }

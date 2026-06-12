@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Icon from '@/components/icons/Icon';
 import { UI } from '@/lib/constants/ui-strings';
 
@@ -16,17 +16,12 @@ type TreeFabProps = {
 export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBook }: TreeFabProps) {
   const [open, setOpen] = useState(false);
 
-  const actions: {
-    id: FabAction;
-    label: string;
-    icon: 'plus' | 'search' | 'center' | 'book';
-    onClick: () => void;
-  }[] = [
-    { id: 'add', label: UI.ADD_PERSON, icon: 'plus', onClick: onAddPerson },
-    { id: 'search', label: UI.SEARCH_PERSON, icon: 'search', onClick: onSearch },
-    { id: 'book', label: UI.VIEW_GENEALOGY_BOOK, icon: 'book', onClick: onOpenBook },
-    { id: 'center', label: UI.CENTER_TREE, icon: 'center', onClick: onCenterTree },
-  ];
+  const actions = useMemo(() => [
+    { id: 'add' as FabAction, label: UI.ADD_PERSON, icon: 'plus' as const, onClick: onAddPerson },
+    { id: 'search' as FabAction, label: UI.SEARCH_PERSON, icon: 'search' as const, onClick: onSearch },
+    { id: 'book' as FabAction, label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' as const, onClick: onOpenBook },
+    { id: 'center' as FabAction, label: UI.CENTER_TREE, icon: 'center' as const, onClick: onCenterTree },
+  ], [onAddPerson, onSearch, onOpenBook, onCenterTree]);
 
   const handleAction = (action: (typeof actions)[number]) => {
     setOpen(false);

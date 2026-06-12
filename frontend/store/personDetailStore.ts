@@ -8,6 +8,7 @@ type PersonDetailStore = {
   details: Record<number, PersonDetail>;
   status: Status;
   loadAll: () => Promise<void>;
+  reloadOne: (id: number) => Promise<void>;
   updateDetail: (id: number, detail: PersonDetail) => void;
 };
 
@@ -30,6 +31,11 @@ export const usePersonDetailStore = create<PersonDetailStore>((set, get) => ({
     } catch {
       set({ status: 'error' });
     }
+  },
+
+  reloadOne: async (id) => {
+    const detail = await api.person.getDetail(id);
+    set((state) => ({ details: { ...state.details, [id]: detail } }));
   },
 
   updateDetail: (id, detail) => {
