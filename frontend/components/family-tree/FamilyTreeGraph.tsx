@@ -1,15 +1,27 @@
-'use client';
+"use client";
 
-import { ReactFlow, ReactFlowProvider, Background, Controls } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import type { FamilyTreeData, Person, Relationship } from '../types/family-tree-types';
-import FamilyTreeEdge from './FamilyTreeEdge';
-import ConnectRelationshipModal from './ConnectRelationshipModal';
-import FamilyTreeNode from './FamilyTreeNode';
-import GraphViewportController from './GraphViewportController';
-import type { FamilyTreeLayoutConfig } from './FamilyTreeGraphLayout';
-import { useFamilyTreeGraph } from '@/hooks/useFamilyTreeGraph';
-import '@xyflow/react/dist/base.css';
+import {
+  ReactFlow,
+  ReactFlowProvider,
+  Background,
+  Controls,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import type {
+  FamilyTreeData,
+  Person,
+  Relationship,
+} from "../types/family-tree-types";
+import FamilyTreeEdge from "./FamilyTreeEdge";
+import ConnectRelationshipModal from "./ConnectRelationshipModal";
+import FamilyTreeNode from "./FamilyTreeNode";
+import GraphViewportController, {
+  GRAPH_INITIAL_ZOOM,
+  GRAPH_MIN_ZOOM,
+} from "./GraphViewportController";
+import type { FamilyTreeLayoutConfig } from "./FamilyTreeGraphLayout";
+import { useFamilyTreeGraph } from "@/hooks/useFamilyTreeGraph";
+import "@xyflow/react/dist/base.css";
 
 export type FamilyTreeGraphProps = {
   treeData: FamilyTreeData;
@@ -33,8 +45,13 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         edges={graph.enhancedEdges}
         nodeTypes={{ custom: FamilyTreeNode }}
         edgeTypes={{ default: FamilyTreeEdge, step: FamilyTreeEdge }}
-        minZoom={0.01}
+        minZoom={GRAPH_MIN_ZOOM}
         fitView
+        fitViewOptions={{
+          padding: 0.2,
+          minZoom: GRAPH_INITIAL_ZOOM,
+          maxZoom: GRAPH_INITIAL_ZOOM,
+        }}
         onlyRenderVisibleElements
         deleteKeyCode={null}
         onNodesChange={graph.onNodesChange}

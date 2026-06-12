@@ -1,0 +1,55 @@
+---
+description: Schema Prisma và quan hệ gia phả — Person, Relationship, migrations
+globs: backend/prisma/**/*
+alwaysApply: false
+---
+
+# Database — Prisma & PostgreSQL
+
+## Models chính
+
+| Model | Vai trò |
+|-------|---------|
+| `Person` | Thành viên; thuộc `Organization`; có thể gắn `User` |
+| `Relationship` | Cạnh có hướng `fromId → toId`, type enum |
+| `Biography` | Tiểu sử 1-1 với Person (`onDelete: Cascade`) |
+| `GraveInfo` | Thông tin mộ 1-1 với Person |
+| `User` / `UserSettings` | Auth + settings JSON |
+| `Organization` | Container cho nhiều Person |
+
+## RelationshipType
+
+```prisma
+enum RelationshipType {
+  FATHER
+  MOTHER
+  SPOUSE
+  CHILD
+}
+```
+
+- Quan hệ **có hướng**: `fromId` là chủ thể, `toId` là đối tượng.
+- Frontend/backend phải thống nhất cách tạo quan hệ (ví dụ: FATHER = from là con, to là cha — kiểm tra code hiện tại trước khi đổi).
+
+## Trường Person đáng chú ý
+
+- `generation`: số thế hệ (Int, nullable).
+- `branch`: nhánh trong cây (mặc định `1`).
+- `birthDate` / `deathDate`: `DateTime` — API thường truyền ISO string.
+
+## Thay đổi schema
+
+1. Sửa `backend/prisma/schema.prisma`.
+2. Chạy `pnpm db:migrate` (tạo migration có tên mô tả).
+3. Chạy `pnpm db:generate` nếu client chưa cập nhật.
+4. Cập nhật DTO, service, types frontend (`family-tree-types.ts`) nếu thêm/sửa field.
+
+## Seed
+
+- Script: `backend/prisma/seed.js` — chạy qua `pnpm db:seed`.
+- Dữ liệu mẫu giúp dev/test cây gia phả; giữ seed idempotent khi có thể.
+
+## Lưu ý
+
+- Không commit `DATABASE_URL` thật vào repo.
+- `UserSettings.data` là `Json` — schema linh hoạt, document cấu trúc trong code hoặc comment khi thêm key mới.

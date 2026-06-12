@@ -1,0 +1,46 @@
+---
+description: Tổng quan dự án Gia phả, stack, ngôn ngữ UI
+alwaysApply: true
+---
+
+# Gia phả — Tổng quan dự án
+
+Ứng dụng quản lý và hiển thị **cây gia phả** (family tree). gồm hai package độc lập:
+
+| Thư mục     | Stack                                                           | Port mặc định |
+| ----------- | --------------------------------------------------------------- | ------------- |
+| `frontend/` | Next.js 16, React 19, TypeScript, Tailwind CSS 4, @xyflow/react | 3000          |
+| `backend/`  | NestJS 11, Prisma 7, PostgreSQL, JWT auth                       | 5000          |
+
+## Quy ước chung
+
+- Package manager: **pnpm** (chạy lệnh trong từng thư mục `frontend/` hoặc `backend/`).
+- Ngôn ngữ giao diện: **tiếng Việt**. Chuỗi UI đặt tập trung tại `frontend/lib/constants/ui-strings.ts` (object `UI`), không hard-code trong component.
+- Phạm vi thay đổi: tối thiểu, chỉ sửa phần liên quan yêu cầu; không refactor lan man.
+- Không commit file secrets (`.env`, credentials).
+- Không tạo commit trừ khi người dùng yêu cầu rõ ràng.
+
+## Domain chính
+
+- **Person**: thành viên gia đình (họ tên, giới tính, ngày sinh/mất, đời, nhánh, tiểu sử, mộ…).
+- **Relationship**: quan hệ `FATHER | MOTHER | SPOUSE | CHILD` giữa hai Person.
+- **Organization**: nhóm/tổ chức chứa danh sách Person.
+- **User / UserSettings**: đăng nhập (Facebook + JWT), cài đặt người dùng (JSON).
+
+## Biến môi trường quan trọng
+
+- Backend (`backend/.env.example`): `DATABASE_URL`, `JWT_SECRET`, `PORT`, `ALLOW_PUBLIC_ACCESS`.
+- Frontend: `NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS` — cho phép truy cập cây không cần đăng nhập khi `true`.
+
+## Lệnh thường dùng
+
+```bash
+# Frontend
+cd frontend && pnpm dev
+
+# Backend
+cd backend && pnpm start:dev
+
+# Database
+cd backend && pnpm db:migrate && pnpm db:seed
+```
