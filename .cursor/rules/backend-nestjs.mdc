@@ -1,0 +1,70 @@
+---
+description: Quy ước backend NestJS — module, DTO, Prisma, auth
+globs: backend/**/*
+alwaysApply: false
+---
+
+# Backend — NestJS
+
+## Cấu trúc module
+
+Mỗi domain một module theo pattern NestJS:
+
+```
+backend/src/<domain>/
+├── <domain>.module.ts
+├── <domain>.controller.ts
+├── <domain>.service.ts
+├── dto/                    # create-*.dto.ts, update-*.dto.ts
+└── entities/               # (nếu có)
+```
+
+Module hiện có: `auth`, `person`, `relationship`, `settings`, `prisma`.
+
+## Import ESM
+
+Backend dùng `"type": "module"`. Import nội bộ **phải có đuôi `.js`**:
+
+```typescript
+// ✅ Đúng
+import { PrismaService } from '../prisma/prisma.service.js';
+
+// ❌ Sai
+import { PrismaService } from '../prisma/prisma.service';
+```
+
+## Prisma
+
+- Inject `PrismaService` vào service, không tạo `PrismaClient` trực tiếp.
+- Client generate tại `backend/generated/prisma` (xem `schema.prisma`).
+- Migration: `pnpm db:migrate` trong `backend/`. Không sửa migration đã apply — tạo migration mới.
+
+## DTO & validation
+
+- Dùng `class-validator` + `class-transformer` trên DTO.
+- `Create*Dto` / `Update*Dto` tách file; update có thể extend `PartialType` từ `@nestjs/mapped-types`.
+- Controller nhận DTO, service nhận dữ liệu đã validate — logic DB nằm ở service.
+
+## API & lỗi
+
+- REST convention: `GET /person`, `GET /person/:id/tree`, `PATCH`, `DELETE`…
+- Không tìm thấy resource: `NotFoundException`.
+- CORS đã bật trong `main.ts` (`origin: true`, `credentials: true`).
+
+## Auth
+
+- JWT guard: `JwtAuthGuard` — bảo vệ route cần đăng nhập.
+- `ALLOW_PUBLIC_ACCESS=true` (env): một số endpoint cho phép truy cập công khai (đồng bộ với frontend).
+- Payload JWT: `jwt-payload.interface.ts`.
+
+## Test
+
+- Unit test: `*.spec.ts` cạnh file nguồn.
+- E2E: `backend/test/`.
+- Chỉ thêm test khi được yêu cầu hoặc cover hành vi quan trọng.
+
+## Format & lint
+
+```bash
+cd backend && pnpm lint && pnpm format
+```

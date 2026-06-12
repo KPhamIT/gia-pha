@@ -6,6 +6,30 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class SettingsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /** Tạm thời dùng user dev khi chưa có JWT */
+  async resolveUserId(userId?: number): Promise<number> {
+    if (userId != null && userId > 0) return userId;
+
+    const existing = await this.prisma.user.findFirst({ orderBy: { id: 'asc' } });
+    if (existing) return existing.id;
+
+    const created = await this.prisma.user.create({
+      data: { provider: 'dev', providerId: 'dev-local' },
+    });
+    return created.id;
+  }
+
+  async findForRequest(userId?: number): Promise<Record<string, unknown> | null> {
+    return this.findByUserId(await this.resolveUserId(userId));
+  }
+
+  async upsertForRequest(
+    userId: number | undefined,
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    return this.upsert(await this.resolveUserId(userId), data);
+  }
+
   async findByUserId(userId: number): Promise<Record<string, unknown> | null> {
     const record = await this.prisma.userSettings.findUnique({
       where: { userId },
