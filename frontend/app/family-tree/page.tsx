@@ -8,6 +8,7 @@ import AddChildSheet from '@/components/family-tree/AddChildSheet';
 import AddPersonSheet from '@/components/family-tree/AddPersonSheet';
 import SearchSheet from '@/components/family-tree/SearchSheet';
 import TreeFab from '@/components/family-tree/TreeFab';
+import GenealogyBookViewer from '@/components/family-tree/GenealogyBookViewer';
 import FamilyTreeSettings from '@/components/family-tree/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/FamilyTreeStatus';
 import Icon from '@/components/icons/Icon';
@@ -59,6 +60,7 @@ export default function FamilyTreePage() {
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showBook, setShowBook] = useState(false);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
 
@@ -173,6 +175,7 @@ export default function FamilyTreePage() {
       <TreeFab
         onAddPerson={() => setViewMode('addPerson')}
         onSearch={() => setShowSearch(true)}
+        onOpenBook={() => setShowBook(true)}
         onCenterTree={() => setCenterTreeKey((key) => key + 1)}
       />
 
@@ -201,6 +204,14 @@ export default function FamilyTreePage() {
           saving={savingSettings}
           saveSuccess={saveSuccess}
           saveError={settingsSaveError}
+        />
+      ) : null}
+
+      {showBook ? (
+        <GenealogyBookViewer
+          persons={treeData.persons}
+          onClose={() => setShowBook(false)}
+          onPersonUpdated={updatePerson}
         />
       ) : null}
 

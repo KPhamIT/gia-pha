@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp';
+export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll';
 
 export interface IconDefinition {
   viewBox: string;
@@ -150,6 +150,45 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
   chevronUp: {
     viewBox: '0 0 24 24',
     paths: <path d="m18 15-6-6-6 6" />,
+  },
+  book: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </>
+    ),
+  },
+  chevronLeft: {
+    viewBox: '0 0 24 24',
+    paths: <path d="m15 18-6-6 6-6" />,
+  },
+  chevronRight: {
+    viewBox: '0 0 24 24',
+    paths: <path d="m9 18 6-6-6-6" />,
+  },
+  print: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+        <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" />
+        <rect x="6" y="14" width="12" height="8" rx="1" />
+      </>
+    ),
+  },
+  printAll: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M7 3h8l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+        <path d="M15 3v4h4" />
+        <path d="M9 13h6" />
+        <path d="M9 17h4" />
+        <path d="M5 7H4a2 2 0 0 0-2 2v5h18v-5a2 2 0 0 0-2-2h-1" />
+      </>
+    ),
   },
 };
 
