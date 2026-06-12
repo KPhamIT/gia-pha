@@ -1,0 +1,70 @@
+---
+description: Quy ước frontend Next.js — API, hooks, components, cây gia phả
+globs: frontend/**/*
+alwaysApply: false
+---
+
+# Frontend — Next.js
+
+## Cấu trúc thư mục
+
+```
+frontend/
+├── app/                    # App Router (pages, layout)
+├── components/
+│   ├── family-tree/        # UI cây gia phả (graph, sheets, modals)
+│   ├── ui/                 # Component dùng chung
+│   ├── icons/
+│   └── types/              # TypeScript types (family-tree-types.ts)
+├── hooks/                  # Custom hooks (useFamilyTree, usePersonDetail, …)
+├── lib/
+│   ├── api/modules/        # Gọi API theo domain (person, relationship, …)
+│   ├── constants/          # api-routes.ts, ui-strings.ts, storage-keys.ts
+│   └── family-tree/        # Logic nghiệp vụ cây (mutations, resolve-root)
+└── utils/                  # Pure helpers (errors, family-tree-utils, theme)
+```
+
+## Gọi API
+
+- Dùng `api` từ `@/lib/api` — không gọi `axios` trực tiếp trong component.
+- Route backend khai báo tại `lib/constants/api-routes.ts`.
+- Module mới: thêm file trong `lib/api/modules/`, export qua `lib/api/index.ts`.
+
+```typescript
+// ✅ Đúng
+import { api } from "@/lib/api";
+const tree = await api.person.getTree(personId);
+
+// ❌ Tránh
+import axios from "axios";
+axios.get("http://localhost:5000/person/1/tree");
+```
+
+## Component & hooks
+
+- Component tương tác client: thêm `'use client'` ở đầu file.
+- Logic fetch/state phức tạp: tách vào `hooks/`, component chỉ render.
+- Cập nhật state cây cục bộ: dùng helpers trong `@/utils/family-tree-utils` hoặc `@/lib/family-tree/mutations`.
+- Types dùng chung: import từ `@/components/types/family-tree-types`.
+
+## UI & styling
+
+- Tailwind CSS 4; global styles tại `app/globals.css`.
+- Chuỗi hiển thị: `import { UI } from '@/lib/constants/ui-strings'`.
+- Sheet/modal fullscreen: tái sử dụng `components/ui/FullScreenSheet.tsx`, `CollapsibleSection.tsx`.
+- Vì ứng dụng hướng đến sử dụng trên điện thoại băng PWD nên khi code hướng đến tối ưng và thân thiện trên điện thoại
+
+## Cây gia phả (React Flow)
+
+- Graph chính: `FamilyTreeGraph.tsx`, layout `FamilyTreeGraphLayout.ts`.
+- Node/edge tùy chỉnh: `FamilyTreeNode.tsx`, `FamilyTreeEdge.tsx`.
+- Không nhét logic layout nặng vào component nhỏ — giữ trong hook hoặc file layout riêng.
+
+## Xử lý lỗi
+
+```typescript
+import { getErrorMessage } from "@/utils/errors";
+import { UI } from "@/lib/constants/ui-strings";
+
+setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
+```

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import type { UserSettings } from '@/lib/api/modules/settings';
-import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
 import { UI } from '@/lib/constants/ui-strings';
 
 type UseSettingsOptions = {
@@ -16,8 +15,7 @@ export function useSettings({ onLoaded }: UseSettingsOptions = {}) {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.TOKEN) : null;
-    if (!token || !onLoaded) return;
+    if (!onLoaded) return;
 
     api.settings.getMine()
       .then((s) => { if (s) onLoaded(s); })
