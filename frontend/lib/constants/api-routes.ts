@@ -1,6 +1,7 @@
 export const API_ROUTES = {
   AUTH_ME: '/auth/me',
   PERSON_LIST: '/person',
+  PERSON_DETAILS: '/person/details',
   PERSON: (id: number) => `/person/${id}`,
   PERSON_TREE: (id: number) => `/person/${id}/tree`,
   PERSON_DETAIL: (id: number) => `/person/${id}/detail`,

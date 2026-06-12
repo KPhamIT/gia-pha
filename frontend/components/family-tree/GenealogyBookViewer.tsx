@@ -5,11 +5,11 @@ import { flushSync } from 'react-dom';
 import type { Person, PersonDetail } from '@/components/types/family-tree-types';
 import Icon from '@/components/icons/Icon';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { api } from '@/lib/api';
 import { updatePersonDetail } from '@/lib/family-tree/mutations';
 import { UI } from '@/lib/constants/ui-strings';
 import { fitGenealogyPagesForPrint, resetGenealogyPrintFit } from '@/utils/fit-genealogy-print';
 import { sortPersonsForBook } from '@/utils/sort-persons-for-book';
+import { usePersonDetailStore } from '@/store/personDetailStore';
 import GenealogyBookPage, {
   buildBookPageDraft,
   draftToUpdateInput,
@@ -36,57 +36,44 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
   const sortedPersons = useMemo(() => sortPersonsForBook(persons), [persons]);
   const [pageIndex, setPageIndex] = useState(0);
   const [flip, setFlip] = useState<FlipDirection>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [detail, setDetail] = useState<Awaited<ReturnType<typeof api.person.getDetail>> | null>(null);
   const [draft, setDraft] = useState<BookPageDraft>(buildBookPageDraft(null));
   const [savedSnapshot, setSavedSnapshot] = useState<BookPageDraft>(buildBookPageDraft(null));
 
   const [isPrintAllLayout, setIsPrintAllLayout] = useState(false);
   const [printAllPages, setPrintAllPages] = useState<PrintAllPage[]>([]);
-  const [loadingPrintAll, setLoadingPrintAll] = useState(false);
 
   const draftCache = useRef<Map<number, BookPageDraft>>(new Map());
   const touchStartX = useRef<number | null>(null);
   const viewerRootRef = useRef<HTMLDivElement>(null);
 
+  const { details, status, loadAll, updateDetail } = usePersonDetailStore();
+
   const currentPerson = sortedPersons[pageIndex];
   const totalPages = sortedPersons.length;
+  const currentDetail = currentPerson ? (details[currentPerson.id] ?? null) : null;
 
   const isDirty = useMemo(
     () => JSON.stringify(draft) !== JSON.stringify(savedSnapshot),
     [draft, savedSnapshot],
   );
 
-  const loadPage = useCallback(async (personId: number) => {
-    setLoading(true);
-    try {
-      const nextDetail = await api.person.getDetail(personId);
-      setDetail(nextDetail);
-
-      const cached = draftCache.current.get(personId);
-      if (cached) {
-        setDraft(cached);
-        setSavedSnapshot(buildBookPageDraft(nextDetail));
-      } else {
-        const initial = buildBookPageDraft(nextDetail);
-        setDraft(initial);
-        setSavedSnapshot(initial);
-      }
-    } catch {
-      setDetail(null);
-      const empty = buildBookPageDraft(null);
-      setDraft(empty);
-      setSavedSnapshot(empty);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  useEffect(() => {
+    void loadAll();
+  }, [loadAll]);
 
   useEffect(() => {
-    if (!currentPerson) return;
-    void loadPage(currentPerson.id);
-  }, [currentPerson, loadPage]);
+    if (status !== 'loaded' || !currentPerson) return;
+    const cachedDraft = draftCache.current.get(currentPerson.id);
+    if (cachedDraft) {
+      setDraft(cachedDraft);
+      setSavedSnapshot(buildBookPageDraft(currentDetail));
+    } else {
+      const initial = buildBookPageDraft(currentDetail);
+      setDraft(initial);
+      setSavedSnapshot(initial);
+    }
+  }, [currentPerson, currentDetail, status]);
 
   const cacheCurrentDraft = useCallback(() => {
     if (!currentPerson || !isDirty) return;
@@ -122,8 +109,8 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
     setSaving(true);
     try {
       const updated = await updatePersonDetail(currentPerson.id, draftToUpdateInput(draft));
+      updateDetail(currentPerson.id, updated);
       const saved = buildBookPageDraft(updated);
-      setDetail(updated);
       setDraft(saved);
       setSavedSnapshot(saved);
       draftCache.current.delete(currentPerson.id);
@@ -178,38 +165,29 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
   };
 
   const handlePrintAll = async () => {
-    if (loadingPrintAll) return;
-
     cacheCurrentDraft();
-    setLoadingPrintAll(true);
 
-    try {
-      const pages: PrintAllPage[] = await Promise.all(
-        sortedPersons.map(async (person, index) => {
-          const nextDetail = await api.person.getDetail(person.id);
-          const cached = draftCache.current.get(person.id);
-          return {
-            personId: person.id,
-            pageNumber: index + 1,
-            detail: nextDetail,
-            draft: cached ?? buildBookPageDraft(nextDetail),
-          };
-        }),
-      );
+    const pages: PrintAllPage[] = sortedPersons.map((person, index) => {
+      const nextDetail = details[person.id];
+      const cached = draftCache.current.get(person.id);
+      return {
+        personId: person.id,
+        pageNumber: index + 1,
+        detail: nextDetail,
+        draft: cached ?? buildBookPageDraft(nextDetail),
+      };
+    });
 
-      flushSync(() => {
-        setPrintAllPages(pages);
-        setIsPrintAllLayout(true);
-      });
+    flushSync(() => {
+      setPrintAllPages(pages);
+      setIsPrintAllLayout(true);
+    });
 
-      await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-      });
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
 
-      await triggerPrint(true);
-    } finally {
-      setLoadingPrintAll(false);
-    }
+    await triggerPrint(true);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -224,7 +202,15 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
     else goToPage('prev');
   };
 
-  if (!currentPerson) {
+  if (status === 'loading' || status === 'idle') {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-amber-950/95 text-amber-50">
+        <LoadingSpinner size={32} label={UI.LOADING} />
+      </div>
+    );
+  }
+
+  if (status === 'error' || !currentPerson) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col bg-amber-950/95 text-amber-50">
         <header className="flex items-center gap-3 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
@@ -238,7 +224,7 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
           </button>
           <h1 className="text-lg font-semibold">{UI.VIEW_GENEALOGY_BOOK}</h1>
         </header>
-        <p className="px-4 text-sm text-amber-100/80">{UI.NO_DATA}</p>
+        <p className="px-4 text-sm text-amber-100/80">{status === 'error' ? UI.ERROR_TITLE : UI.NO_DATA}</p>
       </div>
     );
   }
@@ -268,7 +254,7 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
         <button
           type="button"
           onClick={handlePrint}
-          disabled={loading || loadingPrintAll}
+          disabled={saving}
           className="grid h-10 w-10 shrink-0 place-items-center rounded-full active:bg-white/10 disabled:opacity-40"
           aria-label={UI.BOOK_PRINT_PAGE}
         >
@@ -277,15 +263,11 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
         <button
           type="button"
           onClick={() => void handlePrintAll()}
-          disabled={loading || loadingPrintAll || totalPages === 0}
+          disabled={saving || totalPages === 0}
           className="grid h-10 w-10 shrink-0 place-items-center rounded-full active:bg-white/10 disabled:opacity-40"
           aria-label={UI.BOOK_PRINT_ALL}
         >
-          {loadingPrintAll ? (
-            <LoadingSpinner size={18} label={UI.BOOK_PRINT_ALL_LOADING} />
-          ) : (
-            <Icon path="printAll" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-          )}
+          <Icon path="printAll" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
         </button>
         <span className="shrink-0 text-sm text-amber-100/80">
           {UI.BOOK_PAGE_OF(pageIndex + 1, totalPages)}
@@ -323,8 +305,8 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
               <GenealogyBookPage
                 pageNumber={pageIndex + 1}
                 totalPages={totalPages}
-                detail={detail}
-                loading={loading}
+                detail={currentDetail}
+                loading={false}
                 draft={draft}
                 isDirty={isDirty}
                 saving={saving}

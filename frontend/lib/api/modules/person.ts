@@ -29,6 +29,7 @@ export type { CreatePersonDto };
 
 export const person = {
   list: () => axiosClient.get<Person[]>(API_ROUTES.PERSON_LIST).then((r) => r.data),
+  getAllDetails: () => axiosClient.get<PersonDetail[]>(API_ROUTES.PERSON_DETAILS).then((r) => r.data),
   detail: (id: number) => axiosClient.get<Person>(API_ROUTES.PERSON(id)).then((r) => r.data),
   getDetail: (id: number) =>
     axiosClient.get<PersonDetail>(API_ROUTES.PERSON_DETAIL(id)).then((r) => r.data),

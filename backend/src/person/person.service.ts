@@ -63,6 +63,23 @@ export class PersonService {
     return this.prisma.person.findMany({ orderBy: { fullName: 'asc' } });
   }
 
+  async findAllDetails() {
+    const [persons, relationships] = await Promise.all([
+      this.prisma.person.findMany({
+        include: { biography: true, graveInfo: true },
+        orderBy: { fullName: 'asc' },
+      }),
+      this.prisma.relationship.findMany({ include: { from: true, to: true } }),
+    ]);
+
+    return persons.map((person) => ({
+      person,
+      relationships: relationships.filter(
+        (r) => r.fromId === person.id || r.toId === person.id,
+      ),
+    }));
+  }
+
   async findOne(id: number) {
     const person = await this.prisma.person.findUnique({
       where: { id },

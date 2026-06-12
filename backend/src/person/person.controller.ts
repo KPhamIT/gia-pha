@@ -29,6 +29,11 @@ export class PersonController {
     return this.personService.findAll();
   }
 
+  @Get('details')
+  findAllDetails() {
+    return this.personService.findAllDetails();
+  }
+
   @Get(':id/tree')
   getFamilyGraph(@Param('id') id: string) {
     return this.personService.getFamilyGraph(+id);
