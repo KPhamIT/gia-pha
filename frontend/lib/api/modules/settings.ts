@@ -5,6 +5,8 @@ export type UserSettings = {
   theme?: string;
   horizontalGap?: number;
   verticalStep?: number;
+  nodeWidth?: number;
+  nodeHeight?: number;
   nodeBgColor?: string;
   nodeTextColor?: string;
   [key: string]: unknown;

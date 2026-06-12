@@ -11,14 +11,16 @@ type Coordinates = Map<number, { x: number; y: number }>;
 export type FamilyTreeLayoutConfig = {
   horizontalGap?: number;
   verticalStep?: number;
+  nodeWidth?: number;
+  nodeHeight?: number;
   nodeBgColor?: string;
   nodeTextColor?: string;
 };
 
-const NODE_WIDTH = 80;
+export const NODE_WIDTH = 90;
 export const NODE_HEIGHT = 120;
-const DEFAULT_HORIZONTAL_GAP = 15;
-const DEFAULT_VERTICAL_STEP = 220;
+const DEFAULT_HORIZONTAL_GAP = 20;
+const DEFAULT_VERTICAL_STEP = 200;
 
 function getEffectiveRelationships(relationships: Relationship[]) {
   const parentRelations = new Set(
@@ -149,6 +151,7 @@ function computeCoordinates(
   rootId: number,
   horizontalGap: number,
   verticalStep: number,
+  nodeWidth: number,
 ) {
   const yMap = buildYMap(generationMap, verticalStep);
   const coordinates: Coordinates = new Map();
@@ -171,20 +174,17 @@ function computeCoordinates(
   const computeSubtreeWidth = (personId: number): number => {
     if (subtreeWidthMap.has(personId)) return subtreeWidthMap.get(personId)!;
 
-    // protect against cycles in the relationship graph
     if (computing.has(personId)) {
-      // fallback to single node width when a cycle is detected
-      subtreeWidthMap.set(personId, NODE_WIDTH);
-      return NODE_WIDTH;
+      subtreeWidthMap.set(personId, nodeWidth);
+      return nodeWidth;
     }
 
-    // ensure unique, filtered and sorted children
     const children = Array.from(new Set(childMap.get(personId) ?? [])).filter((id) => relevantPersonIds.has(id)).sort((a, b) => a - b);
     computing.add(personId);
     if (children.length === 0) {
-      subtreeWidthMap.set(personId, NODE_WIDTH);
+      subtreeWidthMap.set(personId, nodeWidth);
       computing.delete(personId);
-      return NODE_WIDTH;
+      return nodeWidth;
     }
     let total = 0;
     for (const child of children) {
@@ -192,7 +192,7 @@ function computeCoordinates(
       total += w;
     }
     if (children.length > 1) total += horizontalGap * (children.length - 1);
-    const width = Math.max(total, NODE_WIDTH);
+    const width = Math.max(total, nodeWidth);
     subtreeWidthMap.set(personId, width);
     computing.delete(personId);
     return width;
@@ -200,35 +200,32 @@ function computeCoordinates(
 
   const layoutNode = (personId: number, left: number): number => {
     if (assigned.has(personId)) {
-      const width = subtreeWidthMap.get(personId) ?? NODE_WIDTH;
+      const width = subtreeWidthMap.get(personId) ?? nodeWidth;
       const oldX = coordinates.get(personId)?.x ?? 0;
       if (oldX !== left) {
         shiftSubtree(personId, left - oldX);
       }
       return width;
     }
-    // guard against cycles during layout recursion
     if (layoutComputing.has(personId)) {
-      return subtreeWidthMap.get(personId) ?? NODE_WIDTH;
+      return subtreeWidthMap.get(personId) ?? nodeWidth;
     }
 
-    // ensure unique, filtered and sorted children
     const children = Array.from(new Set(childMap.get(personId) ?? [])).filter((childId) => relevantPersonIds.has(childId)).sort((a, b) => a - b);
     layoutComputing.add(personId);
     const y = yMap.get(personId) ?? 0;
     if (children.length === 0) {
       coordinates.set(personId, { x: left, y });
       assigned.add(personId);
-      subtreeWidthMap.set(personId, NODE_WIDTH);
+      subtreeWidthMap.set(personId, nodeWidth);
       layoutComputing.delete(personId);
-      return NODE_WIDTH;
+      return nodeWidth;
     }
 
     let currentLeft = left;
     const childXPositions: number[] = [];
     let subtreeWidth = 0;
 
-    // first compute widths for all children deterministically
     const childWidths = children.map((childId) => computeSubtreeWidth(childId));
 
     for (let i = 0; i < children.length; i++) {
@@ -247,11 +244,11 @@ function computeCoordinates(
     }
 
     const minChildX = Math.min(...childXPositions);
-    const maxChildX = Math.max(...childXPositions) + NODE_WIDTH;
-    const x = minChildX + (maxChildX - minChildX) / 2 - NODE_WIDTH / 2;
+    const maxChildX = Math.max(...childXPositions) + nodeWidth;
+    const x = minChildX + (maxChildX - minChildX) / 2 - nodeWidth / 2;
     coordinates.set(personId, { x, y });
     assigned.add(personId);
-    const width = Math.max(subtreeWidth, NODE_WIDTH);
+    const width = Math.max(subtreeWidth, nodeWidth);
     subtreeWidthMap.set(personId, width);
     layoutComputing.delete(personId);
     return width;
@@ -276,6 +273,8 @@ function buildFlowNodes(
   coordinates: Coordinates,
   nodeBgColor?: string,
   nodeTextColor?: string,
+  nodeWidth?: number,
+  nodeHeight?: number,
 ) {
   return persons.map((person) => {
     const pos = coordinates.get(person.id) || { x: 0, y: 0 };
@@ -292,6 +291,8 @@ function buildFlowNodes(
         person,
         nodeBgColor,
         nodeTextColor,
+        nodeWidth,
+        nodeHeight,
       },
       position: pos,
     } as Node;
@@ -344,6 +345,8 @@ export function buildFamilyTreeGraph(treeData: FamilyTreeData, config: FamilyTre
   const generationMap = buildGenerationMap(persons, levels);
   const horizontalGap = config.horizontalGap ?? DEFAULT_HORIZONTAL_GAP;
   const verticalStep = config.verticalStep ?? DEFAULT_VERTICAL_STEP;
+  const nodeWidth = config.nodeWidth ?? NODE_WIDTH;
+  const nodeHeight = config.nodeHeight ?? NODE_HEIGHT;
   const coordinates = computeCoordinates(
     generationMap,
     childMap,
@@ -351,8 +354,9 @@ export function buildFamilyTreeGraph(treeData: FamilyTreeData, config: FamilyTre
     root.id,
     horizontalGap,
     verticalStep,
+    nodeWidth,
   );
-  const nodes = buildFlowNodes(persons, root.id, coordinates, config.nodeBgColor, config.nodeTextColor);
+  const nodes = buildFlowNodes(persons, root.id, coordinates, config.nodeBgColor, config.nodeTextColor, nodeWidth, nodeHeight);
   const edges = buildFlowEdges(effectiveRelationships);
 
   return { nodes, edges };

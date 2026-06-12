@@ -118,6 +118,40 @@ export default function FamilyTreeSettings({
             </label>
 
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+              {UI.NODE_WIDTH_LABEL}
+              <input
+                type="number"
+                min={40}
+                step={10}
+                value={layoutConfig.nodeWidth}
+                onChange={(event) =>
+                  setLayoutConfig((prev) => ({
+                    ...prev,
+                    nodeWidth: Math.max(40, Number(event.target.value) || 40),
+                  }))
+                }
+                className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-slate-500"
+              />
+            </label>
+
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+              {UI.NODE_HEIGHT_LABEL}
+              <input
+                type="number"
+                min={40}
+                step={10}
+                value={layoutConfig.nodeHeight}
+                onChange={(event) =>
+                  setLayoutConfig((prev) => ({
+                    ...prev,
+                    nodeHeight: Math.max(40, Number(event.target.value) || 40),
+                  }))
+                }
+                className="mt-2 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-slate-500"
+              />
+            </label>
+
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
               {UI.NODE_BG_COLOR}
               <div className="mt-2 flex items-center gap-2">
                 <input

@@ -50,6 +50,8 @@ export default function FamilyTreePage() {
         ...prev,
         ...(typeof saved.horizontalGap === 'number' && { horizontalGap: saved.horizontalGap }),
         ...(typeof saved.verticalStep === 'number' && { verticalStep: saved.verticalStep }),
+        ...(typeof saved.nodeWidth === 'number' && { nodeWidth: saved.nodeWidth }),
+        ...(typeof saved.nodeHeight === 'number' && { nodeHeight: saved.nodeHeight }),
         ...(typeof saved.nodeBgColor === 'string' && { nodeBgColor: saved.nodeBgColor }),
         ...(typeof saved.nodeTextColor === 'string' && { nodeTextColor: saved.nodeTextColor }),
       }));

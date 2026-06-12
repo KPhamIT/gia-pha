@@ -1,6 +1,6 @@
 import { Handle, Position } from '@xyflow/react';
 import { memo, useCallback } from 'react';
-import { NODE_HEIGHT } from '@/components/family-tree/FamilyTreeGraphLayout';
+import { NODE_HEIGHT, NODE_WIDTH } from '@/components/family-tree/FamilyTreeGraphLayout';
 
 type PersonNodeData = {
   fullName: string;
@@ -12,6 +12,8 @@ type PersonNodeData = {
   onNodeClick?: (personId: number) => void;
   nodeBgColor?: string;
   nodeTextColor?: string;
+  nodeWidth?: number;
+  nodeHeight?: number;
 };
 
 type FamilyTreeNodeProps = {
@@ -42,9 +44,10 @@ function FamilyTreeNode({ data, selected, id }: FamilyTreeNodeProps) {
       style={{
         backgroundColor: data.nodeBgColor ?? '#ffffff',
         color: data.nodeTextColor ?? '#0f172a',
-        height: NODE_HEIGHT,
+        width: data.nodeWidth ?? NODE_WIDTH,
+        height: data.nodeHeight ?? NODE_HEIGHT,
       }}
-      className={`w-20 px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 ${
+      className={`px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 ${
         selected
           ? 'border-blue-500 shadow-lg ring-2 ring-blue-200'
           : 'border-slate-200 shadow-sm hover:border-blue-300'
@@ -53,7 +56,7 @@ function FamilyTreeNode({ data, selected, id }: FamilyTreeNodeProps) {
       <Handle type="source" position={Position.Top} />
       <div className="flex flex-col items-center">
         {data.fullName.split(' ').map((word, i) => (
-          <p key={i} className="font-semibold font-vni-thufap2 leading-snug text-center">{word}</p>
+          <p key={i} className="font-semibold text-lg leading-snug text-center">{word}</p>
         ))}
       </div>
       {birthDate ? (

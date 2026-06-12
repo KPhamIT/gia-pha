@@ -6,6 +6,8 @@ import type { LayoutConfig } from '@/components/types/family-tree-types';
 const DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
   horizontalGap: 15,
   verticalStep: 220,
+  nodeWidth: 80,
+  nodeHeight: 120,
   nodeBgColor: '#ffffff',
   nodeTextColor: '#0f172a',
 };

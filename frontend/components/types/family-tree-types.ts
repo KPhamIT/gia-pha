@@ -102,6 +102,8 @@ export type ThemeMode = 'light' | 'dark';
 export type LayoutConfig = {
   horizontalGap: number;
   verticalStep: number;
+  nodeWidth: number;
+  nodeHeight: number;
   nodeBgColor: string;
   nodeTextColor: string;
 };

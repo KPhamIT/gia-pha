@@ -52,10 +52,12 @@ export const UI = {
   THEME_LIGHT: 'Sáng',
   SWITCH_TO_LIGHT: 'Chuyển sang chế độ sáng',
   SWITCH_TO_DARK: 'Chuyển sang chế độ tối',
-  H_GAP_LABEL: 'Khoảng cách ngang',
-  V_GAP_LABEL: 'Khoảng cách dọc',
+  H_GAP_LABEL: 'Khoảng cách tối thiểu giữa node (px)',
+  V_GAP_LABEL: 'Khoảng cách dọc giữa thế hệ (px)',
 
   // Node appearance
+  NODE_WIDTH_LABEL: 'Chiều rộng thẻ (px)',
+  NODE_HEIGHT_LABEL: 'Chiều cao thẻ (px)',
   NODE_BG_COLOR: 'Màu nền thẻ',
   NODE_TEXT_COLOR: 'Màu chữ thẻ',
 
