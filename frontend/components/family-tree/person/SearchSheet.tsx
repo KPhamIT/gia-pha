@@ -40,7 +40,7 @@ export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetP
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={UI.SEARCH_PLACEHOLDER}
-            className="w-full rounded-2xl border border-slate-300 py-3 pl-10 pr-3 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-2xl border border-slate-300 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
           />
         </div>
         <button

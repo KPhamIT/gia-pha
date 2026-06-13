@@ -19,7 +19,7 @@ export default function ConnectRelationshipModal({ pendingType, saving, saveErro
       <p className="mb-3 text-sm font-semibold text-slate-700">{UI.SELECT_RELATIONSHIP}</p>
       <div className="flex items-center gap-3">
         <select
-          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500"
           value={pendingType}
           onChange={(e) => onTypeChange(e.target.value as RelationshipType)}
         >

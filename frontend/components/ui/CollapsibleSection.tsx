@@ -49,7 +49,7 @@ export function FormField({ label, children }: FormFieldProps) {
 }
 
 export const inputClassName =
-  'w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none disabled:opacity-50';
+  'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50';
 
 export const textareaClassName =
-  'w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none disabled:opacity-50 min-h-[120px] resize-y';
+  'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50 min-h-[120px] resize-y';

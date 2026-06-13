@@ -7,7 +7,7 @@ import { UI } from '@/lib/constants/ui-strings';
 import { ModalHeader, iconBtn } from './NodeActionViews';
 
 const EMPTY_CHILD_FORM = { fullName: '', gender: '', birthDate: '', avatar: '' };
-const inputClass = 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-blue-500 focus:outline-none';
+const inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-blue-500 focus:outline-none';
 const labelClass = 'mb-1 block text-sm font-semibold text-slate-700';
 
 export default function NodeChildForm({ node, loading, onBack, onCreate }: {
