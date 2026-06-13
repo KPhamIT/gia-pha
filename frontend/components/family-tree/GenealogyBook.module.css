@@ -34,35 +34,147 @@
 .page {
   width: 100%;
   height: 100%;
+  position: relative;
+  perspective: 2200px;
+}
+
+/* ---------- Realistic 3D page turn ---------- *
+ * A leaf overlay pivots on the spine (left edge). Its front shows the page
+ * we are leaving (next) or arriving at (prev); its back is a blank cream sheet.
+ * The base layer below already renders the destination page, so as the leaf
+ * sweeps past 90deg the destination is revealed underneath. */
+.flipLeaf {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
   transform-style: preserve-3d;
-  backface-visibility: hidden;
-}
-
-.pageFlipNext {
-  animation: flipNext 0.55s ease-in-out forwards;
   transform-origin: left center;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: visible;
 }
 
-.pageFlipPrev {
-  animation: flipPrev 0.55s ease-in-out forwards;
-  transform-origin: right center;
+.flipLeafNext {
+  animation: leafTurnNext 0.95s cubic-bezier(0.33, 0.1, 0.22, 1) forwards;
 }
 
-@keyframes flipNext {
-  0% {
+.flipLeafPrev {
+  /* Starts open on the left, closes back onto the book. */
+  transform: rotateY(-180deg);
+  animation: leafTurnPrev 0.95s cubic-bezier(0.33, 0.1, 0.22, 1) forwards;
+}
+
+@keyframes leafTurnNext {
+  from {
     transform: rotateY(0deg);
   }
-  100% {
+  to {
     transform: rotateY(-180deg);
   }
 }
 
-@keyframes flipPrev {
-  0% {
+@keyframes leafTurnPrev {
+  from {
+    transform: rotateY(-180deg);
+  }
+  to {
     transform: rotateY(0deg);
   }
+}
+
+.flipFace {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  overflow: hidden;
+  border-radius: 2px 6px 6px 2px;
+}
+
+.flipBack {
+  transform: rotateY(180deg);
+  background: linear-gradient(215deg, #fffef9 0%, #f6f2e9 60%, #ece5d6 100%);
+  box-shadow: 0 0 0 1px #e7dfd1 inset;
+}
+
+/* Soft binding shadow near the spine on the cream back side */
+.flipBack::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 16%;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.14), transparent);
+}
+
+/* Travelling sheen/shadow that darkens the turning leaf mid-flip */
+.flipShadow {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 2px 6px 6px 2px;
+  background: linear-gradient(105deg, rgb(0 0 0 / 0.32), rgb(0 0 0 / 0) 45%);
+  opacity: 0;
+}
+
+.flipLeafNext .flipShadow {
+  animation: leafShadeNext 0.95s ease-in-out forwards;
+}
+
+.flipLeafPrev .flipShadow {
+  animation: leafShadePrev 0.95s ease-in-out forwards;
+}
+
+@keyframes leafShadeNext {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 0.55;
+  }
   100% {
-    transform: rotateY(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes leafShadePrev {
+  0% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Drop shadow cast by the lifted leaf onto the page below */
+.flipUnderShade {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: linear-gradient(100deg, rgb(0 0 0 / 0.22), rgb(0 0 0 / 0) 40%);
+  opacity: 0;
+  animation: underShade 0.95s ease-in-out forwards;
+}
+
+@keyframes underShade {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flipLeafNext,
+  .flipLeafPrev,
+  .flipLeafNext .flipShadow,
+  .flipLeafPrev .flipShadow,
+  .flipUnderShade {
+    animation-duration: 0.01ms !important;
   }
 }
 

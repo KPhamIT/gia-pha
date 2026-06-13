@@ -42,7 +42,15 @@ export class SettingsService {
     userId: number,
     data: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    const jsonData = data as Prisma.InputJsonValue;
+    // Shallow-merge top-level keys so partial updates (e.g. just `book`)
+    // don't wipe other settings like theme / layout.
+    const existing = await this.prisma.userSettings.findUnique({
+      where: { userId },
+    });
+    const current =
+      (existing?.data as Record<string, unknown> | undefined) ?? {};
+    const merged = { ...current, ...data };
+    const jsonData = merged as Prisma.InputJsonValue;
     const record = await this.prisma.userSettings.upsert({
       where: { userId },
       create: { userId, data: jsonData },

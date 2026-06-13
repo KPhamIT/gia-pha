@@ -125,6 +125,28 @@ export const UI = {
   BOOK_PRINT_PAGE: 'In trang này',
   BOOK_PRINT_ALL: 'In toàn bộ sổ',
   BOOK_PRINT_ALL_LOADING: 'Đang chuẩn bị in...',
+
+  // Book cover & preface
+  BOOK_COVER_DEFAULT_TITLE: 'GIA PHẢ',
+  BOOK_COVER_DEFAULT_SUBTITLE: 'Dòng họ Việt Nam',
+  BOOK_COVER_DEFAULT_LINEAGE: 'Phụng lập gia phả – Lưu truyền hậu thế',
+  BOOK_COVER_TITLE_PLACEHOLDER: 'Nhập tên dòng họ',
+  BOOK_COVER_SUBTITLE_PLACEHOLDER: 'Nhập câu đối / chú thích',
+  BOOK_COVER_LINEAGE_PLACEHOLDER: 'Nhập lời đề từ',
+  BOOK_COVER_HINT: 'Chạm để chỉnh sửa nội dung trang bìa',
+  BOOK_PREFACE_TITLE_DEFAULT: 'Lời Mở Đầu',
+  BOOK_PREFACE_TITLE_PLACEHOLDER: 'Tiêu đề lời mở đầu',
+  BOOK_PREFACE_BODY_PLACEHOLDER:
+    'Viết đôi lời mở đầu cho cuốn gia phả: nguồn gốc dòng họ, ý nghĩa, lời nhắn gửi con cháu...',
+  BOOK_PREFACE_SIGN_PLACEHOLDER: 'Ký tên / nơi, ngày tháng',
+
+  // Book style controls
+  BOOK_STYLE_TITLE: 'Kiểu trình bày',
+  BOOK_BORDER_STYLE_LABEL: 'Khung viền',
+  BOOK_FORM_STYLE_LABEL: 'Kiểu trang thông tin',
+  BOOK_COVER_FONT_LABEL: 'Font thư pháp',
+  BOOK_OPEN_STYLE: 'Tùy chỉnh kiểu trình bày',
+  BOOK_SAVED_HINT: 'Tự động lưu vào tài khoản',
   SEARCH_PLACEHOLDER: 'Nhập tên để tìm...',
   NO_SEARCH_RESULTS: 'Không tìm thấy kết quả',
   ADD_CHILD: 'Thêm con',

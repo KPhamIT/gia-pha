@@ -1,0 +1,397 @@
+/* ============================================================
+   Shared decorative styles for the genealogy book:
+   page borders, form layouts, cover & preface.
+   ============================================================ */
+
+/* ---------- Page border frames (decorative, overlay only) ---------- */
+.frame {
+  position: absolute;
+  inset: 10px;
+  z-index: 6;
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+/* Classic: single fine gold double-rule */
+.frameClassic {
+  border: 1.5px solid rgb(168 124 0 / 0.55);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.4) inset, 0 0 0 4px rgb(168 124 0 / 0.28) inset;
+}
+
+/* Double: two distinct lines with a gap */
+.frameDouble {
+  border: 1px solid rgb(124 45 18 / 0.5);
+  box-shadow:
+    0 0 0 4px rgb(255 252 245 / 0.6) inset,
+    0 0 0 5.5px rgb(124 45 18 / 0.4) inset,
+    0 0 0 9px rgb(255 252 245 / 0.5) inset,
+    0 0 0 10px rgb(184 134 11 / 0.45) inset;
+}
+
+/* Ornate: double rule plus corner flourishes */
+.frameOrnate {
+  border: 1.5px solid rgb(146 64 14 / 0.55);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.45) inset, 0 0 0 4px rgb(184 134 11 / 0.45) inset;
+}
+
+.frameCorner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 2px solid rgb(184 134 11 / 0.8);
+}
+
+.frameCornerTL {
+  top: -3px;
+  left: -3px;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 8px;
+}
+.frameCornerTR {
+  top: -3px;
+  right: -3px;
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 8px;
+}
+.frameCornerBL {
+  bottom: -3px;
+  left: -3px;
+  border-right: none;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+}
+.frameCornerBR {
+  bottom: -3px;
+  right: -3px;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 8px;
+}
+
+.frameCorner::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgb(146 64 14 / 0.75);
+}
+.frameCornerTL::after {
+  top: 3px;
+  left: 3px;
+}
+.frameCornerTR::after {
+  top: 3px;
+  right: 3px;
+}
+.frameCornerBL::after {
+  bottom: 3px;
+  left: 3px;
+}
+.frameCornerBR::after {
+  bottom: 3px;
+  right: 3px;
+}
+
+/* Cloud: soft rounded dashed inner rule */
+.frameCloud {
+  inset: 12px;
+  border-radius: 14px;
+  border: 1.5px solid rgb(120 113 108 / 0.4);
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.35) inset;
+}
+.frameCloud::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed rgb(120 113 108 / 0.4);
+  border-radius: 9px;
+}
+
+/* Modern: minimal top/bottom accent rules only */
+.frameModern {
+  border: none;
+  inset: 12px;
+}
+.frameModern::before,
+.frameModern::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgb(120 53 15 / 0.55), transparent);
+}
+.frameModern::before {
+  top: 0;
+}
+.frameModern::after {
+  bottom: 0;
+}
+
+/* ---------- Form layout helpers ---------- */
+.formClassicGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
+}
+
+.elegantField {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px dotted rgb(180 134 11 / 0.4);
+}
+.elegantLabel {
+  flex: 0 0 38%;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(120 53 15 / 0.8);
+}
+.elegantValue {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #1f2937;
+}
+.elegantValue input,
+.elegantValue textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  resize: none;
+}
+.elegantValueEmpty {
+  font-style: italic;
+  color: #94a3b8;
+}
+
+/* ---------- Cover page ---------- */
+.cover {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  color: #fdf2d0;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgb(180 60 40 / 0.35), transparent 60%),
+    radial-gradient(140% 100% at 50% 120%, rgb(60 8 8 / 0.6), transparent 55%),
+    linear-gradient(160deg, #7a1410 0%, #5c0d0d 45%, #420808 100%);
+}
+
+.coverInner {
+  position: relative;
+  z-index: 2;
+  padding: clamp(1.5rem, 6vw, 3rem);
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.75rem, 3vh, 1.75rem);
+}
+
+.coverFrame {
+  position: absolute;
+  inset: clamp(14px, 4vw, 28px);
+  z-index: 1;
+  pointer-events: none;
+  border: 2px solid rgb(212 175 55 / 0.65);
+  box-shadow: 0 0 0 6px rgb(212 175 55 / 0.18) inset, 0 0 30px rgb(0 0 0 / 0.35) inset;
+  border-radius: 4px;
+}
+.coverFrame::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgb(212 175 55 / 0.4);
+  border-radius: 2px;
+}
+
+.coverFrameCorner {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgb(212 175 55 / 0.9);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.coverTopBadge {
+  font-size: clamp(11px, 1.6vw, 13px);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: rgb(212 175 55 / 0.85);
+  text-transform: uppercase;
+}
+
+.coverTitle {
+  font-size: clamp(3.2rem, 16vw, 6.5rem);
+  line-height: 1.05;
+  color: #f6d978;
+  text-shadow: 0 2px 1px rgb(0 0 0 / 0.4), 0 0 22px rgb(246 217 120 / 0.35);
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+.coverTitle::placeholder {
+  color: rgb(246 217 120 / 0.4);
+}
+
+.coverDivider {
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: rgb(212 175 55 / 0.8);
+}
+.coverDivider::before,
+.coverDivider::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgb(212 175 55 / 0.7), transparent);
+}
+
+.coverSubtitle {
+  font-size: clamp(1.4rem, 6vw, 2.4rem);
+  color: #fbe9bf;
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  outline: none;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
+}
+.coverSubtitle::placeholder {
+  color: rgb(251 233 191 / 0.4);
+}
+
+.coverLineage {
+  margin-top: 0.25rem;
+  font-size: clamp(13px, 2.2vw, 15px);
+  font-style: italic;
+  color: rgb(251 233 191 / 0.75);
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: none;
+  line-height: 1.5;
+}
+.coverLineage::placeholder {
+  color: rgb(251 233 191 / 0.35);
+}
+
+.coverSeal {
+  margin-top: 0.5rem;
+  width: clamp(54px, 14vw, 76px);
+  height: clamp(54px, 14vw, 76px);
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 2px solid rgb(212 175 55 / 0.8);
+  background: rgb(150 30 25 / 0.5);
+  color: #f6d978;
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  box-shadow: 0 0 18px rgb(0 0 0 / 0.4);
+}
+
+.coverHint {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  font-size: 11px;
+  color: rgb(251 233 191 / 0.5);
+}
+
+@media print {
+  .coverHint {
+    display: none !important;
+  }
+}
+
+/* ---------- Preface page ---------- */
+.prefaceTitle {
+  text-align: center;
+  font-size: clamp(2rem, 9vw, 3.2rem);
+  line-height: 1.1;
+  color: #7c2d12;
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  margin-bottom: 0.75rem;
+}
+.prefaceTitle::placeholder {
+  color: rgb(124 45 18 / 0.35);
+}
+
+.prefaceOrnament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: rgb(184 134 11 / 0.7);
+  margin-bottom: 1.25rem;
+}
+.prefaceOrnament::before,
+.prefaceOrnament::after {
+  content: '';
+  height: 1px;
+  width: 28%;
+  background: linear-gradient(90deg, transparent, rgb(184 134 11 / 0.6), transparent);
+}
+
+.prefaceBody {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: none;
+  font-size: clamp(14px, 2.4vw, 16px);
+  line-height: 1.9;
+  color: #3f3f46;
+  text-align: justify;
+  text-indent: 1.5em;
+}
+.prefaceBody::placeholder {
+  color: #a8a29e;
+  font-style: italic;
+  text-indent: 0;
+}
+
+.prefaceSignature {
+  margin-top: 1rem;
+  width: 100%;
+  text-align: right;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-style: italic;
+  font-size: clamp(13px, 2.2vw, 15px);
+  color: rgb(124 45 18 / 0.85);
+}
+.prefaceSignature::placeholder {
+  color: rgb(124 45 18 / 0.35);
+}
