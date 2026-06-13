@@ -1,0 +1,67 @@
+'use client';
+
+import CollapsibleSection, { FormField, inputClassName, textareaClassName } from '@/components/ui/CollapsibleSection';
+import { UI } from '@/lib/constants/ui-strings';
+import type { PersonDraft } from '@/utils/person-detail-form';
+import { PERSON_FORM_SECTIONS, type Field } from './person-form-sections';
+
+function FieldControl({ field, value, disabled, onChange }: {
+  field: Field;
+  value: string;
+  disabled: boolean;
+  onChange: (value: string) => void;
+}) {
+  const common = { value, disabled, onChange: (e: { target: { value: string } }) => onChange(e.target.value) };
+
+  if (field.type === 'textarea') {
+    return <textarea {...common} className={textareaClassName} />;
+  }
+  if (field.type === 'select') {
+    return (
+      <select {...common} className={inputClassName}>
+        {field.key === 'gender' ? <option value="">{UI.GENDER_PLACEHOLDER}</option> : null}
+        {field.options?.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    );
+  }
+  return (
+    <input
+      type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+      min={field.min}
+      max={field.max}
+      {...common}
+      className={inputClassName}
+    />
+  );
+}
+
+type PersonDetailFieldsProps = {
+  draft: PersonDraft;
+  saving: boolean;
+  onChange: (field: keyof PersonDraft, value: string) => void;
+};
+
+export default function PersonDetailFields({ draft, saving, onChange }: PersonDetailFieldsProps) {
+  return (
+    <>
+      {PERSON_FORM_SECTIONS.map((section) => (
+        <CollapsibleSection key={section.title} title={section.title} defaultOpen={section.defaultOpen}>
+          {section.fields.map((field) => (
+            <FormField key={field.key} label={field.label}>
+              <FieldControl
+                field={field}
+                value={draft[field.key]}
+                disabled={saving}
+                onChange={(value) => onChange(field.key, value)}
+              />
+            </FormField>
+          ))}
+        </CollapsibleSection>
+      ))}
+    </>
+  );
+}

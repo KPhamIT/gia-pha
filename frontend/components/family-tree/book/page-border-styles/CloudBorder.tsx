@@ -1,4 +1,4 @@
-import styles from '../Book.module.css';
+import styles from '../Book.module.scss';
 import type { PageBorderComponent } from './types';
 
 /** Soft rounded frame with a dashed inner rule. */

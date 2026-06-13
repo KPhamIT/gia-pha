@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
 import type { Connection, Edge, EdgeChange, FinalConnectionState, Node, NodeChange } from '@xyflow/react';
-import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/FamilyTreeGraphLayout';
+import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
 import type { FamilyTreeData, Person, Relationship, RelationshipType } from '@/components/types/family-tree-types';
 import { createChildPerson, createRelationship } from '@/lib/family-tree/mutations';
 import { getErrorMessage } from '@/utils/errors';

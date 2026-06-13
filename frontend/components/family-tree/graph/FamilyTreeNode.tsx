@@ -1,6 +1,6 @@
 import { Handle, Position } from '@xyflow/react';
 import { memo, useCallback } from 'react';
-import { NODE_HEIGHT, NODE_WIDTH } from '@/components/family-tree/FamilyTreeGraphLayout';
+import { NODE_HEIGHT, NODE_WIDTH } from '@/components/family-tree/graph/layout';
 
 type PersonNodeData = {
   fullName: string;

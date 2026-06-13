@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { CreateChildFormInput, Person } from '../types/family-tree-types';
+import type { CreateChildFormInput, Person } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import { FormField, inputClassName } from '@/components/ui/CollapsibleSection';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';

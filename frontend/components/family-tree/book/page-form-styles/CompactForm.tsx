@@ -1,5 +1,5 @@
 import { UI } from '@/lib/constants/ui-strings';
-import styles from '../../GenealogyBook.module.css';
+import styles from '../GenealogyBook.module.css';
 import BookField from '../BookField';
 import RelationsBlock from './RelationsBlock';
 import type { PageFormComponent } from './types';

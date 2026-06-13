@@ -1,7 +1,7 @@
 /**
  * Registry of page border styles. To add a new border:
  *   1. Create a component file in this folder (see PlainBorder.tsx).
- *   2. Add decorative classes to ../Book.module.css if needed.
+ *   2. Add decorative classes to ../Book.module.scss if needed.
  *   3. Append it to PAGE_BORDER_STYLES below.
  */
 import PlainBorder from './PlainBorder';

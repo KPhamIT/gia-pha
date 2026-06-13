@@ -3,7 +3,7 @@
 import { UI } from '@/lib/constants/ui-strings';
 import { getCalligraphyFont } from './calligraphy-fonts';
 import type { BookSettings } from './book-settings';
-import styles from './Book.module.css';
+import styles from './Book.module.scss';
 
 type BookCoverPageProps = {
   settings: BookSettings;

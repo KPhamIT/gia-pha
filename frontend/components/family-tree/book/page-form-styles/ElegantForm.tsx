@@ -1,5 +1,5 @@
 import { UI } from '@/lib/constants/ui-strings';
-import bookStyles from '../Book.module.css';
+import bookStyles from '../Book.module.scss';
 import { displayValue } from '../BookField';
 import RelationsBlock from './RelationsBlock';
 import type { PageFormComponent } from './types';

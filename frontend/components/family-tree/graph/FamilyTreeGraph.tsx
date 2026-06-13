@@ -11,7 +11,7 @@ import type {
   FamilyTreeData,
   Person,
   Relationship,
-} from "../types/family-tree-types";
+} from "@/components/types/family-tree-types";
 import FamilyTreeEdge from "./FamilyTreeEdge";
 import ConnectRelationshipModal from "./ConnectRelationshipModal";
 import FamilyTreeNode from "./FamilyTreeNode";
@@ -19,7 +19,7 @@ import GraphViewportController, {
   GRAPH_INITIAL_ZOOM,
   GRAPH_MIN_ZOOM,
 } from "./GraphViewportController";
-import type { FamilyTreeLayoutConfig } from "./FamilyTreeGraphLayout";
+import type { FamilyTreeLayoutConfig } from "./layout";
 import { useFamilyTreeGraph } from "@/hooks/useFamilyTreeGraph";
 import "@xyflow/react/dist/base.css";
 

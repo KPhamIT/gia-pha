@@ -1,6 +1,6 @@
 'use client';
 
-import { RelationshipType } from '../types/family-tree-types';
+import { RelationshipType } from '@/components/types/family-tree-types';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI, RELATIONSHIP_LABELS } from '@/lib/constants/ui-strings';
 

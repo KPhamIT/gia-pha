@@ -1,16 +1,16 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import FamilyTreeGraph from '@/components/family-tree/FamilyTreeGraph';
-import PersonDetailSheet from '@/components/family-tree/PersonDetailSheet';
-import EditPersonSheet from '@/components/family-tree/EditPersonSheet';
-import AddChildSheet from '@/components/family-tree/AddChildSheet';
-import AddPersonSheet from '@/components/family-tree/AddPersonSheet';
-import SearchSheet from '@/components/family-tree/SearchSheet';
-import TreeFab from '@/components/family-tree/TreeFab';
-import GenealogyBookViewer from '@/components/family-tree/GenealogyBookViewer';
-import FamilyTreeSettings from '@/components/family-tree/FamilyTreeSettings';
-import FamilyTreeStatus from '@/components/family-tree/FamilyTreeStatus';
+import FamilyTreeGraph from '@/components/family-tree/graph/FamilyTreeGraph';
+import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet';
+import EditPersonSheet from '@/components/family-tree/person/EditPersonSheet';
+import AddChildSheet from '@/components/family-tree/person/AddChildSheet';
+import AddPersonSheet from '@/components/family-tree/person/AddPersonSheet';
+import SearchSheet from '@/components/family-tree/person/SearchSheet';
+import TreeFab from '@/components/family-tree/graph/TreeFab';
+import GenealogyBookViewer from '@/components/family-tree/book/GenealogyBookViewer';
+import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
+import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
 import Icon from '@/components/icons/Icon';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
 import { useLayoutConfig } from '@/hooks/useLayoutConfig';
@@ -63,7 +63,7 @@ export default function FamilyTreePage() {
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [showBook, setShowBook] = useState(false);
+  const [showBook, setShowBook] = useState(true);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
 

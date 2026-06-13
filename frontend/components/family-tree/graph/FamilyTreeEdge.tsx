@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from '@xyflow/react';
 import type { EdgeProps } from '@xyflow/react';
-import type { FamilyTreeEdgeData } from '../types/family-tree-types';
+import type { FamilyTreeEdgeData } from '@/components/types/family-tree-types';
 import { deleteRelationshipById } from '@/lib/family-tree/mutations';
 import { UI } from '@/lib/constants/ui-strings';
 

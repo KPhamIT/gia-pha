@@ -1,7 +1,7 @@
 'use client';
 
 import { UI } from '@/lib/constants/ui-strings';
-import styles from '../GenealogyBook.module.css';
+import styles from './GenealogyBook.module.css';
 
 export function displayValue(value: string): string {
   return value.trim() || UI.BOOK_EMPTY_FIELD;
