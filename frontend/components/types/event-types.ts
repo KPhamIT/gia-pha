@@ -11,6 +11,8 @@ export type FamilyEvent = {
   amountPerPerson: number;
   paidCount: number;
   totalCollected: number;
+  donationTotal: number;
+  grandTotal: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -21,10 +23,32 @@ export type EventContribution = {
   paid: boolean;
 };
 
-/** A single event with its full contribution list (detail endpoint). */
-export type FamilyEventDetail = Omit<FamilyEvent, 'paidCount' | 'totalCollected'> & {
-  contributions: EventContribution[];
+/** A free-form merit/donation entry (anyone, not tied to the family tree). */
+export type EventDonation = {
+  id: number;
+  eventId: number;
+  personId?: number | null;
+  donorName: string;
+  amount: number;
+  note?: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
+
+/** A single event with its full contribution + donation lists (detail endpoint). */
+export type FamilyEventDetail = FamilyEvent & {
+  contributions: EventContribution[];
+  donations: EventDonation[];
+};
+
+export type CreateDonationInput = {
+  donorName: string;
+  personId?: number | null;
+  amount?: number;
+  note?: string;
+};
+
+export type UpdateDonationInput = Partial<CreateDonationInput>;
 
 export type CreateEventInput = {
   title: string;

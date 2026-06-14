@@ -42,14 +42,15 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
   };
 
   return (
-    <FullScreenSheet title={initial ? UI.EVENT_EDIT : UI.EVENT_ADD} onClose={onClose}>
-      <div className="relative space-y-4 p-4">
+    <FullScreenSheet title={initial ? UI.EVENT_EDIT : UI.EVENT_ADD} onClose={onClose} tone="book">
+      <div className="relative p-4">
         {saving ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
             <LoadingSpinner size={36} label={UI.SAVING} />
           </div>
         ) : null}
 
+        <div className="space-y-4 rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
         <FormField label={UI.EVENT_TITLE_LABEL}>
           <input
             type="text"
@@ -123,6 +124,7 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
         >
           {UI.EVENT_SAVE}
         </button>
+        </div>
       </div>
     </FullScreenSheet>
   );

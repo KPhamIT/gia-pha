@@ -11,4 +11,6 @@ export const API_ROUTES = {
   EVENT_LIST: '/event',
   EVENT: (id: number) => `/event/${id}`,
   EVENT_CONTRIBUTION: (id: number) => `/event/${id}/contribution`,
+  EVENT_DONATION_LIST: (id: number) => `/event/${id}/donation`,
+  EVENT_DONATION: (id: number, donationId: number) => `/event/${id}/donation/${donationId}`,
 };

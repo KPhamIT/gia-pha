@@ -207,6 +207,27 @@ export const UI = {
   EVENT_ROOT_GROUP: 'Đời đầu / Trưởng tộc',
   EVENT_FAMILY_OF: (name: string) => `Gia đình ${name}`,
   EVENT_SAVE: 'Lưu',
+  // Event donations (công đức)
+  EVENT_CONTRIBUTION_SECTION: 'Danh sách đóng góp cố định',
+  EVENT_DONATION_SECTION: 'Danh sách công đức',
+  EVENT_DONATION_ADD: 'Thêm công đức',
+  EVENT_DONATION_EDIT: 'Sửa công đức',
+  EVENT_DONATION_EMPTY: 'Chưa có khoản công đức nào.',
+  EVENT_DONATION_NAME_LABEL: 'Tên người công đức',
+  EVENT_DONATION_NAME_PLACEHOLDER: 'VD: Nguyễn Văn A (con cháu phương xa)',
+  EVENT_DONATION_NAME_REQUIRED: 'Vui lòng nhập tên người công đức.',
+  EVENT_DONATION_PICK_MEMBER: 'Chọn từ thành viên gia phả',
+  EVENT_DONATION_SEARCH_MEMBER: 'Tìm thành viên theo tên...',
+  EVENT_DONATION_MEMBER_SELECTED: 'Thành viên đã chọn',
+  EVENT_DONATION_CLEAR_MEMBER: 'Bỏ chọn',
+  EVENT_DONATION_OR_MANUAL: 'Hoặc nhập tên người ngoài gia phả:',
+  EVENT_DONATION_AMOUNT_LABEL: 'Số tiền công đức (đ)',
+  EVENT_DONATION_NOTE_LABEL: 'Ghi chú',
+  EVENT_DONATION_NOTE_PLACEHOLDER: 'Lời chúc / ghi chú (không bắt buộc)',
+  EVENT_DONATION_DELETE_CONFIRM: 'Xóa khoản công đức này?',
+  EVENT_DONATION_TOTAL: 'Tổng công đức',
+  EVENT_GRAND_TOTAL: 'Tổng cộng',
+  EVENT_VIEW_DONATION: 'Danh sách công đức',
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

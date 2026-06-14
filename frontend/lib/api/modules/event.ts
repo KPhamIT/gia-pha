@@ -1,9 +1,11 @@
 import axiosClient from '@/lib/axiosClient';
 import { API_ROUTES } from '@/lib/constants/api-routes';
 import type {
+  CreateDonationInput,
   CreateEventInput,
   FamilyEvent,
   FamilyEventDetail,
+  UpdateDonationInput,
   UpdateEventInput,
 } from '@/components/types/event-types';
 
@@ -19,4 +21,12 @@ export const event = {
     axiosClient
       .put<FamilyEventDetail>(API_ROUTES.EVENT_CONTRIBUTION(id), { personId, paid })
       .then((r) => r.data),
+  addDonation: (id: number, data: CreateDonationInput) =>
+    axiosClient.post<FamilyEventDetail>(API_ROUTES.EVENT_DONATION_LIST(id), data).then((r) => r.data),
+  updateDonation: (id: number, donationId: number, data: UpdateDonationInput) =>
+    axiosClient
+      .patch<FamilyEventDetail>(API_ROUTES.EVENT_DONATION(id, donationId), data)
+      .then((r) => r.data),
+  removeDonation: (id: number, donationId: number) =>
+    axiosClient.delete<FamilyEventDetail>(API_ROUTES.EVENT_DONATION(id, donationId)).then((r) => r.data),
 };

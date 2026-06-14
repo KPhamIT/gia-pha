@@ -10,6 +10,7 @@ import type { Person, Relationship } from '@/components/types/family-tree-types'
 import type { CreateEventInput, FamilyEvent } from '@/components/types/event-types';
 import EventFormSheet from './EventFormSheet';
 import EventContributionView from './EventContributionView';
+import EventDonationsView from './EventDonationsView';
 import { formatVnd } from './event-format';
 
 type Props = {
@@ -25,10 +26,11 @@ function formatDate(iso?: string | null): string | null {
 }
 
 export default function EventsManager({ persons, relationships, onClose }: Props) {
-  const { events, loading, error, saving, createEvent, updateEvent, deleteEvent, patchStats } = useEvents();
+  const { events, loading, error, saving, createEvent, updateEvent, deleteEvent, patchEvent } = useEvents();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<FamilyEvent | null>(null);
   const [contributionEvent, setContributionEvent] = useState<FamilyEvent | null>(null);
+  const [donationEvent, setDonationEvent] = useState<FamilyEvent | null>(null);
 
   const openCreate = () => {
     setEditing(null);
@@ -65,22 +67,22 @@ export default function EventsManager({ persons, relationships, onClose }: Props
 
   return (
     <>
-      <FullScreenSheet title={UI.EVENTS_TITLE} onClose={onClose} headerRight={addButton}>
+      <FullScreenSheet title={UI.EVENTS_TITLE} onClose={onClose} headerRight={addButton} tone="book">
         {loading ? (
           <div className="flex justify-center py-12">
             <LoadingSpinner size={36} />
           </div>
         ) : error ? (
-          <p className="px-4 py-12 text-center text-sm text-rose-500">{error}</p>
+          <p className="px-4 py-12 text-center text-sm text-rose-300">{error}</p>
         ) : events.length === 0 ? (
-          <p className="px-4 py-12 text-center text-sm text-slate-400">{UI.EVENTS_EMPTY}</p>
+          <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENTS_EMPTY}</p>
         ) : (
           <div className="space-y-3 p-4">
             {events.map((event) => {
               const date = formatDate(event.eventDate);
               const isContribution = event.type === 'CONTRIBUTION';
               return (
-                <article key={event.id} className="rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <article key={event.id} className="rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -119,22 +121,34 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                     <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{event.description}</p>
                   ) : null}
 
-                  {isContribution ? (
-                    <div className="mt-3 border-t border-slate-100 pt-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-500">{UI.EVENT_PAID_COUNT_SHORT(event.paidCount)}</span>
-                        <span className="font-semibold text-blue-600">{formatVnd(event.totalCollected)}</span>
-                      </div>
+                  <div className="mt-3 border-t border-slate-100 pt-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-500">
+                        {isContribution ? UI.EVENT_PAID_COUNT_SHORT(event.paidCount) : UI.EVENT_DONATION_TOTAL}
+                      </span>
+                      <span className="font-semibold text-blue-600">{formatVnd(event.grandTotal)}</span>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      {isContribution ? (
+                        <button
+                          type="button"
+                          onClick={() => setContributionEvent(event)}
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-50 py-2.5 text-sm font-semibold text-blue-700 active:bg-blue-100"
+                        >
+                          <Icon path="list" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+                          {UI.EVENT_VIEW_CONTRIBUTION}
+                        </button>
+                      ) : null}
                       <button
                         type="button"
-                        onClick={() => setContributionEvent(event)}
-                        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-50 py-2.5 text-sm font-semibold text-blue-700 active:bg-blue-100"
+                        onClick={() => setDonationEvent(event)}
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 active:bg-amber-100"
                       >
-                        <Icon path="list" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-                        {UI.EVENT_VIEW_CONTRIBUTION}
+                        <Icon path="userPlus" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+                        {UI.EVENT_VIEW_DONATION}
                       </button>
                     </div>
-                  ) : null}
+                  </div>
                 </article>
               );
             })}
@@ -160,7 +174,16 @@ export default function EventsManager({ persons, relationships, onClose }: Props
           persons={persons}
           relationships={relationships}
           onClose={() => setContributionEvent(null)}
-          onStatsChange={(paidCount, totalCollected) => patchStats(contributionEvent.id, paidCount, totalCollected)}
+          onEventPatched={(patch) => patchEvent(contributionEvent.id, patch)}
+        />
+      ) : null}
+
+      {donationEvent ? (
+        <EventDonationsView
+          event={donationEvent}
+          persons={persons}
+          onClose={() => setDonationEvent(null)}
+          onEventPatched={(patch) => patchEvent(donationEvent.id, patch)}
         />
       ) : null}
     </>

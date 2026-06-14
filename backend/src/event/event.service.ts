@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
+import { CreateDonationDto } from './dto/create-donation.dto.js';
+import { UpdateDonationDto } from './dto/update-donation.dto.js';
 
 @Injectable()
 export class EventService {
@@ -16,16 +18,20 @@ export class EventService {
     return this.prisma.organization.create({ data: { name: defaultName } });
   }
 
-  /** Adds derived contribution stats so the list can show paid count + total. */
-  private withSummary<
-    T extends { amountPerPerson: number; contributions: { paid: boolean }[] },
-  >(event: T) {
-    const paidCount = event.contributions.filter((c) => c.paid).length;
-    const { contributions: _contributions, ...rest } = event;
+  /** Derived money/count stats shared by the list + detail responses. */
+  private summarize(
+    amountPerPerson: number,
+    contributions: { paid: boolean }[],
+    donations: { amount: number }[],
+  ) {
+    const paidCount = contributions.filter((c) => c.paid).length;
+    const totalCollected = paidCount * amountPerPerson;
+    const donationTotal = donations.reduce((sum, d) => sum + d.amount, 0);
     return {
-      ...rest,
       paidCount,
-      totalCollected: paidCount * event.amountPerPerson,
+      totalCollected,
+      donationTotal,
+      grandTotal: totalCollected + donationTotal,
     };
   }
 
@@ -46,17 +52,27 @@ export class EventService {
         organizationId:
           organization?.id ?? (await this.getDefaultOrganization()).id,
       },
-      include: { contributions: { select: { paid: true } } },
+      include: {
+        contributions: { select: { paid: true } },
+        donations: { select: { amount: true } },
+      },
     });
-    return this.withSummary(event);
+    const { contributions, donations, ...rest } = event;
+    return { ...rest, ...this.summarize(rest.amountPerPerson, contributions, donations) };
   }
 
   async findAll() {
     const events = await this.prisma.event.findMany({
       orderBy: [{ eventDate: 'desc' }, { createdAt: 'desc' }],
-      include: { contributions: { select: { paid: true } } },
+      include: {
+        contributions: { select: { paid: true } },
+        donations: { select: { amount: true } },
+      },
     });
-    return events.map((event) => this.withSummary(event));
+    return events.map(({ contributions, donations, ...rest }) => ({
+      ...rest,
+      ...this.summarize(rest.amountPerPerson, contributions, donations),
+    }));
   }
 
   async findOne(id: number) {
@@ -64,15 +80,19 @@ export class EventService {
       where: { id },
       include: {
         contributions: { select: { personId: true, paid: true } },
+        donations: { orderBy: { createdAt: 'asc' } },
       },
     });
     if (!event) throw new NotFoundException('Event not found');
-    return event;
+    return {
+      ...event,
+      ...this.summarize(event.amountPerPerson, event.contributions, event.donations),
+    };
   }
 
   async update(id: number, dto: UpdateEventDto) {
     await this.ensureExists(id);
-    const event = await this.prisma.event.update({
+    await this.prisma.event.update({
       where: { id },
       data: {
         title: dto.title,
@@ -86,9 +106,8 @@ export class EventService {
               : null,
         amountPerPerson: dto.amountPerPerson,
       },
-      include: { contributions: { select: { paid: true } } },
     });
-    return this.withSummary(event);
+    return this.findOne(id);
   }
 
   async remove(id: number) {
@@ -113,6 +132,52 @@ export class EventService {
       });
     }
 
+    return this.findOne(eventId);
+  }
+
+  async addDonation(eventId: number, dto: CreateDonationDto) {
+    await this.ensureExists(eventId);
+    await this.prisma.eventDonation.create({
+      data: {
+        eventId,
+        personId: dto.personId ?? null,
+        donorName: dto.donorName,
+        amount: dto.amount ?? 0,
+        note: dto.note,
+      },
+    });
+    return this.findOne(eventId);
+  }
+
+  async updateDonation(
+    eventId: number,
+    donationId: number,
+    dto: UpdateDonationDto,
+  ) {
+    const donation = await this.prisma.eventDonation.findFirst({
+      where: { id: donationId, eventId },
+    });
+    if (!donation) throw new NotFoundException('Donation not found');
+
+    await this.prisma.eventDonation.update({
+      where: { id: donationId },
+      data: {
+        personId: dto.personId,
+        donorName: dto.donorName,
+        amount: dto.amount,
+        note: dto.note,
+      },
+    });
+    return this.findOne(eventId);
+  }
+
+  async removeDonation(eventId: number, donationId: number) {
+    const donation = await this.prisma.eventDonation.findFirst({
+      where: { id: donationId, eventId },
+    });
+    if (!donation) throw new NotFoundException('Donation not found');
+
+    await this.prisma.eventDonation.delete({ where: { id: donationId } });
     return this.findOne(eventId);
   }
 

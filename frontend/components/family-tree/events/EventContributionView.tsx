@@ -8,7 +8,7 @@ import { UI } from '@/lib/constants/ui-strings';
 import { getBranchLabel } from '@/lib/constants/branches';
 import { api } from '@/lib/api';
 import type { Person, Relationship } from '@/components/types/family-tree-types';
-import type { FamilyEvent } from '@/components/types/event-types';
+import type { FamilyEvent, FamilyEventDetail } from '@/components/types/event-types';
 import { groupLivingByFamily } from './event-grouping';
 import { formatVnd } from './event-format';
 
@@ -17,7 +17,7 @@ type Props = {
   persons: Person[];
   relationships: Relationship[];
   onClose: () => void;
-  onStatsChange: (paidCount: number, totalCollected: number) => void;
+  onEventPatched: (patch: Partial<FamilyEvent>) => void;
 };
 
 function personMeta(person: Person): string {
@@ -29,10 +29,13 @@ function personMeta(person: Person): string {
     .join(' · ');
 }
 
-export default function EventContributionView({ event, persons, relationships, onClose, onStatsChange }: Props) {
+export default function EventContributionView({ event, persons, relationships, onClose, onEventPatched }: Props) {
   const [paidIds, setPaidIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<number | null>(null);
+
+  const groups = useMemo(() => groupLivingByFamily(persons, relationships), [persons, relationships]);
+  const livingCount = useMemo(() => groups.reduce((n, g) => n + g.members.length, 0), [groups]);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,7 +43,7 @@ export default function EventContributionView({ event, persons, relationships, o
       try {
         const detail = await api.event.get(event.id);
         if (!cancelled) {
-          setPaidIds(new Set(detail.contributions.filter((c) => c.paid).map((c) => c.personId)));
+          setPaidIds(new Set((detail.contributions ?? []).filter((c) => c.paid).map((c) => c.personId)));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -51,19 +54,24 @@ export default function EventContributionView({ event, persons, relationships, o
     };
   }, [event.id]);
 
-  const groups = useMemo(() => groupLivingByFamily(persons, relationships), [persons, relationships]);
-  const livingCount = useMemo(() => groups.reduce((n, g) => n + g.members.length, 0), [groups]);
   const livingPaidCount = useMemo(
     () => groups.reduce((n, g) => n + g.members.filter((m) => paidIds.has(m.id)).length, 0),
     [groups, paidIds],
   );
-  const totalCollected = livingPaidCount * event.amountPerPerson;
+  const contributionTotal = livingPaidCount * event.amountPerPerson;
+
+  const patchFromDetail = (detail: FamilyEventDetail) =>
+    onEventPatched({
+      paidCount: detail.paidCount,
+      totalCollected: detail.totalCollected,
+      donationTotal: detail.donationTotal,
+      grandTotal: detail.grandTotal,
+    });
 
   const toggle = async (personId: number) => {
     if (togglingId != null) return;
     const nextPaid = !paidIds.has(personId);
     setTogglingId(personId);
-    // Optimistic update.
     setPaidIds((prev) => {
       const next = new Set(prev);
       if (nextPaid) next.add(personId);
@@ -72,11 +80,9 @@ export default function EventContributionView({ event, persons, relationships, o
     });
     try {
       const detail = await api.event.setContribution(event.id, personId, nextPaid);
-      const paid = detail.contributions.filter((c) => c.paid);
-      setPaidIds(new Set(paid.map((c) => c.personId)));
-      onStatsChange(paid.length, paid.length * event.amountPerPerson);
+      setPaidIds(new Set((detail.contributions ?? []).filter((c) => c.paid).map((c) => c.personId)));
+      patchFromDetail(detail);
     } catch {
-      // Revert on failure.
       setPaidIds((prev) => {
         const next = new Set(prev);
         if (nextPaid) next.delete(personId);
@@ -89,8 +95,7 @@ export default function EventContributionView({ event, persons, relationships, o
   };
 
   return (
-    <FullScreenSheet title={event.title} onClose={onClose}>
-      {/* Summary */}
+    <FullScreenSheet title={event.title} onClose={onClose} tone="book">
       <div className="grid grid-cols-3 gap-px border-b border-slate-200 bg-slate-200 text-center">
         <div className="bg-white py-3">
           <div className="text-lg font-bold text-emerald-600">{livingPaidCount}</div>
@@ -101,13 +106,13 @@ export default function EventContributionView({ event, persons, relationships, o
           <div className="text-xs text-slate-500">{UI.EVENT_UNPAID}</div>
         </div>
         <div className="bg-white py-3">
-          <div className="text-base font-bold text-blue-600">{formatVnd(totalCollected)}</div>
+          <div className="text-base font-bold text-blue-600">{formatVnd(contributionTotal)}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_TOTAL_COLLECTED}</div>
         </div>
       </div>
 
       {event.amountPerPerson > 0 ? (
-        <p className="px-4 pt-3 text-xs text-slate-500">
+        <p className="px-4 pt-3 text-xs text-amber-100/80">
           {UI.EVENT_AMOUNT_PER_PERSON(formatVnd(event.amountPerPerson))}
         </p>
       ) : null}
@@ -117,13 +122,13 @@ export default function EventContributionView({ event, persons, relationships, o
           <LoadingSpinner size={36} />
         </div>
       ) : livingCount === 0 ? (
-        <p className="px-4 py-12 text-center text-sm text-slate-400">{UI.EVENT_NO_MEMBERS}</p>
+        <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENT_NO_MEMBERS}</p>
       ) : (
         <div className="space-y-4 p-4">
           {groups.map((group) => {
             const groupPaid = group.members.filter((m) => paidIds.has(m.id)).length;
             return (
-              <section key={group.key} className="overflow-hidden rounded-xl border border-slate-200">
+              <section key={group.key} className="overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900">
                 <header className="flex items-center justify-between gap-2 bg-slate-50 px-3 py-2">
                   <div className="min-w-0">
                     <h3 className="truncate text-sm font-semibold text-slate-800">

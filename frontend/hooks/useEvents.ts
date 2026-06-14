@@ -56,10 +56,10 @@ export function useEvents() {
     setEvents((prev) => prev.filter((e) => e.id !== id));
   }, []);
 
-  /** Replace one event's derived stats after a contribution toggle. */
-  const patchStats = useCallback((id: number, paidCount: number, totalCollected: number) => {
-    setEvents((prev) => prev.map((e) => (e.id === id ? { ...e, paidCount, totalCollected } : e)));
+  /** Merge fresh derived stats into one list event after a detail mutation. */
+  const patchEvent = useCallback((id: number, patch: Partial<FamilyEvent>) => {
+    setEvents((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
   }, []);
 
-  return { events, loading, error, saving, reload, createEvent, updateEvent, deleteEvent, patchStats };
+  return { events, loading, error, saving, reload, createEvent, updateEvent, deleteEvent, patchEvent };
 }

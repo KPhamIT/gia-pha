@@ -75,6 +75,31 @@ model Event {
 
   contributions EventContribution[]
 
+  donations EventDonation[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model EventDonation {
+  id Int @id @default(autoincrement())
+
+  eventId Int
+
+  // Optional link to a family-tree member; null for outside donors.
+  personId Int?
+
+  donorName String
+
+  amount Int @default(0)
+
+  note String? @db.Text
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  person Person? @relation(fields: [personId], references: [id], onDelete: SetNull)
+
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
@@ -148,6 +173,8 @@ model Person {
   graveInfo GraveInfo?
 
   contributions EventContribution[]
+
+  donations EventDonation[]
 
   createdAt DateTime @default(now())
 }
