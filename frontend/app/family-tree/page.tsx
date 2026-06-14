@@ -1,7 +1,9 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import FamilyTreeGraph from '@/components/family-tree/graph/FamilyTreeGraph';
+import TreeFilters from '@/components/family-tree/graph/TreeFilters';
+import BranchPromptSheet from '@/components/family-tree/graph/BranchPromptSheet';
 import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet';
 import EditPersonSheet from '@/components/family-tree/person/EditPersonSheet';
 import AddChildSheet from '@/components/family-tree/person/AddChildSheet';
@@ -13,7 +15,10 @@ import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSett
 import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
 import Icon from '@/components/icons/Icon';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
+import { useUserBranch } from '@/hooks/useUserBranch';
 import { useLayoutConfig } from '@/hooks/useLayoutConfig';
+import { filterTreeData } from '@/utils/filter-tree-data';
+import type { BranchValue } from '@/lib/constants/branches';
 import { usePersonActions } from '@/hooks/usePersonActions';
 import { usePersonDetail } from '@/hooks/usePersonDetail';
 import { usePersonDetailStore } from '@/store/personDetailStore';
@@ -66,6 +71,10 @@ export default function FamilyTreePage() {
   const [showBook, setShowBook] = useState(true);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
+  const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
+  const [maxGeneration, setMaxGeneration] = useState<number | 'all'>(4);
+
+  const { branch: userBranch, setBranch: setUserBranch, hydrated: branchHydrated } = useUserBranch();
 
   const { detail, loading: detailLoading, error: detailError, reload: reloadDetail } = usePersonDetail(selectedPersonId);
   const { updateDetail: storeUpdateDetail } = usePersonDetailStore();
@@ -173,6 +182,22 @@ export default function FamilyTreePage() {
     [openPersonDetail],
   );
 
+  const handleSelectBranch = useCallback((branch: BranchValue) => setUserBranch(branch), [setUserBranch]);
+
+  // The on-page branch filter follows the user's saved branch until they override it.
+  const effectiveBranch = filterBranch ?? userBranch ?? 'all';
+
+  // Re-fit the viewport whenever the visible subset of the tree changes.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCenterTreeKey((key) => key + 1);
+  }, [effectiveBranch, maxGeneration]);
+
+  const filteredTreeData = useMemo(
+    () => (treeData ? filterTreeData(treeData, { branch: effectiveBranch, maxGeneration }) : null),
+    [treeData, effectiveBranch, maxGeneration],
+  );
+
   if (loading) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
@@ -210,6 +235,13 @@ export default function FamilyTreePage() {
         </button>
       </div>
 
+      <TreeFilters
+        branch={effectiveBranch}
+        maxGeneration={maxGeneration}
+        onBranchChange={setFilterBranch}
+        onMaxGenerationChange={setMaxGeneration}
+      />
+
       <TreeFab
         onAddPerson={handleOpenAddPerson}
         onSearch={handleOpenSearch}
@@ -219,7 +251,7 @@ export default function FamilyTreePage() {
 
       <div className="h-screen">
         <FamilyTreeGraph
-          treeData={treeData}
+          treeData={filteredTreeData ?? treeData}
           layoutConfig={layoutConfig}
           selectedNodeId={selectedPersonId}
           focusNodeId={focusNodeId}
@@ -252,6 +284,8 @@ export default function FamilyTreePage() {
           onPersonUpdated={updatePerson}
         />
       ) : null}
+
+      {branchHydrated && userBranch == null ? <BranchPromptSheet onSelect={handleSelectBranch} /> : null}
 
       {showSearch ? (
         <>

@@ -151,6 +151,15 @@ export const UI = {
   NO_SEARCH_RESULTS: 'Không tìm thấy kết quả',
   ADD_CHILD: 'Thêm con',
   DELETE_PERSON: 'Xóa',
+
+  // Branch onboarding + tree filters
+  BRANCH_PROMPT_TITLE: 'Bạn thuộc nhánh nào?',
+  BRANCH_PROMPT_SUBTITLE: 'Chọn nhánh của bạn để hiển thị cây gia phả phù hợp.',
+  FILTER_TITLE: 'Bộ lọc hiển thị',
+  FILTER_BRANCH_LABEL: 'Nhánh',
+  FILTER_ALL: 'Tất cả',
+  FILTER_GENERATION_LABEL: 'Hiển thị đến đời',
+  GENERATION_SHORT: (n: number) => `Đời ${n}`,
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
