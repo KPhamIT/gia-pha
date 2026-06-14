@@ -11,24 +11,29 @@ type FlipState = { dir: 'next' | 'prev'; from: number; to: number };
  * `onBeforeFlip` runs right before a flip starts (used to cache unsaved edits).
  */
 export function useBookFlip(totalLeaves: number, onBeforeFlip: () => void) {
-  const [pageIndex, setPageIndex] = useState(0);
+  const [storedIndex, setPageIndex] = useState(0);
   const [flip, setFlip] = useState<FlipState | null>(null);
   const touchStartX = useRef<number | null>(null);
+
+  // Hiding pages can shrink the book below the current index — clamp on read so
+  // the viewer never lands on a removed (blank) leaf.
+  const pageIndex = Math.min(storedIndex, Math.max(0, totalLeaves - 1));
 
   const goToPage = useCallback(
     (direction: 'next' | 'prev') => {
       if (flip) return;
-      const nextIndex = direction === 'next' ? pageIndex + 1 : pageIndex - 1;
+      const current = Math.min(storedIndex, Math.max(0, totalLeaves - 1));
+      const nextIndex = direction === 'next' ? current + 1 : current - 1;
       if (nextIndex < 0 || nextIndex >= totalLeaves) return;
 
       onBeforeFlip();
-      setFlip({ dir: direction, from: pageIndex, to: nextIndex });
+      setFlip({ dir: direction, from: current, to: nextIndex });
       window.setTimeout(() => {
         setPageIndex(nextIndex);
         setFlip(null);
       }, FLIP_MS);
     },
-    [flip, pageIndex, totalLeaves, onBeforeFlip],
+    [flip, storedIndex, totalLeaves, onBeforeFlip],
   );
 
   const handleTouchStart = (e: React.TouchEvent) => {

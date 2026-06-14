@@ -6,6 +6,7 @@ import { sortPersonsForBook } from '@/utils/sort-persons-for-book';
 import { usePersonDetailStore } from '@/store/personDetailStore';
 import { type BookLeafCtx } from './BookLeaf';
 import { buildLeaves } from './book-leaves';
+import { applyPageConfig } from './book-page-config';
 import { useBookSettings } from './useBookSettings';
 import { useBookDraft } from './useBookDraft';
 import { useBookFlip } from './useBookFlip';
@@ -17,12 +18,17 @@ import { useGenealogyPrint } from './useGenealogyPrint';
  */
 export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Person) => void) {
   const sortedPersons = useMemo(() => sortPersonsForBook(persons), [persons]);
-  const leaves = useMemo(() => buildLeaves(sortedPersons), [sortedPersons]);
-  const totalLeaves = leaves.length;
-  const personCount = sortedPersons.length;
 
   const { details, status, loadAll, updateDetail } = usePersonDetailStore();
   const { settings, updateSettings } = useBookSettings();
+
+  const visiblePersons = useMemo(
+    () => applyPageConfig(sortedPersons, settings.pageConfig),
+    [sortedPersons, settings.pageConfig],
+  );
+  const leaves = useMemo(() => buildLeaves(visiblePersons), [visiblePersons]);
+  const totalLeaves = leaves.length;
+  const personCount = visiblePersons.length;
 
   // The flip and print hooks cache the current draft before they run, but the
   // draft hook needs the page index from the flip hook — break the cycle with a
@@ -72,5 +78,5 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
     [leaves, settings, updateSettings, details, personCount, currentDetail, draft, isDirty, saving, getPersonDraft, setDraft, handleSave],
   );
 
-  return { status, leaves, totalLeaves, settings, updateSettings, saving, ctx, ...flipApi, ...printApi };
+  return { status, leaves, totalLeaves, sortedPersons, settings, updateSettings, saving, ctx, ...flipApi, ...printApi };
 }

@@ -4,6 +4,7 @@ import { UI } from '@/lib/constants/ui-strings';
 import { DEFAULT_BORDER_STYLE_ID, isBorderStyleId } from './page-border-styles';
 import { DEFAULT_FORM_STYLE_ID, isFormStyleId } from './page-form-styles';
 import { DEFAULT_CALLIGRAPHY_FONT_ID } from './calligraphy-fonts';
+import { type BookPageConfig, normalizePageConfig } from './book-page-config';
 
 /** Key under which book settings live inside the user's settings JSON blob. */
 const BOOK_SETTINGS_KEY = 'book';
@@ -22,6 +23,8 @@ export type BookSettings = {
   prefaceSignature: string;
   borderStyleId: string;
   formStyleId: string;
+  /** Per-person visibility / ordering overrides for the book pages. */
+  pageConfig: BookPageConfig;
 };
 
 export function defaultBookSettings(): BookSettings {
@@ -35,6 +38,7 @@ export function defaultBookSettings(): BookSettings {
     prefaceSignature: '',
     borderStyleId: DEFAULT_BORDER_STYLE_ID,
     formStyleId: DEFAULT_FORM_STYLE_ID,
+    pageConfig: {},
   };
 }
 
@@ -44,6 +48,7 @@ export function normalizeBookSettings(partial: Partial<BookSettings> | null | un
   const merged: BookSettings = { ...base, ...(partial ?? {}) };
   if (!isBorderStyleId(merged.borderStyleId)) merged.borderStyleId = base.borderStyleId;
   if (!isFormStyleId(merged.formStyleId)) merged.formStyleId = base.formStyleId;
+  merged.pageConfig = normalizePageConfig(merged.pageConfig);
   return merged;
 }
 

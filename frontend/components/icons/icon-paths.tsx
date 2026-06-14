@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll';
+export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll' | 'list';
 
 export interface IconDefinition {
   viewBox: string;
@@ -187,6 +187,19 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
         <path d="M9 13h6" />
         <path d="M9 17h4" />
         <path d="M5 7H4a2 2 0 0 0-2 2v5h18v-5a2 2 0 0 0-2-2h-1" />
+      </>
+    ),
+  },
+  list: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M8 6h13" />
+        <path d="M8 12h13" />
+        <path d="M8 18h13" />
+        <path d="M3 6h.01" />
+        <path d="M3 12h.01" />
+        <path d="M3 18h.01" />
       </>
     ),
   },
