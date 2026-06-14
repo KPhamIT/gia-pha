@@ -260,6 +260,7 @@ export default function FamilyTreePage() {
           onPersonAdded={addPerson}
           onRelationshipAdded={addRelationship}
           onRelationshipRemoved={removeRelationship}
+          theme={theme}
         />
       </div>
 

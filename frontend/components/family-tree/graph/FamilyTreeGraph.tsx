@@ -11,6 +11,7 @@ import type {
   FamilyTreeData,
   Person,
   Relationship,
+  ThemeMode,
 } from "@/components/types/family-tree-types";
 import FamilyTreeEdge from "./FamilyTreeEdge";
 import ConnectRelationshipModal from "./ConnectRelationshipModal";
@@ -33,6 +34,7 @@ export type FamilyTreeGraphProps = {
   onPersonAdded?: (person: Person, relationship: Relationship) => void;
   onRelationshipAdded?: (relationship: Relationship) => void;
   onRelationshipRemoved?: (relationshipId: number) => void;
+  theme?: ThemeMode;
 };
 
 function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
@@ -45,6 +47,7 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         edges={graph.enhancedEdges}
         nodeTypes={{ custom: FamilyTreeNode }}
         edgeTypes={{ default: FamilyTreeEdge, step: FamilyTreeEdge }}
+        colorMode={props.theme ?? "light"}
         minZoom={GRAPH_MIN_ZOOM}
         fitView
         fitViewOptions={{
