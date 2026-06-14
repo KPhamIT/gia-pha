@@ -15,14 +15,14 @@ export type FamilyGroup = {
 };
 
 /** Gender is stored inconsistently ('male'/'Nam'); treat both as male. */
-function isMale(person: Person): boolean {
+export function isMale(person: Person): boolean {
   const g = (person.gender ?? '').trim().toLowerCase();
   return g === 'male' || g === 'nam' || g === 'm';
 }
 
-/** A person counts as living when no death date is recorded. */
+/** A person is living when not flagged deceased and no death date is recorded. */
 export function isLiving(person: Person): boolean {
-  return !person.deathDate;
+  return !person.deceased && !person.deathDate;
 }
 
 function byGenerationThenName(a: Person, b: Person): number {
@@ -40,6 +40,7 @@ function byGenerationThenName(a: Person, b: Person): number {
 export function groupLivingByFamily(
   persons: Person[],
   relationships: Relationship[],
+  options?: { malesOnly?: boolean },
 ): FamilyGroup[] {
   const personById = new Map(persons.map((p) => [p.id, p]));
   const edges = normalizeParentChildEdges(getTreeEdges(getEffectiveRelationships(relationships)));
@@ -56,6 +57,7 @@ export function groupLivingByFamily(
   const groups = new Map<string, FamilyGroup>();
   for (const person of persons) {
     if (!isLiving(person)) continue;
+    if (options?.malesOnly && !isMale(person)) continue;
     const father = fatherOf(person.id);
     const key = father ? `f-${father.id}` : 'root';
     const group = groups.get(key) ?? { key, head: father, members: [] };

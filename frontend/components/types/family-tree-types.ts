@@ -4,6 +4,7 @@ export type Person = {
   gender?: string | null;
   birthDate?: string | null;
   deathDate?: string | null;
+  deceased?: boolean | null;
   avatar?: string | null;
   generation?: number | null;
   branch?: number | null;
@@ -56,6 +57,7 @@ export type UpdatePersonDetailInput = {
   gender?: string;
   birthDate?: string;
   deathDate?: string;
+  deceased?: boolean;
   avatar?: string;
   generation?: number | null;
   branch?: number | null;

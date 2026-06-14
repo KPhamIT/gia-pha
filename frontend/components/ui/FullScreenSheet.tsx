@@ -16,11 +16,12 @@ type FullScreenSheetProps = {
 
 export default function FullScreenSheet({ title, onClose, children, headerRight, tone = 'light' }: FullScreenSheetProps) {
   const isBook = tone === 'book';
+  // Matches the genealogy-book pages manager: amber gradient + white content.
   const rootClass = isBook
     ? 'bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50'
     : 'bg-white';
-  const headerClass = isBook ? 'border-amber-100/15' : 'border-slate-200';
-  const backBtnClass = isBook ? 'text-amber-100 active:bg-white/10' : 'text-slate-600 active:bg-slate-100';
+  const headerClass = isBook ? 'border-amber-100/10' : 'border-slate-200';
+  const backBtnClass = isBook ? 'text-amber-50 active:bg-white/10' : 'text-slate-600 active:bg-slate-100';
   const titleClass = isBook ? 'text-amber-50' : 'text-slate-900';
 
   return (

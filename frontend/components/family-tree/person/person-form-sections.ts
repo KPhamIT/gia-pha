@@ -1,7 +1,7 @@
 import { UI } from '@/lib/constants/ui-strings';
 import type { PersonDraft } from '@/utils/person-detail-form';
 
-export type FieldType = 'text' | 'date' | 'number' | 'textarea' | 'select';
+export type FieldType = 'text' | 'date' | 'number' | 'textarea' | 'select' | 'checkbox';
 
 export type Field = {
   key: keyof PersonDraft;
@@ -24,6 +24,7 @@ export const PERSON_FORM_SECTIONS: Section[] = [
       { key: 'fullName', label: UI.CHILD_NAME },
       { key: 'gender', label: UI.GENDER, type: 'select', options: GENDER_OPTIONS },
       { key: 'birthDate', label: UI.BIRTH_DATE, type: 'date' },
+      { key: 'deceased', label: UI.DECEASED_STATUS, type: 'checkbox' },
       { key: 'deathDate', label: UI.DEATH_DATE, type: 'date' },
     ],
   },

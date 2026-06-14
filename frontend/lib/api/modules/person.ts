@@ -12,6 +12,7 @@ type CreatePersonDto = {
   gender?: string;
   birthDate?: string;
   deathDate?: string;
+  deceased?: boolean;
   avatar?: string;
   generation?: number | null;
   branch?: number | null;

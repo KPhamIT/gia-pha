@@ -9,6 +9,7 @@ export type FamilyEvent = {
   type: EventType;
   eventDate?: string | null;
   amountPerPerson: number;
+  maleOnly: boolean;
   paidCount: number;
   totalCollected: number;
   donationTotal: number;
@@ -56,6 +57,7 @@ export type CreateEventInput = {
   type: EventType;
   eventDate?: string;
   amountPerPerson?: number;
+  maleOnly?: boolean;
 };
 
 export type UpdateEventInput = Partial<CreateEventInput>;

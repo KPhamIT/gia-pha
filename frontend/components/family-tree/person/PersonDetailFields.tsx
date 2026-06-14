@@ -13,6 +13,20 @@ function FieldControl({ field, value, disabled, onChange }: {
 }) {
   const common = { value, disabled, onChange: (e: { target: { value: string } }) => onChange(e.target.value) };
 
+  if (field.type === 'checkbox') {
+    return (
+      <label className="flex items-center gap-2 text-sm text-slate-700">
+        <input
+          type="checkbox"
+          checked={value === '1'}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked ? '1' : '')}
+          className="h-5 w-5 cursor-pointer accent-amber-600"
+        />
+        <span>{UI.DECEASED_CHECKBOX}</span>
+      </label>
+    );
+  }
   if (field.type === 'textarea') {
     return <textarea {...common} className={textareaClassName} />;
   }

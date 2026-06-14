@@ -9,6 +9,7 @@ import { UI } from '@/lib/constants/ui-strings';
 import { getBranchLabel } from '@/lib/constants/branches';
 import type { Person } from '@/components/types/family-tree-types';
 import type { CreateDonationInput, EventDonation } from '@/components/types/event-types';
+import { ET } from './event-theme';
 
 type Props = {
   initial?: EventDonation | null;
@@ -81,8 +82,8 @@ export default function EventDonationFormSheet({ initial, persons, saving, onSub
         <div className="space-y-4 rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
         <FormField label={UI.EVENT_DONATION_PICK_MEMBER}>
           {selectedPerson ? (
-            <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+            <div className="flex items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white">
                 {selectedPerson.fullName.charAt(0)}
               </span>
               <div className="min-w-0 flex-1">
@@ -128,9 +129,9 @@ export default function EventDonationFormSheet({ initial, persons, saving, onSub
                       <button
                         type="button"
                         onClick={() => selectMember(person)}
-                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left active:bg-slate-50"
+                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left active:bg-amber-50"
                       >
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-50 text-sm font-semibold text-blue-700">
+                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white">
                           {person.fullName.charAt(0)}
                         </span>
                         <div className="min-w-0">
@@ -189,7 +190,7 @@ export default function EventDonationFormSheet({ initial, persons, saving, onSub
           type="button"
           onClick={handleSubmit}
           disabled={saving}
-          className="mt-2 flex w-full items-center justify-center rounded-2xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700 disabled:opacity-50"
+          className={`mt-2 flex w-full items-center justify-center rounded-2xl py-3.5 text-sm font-semibold ${ET.primaryBtn}`}
         >
           {UI.EVENT_SAVE}
         </button>

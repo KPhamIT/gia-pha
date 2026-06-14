@@ -14,6 +14,7 @@ import type {
   FamilyEventDetail,
 } from '@/components/types/event-types';
 import { formatVnd } from './event-format';
+import { ET } from './event-theme';
 import EventDonationFormSheet from './EventDonationFormSheet';
 
 type Props = {
@@ -86,7 +87,7 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
         setEditing(null);
         setFormOpen(true);
       }}
-      className="grid h-10 w-10 place-items-center rounded-full bg-blue-600 text-white active:bg-blue-700"
+      className={`grid h-10 w-10 place-items-center rounded-full ${ET.roundBtn}`}
       aria-label={UI.EVENT_DONATION_ADD}
     >
       <Icon path="plus" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -96,8 +97,8 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
   return (
     <>
       <FullScreenSheet title={UI.EVENT_DONATION_SECTION} onClose={onClose} headerRight={addButton} tone="book">
-        <div className="border-b border-slate-200 bg-white px-4 py-3 text-center">
-          <div className="text-xl font-bold text-blue-600">{formatVnd(donationTotal)}</div>
+        <div className="border-b border-amber-400/20 bg-white px-4 py-3 text-center">
+          <div className={`text-xl font-bold ${ET.money}`}>{formatVnd(donationTotal)}</div>
           <div className="text-xs text-slate-500">
             {UI.EVENT_DONATION_TOTAL} · {donations.length}
           </div>
@@ -110,17 +111,17 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
         ) : donations.length === 0 ? (
           <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENT_DONATION_EMPTY}</p>
         ) : (
-          <ul className="m-4 divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900">
+          <ul className={`m-4 divide-y divide-neutral-100 ${ET.panel}`}>
             {donations.map((donation) => (
               <li key={donation.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-50 text-sm font-semibold text-blue-700">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white">
                   {donation.donorName.charAt(0)}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-slate-800">{donation.donorName}</span>
-                  {donation.note ? <span className="block truncate text-xs text-slate-400">{donation.note}</span> : null}
+                  <span className="block truncate text-sm font-medium text-neutral-800">{donation.donorName}</span>
+                  {donation.note ? <span className="block truncate text-xs text-neutral-400">{donation.note}</span> : null}
                 </div>
-                <span className="shrink-0 text-sm font-semibold text-blue-600">{formatVnd(donation.amount)}</span>
+                <span className={`shrink-0 text-sm font-bold ${ET.money}`}>{formatVnd(donation.amount)}</span>
                 <div className="flex shrink-0 gap-1">
                   <button
                     type="button"
@@ -128,7 +129,7 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
                       setEditing(donation);
                       setFormOpen(true);
                     }}
-                    className="grid h-8 w-8 place-items-center rounded-full text-slate-500 active:bg-slate-100"
+                    className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100"
                     aria-label={UI.EVENT_DONATION_EDIT}
                   >
                     <Icon path="edit" size={15} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />

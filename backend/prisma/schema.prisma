@@ -71,6 +71,9 @@ model Event {
   // Fixed contribution amount per person (VND) for CONTRIBUTION events.
   amountPerPerson Int @default(0)
 
+  // When true, only living male members are expected to contribute.
+  maleOnly Boolean @default(false)
+
   organization Organization @relation(fields: [organizationId], references: [id])
 
   contributions EventContribution[]
@@ -139,6 +142,10 @@ model Person {
   birthDate DateTime?
 
   deathDate DateTime?
+
+  // Explicit life status — set when the death date is unknown but the person
+  // is known to have passed away.
+  deceased Boolean @default(false)
 
   avatar String?
 

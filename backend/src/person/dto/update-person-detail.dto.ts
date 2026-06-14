@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsDateString,
   IsInt,
   IsOptional,
@@ -39,6 +40,10 @@ export class UpdatePersonDetailDto {
   @IsOptional()
   @IsDateString()
   deathDate?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  deceased?: boolean;
 
   @IsOptional()
   @IsString()

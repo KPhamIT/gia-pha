@@ -7,6 +7,8 @@ export type PersonDraft = {
   gender: string;
   birthDate: string;
   deathDate: string;
+  /** '1' when the person is deceased, '' otherwise (kept string for the form). */
+  deceased: string;
   generation: string;
   branch: string;
   birthPlace: string;
@@ -34,6 +36,7 @@ export function buildPersonDraft(detail: PersonDetail | null, branchFallback = '
     gender: person?.gender ?? '',
     birthDate: toDateInputValue(person?.birthDate),
     deathDate: toDateInputValue(person?.deathDate),
+    deceased: person?.deceased || person?.deathDate ? '1' : '',
     generation: person?.generation != null ? String(person.generation) : '',
     branch: person?.branch != null ? String(person.branch) : branchFallback,
     birthPlace: person?.birthPlace ?? '',
@@ -56,6 +59,7 @@ export function draftToUpdateInput(draft: PersonDraft): UpdatePersonDetailInput 
     gender: draft.gender || undefined,
     birthDate: draft.birthDate || undefined,
     deathDate: draft.deathDate || undefined,
+    deceased: draft.deceased === '1',
     generation: draft.generation ? Number(draft.generation) : undefined,
     branch: draft.branch ? Number(draft.branch) : undefined,
     birthPlace: draft.birthPlace || undefined,

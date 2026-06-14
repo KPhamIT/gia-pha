@@ -11,6 +11,7 @@ import type { Person, Relationship } from '@/components/types/family-tree-types'
 import type { FamilyEvent, FamilyEventDetail } from '@/components/types/event-types';
 import { groupLivingByFamily } from './event-grouping';
 import { formatVnd } from './event-format';
+import { ET } from './event-theme';
 
 type Props = {
   event: FamilyEvent;
@@ -34,7 +35,10 @@ export default function EventContributionView({ event, persons, relationships, o
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
-  const groups = useMemo(() => groupLivingByFamily(persons, relationships), [persons, relationships]);
+  const groups = useMemo(
+    () => groupLivingByFamily(persons, relationships, { malesOnly: event.maleOnly }),
+    [persons, relationships, event.maleOnly],
+  );
   const livingCount = useMemo(() => groups.reduce((n, g) => n + g.members.length, 0), [groups]);
 
   useEffect(() => {
@@ -96,17 +100,17 @@ export default function EventContributionView({ event, persons, relationships, o
 
   return (
     <FullScreenSheet title={event.title} onClose={onClose} tone="book">
-      <div className="grid grid-cols-3 gap-px border-b border-slate-200 bg-slate-200 text-center">
+      <div className="grid grid-cols-3 gap-px border-b border-amber-300/30 bg-amber-200/50 text-center">
         <div className="bg-white py-3">
-          <div className="text-lg font-bold text-emerald-600">{livingPaidCount}</div>
+          <div className="text-lg font-bold text-amber-700">{livingPaidCount}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_PAID}</div>
         </div>
         <div className="bg-white py-3">
-          <div className="text-lg font-bold text-rose-600">{livingCount - livingPaidCount}</div>
+          <div className="text-lg font-bold text-slate-400">{livingCount - livingPaidCount}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_UNPAID}</div>
         </div>
         <div className="bg-white py-3">
-          <div className="text-base font-bold text-blue-600">{formatVnd(contributionTotal)}</div>
+          <div className={`text-base font-bold ${ET.money}`}>{formatVnd(contributionTotal)}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_TOTAL_COLLECTED}</div>
         </div>
       </div>
@@ -128,19 +132,19 @@ export default function EventContributionView({ event, persons, relationships, o
           {groups.map((group) => {
             const groupPaid = group.members.filter((m) => paidIds.has(m.id)).length;
             return (
-              <section key={group.key} className="overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-900">
-                <header className="flex items-center justify-between gap-2 bg-slate-50 px-3 py-2">
+              <section key={group.key} className={ET.panel}>
+                <header className={`flex items-center justify-between gap-2 px-3 py-2 ${ET.bandHeader}`}>
                   <div className="min-w-0">
-                    <h3 className="truncate text-sm font-semibold text-slate-800">
+                    <h3 className="truncate text-sm font-semibold text-amber-900">
                       {group.head ? UI.EVENT_FAMILY_OF(group.head.fullName) : UI.EVENT_ROOT_GROUP}
                     </h3>
-                    {group.head ? <p className="truncate text-xs text-slate-400">{personMeta(group.head)}</p> : null}
+                    {group.head ? <p className="truncate text-xs text-amber-800/70">{personMeta(group.head)}</p> : null}
                   </div>
-                  <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-slate-500">
+                  <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-amber-800">
                     {groupPaid}/{group.members.length}
                   </span>
                 </header>
-                <ul className="divide-y divide-slate-100">
+                <ul className="divide-y divide-neutral-100">
                   {group.members.map((member) => {
                     const paid = paidIds.has(member.id);
                     return (
@@ -149,11 +153,11 @@ export default function EventContributionView({ event, persons, relationships, o
                           type="button"
                           onClick={() => void toggle(member.id)}
                           disabled={togglingId === member.id}
-                          className="flex w-full items-center gap-3 px-3 py-2.5 text-left active:bg-slate-50 disabled:opacity-60"
+                          className="flex w-full items-center gap-3 px-3 py-2.5 text-left active:bg-amber-50 disabled:opacity-60"
                         >
                           <span
                             className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${
-                              paid ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-slate-300 text-transparent'
+                              paid ? 'border-amber-600 bg-amber-600 text-white' : 'border-slate-300 text-transparent'
                             }`}
                           >
                             <Icon path="check" size={14} fill="none" stroke="currentColor" strokeWidth={3} pointer={false} />
@@ -164,7 +168,7 @@ export default function EventContributionView({ event, persons, relationships, o
                               <span className="block truncate text-xs text-slate-400">{personMeta(member)}</span>
                             ) : null}
                           </span>
-                          <span className={`shrink-0 text-xs font-medium ${paid ? 'text-emerald-600' : 'text-slate-400'}`}>
+                          <span className={`shrink-0 text-xs font-semibold ${paid ? 'text-amber-700' : 'text-slate-400'}`}>
                             {paid ? UI.EVENT_PAID : UI.EVENT_UNPAID}
                           </span>
                         </button>

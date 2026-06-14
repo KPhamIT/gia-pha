@@ -49,6 +49,7 @@ export class EventService {
         type: dto.type ?? 'INFO',
         eventDate: dto.eventDate ? new Date(dto.eventDate) : undefined,
         amountPerPerson: dto.amountPerPerson ?? 0,
+        maleOnly: dto.maleOnly ?? false,
         organizationId:
           organization?.id ?? (await this.getDefaultOrganization()).id,
       },
@@ -105,6 +106,7 @@ export class EventService {
               ? new Date(dto.eventDate)
               : null,
         amountPerPerson: dto.amountPerPerson,
+        maleOnly: dto.maleOnly,
       },
     });
     return this.findOne(id);

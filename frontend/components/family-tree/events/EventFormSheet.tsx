@@ -6,6 +6,7 @@ import { FormField, inputClassName, textareaClassName } from '@/components/ui/Co
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
 import type { CreateEventInput, EventType, FamilyEvent } from '@/components/types/event-types';
+import { ET } from './event-theme';
 
 type Props = {
   initial?: FamilyEvent | null;
@@ -25,6 +26,7 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
   const [type, setType] = useState<EventType>(initial?.type ?? 'INFO');
   const [eventDate, setEventDate] = useState(initial?.eventDate ? initial.eventDate.slice(0, 10) : '');
   const [amount, setAmount] = useState(initial?.amountPerPerson ? String(initial.amountPerPerson) : '');
+  const [maleOnly, setMaleOnly] = useState(initial?.maleOnly ?? false);
 
   const handleSubmit = () => {
     if (!title.trim()) {
@@ -38,6 +40,7 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
       type,
       eventDate: eventDate || undefined,
       amountPerPerson: type === 'CONTRIBUTION' && !Number.isNaN(parsedAmount) ? parsedAmount : 0,
+      maleOnly: type === 'CONTRIBUTION' ? maleOnly : false,
     });
   };
 
@@ -72,7 +75,7 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
                 disabled={saving}
                 className={`rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                   type === option.value
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    ? 'border-amber-500 bg-amber-50 text-amber-800'
                     : 'border-slate-300 bg-white text-slate-700'
                 }`}
               >
@@ -83,17 +86,42 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
         </FormField>
 
         {type === 'CONTRIBUTION' ? (
-          <FormField label={UI.EVENT_AMOUNT_LABEL}>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ''))}
-              placeholder={UI.EVENT_AMOUNT_PLACEHOLDER}
-              className={inputClassName}
+          <>
+            <FormField label={UI.EVENT_AMOUNT_LABEL}>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ''))}
+                placeholder={UI.EVENT_AMOUNT_PLACEHOLDER}
+                className={inputClassName}
+                disabled={saving}
+              />
+            </FormField>
+
+            <button
+              type="button"
+              onClick={() => setMaleOnly((v) => !v)}
               disabled={saving}
-            />
-          </FormField>
+              className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-left"
+            >
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-slate-800">{UI.EVENT_MALE_ONLY_LABEL}</span>
+                <span className="block text-xs text-slate-500">{UI.EVENT_MALE_ONLY_HINT}</span>
+              </span>
+              <span
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                  maleOnly ? 'bg-amber-600' : 'bg-slate-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                    maleOnly ? 'left-[1.375rem]' : 'left-0.5'
+                  }`}
+                />
+              </span>
+            </button>
+          </>
         ) : null}
 
         <FormField label={UI.EVENT_DATE_LABEL}>
@@ -120,7 +148,7 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
           type="button"
           onClick={handleSubmit}
           disabled={saving}
-          className="mt-2 flex w-full items-center justify-center rounded-2xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700 disabled:opacity-50"
+          className={`mt-2 flex w-full items-center justify-center rounded-2xl py-3.5 text-sm font-semibold ${ET.primaryBtn}`}
         >
           {UI.EVENT_SAVE}
         </button>

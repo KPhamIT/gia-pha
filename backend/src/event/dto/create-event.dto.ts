@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsInt,
@@ -30,6 +31,10 @@ export class CreateEventDto {
   @IsInt()
   @Min(0)
   amountPerPerson?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  maleOnly?: boolean;
 
   @IsOptional()
   @IsInt()

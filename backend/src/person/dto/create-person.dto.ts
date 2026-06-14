@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsInt,
   IsNotEmpty,
@@ -41,6 +42,10 @@ export class CreatePersonDto {
   @IsOptional()
   @IsDateString()
   deathDate?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  deceased?: boolean;
 
   @IsOptional()
   @IsString()

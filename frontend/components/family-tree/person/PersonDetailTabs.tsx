@@ -27,6 +27,10 @@ export default function PersonDetailTabBody({ tab, person, relations, onSelectPe
       <div className="divide-y divide-slate-100">
         <InfoRow label={UI.GENDER} value={person.gender} />
         <InfoRow label={UI.BIRTH_DATE} value={formatDate(person.birthDate) || UI.BIRTH_DATE_UNKNOWN} />
+        <InfoRow
+          label={UI.DECEASED_STATUS}
+          value={person.deceased || person.deathDate ? UI.STATUS_DECEASED : UI.STATUS_ALIVE}
+        />
         <InfoRow label={UI.DEATH_DATE} value={formatDate(person.deathDate)} />
         <InfoRow label={UI.BIRTH_PLACE} value={person.birthPlace} />
         <InfoRow label={UI.CURRENT_LOCATION} value={person.currentLocation} />

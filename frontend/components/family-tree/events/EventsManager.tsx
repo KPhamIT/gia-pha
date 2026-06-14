@@ -12,6 +12,7 @@ import EventFormSheet from './EventFormSheet';
 import EventContributionView from './EventContributionView';
 import EventDonationsView from './EventDonationsView';
 import { formatVnd } from './event-format';
+import { ET } from './event-theme';
 
 type Props = {
   persons: Person[];
@@ -58,7 +59,7 @@ export default function EventsManager({ persons, relationships, onClose }: Props
     <button
       type="button"
       onClick={openCreate}
-      className="grid h-10 w-10 place-items-center rounded-full bg-blue-600 text-white active:bg-blue-700"
+      className={`grid h-10 w-10 place-items-center rounded-full ${ET.roundBtn}`}
       aria-label={UI.EVENT_ADD}
     >
       <Icon path="plus" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -82,26 +83,31 @@ export default function EventsManager({ persons, relationships, onClose }: Props
               const date = formatDate(event.eventDate);
               const isContribution = event.type === 'CONTRIBUTION';
               return (
-                <article key={event.id} className="rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm">
+                <article key={event.id} className={`${ET.card} p-4`}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span
                           className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                            isContribution ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'
+                            isContribution ? 'bg-amber-700 text-amber-50' : 'bg-amber-100 text-amber-800'
                           }`}
                         >
                           {isContribution ? UI.EVENT_BADGE_CONTRIBUTION : UI.EVENT_BADGE_INFO}
                         </span>
-                        {date ? <span className="text-xs text-slate-400">{date}</span> : null}
+                        {isContribution && event.maleOnly ? (
+                          <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+                            {UI.EVENT_MALE_ONLY_BADGE}
+                          </span>
+                        ) : null}
+                        {date ? <span className="text-xs text-neutral-400">{date}</span> : null}
                       </div>
-                      <h2 className="mt-1 truncate text-base font-semibold text-slate-900">{event.title}</h2>
+                      <h2 className="mt-1 truncate text-base font-semibold text-neutral-900">{event.title}</h2>
                     </div>
                     <div className="flex shrink-0 gap-1">
                       <button
                         type="button"
                         onClick={() => openEdit(event)}
-                        className="grid h-8 w-8 place-items-center rounded-full text-slate-500 active:bg-slate-100"
+                        className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100"
                         aria-label={UI.EVENT_EDIT}
                       >
                         <Icon path="edit" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -118,22 +124,22 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                   </div>
 
                   {event.description ? (
-                    <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{event.description}</p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-neutral-600">{event.description}</p>
                   ) : null}
 
-                  <div className="mt-3 border-t border-slate-100 pt-3">
+                  <div className="mt-3 border-t border-amber-200/60 pt-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-500">
+                      <span className="text-neutral-500">
                         {isContribution ? UI.EVENT_PAID_COUNT_SHORT(event.paidCount) : UI.EVENT_DONATION_TOTAL}
                       </span>
-                      <span className="font-semibold text-blue-600">{formatVnd(event.grandTotal)}</span>
+                      <span className={`font-bold ${ET.money}`}>{formatVnd(event.grandTotal)}</span>
                     </div>
                     <div className="mt-3 flex gap-2">
                       {isContribution ? (
                         <button
                           type="button"
                           onClick={() => setContributionEvent(event)}
-                          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-50 py-2.5 text-sm font-semibold text-blue-700 active:bg-blue-100"
+                          className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold ${ET.contribBtn}`}
                         >
                           <Icon path="list" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
                           {UI.EVENT_VIEW_CONTRIBUTION}
@@ -142,7 +148,7 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                       <button
                         type="button"
                         onClick={() => setDonationEvent(event)}
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-50 py-2.5 text-sm font-semibold text-amber-700 active:bg-amber-100"
+                        className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold ${ET.donationBtn}`}
                       >
                         <Icon path="userPlus" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
                         {UI.EVENT_VIEW_DONATION}
