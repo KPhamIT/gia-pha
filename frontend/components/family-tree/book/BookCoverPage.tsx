@@ -75,8 +75,6 @@ export default function BookCoverPage({ settings, readOnly = false, onChange }: 
           />
         )}
       </div>
-
-      {!readOnly ? <p className={`${styles.coverHint} noPrintHint`}>{UI.BOOK_COVER_HINT}</p> : null}
     </div>
   );
 }
