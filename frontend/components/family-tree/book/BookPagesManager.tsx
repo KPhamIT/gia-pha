@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Icon from '@/components/icons/Icon';
 import { UI } from '@/lib/constants/ui-strings';
 import type { Person } from '@/components/types/family-tree-types';
@@ -23,59 +23,81 @@ function pruneEntry(config: BookPageConfig, id: number): BookPageConfig {
   return next;
 }
 
-/** Full-screen table to toggle page visibility and set display order. */
+/**
+ * Full-screen table to toggle page visibility and set display order.
+ * Edits stay in a local draft and are persisted in a single batch when the
+ * user taps save — so per-row clicks never trigger the debounced settings API.
+ */
 export default function BookPagesManager({ persons, pageConfig, onChange, onClose }: Props) {
-  const visibleCount = useMemo(
-    () => persons.filter((p) => !pageConfig[p.id]?.hidden).length,
-    [persons, pageConfig],
-  );
+  const [draft, setDraft] = useState<BookPageConfig>(pageConfig);
+
+  const isDirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(pageConfig), [draft, pageConfig]);
+  const visibleCount = useMemo(() => persons.filter((p) => !draft[p.id]?.hidden).length, [persons, draft]);
 
   const toggleHidden = (id: number) => {
-    const hidden = pageConfig[id]?.hidden ? undefined : true;
-    const next: BookPageConfig = { ...pageConfig, [id]: { ...pageConfig[id], hidden } };
-    onChange(pruneEntry(next, id));
+    setDraft((prev) => {
+      const hidden = prev[id]?.hidden ? undefined : true;
+      return pruneEntry({ ...prev, [id]: { ...prev[id], hidden } }, id);
+    });
   };
 
   const setOrder = (id: number, raw: string) => {
     const trimmed = raw.trim();
     const parsed = Number.parseInt(trimmed, 10);
     const order = trimmed === '' || Number.isNaN(parsed) ? undefined : parsed;
-    const next: BookPageConfig = { ...pageConfig, [id]: { ...pageConfig[id], order } };
-    onChange(pruneEntry(next, id));
+    setDraft((prev) => pruneEntry({ ...prev, [id]: { ...prev[id], order } }, id));
   };
 
   const showAll = () => {
-    let next: BookPageConfig = { ...pageConfig };
-    for (const p of persons) {
-      if (next[p.id]?.hidden) {
-        next = { ...next, [p.id]: { ...next[p.id], hidden: undefined } };
-        next = pruneEntry(next, p.id);
+    setDraft((prev) => {
+      let next = { ...prev };
+      for (const p of persons) {
+        if (next[p.id]?.hidden) next = pruneEntry({ ...next, [p.id]: { ...next[p.id], hidden: undefined } }, p.id);
       }
-    }
-    onChange(next);
+      return next;
+    });
   };
 
   const resetOrder = () => {
-    let next: BookPageConfig = { ...pageConfig };
-    for (const p of persons) {
-      if (next[p.id]?.order !== undefined) {
-        next = { ...next, [p.id]: { ...next[p.id], order: undefined } };
-        next = pruneEntry(next, p.id);
+    setDraft((prev) => {
+      let next = { ...prev };
+      for (const p of persons) {
+        if (next[p.id]?.order !== undefined) next = pruneEntry({ ...next, [p.id]: { ...next[p.id], order: undefined } }, p.id);
       }
-    }
-    onChange(next);
+      return next;
+    });
+  };
+
+  const handleSave = () => {
+    if (isDirty) onChange(draft);
+    onClose();
+  };
+
+  const handleClose = () => {
+    if (isDirty && !window.confirm(UI.BOOK_PAGES_DISCARD_CONFIRM)) return;
+    onClose();
   };
 
   return (
     <div className={`${styles.viewerRoot} fixed inset-0 z-[60] flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}>
       <header className="flex shrink-0 items-center gap-2 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10" aria-label={UI.CANCEL}>
+        <button type="button" onClick={handleClose} className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10" aria-label={UI.CANCEL}>
           <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
         </button>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-lg font-semibold">{UI.BOOK_PAGES_TITLE}</h1>
           <p className="truncate text-xs text-amber-100/70">{UI.BOOK_PAGES_VISIBLE_COUNT(visibleCount, persons.length)}</p>
         </div>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={!isDirty}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-950 active:bg-amber-200 disabled:bg-white/10 disabled:text-amber-100/40"
+          aria-label={UI.BOOK_PAGES_SAVE}
+          title={isDirty ? UI.BOOK_PAGES_SAVE : UI.BOOK_PAGES_SAVED}
+        >
+          <Icon path="save" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        </button>
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
@@ -105,7 +127,7 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
               </thead>
               <tbody>
                 {persons.map((person, naturalIndex) => {
-                  const entry = pageConfig[person.id];
+                  const entry = draft[person.id];
                   const hidden = !!entry?.hidden;
                   const orderValue = entry?.order;
                   const meta = [
