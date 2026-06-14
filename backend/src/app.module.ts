@@ -7,6 +7,7 @@ import { PersonModule } from './person/person.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { RelationshipModule } from './relationship/relationship.module.js';
 import { SettingsModule } from './settings/settings.module.js';
+import { EventModule } from './event/event.module.js';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SettingsModule } from './settings/settings.module.js';
     AuthModule,
     RelationshipModule,
     SettingsModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],

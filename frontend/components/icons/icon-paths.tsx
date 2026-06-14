@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll' | 'list';
+export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll' | 'list' | 'calendar';
 
 export interface IconDefinition {
   viewBox: string;
@@ -200,6 +200,17 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
         <path d="M3 6h.01" />
         <path d="M3 12h.01" />
         <path d="M3 18h.01" />
+      </>
+    ),
+  },
+  calendar: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <path d="M16 2v4" />
+        <path d="M8 2v4" />
+        <path d="M3 10h18" />
       </>
     ),
   },

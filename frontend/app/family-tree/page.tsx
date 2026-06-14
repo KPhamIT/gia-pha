@@ -11,6 +11,7 @@ import AddPersonSheet from '@/components/family-tree/person/AddPersonSheet';
 import SearchSheet from '@/components/family-tree/person/SearchSheet';
 import TreeFab from '@/components/family-tree/graph/TreeFab';
 import GenealogyBookViewer from '@/components/family-tree/book/GenealogyBookViewer';
+import EventsManager from '@/components/family-tree/events/EventsManager';
 import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
 import Icon from '@/components/icons/Icon';
@@ -69,6 +70,7 @@ export default function FamilyTreePage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showBook, setShowBook] = useState(true);
+  const [showEvents, setShowEvents] = useState(false);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
   const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
@@ -107,6 +109,8 @@ export default function FamilyTreePage() {
   const handleCloseSettings = useCallback(() => setShowSettings(false), []);
   const handleCloseSearch = useCallback(() => setShowSearch(false), []);
   const handleCloseBook = useCallback(() => setShowBook(false), []);
+  const handleOpenEvents = useCallback(() => setShowEvents(true), []);
+  const handleCloseEvents = useCallback(() => setShowEvents(false), []);
   const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
   const handleCloseAddPerson = useCallback(() => setViewMode(null), []);
   const handleOpenEdit = useCallback(() => setViewMode('edit'), []);
@@ -246,6 +250,7 @@ export default function FamilyTreePage() {
         onAddPerson={handleOpenAddPerson}
         onSearch={handleOpenSearch}
         onOpenBook={handleOpenBook}
+        onOpenEvents={handleOpenEvents}
         onCenterTree={handleCenterTree}
       />
 
@@ -283,6 +288,14 @@ export default function FamilyTreePage() {
           persons={treeData.persons}
           onClose={handleCloseBook}
           onPersonUpdated={updatePerson}
+        />
+      ) : null}
+
+      {showEvents ? (
+        <EventsManager
+          persons={treeData.persons}
+          relationships={treeData.relationships}
+          onClose={handleCloseEvents}
         />
       ) : null}
 

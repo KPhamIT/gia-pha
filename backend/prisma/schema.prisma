@@ -12,8 +12,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
-
 enum RelationshipType {
   FATHER
   MOTHER
@@ -21,16 +19,21 @@ enum RelationshipType {
   CHILD
 }
 
+enum EventType {
+  INFO
+  CONTRIBUTION
+}
+
 model User {
-  id          Int          @id @default(autoincrement())
-  email       String?      @unique
-  provider    String
-  providerId  String       @unique
+  id         Int     @id @default(autoincrement())
+  email      String? @unique
+  provider   String
+  providerId String  @unique
 
-  person      Person?
-  settings    UserSettings?
+  person   Person?
+  settings UserSettings?
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model UserSettings {
@@ -42,62 +45,111 @@ model UserSettings {
 }
 
 model Organization {
-  id          Int      @id @default(autoincrement())
-  name        String
+  id   Int    @id @default(autoincrement())
+  name String
 
-  persons     Person[]
+  persons Person[]
 
-  createdAt   DateTime @default(now())
+  events Event[]
+
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id Int @id @default(autoincrement())
+
+  organizationId Int
+
+  title String
+
+  description String? @db.Text
+
+  type EventType @default(INFO)
+
+  eventDate DateTime?
+
+  // Fixed contribution amount per person (VND) for CONTRIBUTION events.
+  amountPerPerson Int @default(0)
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  contributions EventContribution[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model EventContribution {
+  id Int @id @default(autoincrement())
+
+  eventId Int
+
+  personId Int
+
+  paid Boolean @default(true)
+
+  paidAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, personId])
 }
 
 model Person {
-  id              Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  organizationId  Int
+  organizationId Int
 
-  userId          Int? @unique
+  userId Int? @unique
 
-  fullName        String
+  fullName String
 
-  gender          String?
+  gender String?
 
-  birthDate       DateTime?
+  birthDate DateTime?
 
-  deathDate       DateTime?
+  deathDate DateTime?
 
-  avatar          String?
+  avatar String?
 
-  generation      Int?
+  generation Int?
 
-  branch          Int? @default(1)
+  branch Int? @default(1)
 
-  birthPlace      String?
+  birthPlace String?
 
   currentLocation String?
 
-  education       String?
+  education String?
 
-  occupation      String?
+  occupation String?
 
-  religion        String?
+  religion String?
 
-  ethnicity       String?
+  ethnicity String?
 
-  achievements    String? @db.Text
+  achievements String? @db.Text
 
-  organization    Organization @relation(fields: [organizationId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
 
-  user            User? @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
-  fromRelations   Relationship[] @relation("fromPerson")
+  fromRelations Relationship[] @relation("fromPerson")
 
-  toRelations     Relationship[] @relation("toPerson")
+  toRelations Relationship[] @relation("toPerson")
 
-  biography       Biography?
+  biography Biography?
 
-  graveInfo       GraveInfo?
+  graveInfo GraveInfo?
 
-  createdAt       DateTime @default(now())
+  contributions EventContribution[]
+
+  createdAt DateTime @default(now())
 }
 
 model Biography {
@@ -119,17 +171,17 @@ model GraveInfo {
 }
 
 model Relationship {
-  id        Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  fromId    Int
+  fromId Int
 
-  toId      Int
+  toId Int
 
-  type      RelationshipType
+  type RelationshipType
 
-  from      Person @relation("fromPerson", fields: [fromId], references: [id])
+  from Person @relation("fromPerson", fields: [fromId], references: [id])
 
-  to        Person @relation("toPerson", fields: [toId], references: [id])
+  to Person @relation("toPerson", fields: [toId], references: [id])
 
   createdAt DateTime @default(now())
 }

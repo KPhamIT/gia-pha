@@ -8,4 +8,7 @@ export const API_ROUTES = {
   RELATIONSHIP_LIST: '/relationship',
   RELATIONSHIP: (id: number) => `/relationship/${id}`,
   SETTINGS: '/settings',
+  EVENT_LIST: '/event',
+  EVENT: (id: number) => `/event/${id}`,
+  EVENT_CONTRIBUTION: (id: number) => `/event/${id}/contribution`,
 };
