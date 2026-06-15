@@ -5,6 +5,7 @@ import type { PersonDetail } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import Icon from '@/components/icons/Icon';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import { extractPersonRelationships } from '@/utils/person-relationships';
 import PersonDetailTabBody, { DETAIL_TABS, type DetailTab } from './PersonDetailTabs';
@@ -46,7 +47,7 @@ export default function PersonDetailSheet({
         <button
           type="button"
           onClick={onEdit}
-          className="grid h-10 w-10 place-items-center rounded-full text-slate-600 active:bg-slate-100"
+          className="grid h-10 w-10 place-items-center rounded-full text-slate-600 active:bg-slate-100 md:hover:bg-slate-100"
           aria-label={UI.EDIT_PERSON}
           disabled={!person}
         >
@@ -59,25 +60,25 @@ export default function PersonDetailSheet({
           <LoadingSpinner size={36} label={UI.LOADING} />
         </div>
       ) : error ? (
-        <p className="p-4 text-sm text-red-600">{error}</p>
+        <p className={`text-sm text-red-600 ${LAYOUT.pagePad}`}>{error}</p>
       ) : person ? (
         <>
-          <div className="border-b border-slate-200 px-4 py-3">
+          <div className={`border-b border-slate-200 ${LAYOUT.pagePad} py-3`}>
             {person.generation != null ? (
               <p className="text-sm text-slate-500">Đời thứ {person.generation}</p>
             ) : null}
           </div>
 
-          <nav className="flex overflow-x-auto border-b border-slate-200">
+          <nav className="scrollbar-hide flex overflow-x-auto border-b border-slate-200">
             {DETAIL_TABS.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setTab(item.id)}
-                className={`shrink-0 px-4 py-3 text-sm font-medium transition ${
+                className={`shrink-0 px-4 py-3 text-sm font-medium transition md:px-6 ${
                   tab === item.id
                     ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-slate-500 active:text-slate-700'
+                    : 'text-slate-500 active:text-slate-700 md:hover:text-slate-700'
                 }`}
               >
                 {item.label}
@@ -85,7 +86,7 @@ export default function PersonDetailSheet({
             ))}
           </nav>
 
-          <div className="px-4 py-4">
+          <div className={LAYOUT.pagePad}>
             <PersonDetailTabBody tab={tab} person={person} relations={relations} onSelectPerson={onSelectPerson} />
           </div>
 

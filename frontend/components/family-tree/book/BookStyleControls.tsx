@@ -1,6 +1,7 @@
 'use client';
 
 import Icon from '@/components/icons/Icon';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import type { BookSettings } from './book-settings';
 import { CALLIGRAPHY_FONTS } from './calligraphy-fonts';
@@ -19,20 +20,20 @@ const selectClass =
 /** Floating panel to pick book-wide border, form layout and cover font. */
 export default function BookStyleControls({ settings, onChange, onClose }: BookStyleControlsProps) {
   return (
-    <>
+    <div className="fixed inset-0 z-40 flex items-end justify-center md:items-center md:bg-black/40 md:p-6">
       <button
         type="button"
         aria-label={UI.CANCEL}
         onClick={onClose}
-        className="fixed inset-0 z-40 cursor-default bg-black/30"
+        className="absolute inset-0 cursor-default"
       />
-      <div className="absolute right-3 top-14 z-50 w-72 rounded-2xl border border-amber-200/60 bg-white p-4 text-slate-800 shadow-2xl">
+      <div className={`relative w-full max-w-sm rounded-t-2xl border border-amber-200/60 bg-white text-slate-800 shadow-2xl md:rounded-2xl ${LAYOUT.pagePad}`}>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-amber-900">{UI.BOOK_STYLE_TITLE}</h2>
+          <h2 className="text-sm font-semibold text-amber-900 md:text-base">{UI.BOOK_STYLE_TITLE}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="grid h-7 w-7 place-items-center rounded-full text-slate-500 active:bg-slate-100"
+            className="grid h-7 w-7 place-items-center rounded-full text-slate-500 active:bg-slate-100 md:hover:bg-slate-100"
             aria-label={UI.CANCEL}
           >
             <Icon path="close" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -86,6 +87,6 @@ export default function BookStyleControls({ settings, onChange, onClose }: BookS
 
         <p className="mt-3 text-[11px] text-slate-400">{UI.BOOK_SAVED_HINT}</p>
       </div>
-    </>
+    </div>
   );
 }

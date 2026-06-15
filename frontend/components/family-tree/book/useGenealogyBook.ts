@@ -19,7 +19,10 @@ import { useGenealogyPrint } from './useGenealogyPrint';
 export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Person) => void) {
   const sortedPersons = useMemo(() => sortPersonsForBook(persons), [persons]);
 
-  const { details, status, loadAll, updateDetail } = usePersonDetailStore();
+  const details = usePersonDetailStore((s) => s.details);
+  const status = usePersonDetailStore((s) => s.status);
+  const loadAll = usePersonDetailStore((s) => s.loadAll);
+  const updateDetail = usePersonDetailStore((s) => s.updateDetail);
   const { settings, updateSettings } = useBookSettings();
 
   const visiblePersons = useMemo(

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
 import type { Connection, Edge, EdgeChange, FinalConnectionState, Node, NodeChange } from '@xyflow/react';
 import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
@@ -23,7 +23,6 @@ export function useFamilyTreeGraph({
   treeData,
   layoutConfig,
   selectedNodeId,
-  onNodeClick,
   onPersonAdded,
   onRelationshipAdded,
   onRelationshipRemoved,
@@ -34,6 +33,9 @@ export function useFamilyTreeGraph({
   const [pendingType, setPendingType] = useState<RelationshipType>('CHILD');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  const onRelationshipRemovedRef = useRef(onRelationshipRemoved);
+  onRelationshipRemovedRef.current = onRelationshipRemoved;
 
   useEffect(() => {
     const graph = buildFamilyTreeGraph(treeData, layoutConfig);
@@ -47,18 +49,9 @@ export function useFamilyTreeGraph({
       nodes.map((node) => ({
         ...node,
         selected: node.id === String(selectedNodeId),
-        type: 'custom',
-        data: {
-          ...node.data,
-          onNodeClick: () => {
-            const person = (node.data as { person?: Person }).person;
-            if (onNodeClick && person) {
-              onNodeClick(person.id, person);
-            }
-          },
-        },
+        type: 'custom' as const,
       })),
-    [nodes, onNodeClick, selectedNodeId],
+    [nodes, selectedNodeId],
   );
 
   const enhancedEdges = useMemo(
@@ -67,10 +60,11 @@ export function useFamilyTreeGraph({
         ...edge,
         data: {
           ...edge.data,
-          onRelationshipRemoved,
+          onRelationshipRemoved: (relationshipId: number) =>
+            onRelationshipRemovedRef.current?.(relationshipId),
         },
       })),
-    [edges, onRelationshipRemoved],
+    [edges],
   );
 
   const onNodesChange = useCallback(

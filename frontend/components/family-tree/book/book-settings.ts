@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { fetchUserSettings, patchUserSettingsCache } from '@/lib/settings/user-settings-cache';
 import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
 import { UI } from '@/lib/constants/ui-strings';
 import { DEFAULT_BORDER_STYLE_ID, isBorderStyleId } from './page-border-styles';
@@ -77,7 +78,7 @@ export function saveBookSettings(settings: BookSettings): void {
 
 /** Reads book settings stored under the `book` key of the user settings blob. */
 export async function fetchRemoteBookSettings(): Promise<BookSettings | null> {
-  const all = await api.settings.getMine();
+  const all = await fetchUserSettings();
   const book = all?.[BOOK_SETTINGS_KEY];
   if (!book || typeof book !== 'object') return null;
   return normalizeBookSettings(book as Partial<BookSettings>);
@@ -86,4 +87,5 @@ export async function fetchRemoteBookSettings(): Promise<BookSettings | null> {
 /** Persists book settings to the backend without touching other settings keys. */
 export async function persistRemoteBookSettings(settings: BookSettings): Promise<void> {
   await api.settings.upsert({ [BOOK_SETTINGS_KEY]: settings });
+  patchUserSettingsCache({ [BOOK_SETTINGS_KEY]: settings });
 }

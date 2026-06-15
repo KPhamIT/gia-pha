@@ -3,6 +3,8 @@
  * Matches the genealogy-book "pages manager" palette: amber/gold gradient
  * background with white content cards and amber-toned headers/accents.
  */
+import { LAYOUT } from '@/lib/constants/ui-layout';
+
 export const ET = {
   /** White content card with a soft amber border. */
   card: 'rounded-2xl border border-amber-200/60 bg-white text-slate-800 shadow-lg shadow-black/20',
@@ -26,4 +28,8 @@ export const ET = {
   gold: 'text-amber-700',
   /** Pending / outstanding accent. */
   pending: 'text-slate-400',
+  /** Page padding inside book-tone sheets. */
+  pagePad: LAYOUT.pagePad,
+  /** Responsive grid for event cards on desktop. */
+  cardGrid: LAYOUT.cardGrid,
 } as const;

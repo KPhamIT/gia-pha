@@ -46,7 +46,7 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
 
   return (
     <FullScreenSheet title={initial ? UI.EVENT_EDIT : UI.EVENT_ADD} onClose={onClose} tone="book">
-      <div className="relative p-4">
+      <div className={`relative ${ET.pagePad}`}>
         {saving ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
             <LoadingSpinner size={36} label={UI.SAVING} />

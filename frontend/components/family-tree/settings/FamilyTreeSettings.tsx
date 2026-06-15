@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from 'react';
 import type { LayoutConfig, ThemeMode } from '@/components/types/family-tree-types';
 import Icon from '@/components/icons/Icon';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import FamilyTreeSettingsFields from './FamilyTreeSettingsFields';
 
@@ -32,15 +33,20 @@ export default function FamilyTreeSettings({
 }: FamilyTreeSettingsProps) {
   return (
     <>
-      <div className="fixed inset-0 z-50 flex">
-        <div className="absolute inset-0 bg-slate-900/40 transition-opacity duration-300" onClick={onClose} />
+      <div className={LAYOUT.sidePanelOverlay}>
+        <button
+          type="button"
+          className="absolute inset-0 cursor-default"
+          onClick={onClose}
+          aria-label={UI.CLOSE_SETTINGS}
+        />
         <div
-          className="relative ml-auto h-screen w-[220px] max-w-[220px] bg-white p-5 shadow-2xl ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-slate-700"
+          className={`${LAYOUT.sidePanel} scroll-list`}
           style={{ animation: 'slideInRight 240ms ease-out forwards' }}
         >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-slate-900">{UI.SETTINGS_TITLE}</h2>
+              <h2 className="text-base font-semibold text-slate-900 md:text-lg">{UI.SETTINGS_TITLE}</h2>
               <p className="mt-1 text-xs text-slate-500">{UI.SETTINGS_XY_HINT}</p>
             </div>
             <Icon

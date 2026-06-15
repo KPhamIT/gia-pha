@@ -1,6 +1,7 @@
 'use client';
 
 import Icon from '@/components/icons/Icon';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 export function InfoRow({ label, value }: { label: string; value?: string | null }) {
@@ -39,7 +40,7 @@ export function RelationRow({ label, persons, onSelectPerson }: {
 
 export function PersonDetailFooter({ onAddChild, onDelete }: { onAddChild: () => void; onDelete: () => void }) {
   return (
-    <div className="sticky bottom-0 flex gap-3 border-t border-slate-200 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div className={`sticky bottom-0 flex gap-3 border-t border-slate-200 bg-white pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6 ${LAYOUT.pagePad}`}>
       <button
         type="button"
         onClick={onAddChild}

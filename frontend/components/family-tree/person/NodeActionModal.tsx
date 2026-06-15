@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { CreateChildFormInput, Person } from '@/components/types/family-tree-types';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import { ActionOptions, ConfirmDelete } from './NodeActionViews';
 import NodeChildForm from './NodeChildForm';
@@ -27,8 +28,8 @@ export default function NodeActionModal({
   const [view, setView] = useState<View>('options');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 p-4">
-      <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200">
+    <div className={`${LAYOUT.centeredOverlay} ${LAYOUT.overlayBackdropLight}`}>
+      <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200 md:mx-4">
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/80">
             <LoadingSpinner size={40} label={UI.SAVING} />

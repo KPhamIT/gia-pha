@@ -76,17 +76,20 @@ export default function EventsManager({ persons, relationships, onClose }: Props
         ) : error ? (
           <p className="px-4 py-12 text-center text-sm text-rose-300">{error}</p>
         ) : events.length === 0 ? (
-          <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENTS_EMPTY}</p>
+          <p className={`py-12 text-center text-sm text-amber-100/70 ${ET.pagePad}`}>{UI.EVENTS_EMPTY}</p>
         ) : (
-          <div className="space-y-3 p-4">
+          <div className={`${ET.cardGrid} ${ET.pagePad}`}>
             {events.map((event) => {
               const date = formatDate(event.eventDate);
               const isContribution = event.type === 'CONTRIBUTION';
               return (
-                <article key={event.id} className={`${ET.card} p-4`}>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                <article
+                  key={event.id}
+                  className={`${ET.card} flex flex-col p-4 transition-shadow md:p-5 md:hover:shadow-xl`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span
                           className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                             isContribution ? 'bg-amber-700 text-amber-50' : 'bg-amber-100 text-amber-800'
@@ -101,13 +104,13 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                         ) : null}
                         {date ? <span className="text-xs text-neutral-400">{date}</span> : null}
                       </div>
-                      <h2 className="mt-1 truncate text-base font-semibold text-neutral-900">{event.title}</h2>
+                      <h2 className="mt-1.5 text-base font-semibold text-neutral-900 md:text-lg">{event.title}</h2>
                     </div>
                     <div className="flex shrink-0 gap-1">
                       <button
                         type="button"
                         onClick={() => openEdit(event)}
-                        className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100"
+                        className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100 md:hover:bg-neutral-100"
                         aria-label={UI.EVENT_EDIT}
                       >
                         <Icon path="edit" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -115,7 +118,7 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                       <button
                         type="button"
                         onClick={() => void handleDelete(event)}
-                        className="grid h-8 w-8 place-items-center rounded-full text-rose-500 active:bg-rose-50"
+                        className="grid h-8 w-8 place-items-center rounded-full text-rose-500 active:bg-rose-50 md:hover:bg-rose-50"
                         aria-label={UI.DELETE_PERSON}
                       >
                         <Icon path="trash" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -124,22 +127,24 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                   </div>
 
                   {event.description ? (
-                    <p className="mt-2 whitespace-pre-wrap text-sm text-neutral-600">{event.description}</p>
+                    <p className="mt-2 line-clamp-3 whitespace-pre-wrap text-sm text-neutral-600 md:line-clamp-4">
+                      {event.description}
+                    </p>
                   ) : null}
 
-                  <div className="mt-3 border-t border-amber-200/60 pt-3">
-                    <div className="flex items-center justify-between text-sm">
+                  <div className="mt-auto border-t border-amber-200/60 pt-3 md:pt-4">
+                    <div className="flex items-center justify-between gap-3 text-sm">
                       <span className="text-neutral-500">
                         {isContribution ? UI.EVENT_PAID_COUNT_SHORT(event.paidCount) : UI.EVENT_DONATION_TOTAL}
                       </span>
-                      <span className={`font-bold ${ET.money}`}>{formatVnd(event.grandTotal)}</span>
+                      <span className={`font-bold tabular-nums ${ET.money}`}>{formatVnd(event.grandTotal)}</span>
                     </div>
-                    <div className="mt-3 flex gap-2">
+                    <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                       {isContribution ? (
                         <button
                           type="button"
                           onClick={() => setContributionEvent(event)}
-                          className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold ${ET.contribBtn}`}
+                          className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-colors md:py-2 ${ET.contribBtn} md:hover:bg-amber-800`}
                         >
                           <Icon path="list" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
                           {UI.EVENT_VIEW_CONTRIBUTION}
@@ -148,7 +153,7 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                       <button
                         type="button"
                         onClick={() => setDonationEvent(event)}
-                        className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold ${ET.donationBtn}`}
+                        className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-colors md:py-2 ${ET.donationBtn} md:hover:bg-amber-200`}
                       >
                         <Icon path="userPlus" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
                         {UI.EVENT_VIEW_DONATION}

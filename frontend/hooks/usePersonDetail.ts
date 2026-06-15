@@ -5,15 +5,19 @@ import { usePersonDetailStore } from '@/store/personDetailStore';
 import { UI } from '@/lib/constants/ui-strings';
 
 export function usePersonDetail(personId: number | null) {
-  const { details, status, loadAll, reloadOne } = usePersonDetailStore();
+  const detail = usePersonDetailStore((s) =>
+    personId != null ? (s.details[personId] ?? null) : null,
+  );
+  const status = usePersonDetailStore((s) => s.status);
+  const reloadOne = usePersonDetailStore((s) => s.reloadOne);
 
   useEffect(() => {
-    void loadAll();
-  }, [loadAll]);
+    if (personId == null || detail != null) return;
+    void reloadOne(personId);
+  }, [personId, detail, reloadOne]);
 
-  const detail = personId != null ? (details[personId] ?? null) : null;
-  const loading = (status === 'idle' || status === 'loading') && detail == null;
-  const error = status === 'error' ? UI.ERR_FETCH_DETAIL : null;
+  const loading = personId != null && detail == null && status !== 'error';
+  const error = status === 'error' && personId != null && detail == null ? UI.ERR_FETCH_DETAIL : null;
 
   const reload = useCallback(() => {
     if (personId != null) void reloadOne(personId);

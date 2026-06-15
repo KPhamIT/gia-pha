@@ -15,7 +15,7 @@ type Props = {
 
 export default function ConnectRelationshipModal({ pendingType, saving, saveError, onTypeChange, onConfirm, onCancel }: Props) {
   return (
-    <div className="absolute bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-xl">
+    <div className="absolute bottom-6 left-1/2 z-50 w-[min(100%,24rem)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-xl md:w-auto md:min-w-[28rem] md:px-6 md:py-5">
       <p className="mb-3 text-sm font-semibold text-slate-700">{UI.SELECT_RELATIONSHIP}</p>
       <div className="flex items-center gap-3">
         <select

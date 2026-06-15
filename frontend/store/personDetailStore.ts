@@ -12,30 +12,52 @@ type PersonDetailStore = {
   updateDetail: (id: number, detail: PersonDetail) => void;
 };
 
+let loadAllInflight: Promise<void> | null = null;
+const reloadInflight = new Map<number, Promise<void>>();
+
 export const usePersonDetailStore = create<PersonDetailStore>((set, get) => ({
   details: {},
   status: 'idle',
 
   loadAll: async () => {
     const { status } = get();
-    if (status === 'loading' || status === 'loaded') return;
+    if (status === 'loaded') return;
+    if (loadAllInflight) return loadAllInflight;
 
-    set({ status: 'loading' });
-    try {
-      const all = await api.person.getAllDetails();
-      const details: Record<number, PersonDetail> = {};
-      for (const d of all) {
-        details[d.person.id] = d;
+    loadAllInflight = (async () => {
+      set({ status: 'loading' });
+      try {
+        const all = await api.person.getAllDetails();
+        const details: Record<number, PersonDetail> = {};
+        for (const d of all) {
+          details[d.person.id] = d;
+        }
+        set({ details, status: 'loaded' });
+      } catch {
+        set({ status: 'error' });
+      } finally {
+        loadAllInflight = null;
       }
-      set({ details, status: 'loaded' });
-    } catch {
-      set({ status: 'error' });
-    }
+    })();
+
+    return loadAllInflight;
   },
 
   reloadOne: async (id) => {
-    const detail = await api.person.getDetail(id);
-    set((state) => ({ details: { ...state.details, [id]: detail } }));
+    const existing = reloadInflight.get(id);
+    if (existing) return existing;
+
+    const promise = api.person
+      .getDetail(id)
+      .then((detail) => {
+        set((state) => ({ details: { ...state.details, [id]: detail } }));
+      })
+      .finally(() => {
+        reloadInflight.delete(id);
+      });
+
+    reloadInflight.set(id, promise);
+    return promise;
   },
 
   updateDetail: (id, detail) => {

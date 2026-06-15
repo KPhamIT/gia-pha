@@ -1,9 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import type { Person } from '@/components/types/family-tree-types';
+import BottomSheet from '@/components/ui/BottomSheet';
 import Icon from '@/components/icons/Icon';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
+import { useMemo, useState } from 'react';
 
 type SearchSheetProps = {
   persons: Person[];
@@ -21,10 +23,9 @@ export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetP
   }, [persons, query]);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-white shadow-2xl pb-[env(safe-area-inset-bottom)]">
-      <div className="mx-auto mb-3 mt-2 h-1 w-10 rounded-full bg-slate-300" />
-      <div className="flex items-center gap-3 border-b border-slate-200 px-4 pb-3">
-        <div className="relative flex-1">
+    <BottomSheet onClose={onClose} variant="search">
+      <div className={`flex shrink-0 items-center gap-3 border-b border-slate-200 ${LAYOUT.pagePad} pb-3`}>
+        <div className="relative min-w-0 flex-1">
           <Icon
             path="search"
             size={18}
@@ -46,13 +47,13 @@ export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetP
         <button
           type="button"
           onClick={onClose}
-          className="shrink-0 rounded-full px-3 py-2 text-sm font-medium text-slate-600 active:bg-slate-100"
+          className="shrink-0 rounded-full px-3 py-2 text-sm font-medium text-slate-600 active:bg-slate-100 md:hover:bg-slate-100"
         >
           {UI.CANCEL}
         </button>
       </div>
 
-      <div className="max-h-[50vh] overflow-y-auto px-2 py-2">
+      <div className={`${LAYOUT.scrollList} min-h-0 flex-1 px-2 py-2`}>
         {query.trim() && results.length === 0 ? (
           <p className="px-3 py-6 text-center text-sm text-slate-500">{UI.NO_SEARCH_RESULTS}</p>
         ) : null}
@@ -61,7 +62,7 @@ export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetP
             key={person.id}
             type="button"
             onClick={() => onSelect(person)}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-slate-100"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-slate-100 md:hover:bg-slate-50"
           >
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-sm font-semibold text-blue-700">
               {person.fullName.charAt(0)}
@@ -75,6 +76,6 @@ export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetP
           </button>
         ))}
       </div>
-    </div>
+    </BottomSheet>
   );
 }

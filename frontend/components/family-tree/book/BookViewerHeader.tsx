@@ -19,12 +19,12 @@ type Props = {
 
 export default function BookViewerHeader({ totalLeaves, saving, onClose, onToggleStyle, onOpenPages, onPrint, onPrintAll }: Props) {
   return (
-    <header className={`${styles.noPrint} flex shrink-0 items-center gap-2 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]`}>
+    <header className={`${styles.noPrint} flex shrink-0 items-center gap-2 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-6 md:py-4 md:pt-4`}>
       <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10" aria-label={UI.CANCEL}>
         <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
       </button>
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-lg font-semibold">{UI.VIEW_GENEALOGY_BOOK}</h1>
+        <h1 className="truncate text-lg font-semibold md:text-xl">{UI.VIEW_GENEALOGY_BOOK}</h1>
         {/* <p className="text-xs text-amber-100/70">{UI.BOOK_TAP_HINT}</p> */}
       </div>
       <button type="button" onClick={onOpenPages} className={iconBtn} aria-label={UI.BOOK_OPEN_PAGES}>

@@ -1,6 +1,8 @@
 'use client';
 
+import BottomSheet from '@/components/ui/BottomSheet';
 import { BRANCH_OPTIONS, type BranchValue } from '@/lib/constants/branches';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 type WelcomeBranchSheetProps = {
@@ -10,10 +12,9 @@ type WelcomeBranchSheetProps = {
 /** First-visit welcome message and branch selection. */
 export default function WelcomeBranchSheet({ onSelect }: WelcomeBranchSheetProps) {
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-      <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-slate-300" />
-        <h2 className="text-center text-lg font-semibold text-slate-900">{UI.WELCOME_SHEET_TITLE}</h2>
+    <BottomSheet maxWidth="md" zClass="z-[70]">
+      <div className={LAYOUT.pagePad}>
+        <h2 className="text-center text-lg font-semibold text-slate-900 md:text-xl">{UI.WELCOME_SHEET_TITLE}</h2>
         <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600">
           {UI.WELCOME_SHEET_PARAGRAPHS.map((paragraph) => (
             <p key={paragraph.slice(0, 24)}>{paragraph}</p>
@@ -38,6 +39,6 @@ export default function WelcomeBranchSheet({ onSelect }: WelcomeBranchSheetProps
           </div>
         </div>
       </div>
-    </div>
+    </BottomSheet>
   );
 }

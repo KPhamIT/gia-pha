@@ -57,18 +57,18 @@ export default function TreeFilters({ branch, maxGeneration, onBranchChange, onM
   }, [open]);
 
   return (
-    <div ref={containerRef} className="fixed left-4 top-4 z-20 pt-[env(safe-area-inset-top)]">
+    <div ref={containerRef} className="fixed left-4 top-4 z-20 pt-[env(safe-area-inset-top)] md:left-6 md:top-6">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm active:bg-slate-50"
+        className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm active:bg-slate-50 md:text-sm md:hover:bg-slate-50"
       >
-        <span className="max-w-[10rem] truncate">{summary}</span>
+        <span className="max-w-[10rem] truncate md:max-w-[14rem]">{summary}</span>
         <Icon path={open ? 'chevronUp' : 'chevronDown'} size={14} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
       </button>
 
       {open ? (
-        <div className="mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl">
+        <div className="mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl md:w-72 md:p-4">
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{UI.FILTER_BRANCH_LABEL}</p>
           <div className="flex flex-wrap gap-1.5">
             <Tag active={branch === 'all'} label={UI.FILTER_ALL} onClick={() => onBranchChange('all')} />

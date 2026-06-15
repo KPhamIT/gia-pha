@@ -6,7 +6,9 @@ import {
   Background,
   Controls,
 } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { useCallback, useRef } from "react";
 import type {
   FamilyTreeData,
   Person,
@@ -24,6 +26,14 @@ import type { FamilyTreeLayoutConfig } from "./layout";
 import { useFamilyTreeGraph } from "@/hooks/useFamilyTreeGraph";
 import "@xyflow/react/dist/base.css";
 
+const NODE_TYPES = { custom: FamilyTreeNode };
+const EDGE_TYPES = { default: FamilyTreeEdge, step: FamilyTreeEdge };
+const FIT_VIEW_OPTIONS = {
+  padding: 0.2,
+  minZoom: GRAPH_INITIAL_ZOOM,
+  maxZoom: GRAPH_INITIAL_ZOOM,
+};
+
 export type FamilyTreeGraphProps = {
   treeData: FamilyTreeData;
   layoutConfig?: FamilyTreeLayoutConfig;
@@ -39,24 +49,30 @@ export type FamilyTreeGraphProps = {
 
 function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
   const graph = useFamilyTreeGraph(props);
+  const onNodeClickRef = useRef(props.onNodeClick);
+  onNodeClickRef.current = props.onNodeClick;
+
+  const handleNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    const person = (node.data as { person?: Person }).person;
+    if (person && onNodeClickRef.current) {
+      onNodeClickRef.current(person.id, person);
+    }
+  }, []);
 
   return (
     <div className="wrapper relative h-full w-full overflow-hidden">
       <ReactFlow
         nodes={graph.enhancedNodes}
         edges={graph.enhancedEdges}
-        nodeTypes={{ custom: FamilyTreeNode }}
-        edgeTypes={{ default: FamilyTreeEdge, step: FamilyTreeEdge }}
+        nodeTypes={NODE_TYPES}
+        edgeTypes={EDGE_TYPES}
         colorMode={props.theme ?? "light"}
         minZoom={GRAPH_MIN_ZOOM}
         fitView
-        fitViewOptions={{
-          padding: 0.2,
-          minZoom: GRAPH_INITIAL_ZOOM,
-          maxZoom: GRAPH_INITIAL_ZOOM,
-        }}
+        fitViewOptions={FIT_VIEW_OPTIONS}
         onlyRenderVisibleElements
         deleteKeyCode={null}
+        onNodeClick={handleNodeClick}
         onNodesChange={graph.onNodesChange}
         onEdgesChange={graph.onEdgesChange}
         onConnect={graph.onConnect}

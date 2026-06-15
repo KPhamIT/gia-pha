@@ -5,6 +5,7 @@ import type { CreateChildFormInput, Person } from '@/components/types/family-tre
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import { FormField, inputClassName } from '@/components/ui/CollapsibleSection';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 const EMPTY_CHILD_FORM = {
@@ -40,7 +41,7 @@ export default function AddChildSheet({ parent, onClose, onCreateChild, loading 
 
   return (
     <FullScreenSheet title={`${UI.ADD_CHILD_FOR} ${parent.fullName}`} onClose={onClose}>
-      <div className="relative space-y-4 p-4">
+      <div className={`relative space-y-4 ${LAYOUT.pagePad}`}>
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
             <LoadingSpinner size={36} label={UI.SAVING} />

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import { fetchUserSettings, patchUserSettingsCache } from '@/lib/settings/user-settings-cache';
 import type { UserSettings } from '@/lib/api/modules/settings';
 import { UI } from '@/lib/constants/ui-strings';
 
@@ -17,7 +18,7 @@ export function useSettings({ onLoaded }: UseSettingsOptions = {}) {
   useEffect(() => {
     if (!onLoaded) return;
 
-    api.settings.getMine()
+    fetchUserSettings()
       .then((s) => { if (s) onLoaded(s); })
       .catch(() => {
         // No saved settings yet — keep defaults
@@ -33,6 +34,7 @@ export function useSettings({ onLoaded }: UseSettingsOptions = {}) {
 
     try {
       await api.settings.upsert(data);
+      patchUserSettingsCache(data);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2000);
     } catch {

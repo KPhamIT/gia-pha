@@ -190,7 +190,7 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
         headerRight={headerActions}
         tone="book"
       >
-        <div className="border-b border-amber-400/20 bg-white px-4 py-3 text-center">
+        <div className={`border-b border-amber-400/20 bg-white py-3 text-center md:mx-6 md:mt-4 md:rounded-xl md:border md:shadow-sm ${ET.pagePad}`}>
           <div className={`text-xl font-bold ${ET.money}`}>{formatVnd(donationTotal)}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_DONATION_TOTAL}</div>
           {draftDonations.length > 0 ? (
@@ -205,9 +205,10 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
             <LoadingSpinner size={36} />
           </div>
         ) : draftDonations.length === 0 ? (
-          <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENT_DONATION_EMPTY}</p>
+          <p className={`py-12 text-center text-sm text-amber-100/70 ${ET.pagePad}`}>{UI.EVENT_DONATION_EMPTY}</p>
         ) : (
-          <ul className={`m-4 divide-y divide-neutral-100 ${ET.panel}`}>
+          <div className={ET.pagePad}>
+            <ul className={`divide-y divide-neutral-100 ${ET.panel}`}>
             {draftDonations.map((donation) => {
               const isMoney = donation.kind === 'MONEY';
               return (
@@ -274,6 +275,7 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
               );
             })}
           </ul>
+          </div>
         )}
       </FullScreenSheet>
 

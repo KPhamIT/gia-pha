@@ -8,21 +8,26 @@ import { UI } from '@/lib/constants/ui-strings';
 export default function BookViewerFallback({ kind, onClose }: { kind: 'loading' | 'error'; onClose: () => void }) {
   if (kind === 'loading') {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-amber-950/95 text-amber-50">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50">
         <LoadingSpinner size={32} label={UI.LOADING} />
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-amber-950/95 text-amber-50">
-      <header className="flex items-center gap-3 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10" aria-label={UI.CANCEL}>
+    <div className="fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50">
+      <header className="flex items-center gap-3 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-6">
+        <button
+          type="button"
+          onClick={onClose}
+          className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10 md:hover:bg-white/10"
+          aria-label={UI.CANCEL}
+        >
           <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
         </button>
-        <h1 className="text-lg font-semibold">{UI.VIEW_GENEALOGY_BOOK}</h1>
+        <h1 className="text-lg font-semibold md:text-xl">{UI.VIEW_GENEALOGY_BOOK}</h1>
       </header>
-      <p className="px-4 text-sm text-amber-100/80">{UI.ERROR_TITLE}</p>
+      <p className="px-4 text-sm text-amber-100/80 md:px-6">{UI.ERROR_TITLE}</p>
     </div>
   );
 }

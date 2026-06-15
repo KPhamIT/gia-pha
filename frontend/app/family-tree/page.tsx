@@ -14,6 +14,7 @@ import GenealogyBookViewer from '@/components/family-tree/book/GenealogyBookView
 import EventsManager from '@/components/family-tree/events/EventsManager';
 import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
+import BottomSheet from '@/components/ui/BottomSheet';
 import Icon from '@/components/icons/Icon';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
 import { useUserBranch } from '@/hooks/useUserBranch';
@@ -30,9 +31,11 @@ import type { UserSettings } from '@/lib/api/modules/settings';
 import type { Person, ThemeMode, UpdatePersonDetailInput } from '@/components/types/family-tree-types';
 import { createStandalonePerson, updatePersonDetail } from '@/lib/family-tree/mutations';
 import { getPageShellClass } from '@/utils/theme';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
+type MainView = 'book' | 'tree';
 
 export default function FamilyTreePage() {
   const {
@@ -69,7 +72,7 @@ export default function FamilyTreePage() {
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [showBook, setShowBook] = useState(true);
+  const [mainView, setMainView] = useState<MainView>('book');
   const [showEvents, setShowEvents] = useState(false);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
@@ -79,7 +82,7 @@ export default function FamilyTreePage() {
   const { branch: userBranch, setBranch: setUserBranch, hydrated: branchHydrated } = useUserBranch();
 
   const { detail, loading: detailLoading, error: detailError, reload: reloadDetail } = usePersonDetail(selectedPersonId);
-  const { updateDetail: storeUpdateDetail } = usePersonDetailStore();
+  const storeUpdateDetail = usePersonDetailStore((s) => s.updateDetail);
   const { loading: actionLoading, run: runAction } = useAsyncAction();
   const { createChild, deleteNode, loading: modalLoading } = usePersonActions({
     selectedNode,
@@ -104,11 +107,11 @@ export default function FamilyTreePage() {
   const handleNodeClick = useCallback((_personId: number, person: Person) => openPersonDetail(person), [openPersonDetail]);
   const handleOpenSettings = useCallback(() => setShowSettings(true), []);
   const handleOpenSearch = useCallback(() => setShowSearch(true), []);
-  const handleOpenBook = useCallback(() => setShowBook(true), []);
+  const handleOpenBook = useCallback(() => setMainView('book'), []);
   const handleCenterTree = useCallback(() => setCenterTreeKey((k) => k + 1), []);
   const handleCloseSettings = useCallback(() => setShowSettings(false), []);
   const handleCloseSearch = useCallback(() => setShowSearch(false), []);
-  const handleCloseBook = useCallback(() => setShowBook(false), []);
+  const handleCloseBook = useCallback(() => setMainView('tree'), []);
   const handleOpenEvents = useCallback(() => setShowEvents(true), []);
   const handleCloseEvents = useCallback(() => setShowEvents(false), []);
   const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
@@ -216,7 +219,7 @@ export default function FamilyTreePage() {
 
   return (
     <div className={`min-h-screen ${getPageShellClass(theme)}`}>
-      <div className="fixed right-4 top-4 z-20 pt-[env(safe-area-inset-top)]">
+      <div className="fixed right-4 top-4 z-20 pt-[env(safe-area-inset-top)] md:right-6 md:top-6">
         <button
           type="button"
           onClick={handleOpenSettings}
@@ -239,35 +242,47 @@ export default function FamilyTreePage() {
         </button>
       </div>
 
-      <TreeFilters
-        branch={effectiveBranch}
-        maxGeneration={maxGeneration}
-        onBranchChange={setFilterBranch}
-        onMaxGenerationChange={setMaxGeneration}
-      />
-
-      <TreeFab
-        onAddPerson={handleOpenAddPerson}
-        onSearch={handleOpenSearch}
-        onOpenBook={handleOpenBook}
-        onOpenEvents={handleOpenEvents}
-        onCenterTree={handleCenterTree}
-      />
-
-      <div className="h-screen">
-        <FamilyTreeGraph
-          treeData={filteredTreeData ?? treeData}
-          layoutConfig={layoutConfig}
-          selectedNodeId={selectedPersonId}
-          focusNodeId={focusNodeId}
-          centerTreeKey={centerTreeKey}
-          onNodeClick={handleNodeClick}
-          onPersonAdded={addPerson}
-          onRelationshipAdded={addRelationship}
-          onRelationshipRemoved={removeRelationship}
-          theme={theme}
+      {mainView === 'tree' ? (
+        <TreeFilters
+          branch={effectiveBranch}
+          maxGeneration={maxGeneration}
+          onBranchChange={setFilterBranch}
+          onMaxGenerationChange={setMaxGeneration}
         />
-      </div>
+      ) : null}
+
+      {mainView === 'tree' ? (
+        <>
+          <TreeFab
+            onAddPerson={handleOpenAddPerson}
+            onSearch={handleOpenSearch}
+            onOpenBook={handleOpenBook}
+            onOpenEvents={handleOpenEvents}
+            onCenterTree={handleCenterTree}
+          />
+
+          <div className="h-screen">
+            <FamilyTreeGraph
+              treeData={filteredTreeData ?? treeData}
+              layoutConfig={layoutConfig}
+              selectedNodeId={selectedPersonId}
+              focusNodeId={focusNodeId}
+              centerTreeKey={centerTreeKey}
+              onNodeClick={handleNodeClick}
+              onPersonAdded={addPerson}
+              onRelationshipAdded={addRelationship}
+              onRelationshipRemoved={removeRelationship}
+              theme={theme}
+            />
+          </div>
+        </>
+      ) : (
+        <GenealogyBookViewer
+          persons={treeData.persons}
+          onClose={handleCloseBook}
+          onPersonUpdated={updatePerson}
+        />
+      )}
 
       {showSettings ? (
         <FamilyTreeSettings
@@ -283,15 +298,7 @@ export default function FamilyTreePage() {
         />
       ) : null}
 
-      {showBook ? (
-        <GenealogyBookViewer
-          persons={treeData.persons}
-          onClose={handleCloseBook}
-          onPersonUpdated={updatePerson}
-        />
-      ) : null}
-
-      {showEvents ? (
+      {mainView === 'tree' && showEvents ? (
         <EventsManager
           persons={treeData.persons}
           relationships={treeData.relationships}
@@ -302,19 +309,11 @@ export default function FamilyTreePage() {
       {branchHydrated && userBranch == null ? <WelcomeBranchSheet onSelect={handleSelectBranch} /> : null}
 
       {showSearch ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-40 bg-slate-900/30"
-            onClick={handleCloseSearch}
-            aria-label={UI.CANCEL}
-          />
-          <SearchSheet
-            persons={treeData.persons}
-            onClose={handleCloseSearch}
-            onSelect={handleSearchSelect}
-          />
-        </>
+        <SearchSheet
+          persons={treeData.persons}
+          onClose={handleCloseSearch}
+          onSelect={handleSearchSelect}
+        />
       ) : null}
 
       {viewMode === 'detail' && selectedPersonId != null ? (
@@ -358,8 +357,8 @@ export default function FamilyTreePage() {
       ) : null}
 
       {viewMode === 'deleteConfirm' && selectedNode ? (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/30 p-4 pb-[env(safe-area-inset-bottom)]">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+        <BottomSheet onClose={handleBackToDetail} maxWidth="md" zClass="z-[60]">
+          <div className={LAYOUT.pagePad}>
             <div className="mb-4 flex items-center gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-100 text-red-600">
                 <Icon path="alertTriangle" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
@@ -373,7 +372,7 @@ export default function FamilyTreePage() {
               <button
                 type="button"
                 onClick={handleBackToDetail}
-                className="rounded-2xl border border-slate-300 py-3 text-sm font-medium text-slate-700 active:bg-slate-50"
+                className="rounded-2xl border border-slate-300 py-3 text-sm font-medium text-slate-700 active:bg-slate-50 md:hover:bg-slate-50"
                 disabled={modalLoading}
               >
                 {UI.CANCEL}
@@ -381,14 +380,14 @@ export default function FamilyTreePage() {
               <button
                 type="button"
                 onClick={handleDeleteConfirm}
-                className="rounded-2xl bg-red-600 py-3 text-sm font-medium text-white active:bg-red-700 disabled:opacity-50"
+                className="rounded-2xl bg-red-600 py-3 text-sm font-medium text-white active:bg-red-700 md:hover:bg-red-700 disabled:opacity-50"
                 disabled={modalLoading}
               >
                 {UI.DELETE_PERSON}
               </button>
             </div>
           </div>
-        </div>
+        </BottomSheet>
       ) : null}
     </div>
   );

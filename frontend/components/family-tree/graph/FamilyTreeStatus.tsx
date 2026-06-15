@@ -1,6 +1,7 @@
 import type { ThemeMode } from '@/components/types/family-tree-types';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { getMutedTextClass, getPageShellClass } from '@/utils/theme';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 type FamilyTreeStatusProps = {
@@ -31,7 +32,7 @@ export default function FamilyTreeStatus({
   if (type === 'empty') {
     return (
       <div className={shellClass}>
-        <div className={`text-lg ${getMutedTextClass(theme)}`}>{UI.NO_DATA}</div>
+        <div className={`text-lg ${getMutedTextClass(theme)} ${LAYOUT.pagePad} text-center md:mx-auto md:max-w-md md:rounded-2xl md:bg-white/50 md:shadow-sm md:dark:bg-slate-900/50`}>{UI.NO_DATA}</div>
       </div>
     );
   }
@@ -39,7 +40,7 @@ export default function FamilyTreeStatus({
   return (
     <div className={shellClass}>
       <div
-        className={`rounded-lg p-6 text-center ${
+        className={`mx-4 max-w-md rounded-2xl p-6 text-center shadow-lg md:p-8 ${
           theme === 'dark' ? 'border border-slate-700 bg-slate-900' : 'bg-red-50'
         }`}
       >

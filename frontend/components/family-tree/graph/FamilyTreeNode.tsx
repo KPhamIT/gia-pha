@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 import { NODE_HEIGHT, NODE_WIDTH } from '@/components/family-tree/graph/layout';
 
 type PersonNodeData = {
@@ -9,7 +9,6 @@ type PersonNodeData = {
   birthDate?: string | null;
   isRoot: boolean;
   personId?: number;
-  onNodeClick?: (personId: number) => void;
   nodeBgColor?: string;
   nodeTextColor?: string;
   nodeWidth?: number;
@@ -19,7 +18,6 @@ type PersonNodeData = {
 type FamilyTreeNodeProps = {
   data: PersonNodeData;
   selected?: boolean;
-  id?: string;
 };
 
 const birthDateFormatter = new Intl.DateTimeFormat('vi-VN');
@@ -29,18 +27,11 @@ function formatBirthDate(birthDate?: string | null) {
   return birthDateFormatter.format(new Date(birthDate));
 }
 
-function FamilyTreeNode({ data, selected, id }: FamilyTreeNodeProps) {
-  const { onNodeClick } = data;
+function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
   const birthDate = formatBirthDate(data.birthDate);
-  const handleClick = useCallback(() => {
-    if (onNodeClick && id) {
-      onNodeClick(Number(id));
-    }
-  }, [onNodeClick, id]);
 
   return (
     <div
-      onClick={handleClick}
       style={{
         backgroundColor: data.nodeBgColor ?? '#ffffff',
         color: data.nodeTextColor ?? '#0f172a',

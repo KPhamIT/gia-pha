@@ -1,12 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import BookShell from '@/components/ui/BookShell';
 import Icon from '@/components/icons/Icon';
 import { getBranchLabel } from '@/lib/constants/branches';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import type { Person } from '@/components/types/family-tree-types';
 import type { BookPageConfig } from './book-page-config';
-import styles from './GenealogyBook.module.css';
 
 type Props = {
   /** All persons in natural book order (including hidden ones). */
@@ -80,13 +81,18 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
   };
 
   return (
-    <div className={`${styles.viewerRoot} fixed inset-0 z-[60] flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}>
-      <header className="flex shrink-0 items-center gap-2 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <button type="button" onClick={handleClose} className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10" aria-label={UI.CANCEL}>
+    <BookShell zClass="z-[60]">
+      <header className={`${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}>
+        <button
+          type="button"
+          onClick={handleClose}
+          className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10 md:hover:bg-white/10"
+          aria-label={UI.CANCEL}
+        >
           <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
         </button>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-lg font-semibold">{UI.BOOK_PAGES_TITLE}</h1>
+          <h1 className="truncate text-lg font-semibold md:text-xl">{UI.BOOK_PAGES_TITLE}</h1>
           <p className="truncate text-xs text-amber-100/70">{UI.BOOK_PAGES_VISIBLE_COUNT(visibleCount, persons.length)}</p>
         </div>
         <button
@@ -101,15 +107,23 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
         </button>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <div className="mx-auto max-w-2xl">
+      <div className={`${LAYOUT.sheetBody} px-3 md:px-6`}>
+        <div className="mx-auto max-w-2xl pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6">
           <div className="mb-3 flex items-center justify-between gap-2">
             <p className="text-xs text-amber-100/70">{UI.BOOK_PAGES_HINT}</p>
             <div className="flex shrink-0 gap-2">
-              <button type="button" onClick={showAll} className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium active:bg-white/20">
+              <button
+                type="button"
+                onClick={showAll}
+                className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium active:bg-white/20 md:hover:bg-white/20"
+              >
                 {UI.BOOK_PAGES_SHOW_ALL}
               </button>
-              <button type="button" onClick={resetOrder} className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium active:bg-white/20">
+              <button
+                type="button"
+                onClick={resetOrder}
+                className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium active:bg-white/20 md:hover:bg-white/20"
+              >
                 {UI.BOOK_PAGES_RESET_ORDER}
               </button>
             </div>
@@ -134,13 +148,15 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
                   const meta = [
                     person.branch != null ? getBranchLabel(person.branch) : null,
                     person.generation != null ? `${UI.BOOK_GENERATION} ${person.generation}` : null,
-                  ].filter(Boolean).join(' · ');
+                  ]
+                    .filter(Boolean)
+                    .join(' · ');
 
                   return (
                     <tr
                       key={person.id}
                       onClick={() => toggleHidden(person.id)}
-                      className={`cursor-pointer border-t border-amber-100 transition-colors ${hidden ? 'bg-slate-100 text-slate-400' : 'active:bg-amber-50'}`}
+                      className={`cursor-pointer border-t border-amber-100 transition-colors ${hidden ? 'bg-slate-100 text-slate-400' : 'active:bg-amber-50 md:hover:bg-amber-50/80'}`}
                     >
                       <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
                         <input
@@ -175,6 +191,6 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
           )}
         </div>
       </div>
-    </div>
+    </BookShell>
   );
 }

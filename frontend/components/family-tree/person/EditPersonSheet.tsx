@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { PersonDetail, UpdatePersonDetailInput } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import { buildPersonDraft, draftToUpdateInput, type PersonDraft } from '@/utils/person-detail-form';
 import PersonDetailFields from './PersonDetailFields';
@@ -44,9 +45,11 @@ export default function EditPersonSheet({ detail, loading, saving, onClose, onSa
         </div>
       ) : (
         <>
-          <PersonDetailFields draft={draft} saving={saving} onChange={update} />
+          <div className={LAYOUT.pagePad}>
+            <PersonDetailFields draft={draft} saving={saving} onChange={update} />
+          </div>
 
-          <div className="sticky bottom-0 border-t border-slate-200 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className={`sticky bottom-0 border-t border-slate-200 bg-white ${LAYOUT.pagePad} pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6`}>
             <button
               type="button"
               onClick={handleSave}

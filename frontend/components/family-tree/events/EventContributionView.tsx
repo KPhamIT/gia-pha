@@ -237,7 +237,8 @@ export default function EventContributionView({ event, persons, relationships, o
 
   return (
     <FullScreenSheet title={event.title} onClose={handleClose} headerRight={saveButton} tone="book">
-      <div className="grid grid-cols-3 gap-px border-b border-amber-300/30 bg-amber-200/50 text-center">
+      <div className={`overflow-hidden rounded-xl border border-amber-200/40 bg-white shadow-sm ${ET.pagePad} md:mx-6 md:mt-4`}>
+        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-amber-300/30 bg-amber-200/50 text-center">
         <div className="bg-white py-3">
           <div className="text-lg font-bold text-amber-700">{livingPaidCount}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_PAID}</div>
@@ -250,10 +251,11 @@ export default function EventContributionView({ event, persons, relationships, o
           <div className={`text-base font-bold ${ET.money}`}>{formatVnd(contributionTotal)}</div>
           <div className="text-xs text-slate-500">{UI.EVENT_TOTAL_COLLECTED}</div>
         </div>
+        </div>
       </div>
 
       {event.amountPerPerson > 0 ? (
-        <p className="px-4 pt-3 text-xs text-amber-100/80">
+        <p className={`text-xs text-amber-100/80 ${ET.pagePad} md:pt-4`}>
           {UI.EVENT_AMOUNT_PER_PERSON(formatVnd(event.amountPerPerson))}
         </p>
       ) : null}
@@ -265,7 +267,7 @@ export default function EventContributionView({ event, persons, relationships, o
       ) : livingCount === 0 ? (
         <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENT_NO_MEMBERS}</p>
       ) : (
-        <div className="space-y-4 p-4">
+        <div className={`grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4 ${ET.pagePad}`}>
           {groups.map((group) => {
             const groupPaid = group.members.filter((m) =>
               isFullyPaid(getAmount(m.id), event.amountPerPerson),

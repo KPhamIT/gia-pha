@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import { FormField, inputClassName, textareaClassName } from '@/components/ui/CollapsibleSection';
 import Icon from '@/components/icons/Icon';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import { getBranchLabel } from '@/lib/constants/branches';
 import type { Person } from '@/components/types/family-tree-types';
@@ -93,7 +94,7 @@ export default function EventDonationFormSheet({ initial, persons, onSubmit, onC
 
   return (
     <FullScreenSheet title={initial ? UI.EVENT_DONATION_EDIT : UI.EVENT_DONATION_ADD} onClose={onClose} tone="book">
-      <div className="p-4">
+      <div className={LAYOUT.pagePad}>
         <div className="space-y-4 rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
           <FormField label={UI.EVENT_DONATION_KIND_LABEL}>
             <div className="flex gap-2">
@@ -151,7 +152,7 @@ export default function EventDonationFormSheet({ initial, persons, onSubmit, onC
                   />
                 </div>
                 {results.length > 0 ? (
-                  <ul className="mt-2 max-h-56 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200">
+                  <ul className={`scroll-list mt-2 max-h-56 divide-y divide-slate-100 rounded-xl border border-slate-200`}>
                     {results.map((person) => (
                       <li key={person.id}>
                         <button

@@ -31,7 +31,7 @@ export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBoo
   };
 
   return (
-    <div className="fixed bottom-6 left-4 z-20 flex flex-col-reverse items-start gap-3 pb-[env(safe-area-inset-bottom)]">
+    <div className="fixed bottom-6 left-4 z-20 flex flex-col-reverse items-start gap-3 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
       {open ? (
         <div className="flex flex-col gap-2">
           {actions.map((action) => (

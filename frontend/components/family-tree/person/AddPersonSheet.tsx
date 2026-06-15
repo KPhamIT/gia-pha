@@ -4,6 +4,7 @@ import { useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
 import { FormField, inputClassName } from '@/components/ui/CollapsibleSection';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
+import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 type AddPersonSheetProps = {
@@ -27,7 +28,7 @@ export default function AddPersonSheet({ onClose, onSubmit, loading = false }: A
 
   return (
     <FullScreenSheet title={UI.ADD_PERSON} onClose={onClose}>
-      <div className="relative space-y-4 p-4">
+      <div className={`relative space-y-4 ${LAYOUT.pagePad}`}>
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
             <LoadingSpinner size={36} label={UI.SAVING} />
