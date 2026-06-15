@@ -292,11 +292,7 @@ export default function FamilyTreePage() {
           <FamilyTreeStatus theme={theme} type="loading" />
         )
       ) : (
-        <GenealogyBookViewer
-          persons={persons}
-          onClose={handleCloseBook}
-          onPersonUpdated={updatePerson}
-        />
+        <GenealogyBookViewer persons={persons} onClose={handleCloseBook} />
       )}
 
       {showSettings ? (

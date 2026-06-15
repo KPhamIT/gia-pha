@@ -15,19 +15,12 @@ export type BookLeafCtx = {
   updateSettings: (patch: Partial<BookSettings>) => void;
   details: Record<number, PersonDetail>;
   personCount: number;
-  currentDetail: PersonDetail | null;
-  draft: BookPageDraft;
-  isDirty: boolean;
-  saving: boolean;
   getPersonDraft: (person: Person) => BookPageDraft;
-  onDraftChange: (draft: BookPageDraft) => void;
-  onSave: () => void;
 };
 
-/** Renders any leaf by index. `live` marks the single editable current page. */
-export default function BookLeaf({ index, readOnly, live, ctx }: {
+/** Renders any leaf by index. `live` enables editing on cover and preface only. */
+export default function BookLeaf({ index, live, ctx }: {
   index: number;
-  readOnly: boolean;
   live?: boolean;
   ctx: BookLeafCtx;
 }) {
@@ -35,7 +28,7 @@ export default function BookLeaf({ index, readOnly, live, ctx }: {
   if (!leaf) return null;
 
   if (leaf.kind === 'cover') {
-    return <BookCoverPage settings={ctx.settings} readOnly={readOnly} onChange={ctx.updateSettings} />;
+    return <BookCoverPage settings={ctx.settings} readOnly={!live} onChange={ctx.updateSettings} />;
   }
 
   if (leaf.kind === 'preface') {
@@ -43,34 +36,15 @@ export default function BookLeaf({ index, readOnly, live, ctx }: {
     return (
       <div className={`${styles.paper} relative`} data-genealogy-paper>
         <Border>
-          <BookPrefacePage settings={ctx.settings} readOnly={readOnly} onChange={ctx.updateSettings} />
+          <BookPrefacePage settings={ctx.settings} readOnly={!live} onChange={ctx.updateSettings} />
         </Border>
       </div>
     );
   }
 
-  const pageNumber = leaf.personIndex + 1;
-  if (live) {
-    return (
-      <GenealogyBookPage
-        pageNumber={pageNumber}
-        totalPages={ctx.personCount}
-        detail={ctx.currentDetail}
-        loading={false}
-        draft={ctx.draft}
-        borderStyleId={ctx.settings.borderStyleId}
-        formStyleId={ctx.settings.formStyleId}
-        isDirty={ctx.isDirty}
-        saving={ctx.saving}
-        onDraftChange={ctx.onDraftChange}
-        onSave={ctx.onSave}
-      />
-    );
-  }
-
   return (
     <GenealogyBookPage
-      pageNumber={pageNumber}
+      pageNumber={leaf.personIndex + 1}
       totalPages={ctx.personCount}
       detail={ctx.details[leaf.person.id] ?? null}
       loading={false}

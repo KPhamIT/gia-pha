@@ -13,13 +13,12 @@ import styles from './GenealogyBook.module.css';
 type GenealogyBookViewerProps = {
   persons: Person[];
   onClose: () => void;
-  onPersonUpdated: (person: Person) => void;
 };
 
-export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated }: GenealogyBookViewerProps) {
+export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookViewerProps) {
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
-  const book = useGenealogyBook(persons, onPersonUpdated);
+  const book = useGenealogyBook(persons);
   const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef } = book;
 
   if (!hydrated) return <BookViewerFallback kind="loading" onClose={onClose} />;
@@ -32,7 +31,6 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
       <BookViewerHeader
         pageIndex={book.pageIndex}
         totalLeaves={book.totalLeaves}
-        saving={book.saving}
         onClose={onClose}
         onToggleStyle={() => setShowStyle((v) => !v)}
         onOpenPages={() => setShowPages(true)}

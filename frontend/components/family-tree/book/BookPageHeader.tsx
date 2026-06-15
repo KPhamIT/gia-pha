@@ -63,10 +63,11 @@ function InlineNumberField({ label, field, value, readOnly, onChange }: {
   );
 }
 
-export default function BookPageHeader({ draft, readOnly, onChange }: {
+export default function BookPageHeader({ draft, readOnly, onChange, onStartEdit }: {
   draft: BookPageDraft;
   readOnly: boolean;
   onChange: Update;
+  onStartEdit?: () => void;
 }) {
   const nameClass = draft.fullName.trim() ? 'text-amber-950' : 'italic text-slate-400';
 
@@ -74,7 +75,12 @@ export default function BookPageHeader({ draft, readOnly, onChange }: {
     <div className={`${styles.paperHeader} mb-4 border-b-2 border-amber-900/15 pb-3 text-center`}>
       <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amber-900/50">{UI.PAGE_TITLE}</p>
       {readOnly ? (
-        <h2 className={`mt-1 text-xl font-bold ${nameClass}`}>{displayValue(draft.fullName)}</h2>
+        <h2
+          className={`mt-1 text-xl font-bold ${nameClass} ${onStartEdit ? 'cursor-text' : ''}`}
+          onClick={onStartEdit}
+        >
+          {displayValue(draft.fullName)}
+        </h2>
       ) : (
         <input
           type="text"

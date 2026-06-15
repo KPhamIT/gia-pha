@@ -1,14 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { Person } from '@/components/types/family-tree-types';
 import { sortPersonsForBook } from '@/utils/sort-persons-for-book';
 import { usePersonDetailStore } from '@/store/personDetailStore';
 import { type BookLeafCtx } from './BookLeaf';
+import { buildBookPageDraft } from './GenealogyBookPage';
 import { buildLeaves } from './book-leaves';
 import { applyPageConfig } from './book-page-config';
 import { useBookSettings } from './useBookSettings';
-import { useBookDraft } from './useBookDraft';
 import { useBookFlip } from './useBookFlip';
 import { useGenealogyPrint } from './useGenealogyPrint';
 import { ensureCalligraphyFontLoaded } from './calligraphy-font-loader';
@@ -22,15 +22,14 @@ function deferPersonDetailsLoad(loadAll: () => Promise<void>): void {
 }
 
 /**
- * Composes the book's data + interaction hooks (settings, draft editing, page
- * flipping, printing) and exposes everything {@link GenealogyBookViewer} renders.
+ * Composes the book's data + interaction hooks (settings, page flipping,
+ * printing) and exposes everything {@link GenealogyBookViewer} renders.
  */
-export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Person) => void) {
+export function useGenealogyBook(persons: Person[]) {
   const sortedPersons = useMemo(() => sortPersonsForBook(persons), [persons]);
 
   const details = usePersonDetailStore((s) => s.details);
   const loadAll = usePersonDetailStore((s) => s.loadAll);
-  const updateDetail = usePersonDetailStore((s) => s.updateDetail);
   const { settings, updateSettings, hydrated } = useBookSettings();
 
   const visiblePersons = useMemo(
@@ -41,30 +40,13 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
   const totalLeaves = leaves.length;
   const personCount = visiblePersons.length;
 
-  // The flip and print hooks cache the current draft before they run, but the
-  // draft hook needs the page index from the flip hook — break the cycle with a
-  // ref the draft hook fills in below.
-  const cacheRef = useRef<() => void>(() => {});
-  const cacheCurrent = useCallback(() => cacheRef.current(), []);
+  const flipApi = useBookFlip(totalLeaves, () => {});
+  const printApi = useGenealogyPrint(() => {});
 
-  const flipApi = useBookFlip(totalLeaves, cacheCurrent);
-  const currentLeaf = leaves[flipApi.pageIndex];
-  const currentPerson = currentLeaf?.kind === 'person' ? currentLeaf.person : null;
-  const currentDetail = currentPerson ? (details[currentPerson.id] ?? null) : null;
-
-  const { draft, setDraft, isDirty, saving, cacheCurrentDraft, getPersonDraft, handleSave } = useBookDraft({
-    currentPerson,
-    currentDetail,
-    details,
-    updateDetail,
-    onPersonUpdated,
-  });
-
-  const printApi = useGenealogyPrint(cacheCurrent);
-
-  useEffect(() => {
-    cacheRef.current = cacheCurrentDraft;
-  }, [cacheCurrentDraft]);
+  const getPersonDraft = useCallback(
+    (person: Person) => buildBookPageDraft(details[person.id] ?? null),
+    [details],
+  );
 
   useEffect(() => {
     deferPersonDetailsLoad(loadAll);
@@ -81,16 +63,10 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
       updateSettings,
       details,
       personCount,
-      currentDetail,
-      draft,
-      isDirty,
-      saving,
       getPersonDraft,
-      onDraftChange: setDraft,
-      onSave: () => void handleSave(),
     }),
-    [leaves, settings, updateSettings, details, personCount, currentDetail, draft, isDirty, saving, getPersonDraft, setDraft, handleSave],
+    [leaves, settings, updateSettings, details, personCount, getPersonDraft],
   );
 
-  return { hydrated, leaves, totalLeaves, sortedPersons, settings, updateSettings, saving, ctx, ...flipApi, ...printApi };
+  return { hydrated, leaves, totalLeaves, sortedPersons, settings, updateSettings, ctx, ...flipApi, ...printApi };
 }

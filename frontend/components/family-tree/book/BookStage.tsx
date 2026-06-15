@@ -51,18 +51,14 @@ export default function BookStage({
         <div className={`${styles.printCurrentArea} ${styles.scene} h-full`}>
           <div className={styles.sheet}>
             <div className={styles.page}>
-              {flip ? (
-                <BookLeaf index={baseIndex} readOnly ctx={ctx} />
-              ) : (
-                <BookLeaf index={pageIndex} readOnly={false} live ctx={ctx} />
-              )}
+              <BookLeaf index={flip ? baseIndex : pageIndex} live={!flip} ctx={ctx} />
 
               {flip ? (
                 <>
                   <div className={styles.flipUnderShade} aria-hidden />
                   <div className={`${styles.flipLeaf} ${flip.dir === 'next' ? styles.flipLeafNext : styles.flipLeafPrev}`} aria-hidden>
                     <div className={styles.flipFace}>
-                      <BookLeaf index={frontIndex} readOnly ctx={ctx} />
+                      <BookLeaf index={frontIndex} ctx={ctx} />
                     </div>
                     <FlipBackFace settings={ctx.settings} />
                     <div className={styles.flipShadow} />
@@ -78,7 +74,7 @@ export default function BookStage({
         {isPrintAllLayout
           ? leaves.map((leaf, index) => (
               <div key={leafKey(leaf)} className={styles.printAllPage}>
-                <BookLeaf index={index} readOnly ctx={ctx} />
+                <BookLeaf index={index} ctx={ctx} />
               </div>
             ))
           : null}

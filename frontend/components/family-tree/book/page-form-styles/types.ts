@@ -7,6 +7,7 @@ export type PageFormProps = {
   relations: PersonRelationships | null;
   readOnly: boolean;
   onChange: (field: keyof BookPageDraft, value: string) => void;
+  onStartEdit?: () => void;
 };
 
 export type PageFormComponent = (props: PageFormProps) => ReactElement;
