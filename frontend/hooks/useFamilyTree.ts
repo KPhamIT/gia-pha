@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { FamilyTreeData, Person, Relationship } from '@/components/types/family-tree-types';
-import { resolveRootPersonId } from '@/lib/family-tree/resolve-root-person-id';
 import {
   addPersonToTree,
   addRelationshipToTree,
@@ -13,6 +12,7 @@ import {
 import { api } from '@/lib/api';
 import { getErrorMessage } from '@/utils/errors';
 import { UI } from '@/lib/constants/ui-strings';
+import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
 
 const ALLOW_PUBLIC_ACCESS = process.env.NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS === 'true';
 
@@ -26,14 +26,27 @@ export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
       setLoading(true);
       setError(null);
 
-      const personId = await resolveRootPersonId(allowPublicAccess);
-      if (!personId) {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+
+      if (token) {
+        try {
+          const meResponse = await api.auth.me();
+          if (meResponse?.person?.id) {
+            setTreeData(await api.person.getTree(meResponse.person.id));
+            return;
+          }
+        } catch (err) {
+          console.error('Error fetching user info:', err);
+        }
+      }
+
+      if (!allowPublicAccess) {
         setError(UI.ERR_FETCH_USER);
         setTreeData(null);
         return;
       }
 
-      setTreeData(await api.person.getTree(personId));
+      setTreeData(await api.person.getDefaultTree());
     } catch (err) {
       console.error('Error fetching family tree:', err);
       setError(getErrorMessage(err, UI.ERR_FETCH_DATA));

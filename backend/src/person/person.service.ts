@@ -187,6 +187,17 @@ export class PersonService {
     return this.prisma.person.delete({ where: { id } });
   }
 
+  async getDefaultFamilyGraph() {
+    const persons = await this.prisma.person.findMany({
+      orderBy: { fullName: 'asc' },
+    });
+    const root = persons.find((person) => person.generation === 0) ?? persons[0];
+    if (!root) {
+      throw new NotFoundException('No persons found');
+    }
+    return this.getFamilyGraph(root.id);
+  }
+
   async getFamilyGraph(rootId: number) {
     const root = await this.findOne(rootId);
     const persons = await this.prisma.person.findMany({

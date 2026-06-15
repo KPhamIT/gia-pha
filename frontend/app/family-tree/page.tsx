@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import FamilyTreeGraph from '@/components/family-tree/graph/FamilyTreeGraph';
+import dynamic from 'next/dynamic';
 import TreeFilters from '@/components/family-tree/graph/TreeFilters';
 import WelcomeBranchSheet from '@/components/family-tree/graph/WelcomeBranchSheet';
 import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet';
@@ -12,7 +12,6 @@ import DeletePersonSheet from '@/components/family-tree/person/DeletePersonSheet
 import SearchSheet from '@/components/family-tree/person/SearchSheet';
 import TreeFab from '@/components/family-tree/graph/TreeFab';
 import GenealogyBookViewer from '@/components/family-tree/book/GenealogyBookViewer';
-import EventsManager from '@/components/family-tree/events/EventsManager';
 import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
 import Icon from '@/components/icons/Icon';
@@ -32,6 +31,17 @@ import type { Person, ThemeMode, UpdatePersonDetailInput } from '@/components/ty
 import { createStandalonePerson, updatePersonDetail } from '@/lib/family-tree/mutations';
 import { getPageShellClass } from '@/utils/theme';
 import { UI } from '@/lib/constants/ui-strings';
+
+const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/FamilyTreeGraph'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full items-center justify-center text-sm text-slate-500">{UI.LOADING}</div>
+  ),
+});
+
+const EventsManager = dynamic(() => import('@/components/family-tree/events/EventsManager'), {
+  ssr: false,
+});
 
 type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
 type MainView = 'book' | 'tree';

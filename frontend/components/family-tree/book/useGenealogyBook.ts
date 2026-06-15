@@ -11,6 +11,7 @@ import { useBookSettings } from './useBookSettings';
 import { useBookDraft } from './useBookDraft';
 import { useBookFlip } from './useBookFlip';
 import { useGenealogyPrint } from './useGenealogyPrint';
+import { ensureCalligraphyFontLoaded } from './calligraphy-font-loader';
 
 /**
  * Composes the book's data + interaction hooks (settings, draft editing, page
@@ -20,10 +21,9 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
   const sortedPersons = useMemo(() => sortPersonsForBook(persons), [persons]);
 
   const details = usePersonDetailStore((s) => s.details);
-  const status = usePersonDetailStore((s) => s.status);
   const loadAll = usePersonDetailStore((s) => s.loadAll);
   const updateDetail = usePersonDetailStore((s) => s.updateDetail);
-  const { settings, updateSettings } = useBookSettings();
+  const { settings, updateSettings, hydrated } = useBookSettings();
 
   const visiblePersons = useMemo(
     () => applyPageConfig(sortedPersons, settings.pageConfig),
@@ -48,7 +48,6 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
     currentPerson,
     currentDetail,
     details,
-    status,
     updateDetail,
     onPersonUpdated,
   });
@@ -62,6 +61,10 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
   useEffect(() => {
     void loadAll();
   }, [loadAll]);
+
+  useEffect(() => {
+    ensureCalligraphyFontLoaded(settings.coverFontId);
+  }, [settings.coverFontId]);
 
   const ctx = useMemo<BookLeafCtx>(
     () => ({
@@ -81,5 +84,5 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
     [leaves, settings, updateSettings, details, personCount, currentDetail, draft, isDirty, saving, getPersonDraft, setDraft, handleSave],
   );
 
-  return { status, leaves, totalLeaves, sortedPersons, settings, updateSettings, saving, ctx, ...flipApi, ...printApi };
+  return { hydrated, leaves, totalLeaves, sortedPersons, settings, updateSettings, saving, ctx, ...flipApi, ...printApi };
 }

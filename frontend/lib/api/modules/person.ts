@@ -41,4 +41,6 @@ export const person = {
     axiosClient.patch<PersonDetail>(API_ROUTES.PERSON_DETAIL(id), data).then((r) => r.data),
   delete: (id: number) => axiosClient.delete(API_ROUTES.PERSON(id)).then((r) => r.data),
   getTree: (id: number) => axiosClient.get<FamilyTreeData>(API_ROUTES.PERSON_TREE(id)).then((r) => r.data),
+  getDefaultTree: () =>
+    axiosClient.get<FamilyTreeData>(API_ROUTES.PERSON_ROOT_TREE).then((r) => r.data),
 };

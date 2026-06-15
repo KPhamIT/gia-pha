@@ -9,7 +9,6 @@ type Params = {
   currentPerson: Person | null;
   currentDetail: PersonDetail | null;
   details: Record<number, PersonDetail>;
-  status: string;
   updateDetail: (id: number, detail: PersonDetail) => void;
   onPersonUpdated: (person: Person) => void;
 };
@@ -18,7 +17,7 @@ type Params = {
  * Owns the editable draft for the current book page plus a per-person cache of
  * unsaved edits, so flipping between pages keeps changes until they are saved.
  */
-export function useBookDraft({ currentPerson, currentDetail, details, status, updateDetail, onPersonUpdated }: Params) {
+export function useBookDraft({ currentPerson, currentDetail, details, updateDetail, onPersonUpdated }: Params) {
   const [draft, setDraft] = useState<BookPageDraft>(buildBookPageDraft(null));
   const [savedSnapshot, setSavedSnapshot] = useState<BookPageDraft>(buildBookPageDraft(null));
   const [saving, setSaving] = useState(false);
@@ -33,8 +32,15 @@ export function useBookDraft({ currentPerson, currentDetail, details, status, up
   // Load the draft for a person page only when the page actually changes, so
   // caching the current draft (which updates draftCache) doesn't clobber edits.
   useEffect(() => {
-    if (status !== 'loaded' || !currentPerson) return;
-    if (loadedPersonId.current === currentPerson.id) return;
+    if (!currentPerson) return;
+    if (loadedPersonId.current === currentPerson.id) {
+      if (currentDetail && !draftCache[currentPerson.id]) {
+        const fromDetail = buildBookPageDraft(currentDetail);
+        setSavedSnapshot(fromDetail);
+        setDraft((prev) => (JSON.stringify(prev) === JSON.stringify(buildBookPageDraft(null)) ? fromDetail : prev));
+      }
+      return;
+    }
     loadedPersonId.current = currentPerson.id;
     /* eslint-disable react-hooks/set-state-in-effect */
     const cachedDraft = draftCache[currentPerson.id];
@@ -47,7 +53,7 @@ export function useBookDraft({ currentPerson, currentDetail, details, status, up
       setSavedSnapshot(initial);
     }
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [currentPerson, currentDetail, status, draftCache]);
+  }, [currentPerson, currentDetail, draftCache]);
 
   const cacheCurrentDraft = useCallback(() => {
     if (!currentPerson || !isDirty) return;

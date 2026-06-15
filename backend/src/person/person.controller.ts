@@ -34,6 +34,11 @@ export class PersonController {
     return this.personService.findAllDetails();
   }
 
+  @Get('root/tree')
+  getDefaultFamilyGraph() {
+    return this.personService.getDefaultFamilyGraph();
+  }
+
   @Get(':id/tree')
   getFamilyGraph(@Param('id') id: string) {
     return this.personService.getFamilyGraph(+id);

@@ -5,6 +5,7 @@ import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import type { BookSettings } from './book-settings';
 import { CALLIGRAPHY_FONTS } from './calligraphy-fonts';
+import { ensureCalligraphyFontLoaded } from './calligraphy-font-loader';
 import { PAGE_BORDER_STYLES } from './page-border-styles';
 import { PAGE_FORM_STYLES } from './page-form-styles';
 
@@ -75,7 +76,11 @@ export default function BookStyleControls({ settings, onChange, onClose }: BookS
           <select
             className={selectClass}
             value={settings.coverFontId}
-            onChange={(e) => onChange({ coverFontId: e.target.value })}
+            onChange={(e) => {
+              const coverFontId = e.target.value;
+              ensureCalligraphyFontLoaded(coverFontId);
+              onChange({ coverFontId });
+            }}
           >
             {CALLIGRAPHY_FONTS.map((f) => (
               <option key={f.id} value={f.id}>

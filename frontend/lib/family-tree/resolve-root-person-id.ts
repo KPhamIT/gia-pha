@@ -22,10 +22,10 @@ export async function resolveRootPersonId(allowPublicAccess: boolean): Promise<n
   }
 
   try {
-    const persons = await api.person.list();
-    return getRootPerson(persons as Person[])?.id ?? null;
+    const tree = await api.person.getDefaultTree();
+    return tree.root?.id ?? getRootPerson(tree.persons as Person[])?.id ?? null;
   } catch (err) {
-    console.error('Error fetching persons:', err);
+    console.error('Error fetching default tree:', err);
     return null;
   }
 }

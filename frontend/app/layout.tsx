@@ -1,32 +1,16 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Geist, Geist_Mono, Noto_Serif, Open_Sans } from "next/font/google";
+import { Noto_Serif } from "next/font/google";
 import "./globals.css";
 import { UI } from "@/lib/constants/ui-strings";
 import { themeInitScript } from "@/utils/theme";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const notoSerif = Noto_Serif({
   variable: "--font-noto-serif",
   subsets: ["latin", "vietnamese"],
   style: ["normal", "italic"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
-
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
-  subsets: ["latin", "vietnamese"],
-  style: ["normal", "italic"],
-  axes: ["wdth"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,7 +26,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${geistSans.variable} ${geistMono.variable} ${notoSerif.variable} ${openSans.variable} h-full antialiased`}
+      className={`${notoSerif.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <Script id="theme-init" strategy="beforeInteractive">

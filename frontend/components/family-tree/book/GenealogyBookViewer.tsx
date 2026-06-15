@@ -20,10 +20,9 @@ export default function GenealogyBookViewer({ persons, onClose, onPersonUpdated 
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
   const book = useGenealogyBook(persons, onPersonUpdated);
-  const { status, settings, updateSettings, isPrintAllLayout, viewerRootRef } = book;
+  const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef } = book;
 
-  if (status === 'loading' || status === 'idle') return <BookViewerFallback kind="loading" onClose={onClose} />;
-  if (status === 'error') return <BookViewerFallback kind="error" onClose={onClose} />;
+  if (!hydrated) return <BookViewerFallback kind="loading" onClose={onClose} />;
 
   return (
     <div
