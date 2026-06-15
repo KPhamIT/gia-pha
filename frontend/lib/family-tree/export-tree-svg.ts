@@ -244,28 +244,34 @@ export function resolveExportLayout(settings: TreeExportSettings, header: Rect):
   const drX = settings.dragonRight.x ?? scrollX + scrollW + 50;
   const drY = settings.dragonRight.y ?? dragonY;
 
-  const leftFont = settings.coupletLeft.fontSize ?? defaultCoupletFontSize(settings.coupletLeft.text);
-  const rightFont = settings.coupletRight.fontSize ?? defaultCoupletFontSize(settings.coupletRight.text);
-  // Couplets default to the top-left / top-right corners, running downward.
-  const coupletTopY = header.y + leftFont * 0.5;
+  // Both couplets share one font size + colour. Auto size fits the longer
+  // couplet's column to ≈ 18rem so neither overflows.
+  const coupletColor = settings.coupletColor;
+  const coupletFont =
+    settings.coupletFontSize ??
+    Math.min(
+      defaultCoupletFontSize(settings.coupletLeft.text),
+      defaultCoupletFontSize(settings.coupletRight.text),
+    );
+  const coupletTopY = header.y + coupletFont * 0.5;
 
   return {
     scroll: { x: scrollX, y: scrollY, width: scrollW, height: scrollH, visible: settings.scroll.visible },
     dragonLeft: { x: dlX, y: dlY, width: dlW, height: dlH, visible: settings.dragonLeft.visible },
     dragonRight: { x: drX, y: drY, width: drW, height: drH, visible: settings.dragonRight.visible },
     coupletLeft: {
-      x: settings.coupletLeft.x ?? header.x + leftFont * 0.9,
+      x: settings.coupletLeft.x ?? header.x + coupletFont * 0.9,
       y: settings.coupletLeft.y ?? coupletTopY,
-      fontSize: leftFont,
-      color: settings.coupletLeft.color,
+      fontSize: coupletFont,
+      color: coupletColor,
       text: settings.coupletLeft.text,
       visible: settings.coupletLeft.visible,
     },
     coupletRight: {
-      x: settings.coupletRight.x ?? header.x + header.width - rightFont * 0.9,
-      y: settings.coupletRight.y ?? header.y + rightFont * 0.5,
-      fontSize: rightFont,
-      color: settings.coupletRight.color,
+      x: settings.coupletRight.x ?? header.x + header.width - coupletFont * 0.9,
+      y: settings.coupletRight.y ?? header.y + coupletFont * 0.5,
+      fontSize: coupletFont,
+      color: coupletColor,
       text: settings.coupletRight.text,
       visible: settings.coupletRight.visible,
     },

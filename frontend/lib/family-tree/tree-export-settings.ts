@@ -1,6 +1,6 @@
 import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
 import { DEFAULT_CALLIGRAPHY_FONT_ID } from '@/components/family-tree/book/calligraphy-fonts';
-import { DEFAULT_TREE_BORDER_ID, isTreeBorderId } from './svg-border';
+import { DEFAULT_NODE_CARD_ID, DEFAULT_TREE_BORDER_ID, isNodeCardId, isTreeBorderId } from './svg-border';
 
 /**
  * A draggable box. Any of x/y/width/height may be `null`, meaning "auto" —
@@ -19,8 +19,6 @@ export type ExportImageCfg = ExportBox & { visible: boolean };
 export type ExportCoupletCfg = ExportBox & {
   visible: boolean;
   text: string;
-  fontSize: number | null;
-  color: string;
 };
 
 /**
@@ -40,6 +38,18 @@ export type TreeExportSettings = {
   coupletRight: ExportCoupletCfg;
   /** Calligraphy font (thư pháp) used for both couplets, same set as the book cover. */
   coupletFontId: string;
+  /** Shared text colour for both couplets. */
+  coupletColor: string;
+  /** Shared font size (SVG units) for both couplets; null = auto (≈ 18rem column). */
+  coupletFontSize: number | null;
+  /** Person card appearance. */
+  nodeBgColor: string;
+  nodeTextColor: string;
+  nodeBorderColor: string;
+  /** Border/frame style id for each person card. */
+  nodeBorderStyleId: string;
+  /** Name font size (SVG units) inside each person card. */
+  nodeFontSize: number;
 };
 
 const GOLD = '#7c2d12';
@@ -54,8 +64,6 @@ const autoCouplet = (text: string): ExportCoupletCfg => ({
   height: null,
   visible: true,
   text,
-  fontSize: null,
-  color: COUPLET_COLOR,
 });
 
 export function defaultTreeExportSettings(): TreeExportSettings {
@@ -70,6 +78,13 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     coupletLeft: autoCouplet('Tổ Tiên Công Đức Thiên Niên Thịnh'),
     coupletRight: autoCouplet('Tử Hiếu Tôn Hiền Vạn Đại Vinh'),
     coupletFontId: DEFAULT_CALLIGRAPHY_FONT_ID,
+    coupletColor: COUPLET_COLOR,
+    coupletFontSize: null,
+    nodeBgColor: '#ffffff',
+    nodeTextColor: '#1f2937',
+    nodeBorderColor: '#94a3b8',
+    nodeBorderStyleId: DEFAULT_NODE_CARD_ID,
+    nodeFontSize: 15,
   };
 }
 
@@ -96,6 +111,7 @@ export function normalizeTreeExportSettings(
     coupletRight: normalizeCouplet(partial?.coupletRight, base.coupletRight),
   };
   if (!isTreeBorderId(merged.borderStyleId)) merged.borderStyleId = base.borderStyleId;
+  if (!isNodeCardId(merged.nodeBorderStyleId)) merged.nodeBorderStyleId = base.nodeBorderStyleId;
   return merged;
 }
 

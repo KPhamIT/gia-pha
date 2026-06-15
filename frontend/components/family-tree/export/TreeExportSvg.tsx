@@ -14,7 +14,7 @@ import {
   type ResolvedLayout,
   type Rect,
 } from '@/lib/family-tree/export-tree-svg';
-import { getTreeBorderStyle } from '@/lib/family-tree/svg-border';
+import { getNodeCardStyle, getTreeBorderStyle } from '@/lib/family-tree/svg-border';
 import { getCalligraphyFont } from '@/components/family-tree/book/calligraphy-fonts';
 import type { ExportBox, TreeExportSettings } from '@/lib/family-tree/tree-export-settings';
 
@@ -27,8 +27,6 @@ type TreeExportSvgProps = {
   layout: ResolvedLayout;
   settings: TreeExportSettings;
   imageSources: Record<ExportImageKey, string>;
-  nodeBgColor?: string;
-  nodeTextColor?: string;
   interactive?: boolean;
   selectedId?: DraggableId | null;
   onSelect?: (id: DraggableId | null) => void;
@@ -76,8 +74,6 @@ export default function TreeExportSvg({
   layout,
   settings,
   imageSources,
-  nodeBgColor = '#ffffff',
-  nodeTextColor = '#1f2937',
   interactive = false,
   selectedId = null,
   onSelect,
@@ -87,6 +83,8 @@ export default function TreeExportSvg({
   const { canvasWidth, canvasHeight, borderRect, treeTranslateX, treeTranslateY } = geometry;
   const border = getTreeBorderStyle(settings.borderStyleId);
   const coupletFontFamily = getCalligraphyFont(settings.coupletFontId).cssValue;
+  const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } = settings;
+  const nodeCard = getNodeCardStyle(settings.nodeBorderStyleId);
 
   const toSvgPoint = (clientX: number, clientY: number) => {
     const svg = svgRef.current;
@@ -250,21 +248,15 @@ export default function TreeExportSvg({
         {model.nodes.map((n) => {
           const words = n.fullName.trim().split(/\s+/).filter(Boolean);
           const cx = model.nodeWidth / 2;
-          const nameFont = 15;
-          const lineH = 18;
+          const nameFont = nodeFontSize;
+          const lineH = nameFont * 1.2;
+          const birthFont = nameFont * 0.73;
           const birth = formatBirthDate(n.birthDate);
-          const blockH = words.length * lineH + (birth ? 16 : 0);
+          const blockH = words.length * lineH + (birth ? birthFont + 5 : 0);
           const firstBaseline = Math.max(nameFont + 6, (model.nodeHeight - blockH) / 2 + nameFont);
           return (
             <g key={n.id} transform={`translate(${n.x} ${n.y})`}>
-              <rect
-                width={model.nodeWidth}
-                height={model.nodeHeight}
-                rx={8}
-                fill={nodeBgColor}
-                stroke={n.isRoot ? '#b45309' : '#94a3b8'}
-                strokeWidth={n.isRoot ? 2.5 : 1.5}
-              />
+              {nodeCard.render(model.nodeWidth, model.nodeHeight, nodeBgColor, nodeBorderColor, n.isRoot ? 2.5 : 1.5)}
               <text
                 x={cx}
                 textAnchor="middle"
@@ -285,7 +277,7 @@ export default function TreeExportSvg({
                   y={firstBaseline + words.length * lineH + 4}
                   textAnchor="middle"
                   fontFamily={SERIF}
-                  fontSize={11}
+                  fontSize={birthFont}
                   fill={nodeTextColor}
                   opacity={0.7}
                 >

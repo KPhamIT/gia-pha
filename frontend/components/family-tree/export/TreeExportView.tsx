@@ -131,7 +131,7 @@ export default function TreeExportView({ treeData, layoutConfig = {}, onClose }:
 
   return (
     <div className="overlay-viewport z-40 bg-slate-300">
-      <div className="absolute inset-0 flex items-center justify-center p-2 pb-[40vh] md:p-4 md:pr-[22rem]">
+      <div className="absolute inset-0 flex items-center justify-center p-2 pb-36 md:p-4 md:pr-[22rem] md:pb-4">
         <TreeExportSvg
           svgRef={svgRef}
           model={model}
@@ -139,8 +139,6 @@ export default function TreeExportView({ treeData, layoutConfig = {}, onClose }:
           layout={layout}
           settings={settings}
           imageSources={imageSources}
-          nodeBgColor={layoutConfig.nodeBgColor}
-          nodeTextColor={layoutConfig.nodeTextColor}
           interactive
           selectedId={selectedId}
           onSelect={setSelectedId}
