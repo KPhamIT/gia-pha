@@ -9,11 +9,18 @@ import { api } from '@/lib/api';
 import type { Person } from '@/components/types/family-tree-types';
 import type {
   CreateDonationInput,
+  DonationDraftItem,
   EventDonation,
   FamilyEvent,
   FamilyEventDetail,
 } from '@/components/types/event-types';
-import { formatVnd } from './event-format';
+import {
+  buildSaveDonationsPayload,
+  donationsToDraft,
+  isDonationsDraftDirty,
+  newDonationDraftKey,
+} from './event-donation-draft';
+import { formatDonationValue, formatVnd } from './event-format';
 import { ET } from './event-theme';
 import EventDonationFormSheet from './EventDonationFormSheet';
 
@@ -33,18 +40,23 @@ const summaryPatch = (detail: FamilyEventDetail): Partial<FamilyEvent> => ({
 
 /** Full-screen list of free-form merit donations (công đức) for one event. */
 export default function EventDonationsView({ event, persons, onClose, onEventPatched }: Props) {
-  const [donations, setDonations] = useState<EventDonation[]>([]);
+  const [savedDonations, setSavedDonations] = useState<EventDonation[]>([]);
+  const [draftDonations, setDraftDonations] = useState<DonationDraftItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<EventDonation | null>(null);
   const [saving, setSaving] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
         const detail = await api.event.get(event.id);
-        if (!cancelled) setDonations(detail.donations ?? []);
+        if (!cancelled) {
+          const donations = detail.donations ?? [];
+          setSavedDonations(donations);
+          setDraftDonations(donationsToDraft(donations));
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -54,79 +66,194 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
     };
   }, [event.id]);
 
-  const donationTotal = useMemo(() => donations.reduce((sum, d) => sum + d.amount, 0), [donations]);
+  const editing = useMemo(
+    () => draftDonations.find((item) => item.draftKey === editingKey) ?? null,
+    [draftDonations, editingKey],
+  );
 
-  const apply = (detail: FamilyEventDetail) => {
-    setDonations(detail.donations ?? []);
-    onEventPatched(summaryPatch(detail));
+  const isDirty = useMemo(
+    () => isDonationsDraftDirty(savedDonations, draftDonations),
+    [savedDonations, draftDonations],
+  );
+
+  const donationTotal = useMemo(
+    () =>
+      draftDonations
+        .filter((donation) => donation.kind === 'MONEY')
+        .reduce((sum, donation) => sum + donation.amount, 0),
+    [draftDonations],
+  );
+
+  const inKindCount = useMemo(
+    () => draftDonations.filter((donation) => donation.kind === 'IN_KIND').length,
+    [draftDonations],
+  );
+
+  const upsertDraft = (input: CreateDonationInput) => {
+    if (editing) {
+      setDraftDonations((prev) =>
+        prev.map((item) =>
+          item.draftKey === editing.draftKey
+            ? {
+                ...item,
+                donorName: input.donorName,
+                personId: input.personId,
+                kind: input.kind ?? 'MONEY',
+                amount: input.amount ?? 0,
+                itemDescription: input.itemDescription ?? null,
+                note: input.note ?? null,
+              }
+            : item,
+        ),
+      );
+    } else {
+      setDraftDonations((prev) => [
+        ...prev,
+        {
+          draftKey: newDonationDraftKey(),
+          donorName: input.donorName,
+          personId: input.personId,
+          kind: input.kind ?? 'MONEY',
+          amount: input.amount ?? 0,
+          itemDescription: input.itemDescription ?? null,
+          note: input.note ?? null,
+        },
+      ]);
+    }
+    setFormOpen(false);
+    setEditingKey(null);
   };
 
-  const submit = async (input: CreateDonationInput) => {
+  const removeDraft = (draftKey: string) => {
+    if (!window.confirm(UI.EVENT_DONATION_DELETE_CONFIRM)) return;
+    setDraftDonations((prev) => prev.filter((item) => item.draftKey !== draftKey));
+  };
+
+  const handleSave = async () => {
+    if (!isDirty || saving) return;
+
+    const payload = buildSaveDonationsPayload(savedDonations, draftDonations);
     setSaving(true);
     try {
-      const detail = editing
-        ? await api.event.updateDonation(event.id, editing.id, input)
-        : await api.event.addDonation(event.id, input);
-      apply(detail);
-      setFormOpen(false);
-      setEditing(null);
+      const detail = await api.event.saveDonations(event.id, payload);
+      const donations = detail.donations ?? [];
+      setSavedDonations(donations);
+      setDraftDonations(donationsToDraft(donations));
+      onEventPatched(summaryPatch(detail));
+    } catch {
+      setDraftDonations(donationsToDraft(savedDonations));
     } finally {
       setSaving(false);
     }
   };
 
-  const remove = async (donation: EventDonation) => {
-    if (!window.confirm(UI.EVENT_DONATION_DELETE_CONFIRM)) return;
-    apply(await api.event.removeDonation(event.id, donation.id));
+  const handleClose = () => {
+    if (isDirty && !window.confirm(UI.BOOK_PAGES_DISCARD_CONFIRM)) return;
+    onClose();
   };
 
-  const addButton = (
-    <button
-      type="button"
-      onClick={() => {
-        setEditing(null);
-        setFormOpen(true);
-      }}
-      className={`grid h-10 w-10 place-items-center rounded-full ${ET.roundBtn}`}
-      aria-label={UI.EVENT_DONATION_ADD}
-    >
-      <Icon path="plus" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-    </button>
+  const headerActions = (
+    <div className="flex shrink-0 items-center gap-2">
+      <button
+        type="button"
+        onClick={() => {
+          setEditingKey(null);
+          setFormOpen(true);
+        }}
+        className={`grid h-10 w-10 place-items-center rounded-full ${ET.roundBtn}`}
+        aria-label={UI.EVENT_DONATION_ADD}
+      >
+        <Icon path="plus" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+      </button>
+      <button
+        type="button"
+        onClick={() => void handleSave()}
+        disabled={!isDirty || saving}
+        className="grid h-10 w-10 place-items-center rounded-full bg-amber-100 text-amber-950 active:bg-amber-200 disabled:bg-white/10 disabled:text-amber-100/40"
+        aria-label={UI.BOOK_PAGES_SAVE}
+        title={isDirty ? UI.BOOK_PAGES_SAVE : UI.BOOK_PAGES_SAVED}
+      >
+        {saving ? (
+          <LoadingSpinner size={20} />
+        ) : (
+          <Icon path="save" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        )}
+      </button>
+    </div>
   );
 
   return (
     <>
-      <FullScreenSheet title={UI.EVENT_DONATION_SECTION} onClose={onClose} headerRight={addButton} tone="book">
+      <FullScreenSheet
+        title={UI.EVENT_DONATION_SECTION}
+        onClose={handleClose}
+        headerRight={headerActions}
+        tone="book"
+      >
         <div className="border-b border-amber-400/20 bg-white px-4 py-3 text-center">
           <div className={`text-xl font-bold ${ET.money}`}>{formatVnd(donationTotal)}</div>
-          <div className="text-xs text-slate-500">
-            {UI.EVENT_DONATION_TOTAL} · {donations.length}
-          </div>
+          <div className="text-xs text-slate-500">{UI.EVENT_DONATION_TOTAL}</div>
+          {draftDonations.length > 0 ? (
+            <div className="mt-1 text-xs text-slate-400">
+              {UI.EVENT_DONATION_SUMMARY_SUBTITLE(draftDonations.length, inKindCount)}
+            </div>
+          ) : null}
         </div>
 
         {loading ? (
           <div className="flex justify-center py-12">
             <LoadingSpinner size={36} />
           </div>
-        ) : donations.length === 0 ? (
+        ) : draftDonations.length === 0 ? (
           <p className="px-4 py-12 text-center text-sm text-amber-100/70">{UI.EVENT_DONATION_EMPTY}</p>
         ) : (
           <ul className={`m-4 divide-y divide-neutral-100 ${ET.panel}`}>
-            {donations.map((donation) => (
-              <li key={donation.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white">
+            {draftDonations.map((donation) => {
+              const isMoney = donation.kind === 'MONEY';
+              return (
+              <li
+                key={donation.draftKey}
+                className={`flex gap-3 px-4 py-3 ${isMoney ? 'items-center' : 'items-start'}`}
+              >
+                <span
+                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white ${
+                    isMoney ? '' : 'mt-0.5'
+                  }`}
+                >
                   {donation.donorName.charAt(0)}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-neutral-800">{donation.donorName}</span>
-                  {donation.note ? <span className="block truncate text-xs text-neutral-400">{donation.note}</span> : null}
+                  <div className={`flex justify-between gap-2 ${isMoney ? 'items-center' : 'items-start'}`}>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <span className="text-sm font-medium text-neutral-800">{donation.donorName}</span>
+                        {donation.kind === 'IN_KIND' ? (
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+                            {UI.EVENT_DONATION_KIND_IN_KIND}
+                          </span>
+                        ) : null}
+                      </div>
+                      {donation.kind === 'IN_KIND' && donation.itemDescription ? (
+                        <span className="mt-0.5 block text-sm font-semibold text-amber-900">
+                          {donation.itemDescription}
+                        </span>
+                      ) : null}
+                      {donation.note ? (
+                        <span className="mt-0.5 block text-xs text-neutral-400">{donation.note}</span>
+                      ) : null}
+                    </div>
+                    {donation.kind === 'MONEY' ? (
+                      <span className={`shrink-0 text-sm font-bold ${ET.money}`}>
+                        {formatDonationValue(donation)}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-                <span className={`shrink-0 text-sm font-bold ${ET.money}`}>{formatVnd(donation.amount)}</span>
                 <div className="flex shrink-0 gap-1">
                   <button
                     type="button"
                     onClick={() => {
-                      setEditing(donation);
+                      setEditingKey(donation.draftKey);
                       setFormOpen(true);
                     }}
                     className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100"
@@ -136,7 +263,7 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
                   </button>
                   <button
                     type="button"
-                    onClick={() => void remove(donation)}
+                    onClick={() => removeDraft(donation.draftKey)}
                     className="grid h-8 w-8 place-items-center rounded-full text-rose-500 active:bg-rose-50"
                     aria-label={UI.DELETE_PERSON}
                   >
@@ -144,7 +271,8 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
                   </button>
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ul>
         )}
       </FullScreenSheet>
@@ -153,11 +281,10 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
         <EventDonationFormSheet
           initial={editing}
           persons={persons}
-          saving={saving}
-          onSubmit={submit}
+          onSubmit={upsertDraft}
           onClose={() => {
             setFormOpen(false);
-            setEditing(null);
+            setEditingKey(null);
           }}
         />
       ) : null}

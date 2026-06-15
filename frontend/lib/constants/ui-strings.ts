@@ -206,6 +206,8 @@ export const UI = {
   EVENT_BADGE_CONTRIBUTION: 'Đóng góp',
   EVENT_PAID: 'Đã nộp',
   EVENT_UNPAID: 'Chưa nộp',
+  EVENT_PARTIAL_PAID: 'Đóng một phần',
+  EVENT_AMOUNT_PAID_PLACEHOLDER: 'Số tiền đã đóng',
   EVENT_PAID_SUMMARY: (paid: number, total: number) => `${paid}/${total} người đã nộp`,
   EVENT_PAID_COUNT_SHORT: (paid: number) => `${paid} người đã nộp`,
   EVENT_TOTAL_COLLECTED: 'Tổng đã thu',
@@ -228,11 +230,25 @@ export const UI = {
   EVENT_DONATION_MEMBER_SELECTED: 'Thành viên đã chọn',
   EVENT_DONATION_CLEAR_MEMBER: 'Bỏ chọn',
   EVENT_DONATION_OR_MANUAL: 'Hoặc nhập tên người ngoài gia phả:',
+  EVENT_DONATION_KIND_LABEL: 'Loại công đức',
+  EVENT_DONATION_KIND_MONEY: 'Tiền',
+  EVENT_DONATION_KIND_IN_KIND: 'Hiện vật',
   EVENT_DONATION_AMOUNT_LABEL: 'Số tiền công đức (đ)',
+  EVENT_DONATION_ITEM_LABEL: 'Mô tả hiện vật',
+  EVENT_DONATION_ITEM_PLACEHOLDER: 'VD: 5 kg gạo, 1 con lợn...',
+  EVENT_DONATION_ITEM_REQUIRED: 'Vui lòng nhập mô tả hiện vật.',
   EVENT_DONATION_NOTE_LABEL: 'Ghi chú',
   EVENT_DONATION_NOTE_PLACEHOLDER: 'Lời chúc / ghi chú (không bắt buộc)',
   EVENT_DONATION_DELETE_CONFIRM: 'Xóa khoản công đức này?',
-  EVENT_DONATION_TOTAL: 'Tổng công đức',
+  EVENT_DONATION_FORM_DONE: 'Xong',
+  EVENT_DONATION_TOTAL: 'Tổng tiền công đức',
+  EVENT_DONATION_ENTRY_COUNT: (count: number) => `${count} khoản`,
+  EVENT_DONATION_IN_KIND_COUNT: (count: number) => `${count} hiện vật`,
+  EVENT_DONATION_SUMMARY_SUBTITLE: (entryCount: number, inKindCount: number) => {
+    const parts = [UI.EVENT_DONATION_ENTRY_COUNT(entryCount)];
+    if (inKindCount > 0) parts.push(UI.EVENT_DONATION_IN_KIND_COUNT(inKindCount));
+    return parts.join(' · ');
+  },
   EVENT_GRAND_TOTAL: 'Tổng cộng',
   EVENT_VIEW_DONATION: 'Danh sách công đức',
 } as const;

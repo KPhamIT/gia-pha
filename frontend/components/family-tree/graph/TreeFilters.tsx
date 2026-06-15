@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/icons/Icon';
 import { UI } from '@/lib/constants/ui-strings';
 import { BRANCH_OPTIONS, getBranchLabel } from '@/lib/constants/branches';
@@ -33,12 +33,31 @@ function Tag({ active, label, onClick }: { active: boolean; label: string; onCli
 
 export default function TreeFilters({ branch, maxGeneration, onBranchChange, onMaxGenerationChange }: TreeFiltersProps) {
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const summary = `${branch === 'all' ? UI.FILTER_ALL : getBranchLabel(branch)} · ${
     maxGeneration === 'all' ? UI.FILTER_ALL : UI.GENERATION_SHORT(maxGeneration)
   }`;
 
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (containerRef.current && !containerRef.current.contains(target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [open]);
+
   return (
-    <div className="fixed left-4 top-4 z-20 pt-[env(safe-area-inset-top)]">
+    <div ref={containerRef} className="fixed left-4 top-4 z-20 pt-[env(safe-area-inset-top)]">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

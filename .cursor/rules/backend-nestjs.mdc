@@ -48,6 +48,7 @@ import { PrismaService } from '../prisma/prisma.service';
 ## API & lỗi
 
 - REST convention: `GET /person`, `GET /person/:id/tree`, `PATCH`, `DELETE`…
+- Màn hình danh sách có nhiều thao tác sửa: ưu tiên **một endpoint batch** (`PUT …/contribution`, `PUT …/donation`) nhận payload delta (`create` / `update` / `remove` hoặc mảng thay đổi), xử lý trong `$transaction` — tránh N request từ frontend.
 - Không tìm thấy resource: `NotFoundException`.
 - CORS đã bật trong `main.ts` (`origin: true`, `credentials: true`).
 

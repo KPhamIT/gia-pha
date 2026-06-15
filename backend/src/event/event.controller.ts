@@ -12,9 +12,10 @@ import {
 import { EventService } from './event.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
-import { SetContributionDto } from './dto/set-contribution.dto.js';
+import { SetContributionsDto } from './dto/set-contribution.dto.js';
 import { CreateDonationDto } from './dto/create-donation.dto.js';
 import { UpdateDonationDto } from './dto/update-donation.dto.js';
+import { SaveDonationsDto } from './dto/save-donations.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
 @Controller('event')
@@ -51,8 +52,14 @@ export class EventController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id/contribution')
-  setContribution(@Param('id') id: string, @Body() dto: SetContributionDto) {
-    return this.eventService.setContribution(+id, dto.personId, dto.paid);
+  setContributions(@Param('id') id: string, @Body() dto: SetContributionsDto) {
+    return this.eventService.setContributions(+id, dto.contributions);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/donation')
+  setDonations(@Param('id') id: string, @Body() dto: SaveDonationsDto) {
+    return this.eventService.setDonations(+id, dto);
   }
 
   @UseGuards(JwtAuthGuard)

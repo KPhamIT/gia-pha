@@ -68,3 +68,15 @@ import { UI } from "@/lib/constants/ui-strings";
 
 setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
 ```
+
+## Draft & batch save (màn hình danh sách)
+
+Áp dụng cho mọi UI quản lý danh sách có thể sửa nhiều dòng (vd. trang sổ, đóng góp, công đức):
+
+1. **Load một lần** khi mở màn hình (`useEffect` phụ thuộc id ổn định — không phụ thuộc callback inline).
+2. **`saved*`** (state từ server) + **`draft*`** (state local); `isDirty` so sánh draft vs saved.
+3. Mọi click/nhập/sửa/xóa trên UI **chỉ cập nhật draft** — không gọi API.
+4. Header có nút **Lưu** (icon save, disabled khi không dirty) — tham khảo `BookPagesManager.tsx`.
+5. **Một request** `PUT` batch khi lưu; payload chỉ gồm thay đổi (`create` / `update` / `remove` hoặc mảng delta tương đương).
+6. Thoát/back: nếu `isDirty` → `window.confirm(UI.BOOK_PAGES_DISCARD_CONFIRM)`.
+7. Sau lưu thành công: đồng bộ `saved*` và `draft*` từ response; gọi callback patch parent **một lần** (không gọi trong effect load ban đầu).

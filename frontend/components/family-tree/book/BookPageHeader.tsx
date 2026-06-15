@@ -1,5 +1,6 @@
 'use client';
 
+import { BRANCH_OPTIONS, getBranchLabel } from '@/lib/constants/branches';
 import { UI } from '@/lib/constants/ui-strings';
 import type { BookPageDraft } from './book-page-draft';
 import { displayValue } from './BookField';
@@ -7,7 +8,35 @@ import styles from './GenealogyBook.module.css';
 
 type Update = (field: keyof BookPageDraft, value: string) => void;
 
-/** A short numeric inline field (branch / generation) shown next to its label. */
+function InlineBranchField({ value, readOnly, onChange }: {
+  value: string;
+  readOnly: boolean;
+  onChange: Update;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      {UI.BOOK_BRANCH}
+      {readOnly ? (
+        <span>{value ? getBranchLabel(Number(value)) : displayValue(value)}</span>
+      ) : (
+        <select
+          value={value}
+          onChange={(e) => onChange('branch', e.target.value)}
+          className="border-0 border-b border-dashed border-amber-300/80 bg-transparent text-center outline-none"
+        >
+          <option value="">{UI.BOOK_EMPTY_FIELD}</option>
+          {BRANCH_OPTIONS.map((option) => (
+            <option key={option.value} value={String(option.value)}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      )}
+    </span>
+  );
+}
+
+/** A short numeric inline field (generation) shown next to its label. */
 function InlineNumberField({ label, field, value, readOnly, onChange }: {
   label: string;
   field: keyof BookPageDraft;
@@ -56,7 +85,7 @@ export default function BookPageHeader({ draft, readOnly, onChange }: {
         />
       )}
       <div className="mt-2 flex justify-center gap-4 text-xs text-amber-900/60">
-        <InlineNumberField label={UI.BOOK_BRANCH} field="branch" value={draft.branch} readOnly={readOnly} onChange={onChange} />
+        <InlineBranchField value={draft.branch} readOnly={readOnly} onChange={onChange} />
         <InlineNumberField label={UI.BOOK_GENERATION} field="generation" value={draft.generation} readOnly={readOnly} onChange={onChange} />
       </div>
     </div>

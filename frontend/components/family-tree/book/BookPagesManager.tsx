@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Icon from '@/components/icons/Icon';
+import { getBranchLabel } from '@/lib/constants/branches';
 import { UI } from '@/lib/constants/ui-strings';
 import type { Person } from '@/components/types/family-tree-types';
 import type { BookPageConfig } from './book-page-config';
@@ -131,7 +132,7 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
                   const hidden = !!entry?.hidden;
                   const orderValue = entry?.order;
                   const meta = [
-                    person.branch != null ? `${UI.BOOK_BRANCH} ${person.branch}` : null,
+                    person.branch != null ? getBranchLabel(person.branch) : null,
                     person.generation != null ? `${UI.BOOK_GENERATION} ${person.generation}` : null,
                   ].filter(Boolean).join(' · ');
 

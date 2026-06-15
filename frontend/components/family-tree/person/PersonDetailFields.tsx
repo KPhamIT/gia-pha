@@ -1,6 +1,7 @@
 'use client';
 
 import CollapsibleSection, { FormField, inputClassName, textareaClassName } from '@/components/ui/CollapsibleSection';
+import { BRANCH_OPTIONS } from '@/lib/constants/branches';
 import { UI } from '@/lib/constants/ui-strings';
 import type { PersonDraft } from '@/utils/person-detail-form';
 import { PERSON_FORM_SECTIONS, type Field } from './person-form-sections';
@@ -31,12 +32,17 @@ function FieldControl({ field, value, disabled, onChange }: {
     return <textarea {...common} className={textareaClassName} />;
   }
   if (field.type === 'select') {
+    const options =
+      field.key === 'branch'
+        ? BRANCH_OPTIONS.map((b) => ({ value: String(b.value), label: b.label }))
+        : field.options?.map((opt) => ({ value: opt, label: opt })) ?? [];
+
     return (
       <select {...common} className={inputClassName}>
         {field.key === 'gender' ? <option value="">{UI.GENDER_PLACEHOLDER}</option> : null}
-        {field.options?.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
           </option>
         ))}
       </select>

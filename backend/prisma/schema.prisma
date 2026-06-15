@@ -24,6 +24,11 @@ enum EventType {
   CONTRIBUTION
 }
 
+enum DonationKind {
+  MONEY
+  IN_KIND
+}
+
 model User {
   id         Int     @id @default(autoincrement())
   email      String? @unique
@@ -95,7 +100,12 @@ model EventDonation {
 
   donorName String
 
+  kind DonationKind @default(MONEY)
+
   amount Int @default(0)
+
+  /** Description when kind is IN_KIND (e.g. "5 kg gạo"). */
+  itemDescription String? @db.Text
 
   note String? @db.Text
 
@@ -116,6 +126,9 @@ model EventContribution {
   personId Int
 
   paid Boolean @default(true)
+
+  // VND collected from this person (may be less than Event.amountPerPerson).
+  amountPaid Int @default(0)
 
   paidAt DateTime @default(now())
 

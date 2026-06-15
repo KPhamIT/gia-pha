@@ -1,5 +1,7 @@
 export type EventType = 'INFO' | 'CONTRIBUTION';
 
+export type DonationKind = 'MONEY' | 'IN_KIND';
+
 /** An event row as returned by the list endpoint (with derived stats). */
 export type FamilyEvent = {
   id: number;
@@ -22,6 +24,7 @@ export type FamilyEvent = {
 export type EventContribution = {
   personId: number;
   paid: boolean;
+  amountPaid: number;
 };
 
 /** A free-form merit/donation entry (anyone, not tied to the family tree). */
@@ -30,7 +33,9 @@ export type EventDonation = {
   eventId: number;
   personId?: number | null;
   donorName: string;
+  kind: DonationKind;
   amount: number;
+  itemDescription?: string | null;
   note?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -45,7 +50,9 @@ export type FamilyEventDetail = FamilyEvent & {
 export type CreateDonationInput = {
   donorName: string;
   personId?: number | null;
+  kind?: DonationKind;
   amount?: number;
+  itemDescription?: string;
   note?: string;
 };
 
@@ -61,3 +68,25 @@ export type CreateEventInput = {
 };
 
 export type UpdateEventInput = Partial<CreateEventInput>;
+
+export type SaveContributionsInput = {
+  contributions: { personId: number; amountPaid: number }[];
+};
+
+/** Local draft row before batch save (công đức). */
+export type DonationDraftItem = {
+  draftKey: string;
+  id?: number;
+  donorName: string;
+  personId?: number | null;
+  kind: DonationKind;
+  amount: number;
+  itemDescription?: string | null;
+  note?: string | null;
+};
+
+export type SaveDonationsInput = {
+  create: CreateDonationInput[];
+  update: ({ id: number } & UpdateDonationInput)[];
+  remove: number[];
+};

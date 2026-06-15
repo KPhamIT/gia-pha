@@ -5,6 +5,8 @@ import type {
   CreateEventInput,
   FamilyEvent,
   FamilyEventDetail,
+  SaveContributionsInput,
+  SaveDonationsInput,
   UpdateDonationInput,
   UpdateEventInput,
 } from '@/components/types/event-types';
@@ -17,9 +19,13 @@ export const event = {
   update: (id: number, data: UpdateEventInput) =>
     axiosClient.patch<FamilyEvent>(API_ROUTES.EVENT(id), data).then((r) => r.data),
   remove: (id: number) => axiosClient.delete(API_ROUTES.EVENT(id)).then((r) => r.data),
-  setContribution: (id: number, personId: number, paid: boolean) =>
+  saveContributions: (id: number, data: SaveContributionsInput) =>
     axiosClient
-      .put<FamilyEventDetail>(API_ROUTES.EVENT_CONTRIBUTION(id), { personId, paid })
+      .put<FamilyEventDetail>(API_ROUTES.EVENT_CONTRIBUTION(id), data)
+      .then((r) => r.data),
+  saveDonations: (id: number, data: SaveDonationsInput) =>
+    axiosClient
+      .put<FamilyEventDetail>(API_ROUTES.EVENT_DONATION_LIST(id), data)
       .then((r) => r.data),
   addDonation: (id: number, data: CreateDonationInput) =>
     axiosClient.post<FamilyEventDetail>(API_ROUTES.EVENT_DONATION_LIST(id), data).then((r) => r.data),
