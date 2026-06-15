@@ -6,6 +6,7 @@ import Icon from '@/components/icons/Icon';
 import { getBranchLabel } from '@/lib/constants/branches';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
+import { dismissOverlayFocus } from '@/hooks/useOverlayViewport';
 import { extractPersonRelationships } from '@/utils/person-relationships';
 import { useMemo, useState } from 'react';
 
@@ -56,12 +57,15 @@ export default function SearchSheet({ persons, relationships, onClose, onSelect 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={UI.SEARCH_PLACEHOLDER}
-            className="w-full rounded-2xl border border-slate-300 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-2xl border border-slate-300 bg-white py-3 pl-10 pr-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
           />
         </div>
         <button
           type="button"
-          onClick={onClose}
+          onClick={() => {
+            dismissOverlayFocus();
+            onClose();
+          }}
           className="shrink-0 rounded-full px-3 py-2 text-sm font-medium text-slate-600 active:bg-slate-100 md:hover:bg-slate-100"
         >
           {UI.CANCEL}

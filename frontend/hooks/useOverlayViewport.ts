@@ -20,6 +20,14 @@ export function syncOverlayViewport(): void {
   root.style.setProperty('--overlay-offset-top', '0px');
 }
 
+/** Blur focused inputs and reset scroll after closing an overlay (iOS page-zoom recovery). */
+export function dismissOverlayFocus(): void {
+  const el = document.activeElement;
+  if (el instanceof HTMLElement) el.blur();
+  syncOverlayViewport();
+  window.scrollTo(0, 0);
+}
+
 export function useOverlayViewport(): void {
   useEffect(() => {
     syncOverlayViewport();

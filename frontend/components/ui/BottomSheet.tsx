@@ -1,7 +1,8 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { dismissOverlayFocus } from '@/hooks/useOverlayViewport';
 import OverlayPortal from './OverlayPortal';
 
 type BottomSheetProps = {
@@ -35,6 +36,13 @@ export default function BottomSheet({
     ? LAYOUT.bottomSheetSearchPanel
     : `${LAYOUT.bottomSheetPanel} ${MAX_WIDTH[maxWidth]}`;
 
+  useEffect(() => () => dismissOverlayFocus(), []);
+
+  const handleClose = () => {
+    dismissOverlayFocus();
+    onClose?.();
+  };
+
   return (
     <OverlayPortal>
       <div className={`${overlayClass} ${zClass}`}>
@@ -42,7 +50,7 @@ export default function BottomSheet({
           <button
             type="button"
             className="absolute inset-0 cursor-default"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Đóng"
           />
         ) : null}

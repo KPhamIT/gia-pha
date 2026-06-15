@@ -71,7 +71,7 @@ export default function BookPersonSearch({ persons, onClose, onSelect }: Props) 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={UI.SEARCH_PLACEHOLDER}
-              className="w-full rounded-2xl border border-amber-100/20 bg-white/10 py-3 pl-10 pr-3 text-sm text-amber-50 placeholder:text-amber-100/50 focus:border-amber-200/50 focus:bg-white/15 focus:outline-none"
+              className="w-full rounded-2xl border border-amber-100/20 bg-white/10 py-3 pl-10 pr-3 text-base text-amber-50 placeholder:text-amber-100/50 focus:border-amber-200/50 focus:bg-white/15 focus:outline-none"
             />
           </div>
 

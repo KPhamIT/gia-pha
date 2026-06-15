@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import Icon from '@/components/icons/Icon';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { dismissOverlayFocus } from '@/hooks/useOverlayViewport';
 import OverlayPortal from './OverlayPortal';
 
 type SheetTone = 'light' | 'book';
@@ -26,6 +27,11 @@ export default function FullScreenSheet({ title, onClose, children, headerRight,
   const titleClass = isBook ? 'text-amber-50' : 'text-slate-900';
   const backdropClass = isBook ? LAYOUT.overlayBackdropDark : LAYOUT.overlayBackdropLight;
 
+  const handleClose = () => {
+    dismissOverlayFocus();
+    onClose();
+  };
+
   return (
     <OverlayPortal>
       <div className={`${LAYOUT.overlay} ${backdropClass}`}>
@@ -33,7 +39,7 @@ export default function FullScreenSheet({ title, onClose, children, headerRight,
           <header className={`${LAYOUT.sheetHeader} ${headerClass}`}>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors ${backBtnClass}`}
               aria-label="Đóng"
             >
