@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import FamilyTreeGraph from '@/components/family-tree/graph/FamilyTreeGraph';
 import TreeFilters from '@/components/family-tree/graph/TreeFilters';
-import BranchPromptSheet from '@/components/family-tree/graph/BranchPromptSheet';
+import WelcomeBranchSheet from '@/components/family-tree/graph/WelcomeBranchSheet';
 import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet';
 import EditPersonSheet from '@/components/family-tree/person/EditPersonSheet';
 import AddChildSheet from '@/components/family-tree/person/AddChildSheet';
@@ -299,7 +299,7 @@ export default function FamilyTreePage() {
         />
       ) : null}
 
-      {branchHydrated && userBranch == null ? <BranchPromptSheet onSelect={handleSelectBranch} /> : null}
+      {branchHydrated && userBranch == null ? <WelcomeBranchSheet onSelect={handleSelectBranch} /> : null}
 
       {showSearch ? (
         <>

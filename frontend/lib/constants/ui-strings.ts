@@ -170,7 +170,15 @@ export const UI = {
   ADD_CHILD: 'Thêm con',
   DELETE_PERSON: 'Xóa',
 
-  // Branch onboarding + tree filters
+  // Welcome onboarding + branch selection (first visit)
+  WELCOME_SHEET_TITLE: 'Chào mừng bạn trở về cội nguồn!',
+  WELCOME_SHEET_PARAGRAPHS: [
+    'Đây là nơi lưu giữ ký ức, truyền thống và lịch sử của dòng họ qua nhiều thế hệ.',
+    'Mỗi con người đều là một mắt xích quan trọng trong hành trình phát triển của gia tộc. Thông qua gia phả điện tử, chúng ta cùng nhau kết nối họ hàng, tìm hiểu nguồn gốc tổ tiên, ghi nhớ công lao của các bậc tiền nhân và lưu truyền những giá trị tốt đẹp cho con cháu mai sau.',
+    'Hãy dành chút thời gian bổ sung thông tin về gia đình, hình ảnh, tư liệu, ngày giỗ, sự kiện và những câu chuyện đáng nhớ của người thân. Mỗi đóng góp của bạn sẽ góp phần làm cho cây đại thụ gia tộc ngày càng đầy đủ, chính xác và ý nghĩa hơn.',
+    'Mọi sự đóng góp, công đức và chung tay xây dựng gia phả đều được trân trọng ghi nhận, lưu giữ và truyền lại cho các thế hệ tương lai.',
+  ],
+  WELCOME_SHEET_CLOSING: 'Cùng nhau gìn giữ cội nguồn – kết nối hiện tại – trao truyền giá trị cho mai sau.',
   BRANCH_PROMPT_TITLE: 'Bạn thuộc nhánh nào?',
   BRANCH_PROMPT_SUBTITLE: 'Chọn nhánh của bạn để hiển thị cây gia phả phù hợp.',
   FILTER_TITLE: 'Bộ lọc hiển thị',
