@@ -2,12 +2,17 @@
 
 import { useEffect } from "react";
 import { useReactFlow } from "@xyflow/react";
+import { NODE_HEIGHT, NODE_WIDTH } from "./layout";
 
 export const GRAPH_MIN_ZOOM = 0.01;
-export const GRAPH_INITIAL_ZOOM = 0.5;
+export const GRAPH_MAX_ZOOM = 2;
 
-const NODE_WIDTH = 260;
-const NODE_HEIGHT = 80;
+/** Shared fitView bounds — allow zoom-in on small/mobile viewports. */
+export const GRAPH_FIT_VIEW_OPTIONS = {
+  padding: 0.15,
+  minZoom: GRAPH_MIN_ZOOM,
+  maxZoom: GRAPH_MAX_ZOOM,
+};
 
 type GraphViewportControllerProps = {
   focusNodeId?: number | null;
@@ -37,13 +42,26 @@ export default function GraphViewportController({
 
   useEffect(() => {
     if (centerTreeKey == null || centerTreeKey === 0) return;
-    void fitView({
-      padding: 0.2,
-      duration: 400,
-      minZoom: GRAPH_INITIAL_ZOOM,
-      maxZoom: GRAPH_INITIAL_ZOOM,
-    });
+    void fitView({ ...GRAPH_FIT_VIEW_OPTIONS, duration: 400 });
   }, [centerTreeKey, fitView]);
+
+  useEffect(() => {
+    let frame = 0;
+    const refit = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        void fitView({ ...GRAPH_FIT_VIEW_OPTIONS, duration: 0 });
+      });
+    };
+
+    window.addEventListener("resize", refit);
+    window.visualViewport?.addEventListener("resize", refit);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", refit);
+      window.visualViewport?.removeEventListener("resize", refit);
+    };
+  }, [fitView]);
 
   return null;
 }

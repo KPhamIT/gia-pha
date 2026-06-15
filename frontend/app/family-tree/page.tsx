@@ -273,7 +273,7 @@ export default function FamilyTreePage() {
               onCenterTree={handleCenterTree}
             />
 
-            <div className="h-screen">
+            <div className="h-dvh">
               <FamilyTreeGraph
                 treeData={filteredTreeData ?? treeData}
                 layoutConfig={layoutConfig}

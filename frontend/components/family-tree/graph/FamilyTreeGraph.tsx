@@ -19,7 +19,7 @@ import FamilyTreeEdge from "./FamilyTreeEdge";
 import ConnectRelationshipModal from "./ConnectRelationshipModal";
 import FamilyTreeNode from "./FamilyTreeNode";
 import GraphViewportController, {
-  GRAPH_INITIAL_ZOOM,
+  GRAPH_FIT_VIEW_OPTIONS,
   GRAPH_MIN_ZOOM,
 } from "./GraphViewportController";
 import type { FamilyTreeLayoutConfig } from "./layout";
@@ -28,11 +28,6 @@ import "@xyflow/react/dist/base.css";
 
 const NODE_TYPES = { custom: FamilyTreeNode };
 const EDGE_TYPES = { default: FamilyTreeEdge, step: FamilyTreeEdge };
-const FIT_VIEW_OPTIONS = {
-  padding: 0.2,
-  minZoom: GRAPH_INITIAL_ZOOM,
-  maxZoom: GRAPH_INITIAL_ZOOM,
-};
 
 export type FamilyTreeGraphProps = {
   treeData: FamilyTreeData;
@@ -69,7 +64,7 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         colorMode={props.theme ?? "light"}
         minZoom={GRAPH_MIN_ZOOM}
         fitView
-        fitViewOptions={FIT_VIEW_OPTIONS}
+        fitViewOptions={GRAPH_FIT_VIEW_OPTIONS}
         onlyRenderVisibleElements
         deleteKeyCode={null}
         onNodeClick={handleNodeClick}
