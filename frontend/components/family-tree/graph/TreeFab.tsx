@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Icon from '@/components/icons/Icon';
 import { UI } from '@/lib/constants/ui-strings';
 
-type FabAction = 'add' | 'search' | 'center' | 'book' | 'events';
+type FabAction = 'add' | 'search' | 'center' | 'book' | 'events' | 'export';
 
 type TreeFabProps = {
   onAddPerson: () => void;
@@ -12,9 +12,10 @@ type TreeFabProps = {
   onCenterTree: () => void;
   onOpenBook: () => void;
   onOpenEvents: () => void;
+  onOpenExport: () => void;
 };
 
-export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBook, onOpenEvents }: TreeFabProps) {
+export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBook, onOpenEvents, onOpenExport }: TreeFabProps) {
   const [open, setOpen] = useState(false);
 
   const actions = useMemo(() => [
@@ -22,8 +23,9 @@ export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBoo
     { id: 'search' as FabAction, label: UI.SEARCH_PERSON, icon: 'search' as const, onClick: onSearch },
     { id: 'book' as FabAction, label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' as const, onClick: onOpenBook },
     { id: 'events' as FabAction, label: UI.EVENTS_FAB, icon: 'calendar' as const, onClick: onOpenEvents },
+    { id: 'export' as FabAction, label: UI.EXPORT_FAB, icon: 'image' as const, onClick: onOpenExport },
     { id: 'center' as FabAction, label: UI.CENTER_TREE, icon: 'center' as const, onClick: onCenterTree },
-  ], [onAddPerson, onSearch, onOpenBook, onOpenEvents, onCenterTree]);
+  ], [onAddPerson, onSearch, onOpenBook, onOpenEvents, onOpenExport, onCenterTree]);
 
   const handleAction = (action: (typeof actions)[number]) => {
     setOpen(false);

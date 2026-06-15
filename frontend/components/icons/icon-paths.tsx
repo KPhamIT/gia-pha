@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll' | 'list' | 'calendar';
+export type IconName = 'settings' | 'close' | 'sun' | 'moon' | 'trash' | 'userPlus' | 'arrowLeft' | 'alertTriangle' | 'check' | 'save' | 'search' | 'edit' | 'center' | 'plus' | 'chevronDown' | 'chevronUp' | 'book' | 'chevronLeft' | 'chevronRight' | 'print' | 'printAll' | 'list' | 'calendar' | 'image' | 'download';
 
 export interface IconDefinition {
   viewBox: string;
@@ -211,6 +211,26 @@ const iconDefinitions: Record<IconName, IconDefinition> = {
         <path d="M16 2v4" />
         <path d="M8 2v4" />
         <path d="M3 10h18" />
+      </>
+    ),
+  },
+  image: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3.5-3.5a2 2 0 0 0-2.8 0L4 22" />
+      </>
+    ),
+  },
+  download: {
+    viewBox: '0 0 24 24',
+    paths: (
+      <>
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <path d="M7 10l5 5 5-5" />
+        <path d="M12 15V3" />
       </>
     ),
   },

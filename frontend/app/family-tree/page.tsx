@@ -43,6 +43,10 @@ const EventsManager = dynamic(() => import('@/components/family-tree/events/Even
   ssr: false,
 });
 
+const TreeExportView = dynamic(() => import('@/components/family-tree/export/TreeExportView'), {
+  ssr: false,
+});
+
 type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
 type MainView = 'book' | 'tree';
 
@@ -83,6 +87,7 @@ export default function FamilyTreePage() {
   const [showSearch, setShowSearch] = useState(false);
   const [mainView, setMainView] = useState<MainView>('book');
   const [showEvents, setShowEvents] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
   const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
@@ -123,6 +128,8 @@ export default function FamilyTreePage() {
   const handleCloseBook = useCallback(() => setMainView('tree'), []);
   const handleOpenEvents = useCallback(() => setShowEvents(true), []);
   const handleCloseEvents = useCallback(() => setShowEvents(false), []);
+  const handleOpenExport = useCallback(() => setShowExport(true), []);
+  const handleCloseExport = useCallback(() => setShowExport(false), []);
   const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
   const handleCloseAddPerson = useCallback(() => setViewMode(null), []);
   const handleOpenEdit = useCallback(() => setViewMode('edit'), []);
@@ -270,6 +277,7 @@ export default function FamilyTreePage() {
               onSearch={handleOpenSearch}
               onOpenBook={handleOpenBook}
               onOpenEvents={handleOpenEvents}
+              onOpenExport={handleOpenExport}
               onCenterTree={handleCenterTree}
             />
 
@@ -314,6 +322,14 @@ export default function FamilyTreePage() {
           persons={treeData.persons}
           relationships={treeData.relationships}
           onClose={handleCloseEvents}
+        />
+      ) : null}
+
+      {mainView === 'tree' && showExport && (filteredTreeData ?? treeData) ? (
+        <TreeExportView
+          treeData={(filteredTreeData ?? treeData)!}
+          layoutConfig={layoutConfig}
+          onClose={handleCloseExport}
         />
       ) : null}
 

@@ -262,6 +262,33 @@ export const UI = {
   },
   EVENT_GRAND_TOTAL: 'Tổng cộng',
   EVENT_VIEW_DONATION: 'Danh sách công đức',
+
+  // Export tree as SVG image (for large-format printing)
+  EXPORT_FAB: 'Xuất ảnh / In',
+  EXPORT_TITLE: 'Xuất ảnh gia phả',
+  EXPORT_HINT: 'Kéo các hình trên bản xem trước để di chuyển; kéo góc để phóng to / thu nhỏ.',
+  EXPORT_CLOSE: 'Đóng',
+  EXPORT_DOWNLOAD: 'Tải ảnh SVG',
+  EXPORT_PREPARING: 'Đang chuẩn bị ảnh...',
+  EXPORT_LOADING_ASSETS: 'Đang tải hình trang trí...',
+  EXPORT_SECTION_GENERAL: 'Chung',
+  EXPORT_SECTION_HEADER: 'Trang trí phía trên',
+  EXPORT_SECTION_COUPLETS: 'Câu đối',
+  EXPORT_BG_COLOR: 'Màu nền',
+  EXPORT_BORDER_STYLE: 'Khung viền',
+  EXPORT_BORDER_COLOR: 'Màu khung viền',
+  EXPORT_HEADER_HEIGHT: 'Chiều cao vùng trang trí',
+  EXPORT_SHOW_DRAGON_LEFT: 'Hiện rồng bên trái',
+  EXPORT_SHOW_DRAGON_RIGHT: 'Hiện rồng bên phải',
+  EXPORT_SHOW_SCROLL: 'Hiện cuốn thư',
+  EXPORT_COUPLET_LEFT: 'Câu đối bên trái',
+  EXPORT_COUPLET_RIGHT: 'Câu đối bên phải',
+  EXPORT_COUPLET_PLACEHOLDER: 'Nhập nội dung câu đối...',
+  EXPORT_COUPLET_FONT: 'Font thư pháp câu đối',
+  EXPORT_COUPLET_FONT_SIZE: 'Cỡ chữ câu đối',
+  EXPORT_COUPLET_COLOR: 'Màu chữ câu đối',
+  EXPORT_RESET: 'Đặt lại bố cục',
+  EXPORT_RESET_CONFIRM: 'Đặt lại toàn bộ bố cục trang trí về mặc định?',
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

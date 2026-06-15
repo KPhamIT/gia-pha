@@ -18,6 +18,11 @@ const FONT_FILES: Record<string, FontDef> = {
 
 const loadedFamilies = new Set<string>();
 
+/** Resolve a font id to its CSS family name + woff2 file path. */
+export function getCalligraphyFontDef(fontId: string): FontDef {
+  return FONT_FILES[fontId] ?? FONT_FILES.thanhcong;
+}
+
 /** Inject @font-face for one calligraphy font (idempotent). */
 export function ensureCalligraphyFontLoaded(fontId: string): void {
   if (typeof document === 'undefined') return;
