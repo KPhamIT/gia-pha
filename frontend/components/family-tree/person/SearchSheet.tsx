@@ -39,7 +39,7 @@ export default function SearchSheet({ persons, relationships, onClose, onSelect 
 
   return (
     <BottomSheet onClose={onClose} variant="search">
-      <div className={`flex shrink-0 items-center gap-3 border-b border-slate-200 ${LAYOUT.pagePad} pb-3`}>
+      <div className={`flex shrink-0 items-center gap-3 border-b border-slate-200 ${LAYOUT.pagePad} pb-3 min-w-0`}>
         <div className="relative min-w-0 flex-1">
           <Icon
             path="search"

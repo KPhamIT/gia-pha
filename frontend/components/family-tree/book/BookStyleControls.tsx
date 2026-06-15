@@ -21,7 +21,7 @@ const selectClass =
 /** Floating panel to pick book-wide border, form layout and cover font. */
 export default function BookStyleControls({ settings, onChange, onClose }: BookStyleControlsProps) {
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center md:items-center md:bg-black/40 md:p-6">
+    <div className="overlay-viewport z-40 flex items-end justify-center md:items-center md:bg-black/40 md:p-6">
       <button
         type="button"
         aria-label={UI.CANCEL}

@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --overlay-vw: 100vw;
+  --overlay-vh: 100dvh;
+  --overlay-offset-left: 0px;
+  --overlay-offset-top: 0px;
 }
 
 @theme inline {
@@ -22,6 +26,26 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-noto-serif), serif;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Full-screen overlays sized to the visual viewport (fixes iOS sheet clipping). */
+.overlay-viewport {
+  position: fixed;
+  top: var(--overlay-offset-top);
+  left: var(--overlay-offset-left);
+  width: var(--overlay-vw);
+  height: var(--overlay-vh);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Hide scrollbar but keep scroll (wheel, touch, trackpad) */

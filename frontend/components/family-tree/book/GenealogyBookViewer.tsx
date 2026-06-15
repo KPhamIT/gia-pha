@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import OverlayPortal from '@/components/ui/OverlayPortal';
+import { useOverlayViewport } from '@/hooks/useOverlayViewport';
 import type { Person } from '@/components/types/family-tree-types';
 import BookPersonSearch from './BookPersonSearch';
 import BookStyleControls from './BookStyleControls';
@@ -20,16 +22,18 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  useOverlayViewport();
   const book = useGenealogyBook(persons);
   const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef } = book;
 
   if (!hydrated) return <BookViewerFallback kind="loading" onClose={onClose} />;
 
   return (
-    <div
-      ref={viewerRootRef}
-      className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} fixed inset-0 z-50 flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
-    >
+    <OverlayPortal>
+      <div
+        ref={viewerRootRef}
+        className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} overlay-viewport z-50 flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
+      >
       <BookViewerHeader
         pageIndex={book.pageIndex}
         totalLeaves={book.totalLeaves}
@@ -75,6 +79,7 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
         onTouchStart={book.handleTouchStart}
         onTouchEnd={book.handleTouchEnd}
       />
-    </div>
+      </div>
+    </OverlayPortal>
   );
 }

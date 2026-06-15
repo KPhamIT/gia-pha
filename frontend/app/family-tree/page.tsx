@@ -229,7 +229,7 @@ export default function FamilyTreePage() {
   }
 
   return (
-    <div className={`min-h-screen ${getPageShellClass(theme)}`}>
+    <div className={`min-h-screen overflow-x-hidden ${getPageShellClass(theme)}`}>
       <div className="fixed right-4 top-4 z-20 pt-[env(safe-area-inset-top)] md:right-6 md:top-6">
         <button
           type="button"
@@ -273,7 +273,7 @@ export default function FamilyTreePage() {
               onCenterTree={handleCenterTree}
             />
 
-            <div className="h-dvh">
+            <div className="h-dvh overflow-hidden">
               <FamilyTreeGraph
                 treeData={filteredTreeData ?? treeData}
                 layoutConfig={layoutConfig}

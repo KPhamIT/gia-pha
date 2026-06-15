@@ -6,6 +6,7 @@ import Icon from '@/components/icons/Icon';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
+import OverlayPortal from '@/components/ui/OverlayPortal';
 import FamilyTreeSettingsFields from './FamilyTreeSettingsFields';
 
 interface FamilyTreeSettingsProps {
@@ -32,7 +33,7 @@ export default function FamilyTreeSettings({
   saveError = null,
 }: FamilyTreeSettingsProps) {
   return (
-    <>
+    <OverlayPortal>
       <div className={LAYOUT.sidePanelOverlay}>
         <button
           type="button"
@@ -100,6 +101,6 @@ export default function FamilyTreeSettings({
           to { transform: translateX(0); }
         }
       `}</style>
-    </>
+    </OverlayPortal>
   );
 }

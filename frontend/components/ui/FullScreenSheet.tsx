@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import Icon from '@/components/icons/Icon';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import OverlayPortal from './OverlayPortal';
 
 type SheetTone = 'light' | 'book';
 
@@ -26,26 +27,28 @@ export default function FullScreenSheet({ title, onClose, children, headerRight,
   const backdropClass = isBook ? LAYOUT.overlayBackdropDark : LAYOUT.overlayBackdropLight;
 
   return (
-    <div className={`${LAYOUT.overlay} ${backdropClass}`}>
-      <div className={`${LAYOUT.panel} ${panelClass}`}>
-        <header className={`${LAYOUT.sheetHeader} ${headerClass}`}>
-          <button
-            type="button"
-            onClick={onClose}
-            className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors ${backBtnClass}`}
-            aria-label="Đóng"
-          >
-            <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-          </button>
-          {title ? (
-            <h1 className={`min-w-0 flex-1 truncate text-lg font-semibold md:text-xl ${titleClass}`}>{title}</h1>
-          ) : (
-            <div className="flex-1" />
-          )}
-          {headerRight ? <div className="shrink-0">{headerRight}</div> : null}
-        </header>
-        <div className={LAYOUT.sheetBody}>{children}</div>
+    <OverlayPortal>
+      <div className={`${LAYOUT.overlay} ${backdropClass}`}>
+        <div className={`${LAYOUT.panel} ${panelClass}`}>
+          <header className={`${LAYOUT.sheetHeader} ${headerClass}`}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors ${backBtnClass}`}
+              aria-label="Đóng"
+            >
+              <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+            </button>
+            {title ? (
+              <h1 className={`min-w-0 flex-1 truncate text-lg font-semibold md:text-xl ${titleClass}`}>{title}</h1>
+            ) : (
+              <div className="flex-1" />
+            )}
+            {headerRight ? <div className="shrink-0">{headerRight}</div> : null}
+          </header>
+          <div className={LAYOUT.sheetBody}>{children}</div>
+        </div>
       </div>
-    </div>
+    </OverlayPortal>
   );
 }

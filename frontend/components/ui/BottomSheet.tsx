@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import OverlayPortal from './OverlayPortal';
 
 type BottomSheetProps = {
   children: ReactNode;
@@ -35,19 +36,21 @@ export default function BottomSheet({
     : `${LAYOUT.bottomSheetPanel} ${MAX_WIDTH[maxWidth]}`;
 
   return (
-    <div className={`${overlayClass} ${zClass}`}>
-      {onClose ? (
-        <button
-          type="button"
-          className="absolute inset-0 cursor-default"
-          onClick={onClose}
-          aria-label="Đóng"
-        />
-      ) : null}
-      <div className={panelClass}>
-        {showHandle ? <div className={LAYOUT.bottomSheetHandle} /> : null}
-        {children}
+    <OverlayPortal>
+      <div className={`${overlayClass} ${zClass}`}>
+        {onClose ? (
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default"
+            onClick={onClose}
+            aria-label="Đóng"
+          />
+        ) : null}
+        <div className={panelClass}>
+          {showHandle ? <div className={LAYOUT.bottomSheetHandle} /> : null}
+          {children}
+        </div>
       </div>
-    </div>
+    </OverlayPortal>
   );
 }
