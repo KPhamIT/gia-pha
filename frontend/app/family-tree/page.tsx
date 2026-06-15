@@ -214,15 +214,17 @@ export default function FamilyTreePage() {
     [treeData, effectiveBranch, maxGeneration],
   );
 
-  if (loading) {
+  const persons = treeData?.persons ?? [];
+
+  if (loading && mainView === 'tree') {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
 
-  if (error) {
+  if (error && !treeData) {
     return <FamilyTreeStatus theme={theme} type="error" message={error} onRetry={reload} />;
   }
 
-  if (!treeData) {
+  if (!loading && !treeData) {
     return <FamilyTreeStatus theme={theme} type="empty" />;
   }
 
@@ -261,33 +263,37 @@ export default function FamilyTreePage() {
       ) : null}
 
       {mainView === 'tree' ? (
-        <>
-          <TreeFab
-            onAddPerson={handleOpenAddPerson}
-            onSearch={handleOpenSearch}
-            onOpenBook={handleOpenBook}
-            onOpenEvents={handleOpenEvents}
-            onCenterTree={handleCenterTree}
-          />
-
-          <div className="h-screen">
-            <FamilyTreeGraph
-              treeData={filteredTreeData ?? treeData}
-              layoutConfig={layoutConfig}
-              selectedNodeId={selectedPersonId}
-              focusNodeId={focusNodeId}
-              centerTreeKey={centerTreeKey}
-              onNodeClick={handleNodeClick}
-              onPersonAdded={addPerson}
-              onRelationshipAdded={addRelationship}
-              onRelationshipRemoved={removeRelationship}
-              theme={theme}
+        treeData ? (
+          <>
+            <TreeFab
+              onAddPerson={handleOpenAddPerson}
+              onSearch={handleOpenSearch}
+              onOpenBook={handleOpenBook}
+              onOpenEvents={handleOpenEvents}
+              onCenterTree={handleCenterTree}
             />
-          </div>
-        </>
+
+            <div className="h-screen">
+              <FamilyTreeGraph
+                treeData={filteredTreeData ?? treeData}
+                layoutConfig={layoutConfig}
+                selectedNodeId={selectedPersonId}
+                focusNodeId={focusNodeId}
+                centerTreeKey={centerTreeKey}
+                onNodeClick={handleNodeClick}
+                onPersonAdded={addPerson}
+                onRelationshipAdded={addRelationship}
+                onRelationshipRemoved={removeRelationship}
+                theme={theme}
+              />
+            </div>
+          </>
+        ) : (
+          <FamilyTreeStatus theme={theme} type="loading" />
+        )
       ) : (
         <GenealogyBookViewer
-          persons={treeData.persons}
+          persons={persons}
           onClose={handleCloseBook}
           onPersonUpdated={updatePerson}
         />
@@ -307,7 +313,7 @@ export default function FamilyTreePage() {
         />
       ) : null}
 
-      {mainView === 'tree' && showEvents ? (
+      {mainView === 'tree' && showEvents && treeData ? (
         <EventsManager
           persons={treeData.persons}
           relationships={treeData.relationships}
@@ -317,7 +323,7 @@ export default function FamilyTreePage() {
 
       {branchHydrated && userBranch == null ? <WelcomeBranchSheet onSelect={handleSelectBranch} /> : null}
 
-      {showSearch ? (
+      {showSearch && treeData ? (
         <SearchSheet
           persons={treeData.persons}
           relationships={treeData.relationships}

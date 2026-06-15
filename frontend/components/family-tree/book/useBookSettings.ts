@@ -30,6 +30,7 @@ export function useBookSettings() {
     /* eslint-disable react-hooks/set-state-in-effect */
     setSettings(local);
     lastPersistedJson.current = JSON.stringify(local);
+    setHydrated(true);
 
     void (async () => {
       try {
@@ -41,8 +42,6 @@ export function useBookSettings() {
         }
       } catch {
         /* offline or unauthenticated — keep the local copy */
-      } finally {
-        if (!cancelled) setHydrated(true);
       }
     })();
     /* eslint-enable react-hooks/set-state-in-effect */

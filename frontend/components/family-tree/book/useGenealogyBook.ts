@@ -13,6 +13,14 @@ import { useBookFlip } from './useBookFlip';
 import { useGenealogyPrint } from './useGenealogyPrint';
 import { ensureCalligraphyFontLoaded } from './calligraphy-font-loader';
 
+function deferPersonDetailsLoad(loadAll: () => Promise<void>): void {
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(() => void loadAll(), { timeout: 4000 });
+    return;
+  }
+  window.setTimeout(() => void loadAll(), 3000);
+}
+
 /**
  * Composes the book's data + interaction hooks (settings, draft editing, page
  * flipping, printing) and exposes everything {@link GenealogyBookViewer} renders.
@@ -59,7 +67,7 @@ export function useGenealogyBook(persons: Person[], onPersonUpdated: (person: Pe
   }, [cacheCurrentDraft]);
 
   useEffect(() => {
-    void loadAll();
+    deferPersonDetailsLoad(loadAll);
   }, [loadAll]);
 
   useEffect(() => {
