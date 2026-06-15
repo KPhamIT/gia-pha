@@ -6,7 +6,7 @@ import { sortPersonsForBook } from '@/utils/sort-persons-for-book';
 import { usePersonDetailStore } from '@/store/personDetailStore';
 import { type BookLeafCtx } from './BookLeaf';
 import { buildBookPageDraft } from './GenealogyBookPage';
-import { buildLeaves } from './book-leaves';
+import { buildLeaves, leafIndexForPerson } from './book-leaves';
 import { applyPageConfig } from './book-page-config';
 import { useBookSettings } from './useBookSettings';
 import { useBookFlip } from './useBookFlip';
@@ -48,6 +48,14 @@ export function useGenealogyBook(persons: Person[]) {
     [details],
   );
 
+  const jumpToPerson = useCallback(
+    (personId: number) => {
+      const index = leafIndexForPerson(leaves, personId);
+      if (index >= 0) flipApi.jumpToIndex(index);
+    },
+    [leaves, flipApi],
+  );
+
   useEffect(() => {
     deferPersonDetailsLoad(loadAll);
   }, [loadAll]);
@@ -68,5 +76,5 @@ export function useGenealogyBook(persons: Person[]) {
     [leaves, settings, updateSettings, details, personCount, getPersonDraft],
   );
 
-  return { hydrated, leaves, totalLeaves, sortedPersons, settings, updateSettings, ctx, ...flipApi, ...printApi };
+  return { hydrated, leaves, totalLeaves, visiblePersons, sortedPersons, settings, updateSettings, ctx, jumpToPerson, ...flipApi, ...printApi };
 }

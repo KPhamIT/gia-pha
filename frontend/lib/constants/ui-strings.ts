@@ -153,6 +153,8 @@ export const UI = {
   BOOK_SAVED_HINT: 'Tự động lưu vào tài khoản',
   // Book pages manager
   BOOK_OPEN_PAGES: 'Quản lý trang hiển thị',
+  BOOK_OPEN_SEARCH: 'Tìm người trong sổ',
+  BOOK_SEARCH_TITLE: 'Tìm trang theo tên',
   BOOK_PAGES_TITLE: 'Trang hiển thị trong sổ',
   BOOK_PAGES_HINT: 'Bỏ chọn để ẩn trang, nhập số để đổi thứ tự hiển thị.',
   BOOK_PAGES_COL_ORDER: 'STT',

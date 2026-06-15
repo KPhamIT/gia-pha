@@ -15,3 +15,8 @@ export function buildLeaves(persons: Person[]): Leaf[] {
 }
 
 export const leafKey = (leaf: Leaf): string => (leaf.kind === 'person' ? `p-${leaf.person.id}` : leaf.kind);
+
+/** Leaf index for a visible person page, or -1 if not in the book. */
+export function leafIndexForPerson(leaves: Leaf[], personId: number): number {
+  return leaves.findIndex((leaf) => leaf.kind === 'person' && leaf.person.id === personId);
+}

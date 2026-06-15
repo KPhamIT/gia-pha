@@ -53,5 +53,17 @@ export function useBookFlip(totalLeaves: number, onBeforeFlip: () => void) {
   const baseIndex = flip ? (flip.dir === 'next' ? flip.to : flip.from) : pageIndex;
   const frontIndex = flip ? (flip.dir === 'next' ? flip.from : flip.to) : pageIndex;
 
-  return { pageIndex, flip, goToPage, handleTouchStart, handleTouchEnd, baseIndex, frontIndex };
+  const jumpToIndex = useCallback(
+    (index: number) => {
+      if (flip) return;
+      const target = Math.max(0, Math.min(index, totalLeaves - 1));
+      const current = Math.min(storedIndex, Math.max(0, totalLeaves - 1));
+      if (target === current) return;
+      onBeforeFlip();
+      setPageIndex(target);
+    },
+    [flip, storedIndex, totalLeaves, onBeforeFlip],
+  );
+
+  return { pageIndex, flip, goToPage, jumpToIndex, handleTouchStart, handleTouchEnd, baseIndex, frontIndex };
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Person } from '@/components/types/family-tree-types';
+import BookPersonSearch from './BookPersonSearch';
 import BookStyleControls from './BookStyleControls';
 import BookPagesManager from './BookPagesManager';
 import BookViewerHeader from './BookViewerHeader';
@@ -18,6 +19,7 @@ type GenealogyBookViewerProps = {
 export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookViewerProps) {
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const book = useGenealogyBook(persons);
   const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef } = book;
 
@@ -33,6 +35,7 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
         totalLeaves={book.totalLeaves}
         onClose={onClose}
         onToggleStyle={() => setShowStyle((v) => !v)}
+        onOpenSearch={() => setShowSearch(true)}
         onOpenPages={() => setShowPages(true)}
         onPrint={book.handlePrint}
         onPrintAll={() => void book.handlePrintAll()}
@@ -40,6 +43,14 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
 
       {showStyle ? (
         <BookStyleControls settings={settings} onChange={updateSettings} onClose={() => setShowStyle(false)} />
+      ) : null}
+
+      {showSearch ? (
+        <BookPersonSearch
+          persons={book.visiblePersons}
+          onClose={() => setShowSearch(false)}
+          onSelect={(person) => book.jumpToPerson(person.id)}
+        />
       ) : null}
 
       {showPages ? (
