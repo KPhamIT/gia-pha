@@ -13,7 +13,7 @@ type WelcomeBranchSheetProps = {
 export default function WelcomeBranchSheet({ onSelect }: WelcomeBranchSheetProps) {
   return (
     <BottomSheet maxWidth="md" zClass="z-[70]">
-      <div className={LAYOUT.pagePad}>
+      <div className={`${LAYOUT.sheetBody} ${LAYOUT.pagePad}`}>
         <h2 className="text-center text-lg font-semibold text-slate-900 md:text-xl">{UI.WELCOME_SHEET_TITLE}</h2>
         <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600">
           {UI.WELCOME_SHEET_PARAGRAPHS.map((paragraph) => (

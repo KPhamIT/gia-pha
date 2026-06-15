@@ -131,7 +131,11 @@ export default function TreeExportView({ treeData, layoutConfig = {}, onClose }:
 
   return (
     <div className="overlay-viewport z-40 bg-slate-300">
-      <div className="absolute inset-0 flex items-center justify-center p-2 pb-36 md:p-4 md:pr-[22rem] md:pb-4">
+      <div
+        className={`absolute inset-0 flex items-center justify-center p-2 md:p-4 md:pr-[22rem] md:pb-4 ${
+          collapsed ? 'pb-36' : 'pb-[calc(55vh+1.5rem)]'
+        }`}
+      >
         <TreeExportSvg
           svgRef={svgRef}
           model={model}
