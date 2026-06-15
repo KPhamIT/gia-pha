@@ -8,13 +8,13 @@ import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet
 import EditPersonSheet from '@/components/family-tree/person/EditPersonSheet';
 import AddChildSheet from '@/components/family-tree/person/AddChildSheet';
 import AddPersonSheet from '@/components/family-tree/person/AddPersonSheet';
+import DeletePersonSheet from '@/components/family-tree/person/DeletePersonSheet';
 import SearchSheet from '@/components/family-tree/person/SearchSheet';
 import TreeFab from '@/components/family-tree/graph/TreeFab';
 import GenealogyBookViewer from '@/components/family-tree/book/GenealogyBookViewer';
 import EventsManager from '@/components/family-tree/events/EventsManager';
 import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
-import BottomSheet from '@/components/ui/BottomSheet';
 import Icon from '@/components/icons/Icon';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
 import { useUserBranch } from '@/hooks/useUserBranch';
@@ -31,7 +31,6 @@ import type { UserSettings } from '@/lib/api/modules/settings';
 import type { Person, ThemeMode, UpdatePersonDetailInput } from '@/components/types/family-tree-types';
 import { createStandalonePerson, updatePersonDetail } from '@/lib/family-tree/mutations';
 import { getPageShellClass } from '@/utils/theme';
-import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 
 type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
@@ -311,6 +310,7 @@ export default function FamilyTreePage() {
       {showSearch ? (
         <SearchSheet
           persons={treeData.persons}
+          relationships={treeData.relationships}
           onClose={handleCloseSearch}
           onSelect={handleSearchSelect}
         />
@@ -357,37 +357,12 @@ export default function FamilyTreePage() {
       ) : null}
 
       {viewMode === 'deleteConfirm' && selectedNode ? (
-        <BottomSheet onClose={handleBackToDetail} maxWidth="md" zClass="z-[60]">
-          <div className={LAYOUT.pagePad}>
-            <div className="mb-4 flex items-center gap-3">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-100 text-red-600">
-                <Icon path="alertTriangle" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Xóa {selectedNode.fullName}?</p>
-                <p className="text-xs text-slate-500">{UI.DELETE_IRREVERSIBLE}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={handleBackToDetail}
-                className="rounded-2xl border border-slate-300 py-3 text-sm font-medium text-slate-700 active:bg-slate-50 md:hover:bg-slate-50"
-                disabled={modalLoading}
-              >
-                {UI.CANCEL}
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteConfirm}
-                className="rounded-2xl bg-red-600 py-3 text-sm font-medium text-white active:bg-red-700 md:hover:bg-red-700 disabled:opacity-50"
-                disabled={modalLoading}
-              >
-                {UI.DELETE_PERSON}
-              </button>
-            </div>
-          </div>
-        </BottomSheet>
+        <DeletePersonSheet
+          person={selectedNode}
+          loading={modalLoading}
+          onClose={handleBackToDetail}
+          onConfirm={handleDeleteConfirm}
+        />
       ) : null}
     </div>
   );

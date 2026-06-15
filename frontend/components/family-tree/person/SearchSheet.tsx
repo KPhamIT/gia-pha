@@ -1,19 +1,34 @@
 'use client';
 
-import type { Person } from '@/components/types/family-tree-types';
+import type { Person, Relationship } from '@/components/types/family-tree-types';
 import BottomSheet from '@/components/ui/BottomSheet';
 import Icon from '@/components/icons/Icon';
+import { getBranchLabel } from '@/lib/constants/branches';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
+import { extractPersonRelationships } from '@/utils/person-relationships';
 import { useMemo, useState } from 'react';
 
 type SearchSheetProps = {
   persons: Person[];
+  relationships: Relationship[];
   onClose: () => void;
   onSelect: (person: Person) => void;
 };
 
-export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetProps) {
+function searchPersonSubtitle(person: Person, relationships: Relationship[]): string | null {
+  const { father, mother } = extractPersonRelationships(person.id, relationships);
+  const parts = [
+    person.generation != null ? UI.GENERATION_SHORT(person.generation) : null,
+    person.branch != null ? getBranchLabel(person.branch) : null,
+    father ? `${UI.FATHER}: ${father.fullName}` : null,
+    mother ? `${UI.MOTHER}: ${mother.fullName}` : null,
+  ].filter(Boolean);
+
+  return parts.length > 0 ? parts.join(' · ') : null;
+}
+
+export default function SearchSheet({ persons, relationships, onClose, onSelect }: SearchSheetProps) {
   const [query, setQuery] = useState('');
 
   const results = useMemo(() => {
@@ -57,24 +72,27 @@ export default function SearchSheet({ persons, onClose, onSelect }: SearchSheetP
         {query.trim() && results.length === 0 ? (
           <p className="px-3 py-6 text-center text-sm text-slate-500">{UI.NO_SEARCH_RESULTS}</p>
         ) : null}
-        {results.map((person) => (
-          <button
-            key={person.id}
-            type="button"
-            onClick={() => onSelect(person)}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-slate-100 md:hover:bg-slate-50"
-          >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-sm font-semibold text-blue-700">
-              {person.fullName.charAt(0)}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate font-medium text-slate-900">{person.fullName}</p>
-              {person.generation != null ? (
-                <p className="text-xs text-slate-500">Đời thứ {person.generation}</p>
-              ) : null}
-            </div>
-          </button>
-        ))}
+        {results.map((person) => {
+          const subtitle = searchPersonSubtitle(person, relationships);
+          return (
+            <button
+              key={person.id}
+              type="button"
+              onClick={() => onSelect(person)}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-slate-100 md:hover:bg-slate-50"
+            >
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-sm font-semibold text-blue-700">
+                {person.fullName.charAt(0)}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate font-medium text-slate-900">{person.fullName}</p>
+                {subtitle ? (
+                  <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-slate-500">{subtitle}</p>
+                ) : null}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </BottomSheet>
   );

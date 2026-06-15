@@ -10,6 +10,11 @@ export function loadStoredTheme(): ThemeMode {
   return savedTheme === 'dark' ? 'dark' : 'light';
 }
 
+/** Inline script for layout — applies `dark` on <html> before React hydrates. */
+export function themeInitScript(): string {
+  return `(function(){try{var t=localStorage.getItem(${JSON.stringify(STORAGE_KEYS.THEME)});if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`;
+}
+
 export function applyTheme(theme: ThemeMode): void {
   document.documentElement.classList.toggle('dark', theme === 'dark');
   localStorage.setItem(STORAGE_KEYS.THEME, theme);

@@ -1,6 +1,8 @@
 // Shared decorative styles for the genealogy book:
 // page borders, form layouts, cover & preface.
 
+@use 'sass:string';
+
 // ---------- Tokens (space-separated RGB channels for modern alpha syntax) ----------
 $gold: 184 134 11;
 $gold-light: 212 175 55;
@@ -15,7 +17,7 @@ $text-body: #3f3f46;
 $text-placeholder: #a8a29e;
 
 @function channel($channels, $alpha) {
-  @return unquote('rgb(#{$channels} / #{$alpha})');
+  @return string.unquote('rgb(#{$channels} / #{$alpha})');
 }
 
 @mixin transparent-input {

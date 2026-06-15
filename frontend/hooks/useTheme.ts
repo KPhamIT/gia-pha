@@ -4,8 +4,15 @@ import { useEffect, useState } from 'react';
 import type { ThemeMode } from '@/components/types/family-tree-types';
 import { applyTheme, loadStoredTheme } from '@/utils/theme';
 
+/** SSR-safe default; real preference loads in useEffect after hydration. */
+const INITIAL_THEME: ThemeMode = 'light';
+
 export function useTheme() {
-  const [theme, setTheme] = useState<ThemeMode>(loadStoredTheme);
+  const [theme, setTheme] = useState<ThemeMode>(INITIAL_THEME);
+
+  useEffect(() => {
+    setTheme(loadStoredTheme());
+  }, []);
 
   useEffect(() => {
     applyTheme(theme);

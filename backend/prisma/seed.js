@@ -1,11 +1,15 @@
 import 'dotenv/config';
 import { PrismaClient } from '../dist/generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
+import pg from 'pg';
+
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL ?? '',
+  max: 1,
+});
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL ?? '',
-  }),
+  adapter: new PrismaPg(pool),
 });
 
 async function main() {
@@ -60,4 +64,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });

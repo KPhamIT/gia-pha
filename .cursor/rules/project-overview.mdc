@@ -17,6 +17,7 @@ alwaysApply: true
 - Package manager: **pnpm** (chạy lệnh trong từng thư mục `frontend/` hoặc `backend/`).
 - Ngôn ngữ giao diện: **tiếng Việt**. Chuỗi UI đặt tập trung tại `frontend/lib/constants/ui-strings.ts` (object `UI`), không hard-code trong component.
 - Phạm vi thay đổi: tối thiểu, chỉ sửa phần liên quan yêu cầu; không refactor lan man.
+- **Hàm nhỏ, không duplicate**: mỗi function một việc (~≤25 dòng); logic dùng ≥2 chỗ → tách file/helper dùng chung. Chi tiết: rule `code-style.mdc`.
 - **Draft trước, lưu một lượt**: màn hình chỉnh sửa danh sách (sổ gia phả, đóng góp sự kiện, công đức…) giữ thay đổi ở state local; **không** gọi API từng thao tác. Icon **Lưu** sáng khi `isDirty`; bấm Lưu gửi **một request batch** với payload chỉ gồm phần thay đổi. Thoát khi còn draft → xác nhận bỏ (`UI.BOOK_PAGES_DISCARD_CONFIRM`). Tham khảo: `BookPagesManager.tsx`, `EventContributionView.tsx`, `EventDonationsView.tsx`.
 - Không commit file secrets (`.env`, credentials).
 - Không tạo commit trừ khi người dùng yêu cầu rõ ràng.

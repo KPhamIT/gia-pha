@@ -169,6 +169,7 @@ export const UI = {
   NO_SEARCH_RESULTS: 'Không tìm thấy kết quả',
   ADD_CHILD: 'Thêm con',
   DELETE_PERSON: 'Xóa',
+  DELETE_PERSON_CONFIRM: (name: string) => `Xóa ${name}?`,
 
   // Welcome onboarding + branch selection (first visit)
   WELCOME_SHEET_TITLE: 'Chào mừng bạn trở về cội nguồn!',

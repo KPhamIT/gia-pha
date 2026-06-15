@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono, Noto_Serif, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { UI } from "@/lib/constants/ui-strings";
+import { themeInitScript } from "@/utils/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,8 +43,12 @@ export default function RootLayout({
     <html
       lang="vi"
       className={`${geistSans.variable} ${geistMono.variable} ${notoSerif.variable} ${openSans.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <Script id="theme-init" strategy="beforeInteractive">
+        {themeInitScript()}
+      </Script>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

@@ -1,0 +1,40 @@
+---
+description: Hàm nhỏ, DRY — không duplicate, tách file dùng chung
+alwaysApply: true
+---
+
+# Code style — hàm nhỏ & không trùng lặp
+
+Áp dụng **frontend** và **backend**.
+
+## Hàm / function nhỏ
+
+- Mỗi hàm làm **một việc**; mục tiêu **≤ ~25 dòng** (không tính type/import).
+- Component React lớn → tách **sub-component** hoặc **custom hook** (`hooks/`, `components/…`).
+- Service NestJS dài → tách **private method** hoặc helper trong `utils/` / file service phụ.
+- Nếu một khối logic cần comment giải thích “đoạn này làm gì” → **tách thành hàm** có tên rõ nghĩa.
+
+```typescript
+// ❌ Một hàm 80 dòng: load + map + render + save
+// ✅ loadSearchResults(), formatPersonSubtitle(), <SearchResultRow />
+```
+
+## Không duplicate (DRY)
+
+- Logic dùng **≥ 2 chỗ** → đưa vào file dùng chung, **không copy-paste**:
+  - Frontend: `utils/`, `lib/`, `lib/constants/`, `components/ui/`
+  - Backend: `src/**/utils/`, helper riêng, hoặc method private dùng chung trong module
+- Chuỗi UI / label → `frontend/lib/constants/ui-strings.ts` (`UI`).
+- Layout class lặp → `frontend/lib/constants/ui-layout.ts` hoặc component shell (`FullScreenSheet`, `BottomSheet`).
+- Quan hệ gia đình, format ngày/tiền → helper có sẵn (`person-relationships`, `event-format`, …) — **tái sử dụng** trước khi viết mới.
+
+```typescript
+// ❌ Copy subtitle search vào 2 component
+// ✅ searchPersonSubtitle() trong utils hoặc file helper, import ở cả hai
+```
+
+## Khi tách file
+
+- Đặt tên theo **một trách nhiệm** (`DeletePersonSheet.tsx`, `pg-pool.ts`, `event-donation-draft.ts`).
+- Export API nhỏ, rõ; tránh “god file” gom mọi thứ không liên quan.
+- Chỉ refactor/tách khi phục vụ yêu cầu hoặc loại bỏ trùng lặp thật — không refactor lan man (xem `project-overview`).
