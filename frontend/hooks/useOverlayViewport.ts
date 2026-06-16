@@ -26,6 +26,10 @@ export function dismissOverlayFocus(): void {
   if (el instanceof HTMLElement) el.blur();
   syncOverlayViewport();
   window.scrollTo(0, 0);
+  // iOS updates visualViewport after the keyboard dismiss animation.
+  requestAnimationFrame(() => syncOverlayViewport());
+  window.setTimeout(() => syncOverlayViewport(), 100);
+  window.setTimeout(() => syncOverlayViewport(), 300);
 }
 
 export function useOverlayViewport(): void {

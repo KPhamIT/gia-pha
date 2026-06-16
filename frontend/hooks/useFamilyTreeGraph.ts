@@ -1,17 +1,26 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
 import type { Connection, Edge, EdgeChange, FinalConnectionState, Node, NodeChange } from '@xyflow/react';
 import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
 import type { FamilyTreeData, Person, Relationship, RelationshipType } from '@/components/types/family-tree-types';
 import { createChildPerson, createRelationship } from '@/lib/family-tree/mutations';
+import {
+  collectMovedNodePositions,
+  type NodePositionOverrides,
+} from '@/lib/family-tree/node-position-overrides';
 import { getErrorMessage } from '@/utils/errors';
 import { UI } from '@/lib/constants/ui-strings';
+
+export type FamilyTreeGraphApi = {
+  collectMovedNodePositions: () => NodePositionOverrides;
+};
 
 type UseFamilyTreeGraphOptions = {
   treeData: FamilyTreeData;
   layoutConfig?: FamilyTreeLayoutConfig;
+  graphApiRef?: RefObject<FamilyTreeGraphApi | null>;
   selectedNodeId?: number | null;
   onNodeClick?: (personId: number, person: Person) => void;
   onPersonAdded?: (person: Person, relationship: Relationship) => void;
@@ -22,6 +31,7 @@ type UseFamilyTreeGraphOptions = {
 export function useFamilyTreeGraph({
   treeData,
   layoutConfig,
+  graphApiRef,
   selectedNodeId,
   onPersonAdded,
   onRelationshipAdded,
@@ -43,6 +53,16 @@ export function useFamilyTreeGraph({
     setNodes(graph.nodes);
     setEdges(graph.edges);
   }, [treeData, layoutConfig]);
+
+  useEffect(() => {
+    if (!graphApiRef) return;
+    graphApiRef.current = {
+      collectMovedNodePositions: () => collectMovedNodePositions(nodes, treeData, layoutConfig),
+    };
+    return () => {
+      graphApiRef.current = null;
+    };
+  }, [graphApiRef, nodes, treeData, layoutConfig]);
 
   const enhancedNodes = useMemo(
     () =>

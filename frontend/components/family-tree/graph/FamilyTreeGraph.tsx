@@ -8,7 +8,7 @@ import {
 } from "@xyflow/react";
 import type { Node } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, type RefObject } from "react";
 import type {
   FamilyTreeData,
   Person,
@@ -23,6 +23,7 @@ import GraphViewportController, {
   GRAPH_MIN_ZOOM,
 } from "./GraphViewportController";
 import type { FamilyTreeLayoutConfig } from "./layout";
+import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import { useFamilyTreeGraph } from "@/hooks/useFamilyTreeGraph";
 import "@xyflow/react/dist/base.css";
 
@@ -32,6 +33,7 @@ const EDGE_TYPES = { default: FamilyTreeEdge, step: FamilyTreeEdge };
 export type FamilyTreeGraphProps = {
   treeData: FamilyTreeData;
   layoutConfig?: FamilyTreeLayoutConfig;
+  graphApiRef?: RefObject<FamilyTreeGraphApi | null>;
   onNodeClick?: (personId: number, person: Person) => void;
   selectedNodeId?: number | null;
   focusNodeId?: number | null;

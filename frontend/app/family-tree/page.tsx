@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import TreeFilters from '@/components/family-tree/graph/TreeFilters';
 import WelcomeBranchSheet from '@/components/family-tree/graph/WelcomeBranchSheet';
@@ -31,6 +31,8 @@ import type { Person, ThemeMode, UpdatePersonDetailInput } from '@/components/ty
 import { createStandalonePerson, updatePersonDetail } from '@/lib/family-tree/mutations';
 import { getPageShellClass } from '@/utils/theme';
 import { UI } from '@/lib/constants/ui-strings';
+import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
+import type { FamilyTreeGraphApi } from '@/hooks/useFamilyTreeGraph';
 
 const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/FamilyTreeGraph'), {
   ssr: false,
@@ -88,6 +90,8 @@ export default function FamilyTreePage() {
   const [mainView, setMainView] = useState<MainView>('book');
   const [showEvents, setShowEvents] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [exportPositionOverrides, setExportPositionOverrides] = useState<NodePositionOverrides | undefined>();
+  const graphApiRef = useRef<FamilyTreeGraphApi | null>(null);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
   const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
@@ -128,8 +132,15 @@ export default function FamilyTreePage() {
   const handleCloseBook = useCallback(() => setMainView('tree'), []);
   const handleOpenEvents = useCallback(() => setShowEvents(true), []);
   const handleCloseEvents = useCallback(() => setShowEvents(false), []);
-  const handleOpenExport = useCallback(() => setShowExport(true), []);
-  const handleCloseExport = useCallback(() => setShowExport(false), []);
+  const handleOpenExport = useCallback(() => {
+    const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
+    setExportPositionOverrides(Object.keys(moved).length > 0 ? moved : undefined);
+    setShowExport(true);
+  }, []);
+  const handleCloseExport = useCallback(() => {
+    setShowExport(false);
+    setExportPositionOverrides(undefined);
+  }, []);
   const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
   const handleCloseAddPerson = useCallback(() => setViewMode(null), []);
   const handleOpenEdit = useCallback(() => setViewMode('edit'), []);
@@ -285,6 +296,7 @@ export default function FamilyTreePage() {
               <FamilyTreeGraph
                 treeData={filteredTreeData ?? treeData}
                 layoutConfig={layoutConfig}
+                graphApiRef={graphApiRef}
                 selectedNodeId={selectedPersonId}
                 focusNodeId={focusNodeId}
                 centerTreeKey={centerTreeKey}
@@ -329,6 +341,7 @@ export default function FamilyTreePage() {
         <TreeExportView
           treeData={(filteredTreeData ?? treeData)!}
           layoutConfig={layoutConfig}
+          nodePositionOverrides={exportPositionOverrides}
           onClose={handleCloseExport}
         />
       ) : null}

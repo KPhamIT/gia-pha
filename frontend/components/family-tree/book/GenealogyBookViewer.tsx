@@ -32,7 +32,7 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
     <OverlayPortal>
       <div
         ref={viewerRootRef}
-        className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} overlay-viewport z-50 flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
+        className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} fixed inset-0 z-50 flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
       >
       <BookViewerHeader
         pageIndex={book.pageIndex}

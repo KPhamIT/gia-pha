@@ -5,6 +5,7 @@ import {
   NODE_WIDTH,
   type FamilyTreeLayoutConfig,
 } from '@/components/family-tree/graph/layout';
+import type { NodePositionOverrides } from './node-position-overrides';
 import type { TreeExportSettings } from './tree-export-settings';
 
 /** Natural aspect ratios (width / height) of the decorative PNGs. */
@@ -109,7 +110,11 @@ function applyExportRootXOnly(exportNodes: ExportNode[], nodeWidth: number, layo
 }
 
 /** Build the geometric model (positioned nodes + connector paths) for the tree. */
-export function buildExportModel(treeData: FamilyTreeData, layoutConfig: FamilyTreeLayoutConfig = {}): ExportModel {
+export function buildExportModel(
+  treeData: FamilyTreeData,
+  layoutConfig: FamilyTreeLayoutConfig = {},
+  positionOverrides?: NodePositionOverrides,
+): ExportModel {
   const { nodes, edges } = buildFamilyTreeGraph(treeData, layoutConfig);
   const nodeWidth = layoutConfig.nodeWidth ?? NODE_WIDTH;
   const nodeHeight = layoutConfig.nodeHeight ?? NODE_HEIGHT;
@@ -121,10 +126,12 @@ export function buildExportModel(treeData: FamilyTreeData, layoutConfig: FamilyT
       isRoot?: boolean;
       personId?: number;
     };
+    const id = data.personId ?? Number(node.id);
+    const override = positionOverrides?.[id];
     return {
-      id: data.personId ?? Number(node.id),
-      x: node.position.x,
-      y: node.position.y,
+      id,
+      x: override?.x ?? node.position.x,
+      y: override?.y ?? node.position.y,
       fullName: data.fullName ?? '',
       birthDate: data.birthDate ?? null,
       isRoot: Boolean(data.isRoot),
@@ -146,11 +153,14 @@ export function buildExportModel(treeData: FamilyTreeData, layoutConfig: FamilyT
   }
 
   const layoutBounds = computeNodeBounds(exportNodes, nodeWidth, nodeHeight);
-  applyExportRootXOnly(exportNodes, nodeWidth, layoutBounds);
+  const root = exportNodes.find((n) => n.isRoot);
+  const rootMoved = root != null && positionOverrides?.[root.id] != null;
+  if (!rootMoved) {
+    applyExportRootXOnly(exportNodes, nodeWidth, layoutBounds);
+  }
 
   const bounds = computeNodeBounds(exportNodes, nodeWidth, nodeHeight);
   const connectors = buildConnectors(childrenByParent, posById, nodeWidth, nodeHeight);
-  const root = exportNodes.find((n) => n.isRoot);
   const rootCenterX = root ? root.x + nodeWidth / 2 : bounds.x + bounds.width / 2;
 
   return {

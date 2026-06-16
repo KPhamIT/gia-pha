@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BookShell from '@/components/ui/BookShell';
+import { dismissOverlayFocus } from '@/hooks/useOverlayViewport';
 import Icon from '@/components/icons/Icon';
 import { getBranchLabel } from '@/lib/constants/branches';
 import { LAYOUT } from '@/lib/constants/ui-layout';
@@ -32,9 +33,16 @@ export default function BookPersonSearch({ persons, onClose, onSelect }: Props) 
     return persons.filter((person) => person.fullName.toLowerCase().includes(normalized)).slice(0, 20);
   }, [persons, query]);
 
+  const close = () => {
+    dismissOverlayFocus();
+    onClose();
+  };
+
+  useEffect(() => () => dismissOverlayFocus(), []);
+
   const handleSelect = (person: Person) => {
     onSelect(person);
-    onClose();
+    close();
   };
 
   return (
@@ -42,7 +50,7 @@ export default function BookPersonSearch({ persons, onClose, onSelect }: Props) 
       <header className={`${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}>
         <button
           type="button"
-          onClick={onClose}
+          onClick={close}
           className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10 md:hover:bg-white/10"
           aria-label={UI.CANCEL}
         >

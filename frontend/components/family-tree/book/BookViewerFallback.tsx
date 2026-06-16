@@ -10,7 +10,7 @@ export default function BookViewerFallback({ kind, onClose }: { kind: 'loading' 
   if (kind === 'loading') {
     return (
       <OverlayPortal>
-        <div className="overlay-viewport z-50 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50">
+        <div className="fixed inset-0 z-50 flex h-dvh w-full flex-col items-center justify-center gap-3 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50">
           <LoadingSpinner size={32} label={UI.LOADING} />
         </div>
       </OverlayPortal>
@@ -19,7 +19,7 @@ export default function BookViewerFallback({ kind, onClose }: { kind: 'loading' 
 
   return (
     <OverlayPortal>
-      <div className="overlay-viewport z-50 flex flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50">
+      <div className="fixed inset-0 z-50 flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50">
         <header className="flex items-center gap-3 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-6">
           <button
             type="button"

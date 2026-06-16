@@ -15,6 +15,7 @@ import {
   type ExportImageKey,
 } from '@/lib/family-tree/export-tree-svg';
 import { ensureCalligraphyFontLoaded, getCalligraphyFontDef } from '@/components/family-tree/book/calligraphy-font-loader';
+import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
 import {
   defaultTreeExportSettings,
   loadTreeExportSettings,
@@ -32,10 +33,16 @@ type CoupletKey = 'coupletLeft' | 'coupletRight';
 type TreeExportViewProps = {
   treeData: FamilyTreeData;
   layoutConfig?: FamilyTreeLayoutConfig;
+  nodePositionOverrides?: NodePositionOverrides;
   onClose: () => void;
 };
 
-export default function TreeExportView({ treeData, layoutConfig = {}, onClose }: TreeExportViewProps) {
+export default function TreeExportView({
+  treeData,
+  layoutConfig = {},
+  nodePositionOverrides,
+  onClose,
+}: TreeExportViewProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [settings, setSettings] = useState<TreeExportSettings>(loadTreeExportSettings);
   const [selectedId, setSelectedId] = useState<DraggableId | null>(null);
@@ -71,7 +78,10 @@ export default function TreeExportView({ treeData, layoutConfig = {}, onClose }:
     };
   }, []);
 
-  const model = useMemo(() => buildExportModel(treeData, layoutConfig), [treeData, layoutConfig]);
+  const model = useMemo(
+    () => buildExportModel(treeData, layoutConfig, nodePositionOverrides),
+    [treeData, layoutConfig, nodePositionOverrides],
+  );
   const geometry = useMemo(
     () => computeExportGeometry(model.bounds, settings.headerHeight, model.rootCenterX),
     [model.bounds, settings.headerHeight, model.rootCenterX],
