@@ -1,6 +1,10 @@
-'use client';
+"use client";
 
-import { useRef, type MutableRefObject, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  useRef,
+  type MutableRefObject,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import {
   COUPLET_LINE_FACTOR,
   coupletSyllables,
@@ -13,12 +17,23 @@ import {
   type ResolvedImage,
   type ResolvedLayout,
   type Rect,
-} from '@/lib/family-tree/export-tree-svg';
-import { getNodeCardStyle, getTreeBorderStyle } from '@/lib/family-tree/svg-border';
-import { getCalligraphyFont } from '@/components/family-tree/book/calligraphy-fonts';
-import type { ExportBox, TreeExportSettings } from '@/lib/family-tree/tree-export-settings';
+} from "@/lib/family-tree/export-tree-svg";
+import {
+  getNodeCardStyle,
+  getTreeBorderStyle,
+} from "@/lib/family-tree/svg-border";
+import { getCalligraphyFont } from "@/components/family-tree/book/calligraphy-fonts";
+import type {
+  ExportBox,
+  TreeExportSettings,
+} from "@/lib/family-tree/tree-export-settings";
 
-export type DraggableId = 'scroll' | 'dragonLeft' | 'dragonRight' | 'coupletLeft' | 'coupletRight';
+export type DraggableId =
+  | "scroll"
+  | "dragonLeft"
+  | "dragonRight"
+  | "coupletLeft"
+  | "coupletRight";
 
 type TreeExportSvgProps = {
   svgRef: MutableRefObject<SVGSVGElement | null>;
@@ -34,15 +49,15 @@ type TreeExportSvgProps = {
 };
 
 const SERIF = "'Times New Roman', 'Songti SC', serif";
-const birthDateFormatter = new Intl.DateTimeFormat('vi-VN');
+const birthDateFormatter = new Intl.DateTimeFormat("vi-VN");
 
 function formatBirthDate(birthDate: string | null): string {
-  if (!birthDate) return '';
+  if (!birthDate) return "";
   const d = new Date(birthDate);
-  return Number.isNaN(d.getTime()) ? '' : birthDateFormatter.format(d);
+  return Number.isNaN(d.getTime()) ? "" : birthDateFormatter.format(d);
 }
 
-const IMAGE_ASPECT: Record<'scroll' | 'dragonLeft' | 'dragonRight', number> = {
+const IMAGE_ASPECT: Record<"scroll" | "dragonLeft" | "dragonRight", number> = {
   scroll: SCROLL_ASPECT,
   dragonLeft: DRAGON_ASPECT,
   dragonRight: DRAGON_ASPECT,
@@ -50,7 +65,7 @@ const IMAGE_ASPECT: Record<'scroll' | 'dragonLeft' | 'dragonRight', number> = {
 
 type DragState = {
   id: DraggableId;
-  mode: 'move' | 'resize';
+  mode: "move" | "resize";
   startX: number;
   startY: number;
   boxX: number;
@@ -64,7 +79,12 @@ function coupletBounds(c: ResolvedCouplet): Rect {
   const count = Math.max(coupletSyllables(c.text).length, 1);
   const lineGap = coupletLineGap(c.fontSize);
   const height = count * lineGap;
-  return { x: c.x - c.fontSize * 1.4, y: c.y - c.fontSize, width: c.fontSize * 2.8, height: height + c.fontSize * 0.4 };
+  return {
+    x: c.x - c.fontSize * 1.4,
+    y: c.y - c.fontSize,
+    width: c.fontSize * 2.8,
+    height: height + c.fontSize * 0.4,
+  };
 }
 
 export default function TreeExportSvg({
@@ -80,10 +100,17 @@ export default function TreeExportSvg({
   onChange,
 }: TreeExportSvgProps) {
   const dragRef = useRef<DragState | null>(null);
-  const { canvasWidth, canvasHeight, borderRect, treeTranslateX, treeTranslateY } = geometry;
+  const {
+    canvasWidth,
+    canvasHeight,
+    borderRect,
+    treeTranslateX,
+    treeTranslateY,
+  } = geometry;
   const border = getTreeBorderStyle(settings.borderStyleId);
   const coupletFontFamily = getCalligraphyFont(settings.coupletFontId).cssValue;
-  const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } = settings;
+  const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } =
+    settings;
   const nodeCard = getNodeCardStyle(settings.nodeBorderStyleId);
 
   const toSvgPoint = (clientX: number, clientY: number) => {
@@ -100,7 +127,7 @@ export default function TreeExportSvg({
   const beginDrag = (
     e: ReactPointerEvent,
     id: DraggableId,
-    mode: 'move' | 'resize',
+    mode: "move" | "resize",
     box: { x: number; y: number },
   ) => {
     if (!interactive) return;
@@ -109,7 +136,14 @@ export default function TreeExportSvg({
     onSelect?.(id);
     const p = toSvgPoint(e.clientX, e.clientY);
     if (!p) return;
-    dragRef.current = { id, mode, startX: p.x, startY: p.y, boxX: box.x, boxY: box.y };
+    dragRef.current = {
+      id,
+      mode,
+      startX: p.x,
+      startY: p.y,
+      boxX: box.x,
+      boxY: box.y,
+    };
     svgRef.current?.setPointerCapture(e.pointerId);
   };
 
@@ -119,12 +153,20 @@ export default function TreeExportSvg({
     const p = toSvgPoint(e.clientX, e.clientY);
     if (!p) return;
 
-    if (drag.mode === 'move') {
-      onChange?.(drag.id, { x: drag.boxX + (p.x - drag.startX), y: drag.boxY + (p.y - drag.startY) });
+    if (drag.mode === "move") {
+      if (drag.id === "coupletRight") {
+        onChange?.(drag.id, { y: drag.boxY + (p.y - drag.startY) });
+      } else {
+        onChange?.(drag.id, {
+          x: drag.boxX + (p.x - drag.startX),
+          y: drag.boxY + (p.y - drag.startY),
+        });
+      }
       return;
     }
     // resize (images only): anchor at top-left, lock aspect ratio.
-    const aspect = IMAGE_ASPECT[drag.id as 'scroll' | 'dragonLeft' | 'dragonRight'] ?? 1;
+    const aspect =
+      IMAGE_ASPECT[drag.id as "scroll" | "dragonLeft" | "dragonRight"] ?? 1;
     const width = Math.max(40, p.x - drag.boxX);
     onChange?.(drag.id, { width, height: width / aspect });
   };
@@ -135,7 +177,11 @@ export default function TreeExportSvg({
     svgRef.current?.releasePointerCapture(e.pointerId);
   };
 
-  const renderImage = (id: 'scroll' | 'dragonLeft' | 'dragonRight', img: ResolvedImage, href: string) => {
+  const renderImage = (
+    id: "scroll" | "dragonLeft" | "dragonRight",
+    img: ResolvedImage,
+    href: string,
+  ) => {
     if (!img.visible) return null;
     return (
       <image
@@ -147,17 +193,21 @@ export default function TreeExportSvg({
         width={img.width}
         height={img.height}
         preserveAspectRatio="none"
-        style={{ cursor: interactive ? 'move' : 'default' }}
-        onPointerDown={(e) => beginDrag(e, id, 'move', img)}
+        style={{ cursor: interactive ? "move" : "default" }}
+        onPointerDown={(e) => beginDrag(e, id, "move", img)}
       />
     );
   };
 
-  const renderCouplet = (id: 'coupletLeft' | 'coupletRight', c: ResolvedCouplet) => {
+  const renderCouplet = (
+    id: "coupletLeft" | "coupletRight",
+    c: ResolvedCouplet,
+  ) => {
     if (!c.visible || c.text.trim().length === 0) return null;
     const cells = coupletSyllables(c.text);
     const lineGap = coupletLineGap(c.fontSize);
     const bounds = coupletBounds(c);
+
     return (
       <g key={id}>
         <text
@@ -167,7 +217,7 @@ export default function TreeExportSvg({
           fontFamily={coupletFontFamily}
           fontSize={c.fontSize}
           fill={c.color}
-          style={{ pointerEvents: 'none' }}
+          style={{ pointerEvents: "none" }}
         >
           {cells.map((word, i) => (
             <tspan key={i} x={c.x} dy={i === 0 ? 0 : lineGap}>
@@ -182,8 +232,8 @@ export default function TreeExportSvg({
             width={bounds.width}
             height={bounds.height}
             fill="transparent"
-            style={{ cursor: 'move' }}
-            onPointerDown={(e) => beginDrag(e, id, 'move', { x: c.x, y: c.y })}
+            style={{ cursor: "move" }}
+            onPointerDown={(e) => beginDrag(e, id, "move", { x: c.x, y: c.y })}
           />
         ) : null}
       </g>
@@ -192,9 +242,16 @@ export default function TreeExportSvg({
 
   const renderSelection = () => {
     if (!interactive || !selectedId) return null;
-    const isImage = selectedId === 'scroll' || selectedId === 'dragonLeft' || selectedId === 'dragonRight';
-    const bounds: Rect = isImage ? layout[selectedId] : coupletBounds(layout[selectedId]);
+    const isImage =
+      selectedId === "scroll" ||
+      selectedId === "dragonLeft" ||
+      selectedId === "dragonRight";
+    const bounds: Rect = isImage
+      ? layout[selectedId]
+      : coupletBounds(layout[selectedId]);
+
     if (isImage && !layout[selectedId].visible) return null;
+
     return (
       <g data-export-ignore>
         <rect
@@ -215,8 +272,10 @@ export default function TreeExportSvg({
             height={22}
             fill="#2563eb"
             rx={3}
-            style={{ cursor: 'nwse-resize' }}
-            onPointerDown={(e) => beginDrag(e, selectedId, 'resize', { x: bounds.x, y: bounds.y })}
+            style={{ cursor: "nwse-resize" }}
+            onPointerDown={(e) =>
+              beginDrag(e, selectedId, "resize", { x: bounds.x, y: bounds.y })
+            }
           />
         ) : null}
       </g>
@@ -230,13 +289,19 @@ export default function TreeExportSvg({
       width="100%"
       height="100%"
       preserveAspectRatio="xMidYMid meet"
-      style={{ display: 'block', touchAction: 'none' }}
+      style={{ display: "block", touchAction: "none" }}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       onPointerDown={() => interactive && onSelect?.(null)}
     >
-      <rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill={settings.backgroundColor} />
+      <rect
+        x={0}
+        y={0}
+        width={canvasWidth}
+        height={canvasHeight}
+        fill={settings.backgroundColor}
+      />
 
       {border.render(borderRect, settings.borderColor)}
 
@@ -253,10 +318,20 @@ export default function TreeExportSvg({
           const birthFont = nameFont * 0.73;
           const birth = formatBirthDate(n.birthDate);
           const blockH = words.length * lineH + (birth ? birthFont + 5 : 0);
-          const firstBaseline = Math.max(nameFont + 6, (model.nodeHeight - blockH) / 2 + nameFont);
+          const firstBaseline = Math.max(
+            nameFont + 6,
+            (model.nodeHeight - blockH) / 2 + nameFont,
+          );
+
           return (
             <g key={n.id} transform={`translate(${n.x} ${n.y})`}>
-              {nodeCard.render(model.nodeWidth, model.nodeHeight, nodeBgColor, nodeBorderColor, n.isRoot ? 2.5 : 1.5)}
+              {nodeCard.render(
+                model.nodeWidth,
+                model.nodeHeight,
+                nodeBgColor,
+                nodeBorderColor,
+                n.isRoot ? 2.5 : 1.5,
+              )}
               <text
                 x={cx}
                 textAnchor="middle"
@@ -290,11 +365,11 @@ export default function TreeExportSvg({
       </g>
 
       {/* Decorative header */}
-      {renderImage('dragonLeft', layout.dragonLeft, imageSources.dragonLeft)}
-      {renderImage('dragonRight', layout.dragonRight, imageSources.dragonRight)}
-      {renderCouplet('coupletLeft', layout.coupletLeft)}
-      {renderCouplet('coupletRight', layout.coupletRight)}
-      {renderImage('scroll', layout.scroll, imageSources.scroll)}
+      {renderImage("dragonLeft", layout.dragonLeft, imageSources.dragonLeft)}
+      {renderImage("dragonRight", layout.dragonRight, imageSources.dragonRight)}
+      {renderCouplet("coupletLeft", layout.coupletLeft)}
+      {renderCouplet("coupletRight", layout.coupletRight)}
+      {renderImage("scroll", layout.scroll, imageSources.scroll)}
 
       {renderSelection()}
     </svg>

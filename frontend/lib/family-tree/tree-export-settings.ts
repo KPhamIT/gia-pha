@@ -1,5 +1,4 @@
 import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
-import { DEFAULT_CALLIGRAPHY_FONT_ID } from '@/components/family-tree/book/calligraphy-fonts';
 import { DEFAULT_NODE_CARD_ID, DEFAULT_TREE_BORDER_ID, isNodeCardId, isTreeBorderId } from './svg-border';
 
 /**
@@ -57,34 +56,39 @@ const COUPLET_COLOR = '#7f1d1d';
 
 const autoImage = (): ExportImageCfg => ({ x: null, y: null, width: null, height: null, visible: true });
 
-const autoCouplet = (text: string): ExportCoupletCfg => ({
-  x: null,
-  y: null,
-  width: null,
-  height: null,
-  visible: true,
-  text,
-});
-
 export function defaultTreeExportSettings(): TreeExportSettings {
   return {
     backgroundColor: '#f7f0dd',
-    borderStyleId: DEFAULT_TREE_BORDER_ID,
+    borderStyleId: 'classic',
     borderColor: GOLD,
     headerHeight: 420,
     scroll: autoImage(),
     dragonLeft: autoImage(),
     dragonRight: autoImage(),
-    coupletLeft: autoCouplet('Tổ Tiên Công Đức Thiên Niên Thịnh'),
-    coupletRight: autoCouplet('Tử Hiếu Tôn Hiền Vạn Đại Vinh'),
-    coupletFontId: DEFAULT_CALLIGRAPHY_FONT_ID,
+    coupletLeft: {
+      x: 155.16116273557986,
+      y: 469.2951402540331,
+      width: null,
+      height: null,
+      visible: true,
+      text: 'Tổ Tiên Công Đức Thiên Niên Thịnh',
+    },
+    coupletRight: {
+      x: null,
+      y: 459.6610154981737,
+      width: null,
+      height: null,
+      visible: true,
+      text: 'Tử Hiếu Tôn Hiền Vạn Đại Vinh',
+    },
+    coupletFontId: 'thanhcong',
     coupletColor: COUPLET_COLOR,
-    coupletFontSize: null,
-    nodeBgColor: '#ffffff',
-    nodeTextColor: '#1f2937',
-    nodeBorderColor: '#94a3b8',
-    nodeBorderStyleId: DEFAULT_NODE_CARD_ID,
-    nodeFontSize: 15,
+    coupletFontSize: 62,
+    nodeBgColor: '#f20202',
+    nodeTextColor: '#ffdd00',
+    nodeBorderColor: '#ffea00',
+    nodeBorderStyleId: 'ornate',
+    nodeFontSize: 20,
   };
 }
 
@@ -94,6 +98,10 @@ function normalizeImage(partial: Partial<ExportImageCfg> | undefined, base: Expo
 
 function normalizeCouplet(partial: Partial<ExportCoupletCfg> | undefined, base: ExportCoupletCfg): ExportCoupletCfg {
   return { ...base, ...(partial ?? {}) };
+}
+
+function normalizeCoupletRight(partial: Partial<ExportCoupletCfg> | undefined, base: ExportCoupletCfg): ExportCoupletCfg {
+  return { ...normalizeCouplet(partial, base), x: null };
 }
 
 /** Merge an untrusted partial onto defaults and drop a stale border id. */
@@ -108,7 +116,7 @@ export function normalizeTreeExportSettings(
     dragonLeft: normalizeImage(partial?.dragonLeft, base.dragonLeft),
     dragonRight: normalizeImage(partial?.dragonRight, base.dragonRight),
     coupletLeft: normalizeCouplet(partial?.coupletLeft, base.coupletLeft),
-    coupletRight: normalizeCouplet(partial?.coupletRight, base.coupletRight),
+    coupletRight: normalizeCoupletRight(partial?.coupletRight, base.coupletRight),
   };
   if (!isTreeBorderId(merged.borderStyleId)) merged.borderStyleId = base.borderStyleId;
   if (!isNodeCardId(merged.nodeBorderStyleId)) merged.nodeBorderStyleId = base.nodeBorderStyleId;

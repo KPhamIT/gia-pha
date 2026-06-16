@@ -38,11 +38,75 @@ export type ExportModel = {
   nodeWidth: number;
   nodeHeight: number;
   bounds: Rect;
-  /** Horizontal centre (in tree coords) of the root node — the sheet is centred on this. */
+  /** Export-only horizontal anchor for centring (root / first ancestor centre x). */
   rootCenterX: number;
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+function computeNodeBounds(exportNodes: ExportNode[], nodeWidth: number, nodeHeight: number): Rect {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const n of exportNodes) {
+    minX = Math.min(minX, n.x);
+    minY = Math.min(minY, n.y);
+    maxX = Math.max(maxX, n.x + nodeWidth);
+    maxY = Math.max(maxY, n.y + nodeHeight);
+  }
+  if (!Number.isFinite(minX)) {
+    minX = 0;
+    minY = 0;
+    maxX = nodeWidth;
+    maxY = nodeHeight;
+  }
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
+function buildConnectors(
+  childrenByParent: Map<number, number[]>,
+  posById: Map<number, ExportNode>,
+  nodeWidth: number,
+  nodeHeight: number,
+): string[] {
+  const connectors: string[] = [];
+  for (const [parentId, childIds] of childrenByParent) {
+    const parent = posById.get(parentId);
+    if (!parent) continue;
+    const children = childIds
+      .map((id) => posById.get(id))
+      .filter((c): c is ExportNode => Boolean(c));
+    if (children.length === 0) continue;
+
+    const stemX = parent.x + nodeWidth / 2;
+    const parentBottomY = parent.y + nodeHeight;
+    const childCenters = children.map((c) => ({ x: c.x + nodeWidth / 2, top: c.y }));
+    const minTop = Math.min(...childCenters.map((c) => c.top));
+    const busY = (parentBottomY + minTop) / 2;
+    const busLeft = Math.min(stemX, ...childCenters.map((c) => c.x));
+    const busRight = Math.max(stemX, ...childCenters.map((c) => c.x));
+
+    let d = `M ${stemX} ${parentBottomY} L ${stemX} ${busY} `;
+    d += `M ${busLeft} ${busY} L ${busRight} ${busY} `;
+    for (const c of childCenters) {
+      d += `M ${c.x} ${busY} L ${c.x} ${c.top} `;
+    }
+    connectors.push(d.trim());
+  }
+  return connectors;
+}
+
+/**
+ * Export-only: move the root (first ancestor) to the horizontal centre of the
+ * tree extent. No other node coordinates are changed — layout algorithm untouched.
+ */
+function applyExportRootXOnly(exportNodes: ExportNode[], nodeWidth: number, layoutBounds: Rect): void {
+  const root = exportNodes.find((n) => n.isRoot);
+  if (!root) return;
+  const boundsCenterX = layoutBounds.x + layoutBounds.width / 2;
+  root.x = boundsCenterX - nodeWidth / 2;
+}
 
 /** Build the geometric model (positioned nodes + connector paths) for the tree. */
 export function buildExportModel(treeData: FamilyTreeData, layoutConfig: FamilyTreeLayoutConfig = {}): ExportModel {
@@ -81,57 +145,20 @@ export function buildExportModel(treeData: FamilyTreeData, layoutConfig: FamilyT
     childrenByParent.set(parent.id, list);
   }
 
-  const connectors: string[] = [];
-  for (const [parentId, childIds] of childrenByParent) {
-    const parent = posById.get(parentId);
-    if (!parent) continue;
-    const children = childIds
-      .map((id) => posById.get(id))
-      .filter((c): c is ExportNode => Boolean(c));
-    if (children.length === 0) continue;
+  const layoutBounds = computeNodeBounds(exportNodes, nodeWidth, nodeHeight);
+  applyExportRootXOnly(exportNodes, nodeWidth, layoutBounds);
 
-    const stemX = parent.x + nodeWidth / 2;
-    const parentBottomY = parent.y + nodeHeight;
-    const childCenters = children.map((c) => ({ x: c.x + nodeWidth / 2, top: c.y }));
-    const minTop = Math.min(...childCenters.map((c) => c.top));
-    const busY = (parentBottomY + minTop) / 2;
-    const busLeft = Math.min(stemX, ...childCenters.map((c) => c.x));
-    const busRight = Math.max(stemX, ...childCenters.map((c) => c.x));
-
-    let d = `M ${stemX} ${parentBottomY} L ${stemX} ${busY} `;
-    d += `M ${busLeft} ${busY} L ${busRight} ${busY} `;
-    for (const c of childCenters) {
-      d += `M ${c.x} ${busY} L ${c.x} ${c.top} `;
-    }
-    connectors.push(d.trim());
-  }
-
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const n of exportNodes) {
-    minX = Math.min(minX, n.x);
-    minY = Math.min(minY, n.y);
-    maxX = Math.max(maxX, n.x + nodeWidth);
-    maxY = Math.max(maxY, n.y + nodeHeight);
-  }
-  if (!Number.isFinite(minX)) {
-    minX = 0;
-    minY = 0;
-    maxX = nodeWidth;
-    maxY = nodeHeight;
-  }
-
-  const rootNode = exportNodes.find((n) => n.isRoot);
-  const rootCenterX = rootNode ? rootNode.x + nodeWidth / 2 : minX + (maxX - minX) / 2;
+  const bounds = computeNodeBounds(exportNodes, nodeWidth, nodeHeight);
+  const connectors = buildConnectors(childrenByParent, posById, nodeWidth, nodeHeight);
+  const root = exportNodes.find((n) => n.isRoot);
+  const rootCenterX = root ? root.x + nodeWidth / 2 : bounds.x + bounds.width / 2;
 
   return {
     nodes: exportNodes,
     connectors,
     nodeWidth,
     nodeHeight,
-    bounds: { x: minX, y: minY, width: maxX - minX, height: maxY - minY },
+    bounds,
     rootCenterX,
   };
 }
@@ -169,16 +196,15 @@ export type ExportGeometry = {
 };
 
 /**
- * Derive the full canvas geometry. The root node is pinned to the horizontal
- * centre (aligned with the scroll); the content width is widened symmetrically
- * around it so the whole tree still fits inside the border on both sides.
+ * Canvas geometry after export root-x adjustment. The root sits on the horizontal
+ * midline of the tree extent, so left/right reach are equal and the sheet does
+ * not drift sideways on wide trees.
  */
 export function computeExportGeometry(bounds: Rect, headerHeight: number, rootCenterX: number): ExportGeometry {
   const inner0 = EXPORT_OUTER_MARGIN + EXPORT_PADDING;
-  // Largest horizontal reach from the root centre to either edge of the tree.
   const leftReach = rootCenterX - bounds.x;
   const rightReach = bounds.x + bounds.width - rootCenterX;
-  const halfSpan = Math.max(leftReach, rightReach, MIN_CONTENT_WIDTH / 2);
+  const halfSpan = Math.max(leftReach, rightReach, bounds.width / 2, MIN_CONTENT_WIDTH / 2);
   const contentWidth = halfSpan * 2;
   const contentHeight = headerHeight + bounds.height;
   const canvasWidth = contentWidth + inner0 * 2;
@@ -195,7 +221,6 @@ export function computeExportGeometry(bounds: Rect, headerHeight: number, rootCe
       height: canvasHeight - EXPORT_OUTER_MARGIN * 2,
     },
     headerRect: { x: inner0, y: inner0, width: contentWidth, height: headerHeight },
-    // Shift the tree so the root centre lands on the canvas centre.
     treeTranslateX: canvasCenterX - rootCenterX,
     treeTranslateY: inner0 + headerHeight - bounds.y,
   };
@@ -268,7 +293,7 @@ export function resolveExportLayout(settings: TreeExportSettings, header: Rect):
       visible: settings.coupletLeft.visible,
     },
     coupletRight: {
-      x: settings.coupletRight.x ?? header.x + header.width - coupletFont * 0.9,
+      x: header.x + header.width - coupletFont * 0.9,
       y: settings.coupletRight.y ?? header.y + coupletFont * 0.5,
       fontSize: coupletFont,
       color: coupletColor,

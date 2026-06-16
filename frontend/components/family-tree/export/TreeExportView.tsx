@@ -88,7 +88,13 @@ export default function TreeExportView({ treeData, layoutConfig = {}, onClose }:
   );
   const patchCouplet = useCallback(
     (key: CoupletKey, p: Partial<ExportCoupletCfg>) =>
-      setSettings((prev) => ({ ...prev, [key]: { ...prev[key], ...p } })),
+      setSettings((prev) => ({
+        ...prev,
+        [key]:
+          key === 'coupletRight'
+            ? { ...prev[key], ...p, x: null }
+            : { ...prev[key], ...p },
+      })),
     [],
   );
 
