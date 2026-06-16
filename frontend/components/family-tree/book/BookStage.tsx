@@ -72,6 +72,14 @@ export default function BookStage({
         </div>
       ) : null}
 
+      <div className={styles.printSingleStack} aria-hidden data-print-single-stack>
+        {!isPrintAllLayout ? (
+          <div className={styles.printSinglePage}>
+            <BookLeaf index={flip ? baseIndex : pageIndex} live={!flip} ctx={ctx} />
+          </div>
+        ) : null}
+      </div>
+
       <div className={styles.printAllStack} aria-hidden={!isPrintAllLayout} data-print-all-stack>
         {isPrintAllLayout
           ? leaves.map((leaf, index) => (

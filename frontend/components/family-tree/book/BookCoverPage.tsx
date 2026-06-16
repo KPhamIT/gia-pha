@@ -22,7 +22,7 @@ export default function BookCoverPage({ settings, readOnly = false, onChange }: 
   }, [settings.coverFontId]);
 
   return (
-    <div className={styles.cover} data-genealogy-paper>
+    <div className={styles.cover} data-genealogy-paper data-genealogy-cover>
       <div className={styles.coverFrame} aria-hidden />
       <span className={styles.coverFrameCorner} style={{ top: 10, left: 10, borderRight: 'none', borderBottom: 'none' }} />
       <span className={styles.coverFrameCorner} style={{ top: 10, right: 10, borderLeft: 'none', borderBottom: 'none' }} />

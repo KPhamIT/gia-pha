@@ -277,6 +277,14 @@
   /* interactive flip stage — collapsed when printing all pages */
 }
 
+.printSingleStack {
+  display: none;
+}
+
+.printSinglePage {
+  width: 100%;
+}
+
 /* Off-screen but fully laid out so print preview has real content */
 .printAllStack {
   position: fixed;
@@ -599,6 +607,38 @@
   .viewerRoot:not(.printAllMode) .printAllStack {
     display: none !important;
     visibility: hidden !important;
+  }
+
+  .viewerRoot:not(.printAllMode) .stageArea {
+    display: none !important;
+  }
+
+  .viewerRoot:not(.printAllMode) .printSingleStack {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .viewerRoot:not(.printAllMode) .printSinglePage {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .viewerRoot:not(.printAllMode) [data-genealogy-cover] {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    aspect-ratio: 210 / 297 !important;
+    transform: none !important;
+    margin: 0 !important;
   }
 
   .viewerRoot.printAllMode .printAllStack {

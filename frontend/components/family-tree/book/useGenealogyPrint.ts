@@ -10,6 +10,7 @@ const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
 
 const PRINT_STACK_SELECTOR = '[data-print-all-stack] [data-genealogy-paper]';
+const PRINT_SINGLE_FIT_SELECTOR = '[data-print-single-stack] [data-genealogy-paper]:not([data-genealogy-cover])';
 
 async function waitForPrintStack(root: HTMLElement | null, expectedPages: number): Promise<void> {
   const deadline = Date.now() + 15_000;
@@ -58,7 +59,8 @@ export function useGenealogyPrint(onBeforePrintAll: () => void, pageCount: numbe
         await waitForPrintStack(root, pageCount);
         fitGenealogyPagesForPrint(root, PRINT_STACK_SELECTOR);
       } else {
-        fitGenealogyPagesForPrint(root, `.${styles.printCurrentArea} [data-genealogy-paper]`);
+        resetGenealogyPrintFit(root);
+        fitGenealogyPagesForPrint(root, PRINT_SINGLE_FIT_SELECTOR);
       }
 
       await nextFrame();
