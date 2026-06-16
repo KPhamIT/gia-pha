@@ -72,11 +72,11 @@ export default function BookPageHeader({ draft, readOnly, onChange, onStartEdit 
   const nameClass = draft.fullName.trim() ? 'text-amber-950' : 'italic text-slate-400';
 
   return (
-    <div className={`${styles.paperHeader} mb-4 border-b-2 border-amber-900/15 pb-3 text-center`}>
-      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amber-900/50">{UI.PAGE_TITLE}</p>
+    <div className={styles.paperHeader}>
+      <p className={styles.paperHeaderBadge}>{UI.PAGE_TITLE}</p>
       {readOnly ? (
         <h2
-          className={`mt-1 text-xl font-bold ${nameClass} ${onStartEdit ? 'cursor-text' : ''}`}
+          className={`${styles.paperHeaderName} ${nameClass} ${onStartEdit ? 'cursor-text' : ''}`}
           onClick={onStartEdit}
         >
           {displayValue(draft.fullName)}
@@ -87,10 +87,10 @@ export default function BookPageHeader({ draft, readOnly, onChange, onStartEdit 
           value={draft.fullName}
           onChange={(e) => onChange('fullName', e.target.value)}
           placeholder={UI.BOOK_EMPTY_FIELD}
-          className={`mt-1 w-full border-0 bg-transparent text-center text-xl font-bold outline-none ${nameClass}`}
+          className={`${styles.paperHeaderName} w-full border-0 bg-transparent text-center outline-none ${nameClass}`}
         />
       )}
-      <div className="mt-2 flex justify-center gap-4 text-xs text-amber-900/60">
+      <div className={styles.paperHeaderMeta}>
         <InlineBranchField value={draft.branch} readOnly={readOnly} onChange={onChange} />
         <InlineNumberField label={UI.BOOK_GENERATION} field="generation" value={draft.generation} readOnly={readOnly} onChange={onChange} />
       </div>

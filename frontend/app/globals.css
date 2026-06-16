@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Default book cover calligraphy — also injected at runtime for other fonts. */
+@font-face {
+  font-family: "Thuphap-Thanh-Cong";
+  src: url("/fonts/THUPHAPTHANHCONG3a.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

@@ -1,6 +1,7 @@
 import { UI } from '@/lib/constants/ui-strings';
 import bookStyles from '../Book.module.scss';
 import { displayValue } from '../BookField';
+import { BOOK_PRINT_LINES } from '../book-print-lines';
 import RelationsBlock from './RelationsBlock';
 import type { PageFormComponent } from './types';
 
@@ -9,6 +10,7 @@ function Row({
   value,
   onChange,
   multiline = false,
+  printLines,
   readOnly = false,
   onStartEdit,
 }: {
@@ -16,22 +18,32 @@ function Row({
   value: string;
   onChange?: (value: string) => void;
   multiline?: boolean;
+  printLines?: number;
   readOnly?: boolean;
   onStartEdit?: () => void;
 }) {
   const empty = !value.trim();
+  const lineCount = printLines ?? (multiline ? 3 : undefined);
+  const isLong = lineCount != null;
+
   return (
-    <div className={bookStyles.elegantField}>
+    <div
+      className={`${bookStyles.elegantField} ${isLong ? bookStyles.elegantFieldLong : ''}`}
+      data-print-lines={lineCount}
+    >
       <span className={bookStyles.elegantLabel}>{label}</span>
       <span className={`${bookStyles.elegantValue} ${empty ? bookStyles.elegantValueEmpty : ''}`}>
         {readOnly ? (
-          <span className={onStartEdit ? 'cursor-text' : undefined} onClick={onStartEdit}>
+          <span
+            className={`${isLong ? bookStyles.elegantValueMultiline : ''} ${onStartEdit ? 'cursor-text' : ''}`}
+            onClick={onStartEdit}
+          >
             {displayValue(value)}
           </span>
         ) : multiline ? (
           <textarea
             value={value}
-            rows={2}
+            rows={lineCount ?? 2}
             placeholder={UI.BOOK_EMPTY_FIELD}
             onChange={(e) => onChange?.(e.target.value)}
             onFocus={onStartEdit}
@@ -63,13 +75,13 @@ const ElegantForm: PageFormComponent = ({ draft, relations, readOnly, onChange, 
     <Row label={UI.RELIGION} value={draft.religion} onChange={(v) => onChange('religion', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
     <Row label={UI.ETHNICITY} value={draft.ethnicity} onChange={(v) => onChange('ethnicity', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
 
-    <RelationsBlock relations={relations} />
+    <RelationsBlock relations={relations} variant="elegant" />
 
-    <Row label={UI.ACHIEVEMENTS} value={draft.achievements} onChange={(v) => onChange('achievements', v)} multiline readOnly={readOnly} onStartEdit={onStartEdit} />
-    <Row label={UI.BIOGRAPHY} value={draft.biography} onChange={(v) => onChange('biography', v)} multiline readOnly={readOnly} onStartEdit={onStartEdit} />
+    <Row label={UI.ACHIEVEMENTS} value={draft.achievements} onChange={(v) => onChange('achievements', v)} multiline printLines={BOOK_PRINT_LINES.achievements} readOnly={readOnly} onStartEdit={onStartEdit} />
+    <Row label={UI.BIOGRAPHY} value={draft.biography} onChange={(v) => onChange('biography', v)} multiline printLines={BOOK_PRINT_LINES.biography} readOnly={readOnly} onStartEdit={onStartEdit} />
     <Row label={UI.CEMETERY} value={draft.cemetery} onChange={(v) => onChange('cemetery', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
-    <Row label={UI.GRAVE_ADDRESS} value={draft.graveAddress} onChange={(v) => onChange('graveAddress', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
-    <Row label={UI.GRAVE_NOTES} value={draft.graveNotes} onChange={(v) => onChange('graveNotes', v)} multiline readOnly={readOnly} onStartEdit={onStartEdit} />
+    <Row label={UI.GRAVE_ADDRESS} value={draft.graveAddress} onChange={(v) => onChange('graveAddress', v)} multiline printLines={BOOK_PRINT_LINES.graveAddress} readOnly={readOnly} onStartEdit={onStartEdit} />
+    <Row label={UI.GRAVE_NOTES} value={draft.graveNotes} onChange={(v) => onChange('graveNotes', v)} multiline printLines={BOOK_PRINT_LINES.graveNotes} readOnly={readOnly} onStartEdit={onStartEdit} />
   </>
 );
 

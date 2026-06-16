@@ -11,7 +11,7 @@ import { applyPageConfig } from './book-page-config';
 import { useBookSettings } from './useBookSettings';
 import { useBookFlip } from './useBookFlip';
 import { useGenealogyPrint } from './useGenealogyPrint';
-import { ensureCalligraphyFontLoaded } from './calligraphy-font-loader';
+import { loadCalligraphyFont } from './calligraphy-font-loader';
 
 function deferPersonDetailsLoad(loadAll: () => Promise<void>): void {
   if (typeof requestIdleCallback === 'function') {
@@ -41,7 +41,7 @@ export function useGenealogyBook(persons: Person[]) {
   const personCount = visiblePersons.length;
 
   const flipApi = useBookFlip(totalLeaves, () => {});
-  const printApi = useGenealogyPrint(() => {});
+  const printApi = useGenealogyPrint(() => {}, totalLeaves, settings.coverFontId);
 
   const getPersonDraft = useCallback(
     (person: Person) => buildBookPageDraft(details[person.id] ?? null),
@@ -61,7 +61,7 @@ export function useGenealogyBook(persons: Person[]) {
   }, [loadAll]);
 
   useEffect(() => {
-    ensureCalligraphyFontLoaded(settings.coverFontId);
+    void loadCalligraphyFont(settings.coverFontId);
   }, [settings.coverFontId]);
 
   const ctx = useMemo<BookLeafCtx>(

@@ -1,6 +1,7 @@
 import { UI } from '@/lib/constants/ui-strings';
 import styles from '../GenealogyBook.module.css';
 import BookField from '../BookField';
+import { BOOK_PRINT_LINES } from '../book-print-lines';
 import RelationsBlock from './RelationsBlock';
 import type { PageFormComponent } from './types';
 
@@ -18,14 +19,14 @@ const CompactForm: PageFormComponent = ({ draft, relations, readOnly, onChange, 
       <BookField label={UI.RELIGION} value={draft.religion} onChange={(v) => onChange('religion', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
       <BookField label={UI.ETHNICITY} value={draft.ethnicity} onChange={(v) => onChange('ethnicity', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
       <BookField label={UI.CEMETERY} value={draft.cemetery} onChange={(v) => onChange('cemetery', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
-      <BookField label={UI.GRAVE_ADDRESS} value={draft.graveAddress} onChange={(v) => onChange('graveAddress', v)} readOnly={readOnly} onStartEdit={onStartEdit} />
+      <BookField label={UI.GRAVE_ADDRESS} value={draft.graveAddress} onChange={(v) => onChange('graveAddress', v)} multiline printLines={BOOK_PRINT_LINES.graveAddress} readOnly={readOnly} onStartEdit={onStartEdit} />
     </div>
 
     <RelationsBlock relations={relations} />
 
-    <BookField label={UI.ACHIEVEMENTS} value={draft.achievements} onChange={(v) => onChange('achievements', v)} multiline readOnly={readOnly} onStartEdit={onStartEdit} />
-    <BookField label={UI.BIOGRAPHY} value={draft.biography} onChange={(v) => onChange('biography', v)} multiline readOnly={readOnly} onStartEdit={onStartEdit} />
-    <BookField label={UI.GRAVE_NOTES} value={draft.graveNotes} onChange={(v) => onChange('graveNotes', v)} multiline readOnly={readOnly} onStartEdit={onStartEdit} />
+    <BookField label={UI.ACHIEVEMENTS} value={draft.achievements} onChange={(v) => onChange('achievements', v)} multiline printLines={BOOK_PRINT_LINES.achievements} readOnly={readOnly} onStartEdit={onStartEdit} />
+    <BookField label={UI.BIOGRAPHY} value={draft.biography} onChange={(v) => onChange('biography', v)} multiline printLines={BOOK_PRINT_LINES.biography} readOnly={readOnly} onStartEdit={onStartEdit} />
+    <BookField label={UI.GRAVE_NOTES} value={draft.graveNotes} onChange={(v) => onChange('graveNotes', v)} multiline printLines={BOOK_PRINT_LINES.graveNotes} readOnly={readOnly} onStartEdit={onStartEdit} />
   </>
 );
 

@@ -5,30 +5,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  container-type: size;
 }
 
-/* Mobile: full viewport area; desktop: A4 portrait */
+/* Fit an A4 sheet inside the stage on all screen sizes (WYSIWYG with print). */
 .sheet {
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  aspect-ratio: unset;
+  aspect-ratio: 210 / 297;
+  width: min(100cqw, calc(100cqh * 210 / 297));
+  height: min(100cqh, calc(100cqw * 297 / 210));
+  max-width: 100%;
+  max-height: 100%;
   position: relative;
   transform-style: preserve-3d;
-}
-
-@media (min-width: 768px) {
-  .scene {
-    container-type: size;
-  }
-
-  .sheet {
-    aspect-ratio: 210 / 297;
-    width: min(100cqw, calc(100cqh * 210 / 297));
-    height: min(100cqh, calc(100cqw * 297 / 210));
-    max-width: 100%;
-    max-height: 100%;
-  }
 }
 
 .page {
@@ -36,6 +24,7 @@
   height: 100%;
   position: relative;
   perspective: 2200px;
+  background: #fffef9;
 }
 
 /* ---------- Realistic 3D page turn ---------- *
@@ -230,7 +219,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: linear-gradient(145deg, #fffef9 0%, #faf8f2 55%, #f3efe6 100%);
+  background: #fffef9;
   box-shadow:
     0 1px 0 #e8e2d6 inset,
     0 12px 28px rgb(15 23 42 / 0.18),
@@ -241,6 +230,10 @@
   display: flex;
   flex-direction: column;
   font-family: var(--font-noto-serif), serif;
+  padding: 5mm 7mm;
+  font-size: 9.5pt;
+  line-height: 1.5;
+  box-sizing: border-box;
 }
 
 .paper::before {
@@ -280,6 +273,10 @@
   /* single-page view; hidden when printing all */
 }
 
+.stageArea {
+  /* interactive flip stage — collapsed when printing all pages */
+}
+
 /* Off-screen but fully laid out so print preview has real content */
 .printAllStack {
   position: fixed;
@@ -293,6 +290,7 @@
 
 .printAllPage {
   width: 100%;
+  background: #fffef9;
 }
 
 .printAllPage + .printAllPage {
@@ -307,6 +305,104 @@
 .bookGrid,
 .bookFieldMultiline {
   /* compact print overrides below */
+}
+
+.bookFieldMultiline {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bookFieldMultiline[data-print-lines='2'] {
+  min-height: 10mm;
+}
+
+.bookFieldMultiline[data-print-lines='3'] {
+  min-height: 15mm;
+}
+
+.bookFieldMultiline[data-print-lines='4'] {
+  min-height: 20mm;
+}
+
+.bookFieldMultiline[data-print-lines='5'] {
+  min-height: 26mm;
+}
+
+.bookField {
+  padding-top: 1.1mm;
+  padding-bottom: 1.1mm;
+  border-bottom: 1px dashed rgb(253 230 138 / 0.8);
+  line-height: 1.5;
+}
+
+.bookFieldLabel {
+  margin-bottom: 0.3rem;
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgb(146 64 14 / 0.7);
+}
+
+.bookFieldValue {
+  font-size: 8.5pt;
+  line-height: 1.5;
+}
+
+.bookRelations {
+  margin-top: 4mm;
+}
+
+.bookRelationsHeading {
+  margin: 0 0 1mm;
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgb(146 64 14 / 0.7);
+}
+
+.bookRelationRow {
+  /* inherits bookField ruled row */
+}
+
+.paperHeader {
+  margin-bottom: 3mm;
+  padding-bottom: 2mm;
+  border-bottom: 2px solid rgb(120 53 15 / 0.15);
+  text-align: center;
+}
+
+.paperHeaderBadge {
+  font-size: 8pt;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(120 53 15 / 0.5);
+}
+
+.paperHeaderName {
+  margin-top: 1mm;
+  font-size: 14pt;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.paperHeaderMeta {
+  margin-top: 2mm;
+  display: flex;
+  justify-content: center;
+  gap: 4mm;
+  font-size: 8pt;
+  color: rgb(120 53 15 / 0.6);
+}
+
+.paperFooter {
+  margin-top: auto;
+  padding-top: 2mm;
+  text-align: center;
+  font-size: 7pt;
+  color: rgb(120 53 15 / 0.45);
 }
 
 /* Mirror print layout on screen so scale-to-fit measures correctly (single page only) */
@@ -343,8 +439,36 @@
 
 .viewerRoot.printPreparing .bookField,
 .viewerRoot.printAllMode .printAllStack .bookField {
-  padding-top: 1.2mm !important;
-  padding-bottom: 1.2mm !important;
+  padding-top: 1.1mm !important;
+  padding-bottom: 1.1mm !important;
+  border-bottom: 1px dashed #d6d3d1 !important;
+  line-height: 1.5 !important;
+}
+
+.viewerRoot.printPreparing .bookRelations,
+.viewerRoot.printAllMode .printAllStack .bookRelations {
+  margin-top: 3.5mm !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.viewerRoot.printPreparing .bookRelationsHeading,
+.viewerRoot.printAllMode .printAllStack .bookRelationsHeading {
+  margin-bottom: 1mm !important;
+  font-size: 7pt !important;
+}
+
+.viewerRoot.printPreparing .bookRelations p,
+.viewerRoot.printAllMode .printAllStack .bookRelations p {
+  font-size: 8.5pt !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
+
+.viewerRoot.printPreparing .bookRelations .bookRelationRow,
+.viewerRoot.printAllMode .printAllStack .bookRelations .bookRelationRow {
+  padding-top: 1mm !important;
+  padding-bottom: 1mm !important;
 }
 
 .viewerRoot.printPreparing .bookFieldLabel,
@@ -357,21 +481,65 @@
 .viewerRoot.printPreparing .bookField textarea,
 .viewerRoot.printAllMode .printAllStack .bookField p,
 .viewerRoot.printAllMode .printAllStack .bookField input,
-.viewerRoot.printAllMode .printAllStack .bookField textarea {
+.viewerRoot.printAllMode .printAllStack .bookField textarea,
+.viewerRoot.printPreparing .bookFieldValue,
+.viewerRoot.printAllMode .printAllStack .bookFieldValue {
   font-size: 8.5pt !important;
-  line-height: 1.2 !important;
+  line-height: 1.5 !important;
 }
 
 .viewerRoot.printPreparing .bookFieldMultiline,
 .viewerRoot.printPreparing .bookFieldMultiline p,
 .viewerRoot.printAllMode .printAllStack .bookFieldMultiline,
-.viewerRoot.printAllMode .printAllStack .bookFieldMultiline p {
-  max-height: 14mm;
-  overflow: hidden;
+.viewerRoot.printAllMode .printAllStack .bookFieldMultiline p,
+.viewerRoot.printPreparing .bookFieldMultiline textarea,
+.viewerRoot.printAllMode .printAllStack .bookFieldMultiline textarea {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='2'],
+.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='2'] {
+  min-height: 10mm;
+}
+
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='3'],
+.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='3'] {
+  min-height: 15mm;
+}
+
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='4'],
+.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='4'] {
+  min-height: 20mm;
+}
+
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='5'],
+.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='5'] {
+  min-height: 26mm;
 }
 
 .viewerRoot.printPreparing.printAllMode .printCurrentArea {
   display: none !important;
+}
+
+.viewerRoot.printPreparing.printAllMode {
+  position: static !important;
+  inset: auto !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.viewerRoot.printPreparing.printAllMode .stageArea {
+  display: none !important;
+  flex: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
 }
 
 .viewerRoot.printPreparing.printAllMode .printAllStack {
@@ -411,8 +579,21 @@
     inset: auto !important;
     z-index: auto !important;
     display: block !important;
-    background: #fff !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #fffef9 !important;
     color: #000 !important;
+  }
+
+  .printAllPage {
+    background: #fffef9 !important;
+  }
+
+  .viewerRoot.printAllMode .stageArea {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   .viewerRoot.printAllMode .printCurrentArea {
@@ -436,6 +617,8 @@
     opacity: 1 !important;
     z-index: auto !important;
     display: block !important;
+    break-before: avoid-page;
+    page-break-before: auto;
   }
 
   .printAllPage,
@@ -449,14 +632,21 @@
   }
 
   .printAllPage {
-    page-break-after: always;
-    break-after: page;
     display: block;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-before: auto;
+    break-before: auto;
   }
 
-  .printAllPage:last-child {
-    page-break-after: auto;
-    break-after: auto;
+  .printAllPage + .printAllPage {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .printAllPage:first-child {
+    page-break-before: auto;
+    break-before: auto;
   }
 
   .scene {
@@ -484,9 +674,9 @@
     box-shadow: none;
     border: none;
     border-radius: 0;
-    height: auto;
-    max-height: none;
-    overflow: visible;
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
     break-inside: avoid;
     page-break-inside: avoid;
     padding: 5mm 7mm !important;
@@ -534,8 +724,35 @@
   }
 
   .bookField {
-    padding-top: 1.2mm !important;
-    padding-bottom: 1.2mm !important;
+    padding-top: 1.1mm !important;
+    padding-bottom: 1.1mm !important;
+    border-bottom: 1px dashed #d6d3d1 !important;
+    line-height: 1.5 !important;
+  }
+
+  .bookRelations {
+    margin-top: 3.5mm !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .bookRelationsHeading {
+    margin-bottom: 1mm !important;
+    font-size: 7pt !important;
+    color: #666 !important;
+  }
+
+  .bookRelations p,
+  .bookFieldValue {
+    font-size: 8.5pt !important;
+    line-height: 1.35 !important;
+    color: #000 !important;
+  }
+
+  .bookRelations .bookRelationRow {
+    padding-top: 1mm !important;
+    padding-bottom: 1mm !important;
+    border-bottom: 1px dashed #d6d3d1 !important;
   }
 
   .bookFieldLabel {
@@ -547,21 +764,42 @@
 
   .bookField p,
   .bookField input,
-  .bookField textarea {
+  .bookField textarea,
+  .bookFieldValue {
     font-size: 8.5pt !important;
-    line-height: 1.2 !important;
+    line-height: 1.5 !important;
     color: #000 !important;
   }
 
   .bookFieldMultiline,
-  .bookFieldMultiline p {
+  .bookFieldMultiline p,
+  .bookFieldMultiline textarea {
     min-height: 0 !important;
-    max-height: 14mm;
-    overflow: hidden;
+    max-height: none !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+
+  .bookFieldMultiline[data-print-lines='2'] {
+    min-height: 10mm !important;
+  }
+
+  .bookFieldMultiline[data-print-lines='3'] {
+    min-height: 15mm !important;
+  }
+
+  .bookFieldMultiline[data-print-lines='4'] {
+    min-height: 20mm !important;
+  }
+
+  .bookFieldMultiline[data-print-lines='5'] {
+    min-height: 26mm !important;
   }
 
   .paperFooter {
-    margin-top: 2mm !important;
+    margin-top: auto !important;
+    padding-top: 2mm !important;
     font-size: 7pt !important;
     color: #666 !important;
   }

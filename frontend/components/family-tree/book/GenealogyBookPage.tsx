@@ -44,7 +44,7 @@ export default function GenealogyBookPage({
   const Form = getFormStyle(formStyleId).Component;
 
   return (
-    <div className={`${styles.paper} relative px-5 py-6 sm:px-7 sm:py-8`} data-genealogy-paper>
+    <div className={`${styles.paper} relative`} data-genealogy-paper>
       <Border>
         <BookPageHeader draft={draft} readOnly={readOnly} onChange={() => {}} />
 
@@ -58,7 +58,7 @@ export default function GenealogyBookPage({
           </div>
         )}
 
-        <p className={`${styles.paperFooter} mt-3 text-center text-[10px] text-amber-900/45`}>
+        <p className={styles.paperFooter}>
           {UI.BOOK_PAGE_OF(pageNumber, totalPages)}
         </p>
       </Border>

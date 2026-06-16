@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { UI } from '@/lib/constants/ui-strings';
 import { getCalligraphyFont } from './calligraphy-fonts';
+import { loadCalligraphyFont } from './calligraphy-font-loader';
 import type { BookSettings } from './book-settings';
 import styles from './Book.module.scss';
 
@@ -14,6 +16,10 @@ type BookPrefacePageProps = {
 /** Editable preface (lời mở đầu). Lives inside the shared paper + border. */
 export default function BookPrefacePage({ settings, readOnly = false, onChange }: BookPrefacePageProps) {
   const font = getCalligraphyFont(settings.coverFontId).cssValue;
+
+  useEffect(() => {
+    void loadCalligraphyFont(settings.coverFontId);
+  }, [settings.coverFontId]);
 
   return (
     <div className="flex h-full flex-col px-5 py-6 sm:px-7 sm:py-8">

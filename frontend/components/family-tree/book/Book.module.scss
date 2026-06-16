@@ -1,7 +1,7 @@
 // Shared decorative styles for the genealogy book:
 // page borders, form layouts, cover & preface.
 
-@use 'sass:string';
+@use "sass:string";
 
 // ---------- Tokens (space-separated RGB channels for modern alpha syntax) ----------
 $gold: 184 134 11;
@@ -17,7 +17,7 @@ $text-body: #3f3f46;
 $text-placeholder: #a8a29e;
 
 @function channel($channels, $alpha) {
-  @return string.unquote('rgb(#{$channels} / #{$alpha})');
+  @return string.unquote("rgb(#{$channels} / #{$alpha})");
 }
 
 @mixin transparent-input {
@@ -43,7 +43,7 @@ $text-placeholder: #a8a29e;
 }
 
 @mixin gradient-rule($color) {
-  content: '';
+  content: "";
   height: 1px;
   background: linear-gradient(90deg, transparent, $color, transparent);
 }
@@ -87,7 +87,7 @@ $text-placeholder: #a8a29e;
   border: 2px solid channel($gold, 0.8);
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 7px;
     height: 7px;
@@ -147,7 +147,7 @@ $text-placeholder: #a8a29e;
   box-shadow: 0 0 0 4px rgb(255 255 255 / 0.35) inset;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 5px;
     border: 1px dashed channel($stone, 0.4);
@@ -161,12 +161,17 @@ $text-placeholder: #a8a29e;
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, channel($burgundy-deep, 0.55), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      channel($burgundy-deep, 0.55),
+      transparent
+    );
   }
 
   &::before {
@@ -177,6 +182,9 @@ $text-placeholder: #a8a29e;
     bottom: 0;
   }
 }
+
+// Paper tone shared by screen view and print.
+$book-paper-bg: #fffef9;
 
 // ---------- Form layout helpers ----------
 .formClassicGrid {
@@ -189,13 +197,14 @@ $text-placeholder: #a8a29e;
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-  padding: 0.45rem 0;
+  padding: 1.1mm 0;
   border-bottom: 1px dotted channel($gold, 0.4);
+  line-height: 1.5;
 }
 
 .elegantLabel {
-  flex: 0 0 38%;
-  font-size: 12px;
+  flex: 0 0 32%;
+  font-size: 7pt;
   font-weight: 600;
   color: channel($burgundy-deep, 0.8);
 }
@@ -203,7 +212,8 @@ $text-placeholder: #a8a29e;
 .elegantValue {
   flex: 1;
   min-width: 0;
-  font-size: 14px;
+  font-size: 8.5pt;
+  line-height: 1.5;
   color: $text-dark;
 
   input,
@@ -218,6 +228,54 @@ $text-placeholder: #a8a29e;
 .elegantValueEmpty {
   font-style: italic;
   color: $text-muted;
+}
+
+@mixin elegant-long-min-heights {
+  &[data-print-lines="2"] .elegantValue,
+  &[data-print-lines="2"] .elegantValueMultiline {
+    min-height: 10mm;
+  }
+
+  &[data-print-lines="3"] .elegantValue,
+  &[data-print-lines="3"] .elegantValueMultiline {
+    min-height: 15mm;
+  }
+
+  &[data-print-lines="4"] .elegantValue,
+  &[data-print-lines="4"] .elegantValueMultiline {
+    min-height: 20mm;
+  }
+
+  &[data-print-lines="5"] .elegantValue,
+  &[data-print-lines="5"] .elegantValueMultiline {
+    min-height: 26mm;
+  }
+}
+
+.elegantFieldLong {
+  align-items: flex-start;
+  padding: 1.4mm 0;
+  @include elegant-long-min-heights;
+}
+
+.elegantValueMultiline {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.elegantRelations {
+  margin-top: 4mm;
+}
+
+.elegantRelationsHeading {
+  margin: 0 0 1mm;
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: channel($burgundy-deep, 0.75);
 }
 
 // ---------- Cover page ----------
@@ -243,9 +301,9 @@ $text-placeholder: #a8a29e;
 .coverInner {
   position: relative;
   z-index: 2;
-  padding: clamp(1.5rem, 6vw, 3rem);
+  padding: clamp(0.75rem, 5cqh, 2rem);
   width: 100%;
-  max-width: 540px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -264,7 +322,7 @@ $text-placeholder: #a8a29e;
   border-radius: 4px;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 7px;
     border: 1px solid channel($gold-light, 0.4);
@@ -290,8 +348,9 @@ $text-placeholder: #a8a29e;
 }
 
 .coverTitle {
-  font-size: clamp(3.2rem, 16vw, 6.5rem);
+  font-size: clamp(1.6rem, 14cqw, 3.4rem);
   color: #f6d978;
+  font-family: "Thuphap-Thanh-Cong", serif;
   text-shadow:
     0 2px 1px rgb(0 0 0 / 0.4),
     0 0 22px rgb(246 217 120 / 0.35);
@@ -319,8 +378,9 @@ $text-placeholder: #a8a29e;
 }
 
 .coverSubtitle {
-  font-size: clamp(1.4rem, 6vw, 2.4rem);
+  font-size: clamp(1rem, 7cqw, 1.75rem);
   color: #fbe9bf;
+  font-family: "Thuphap-Thanh-Cong", serif;
   @include transparent-input;
   text-align: center;
   text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
@@ -347,15 +407,16 @@ $text-placeholder: #a8a29e;
 
 .coverSeal {
   margin-top: 0.5rem;
-  width: clamp(54px, 14vw, 76px);
-  height: clamp(54px, 14vw, 76px);
+  width: clamp(40px, 12cqw, 64px);
+  height: clamp(40px, 12cqw, 64px);
   display: grid;
   place-items: center;
   border-radius: 8px;
   border: 2px solid channel($gold-light, 0.8);
   background: rgb(150 30 25 / 0.5);
   color: #f6d978;
-  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-size: clamp(1.1rem, 8cqw, 1.75rem);
+  font-family: "Thuphap-Thanh-Cong", serif;
   box-shadow: 0 0 18px rgb(0 0 0 / 0.4);
 }
 
@@ -429,5 +490,109 @@ $text-placeholder: #a8a29e;
 
   &::placeholder {
     color: channel($burgundy, 0.35);
+  }
+}
+
+@mixin elegant-print-long-lines {
+  &[data-print-lines="2"] .elegantValue,
+  &[data-print-lines="2"] .elegantValueMultiline {
+    min-height: 10mm;
+  }
+
+  &[data-print-lines="3"] .elegantValue,
+  &[data-print-lines="3"] .elegantValueMultiline {
+    min-height: 15mm;
+  }
+
+  &[data-print-lines="4"] .elegantValue,
+  &[data-print-lines="4"] .elegantValueMultiline {
+    min-height: 20mm;
+  }
+
+  &[data-print-lines="5"] .elegantValue,
+  &[data-print-lines="5"] .elegantValueMultiline {
+    min-height: 26mm;
+  }
+}
+
+:global(.viewerRoot.printPreparing),
+:global(.viewerRoot.printAllMode) {
+  .elegantField {
+    padding: 1.1mm 0 !important;
+    line-height: 1.5 !important;
+  }
+
+  .elegantLabel {
+    font-size: 7pt !important;
+    flex: 0 0 32% !important;
+    line-height: 1.5 !important;
+  }
+
+  .elegantValue {
+    font-size: 8.5pt !important;
+    line-height: 1.5 !important;
+  }
+
+  .elegantRelations {
+    margin-top: 4mm !important;
+  }
+
+  .elegantFieldLong {
+    align-items: flex-start !important;
+    padding: 1.4mm 0 !important;
+    @include elegant-print-long-lines;
+  }
+
+  .elegantFieldLong .elegantValue,
+  .elegantValueMultiline {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+}
+
+@media print {
+  .elegantField {
+    padding: 1.1mm 0 !important;
+    line-height: 1.5 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .elegantLabel {
+    font-size: 7pt !important;
+    flex: 0 0 32% !important;
+    line-height: 1.5 !important;
+  }
+
+  .elegantValue {
+    font-size: 8.5pt !important;
+    line-height: 1.5 !important;
+  }
+
+  .elegantRelations {
+    margin-top: 4mm !important;
+  }
+
+  .elegantFieldLong {
+    align-items: flex-start !important;
+    padding: 1.4mm 0 !important;
+    @include elegant-print-long-lines;
+  }
+
+  .elegantFieldLong .elegantValue,
+  .elegantValueMultiline {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .coverTitle,
+  .coverSubtitle,
+  .coverSeal {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

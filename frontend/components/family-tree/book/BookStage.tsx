@@ -40,35 +40,37 @@ export default function BookStage({
 }: Props) {
   return (
     <>
-      <div className="relative min-h-0 flex-1 px-3 pb-3 md:px-4 md:pb-4" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        <button type="button" onClick={() => goToPage('prev')} disabled={pageIndex === 0 || flip !== null} className={`${navBtn} left-1`} aria-label={UI.BOOK_PREV_PAGE}>
-          <Icon path="chevronLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-        </button>
-        <button type="button" onClick={() => goToPage('next')} disabled={pageIndex >= totalLeaves - 1 || flip !== null} className={`${navBtn} right-1`} aria-label={UI.BOOK_NEXT_PAGE}>
-          <Icon path="chevronRight" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-        </button>
+      {!isPrintAllLayout ? (
+        <div className={`${styles.stageArea} relative min-h-0 flex-1 px-3 pb-3 md:px-4 md:pb-4`} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          <button type="button" onClick={() => goToPage('prev')} disabled={pageIndex === 0 || flip !== null} className={`${navBtn} left-1`} aria-label={UI.BOOK_PREV_PAGE}>
+            <Icon path="chevronLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+          </button>
+          <button type="button" onClick={() => goToPage('next')} disabled={pageIndex >= totalLeaves - 1 || flip !== null} className={`${navBtn} right-1`} aria-label={UI.BOOK_NEXT_PAGE}>
+            <Icon path="chevronRight" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+          </button>
 
-        <div className={`${styles.printCurrentArea} ${styles.scene} h-full`}>
-          <div className={styles.sheet}>
-            <div className={styles.page}>
-              <BookLeaf index={flip ? baseIndex : pageIndex} live={!flip} ctx={ctx} />
+          <div className={`${styles.printCurrentArea} ${styles.scene} h-full`}>
+            <div className={styles.sheet}>
+              <div className={styles.page}>
+                <BookLeaf index={flip ? baseIndex : pageIndex} live={!flip} ctx={ctx} />
 
-              {flip ? (
-                <>
-                  <div className={styles.flipUnderShade} aria-hidden />
-                  <div className={`${styles.flipLeaf} ${flip.dir === 'next' ? styles.flipLeafNext : styles.flipLeafPrev}`} aria-hidden>
-                    <div className={styles.flipFace}>
-                      <BookLeaf index={frontIndex} ctx={ctx} />
+                {flip ? (
+                  <>
+                    <div className={styles.flipUnderShade} aria-hidden />
+                    <div className={`${styles.flipLeaf} ${flip.dir === 'next' ? styles.flipLeafNext : styles.flipLeafPrev}`} aria-hidden>
+                      <div className={styles.flipFace}>
+                        <BookLeaf index={frontIndex} ctx={ctx} />
+                      </div>
+                      <FlipBackFace settings={ctx.settings} />
+                      <div className={styles.flipShadow} />
                     </div>
-                    <FlipBackFace settings={ctx.settings} />
-                    <div className={styles.flipShadow} />
-                  </div>
-                </>
-              ) : null}
+                  </>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div className={styles.printAllStack} aria-hidden={!isPrintAllLayout} data-print-all-stack>
         {isPrintAllLayout
