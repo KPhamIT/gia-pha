@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { RelationshipModule } from './relationship/relationship.module.js';
 import { SettingsModule } from './settings/settings.module.js';
 import { EventModule } from './event/event.module.js';
+import { ExportPresetModule } from './export-preset/export-preset.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { EventModule } from './event/event.module.js';
     RelationshipModule,
     SettingsModule,
     EventModule,
+    ExportPresetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

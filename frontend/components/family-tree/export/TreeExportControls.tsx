@@ -11,6 +11,7 @@ import type {
   ExportCoupletCfg,
   ExportImageCfg,
   TreeExportSettings,
+  TreeExportPreset,
 } from "@/lib/family-tree/tree-export-settings";
 
 type ImageKey = "scroll" | "dragonLeft" | "dragonRight";
@@ -18,6 +19,8 @@ type CoupletKey = "coupletLeft" | "coupletRight";
 
 type TreeExportControlsProps = {
   settings: TreeExportSettings;
+  presets: TreeExportPreset[];
+  activePresetId: string | null;
   collapsed: boolean;
   exporting: boolean;
   assetsReady: boolean;
@@ -25,6 +28,7 @@ type TreeExportControlsProps = {
   onPatch: (patch: Partial<TreeExportSettings>) => void;
   onPatchImage: (key: ImageKey, patch: Partial<ExportImageCfg>) => void;
   onPatchCouplet: (key: CoupletKey, patch: Partial<ExportCoupletCfg>) => void;
+  onApplyPreset: (presetId: string | null) => void;
   onReset: () => void;
   onClose: () => void;
   onExport: () => void;
@@ -82,6 +86,8 @@ function ColorRow({
 
 export default function TreeExportControls({
   settings,
+  presets,
+  activePresetId,
   collapsed,
   exporting,
   assetsReady,
@@ -89,6 +95,7 @@ export default function TreeExportControls({
   onPatch,
   onPatchImage,
   onPatchCouplet,
+  onApplyPreset,
   onReset,
   onClose,
   onExport,
@@ -147,6 +154,23 @@ export default function TreeExportControls({
             </p>
 
             <div className={sectionTitle}>{UI.EXPORT_SECTION_GENERAL}</div>
+            <label className="mb-2 block">
+              <span className={fieldLabel}>{UI.EXPORT_PRESET}</span>
+              <select
+                className={selectClass}
+                value={activePresetId ?? "__custom__"}
+                onChange={(e) =>
+                  onApplyPreset(e.target.value === "__custom__" ? null : e.target.value)
+                }
+              >
+                <option value="__custom__">{UI.EXPORT_PRESET_CUSTOM}</option>
+                {presets.map((preset) => (
+                  <option key={preset.id} value={preset.id}>
+                    {preset.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <ColorRow
               label={UI.EXPORT_BG_COLOR}
               value={settings.backgroundColor}

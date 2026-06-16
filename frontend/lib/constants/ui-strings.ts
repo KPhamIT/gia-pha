@@ -272,6 +272,8 @@ export const UI = {
   EXPORT_PREPARING: 'Đang chuẩn bị ảnh...',
   EXPORT_LOADING_ASSETS: 'Đang tải hình trang trí...',
   EXPORT_SECTION_GENERAL: 'Chung',
+  EXPORT_PRESET: 'Mẫu nhanh',
+  EXPORT_PRESET_CUSTOM: 'Tùy chỉnh',
   EXPORT_SECTION_HEADER: 'Trang trí phía trên',
   EXPORT_SECTION_COUPLETS: 'Câu đối',
   EXPORT_SECTION_NODE: 'Thẻ thành viên',

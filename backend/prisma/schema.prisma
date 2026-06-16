@@ -37,6 +37,7 @@ model User {
 
   person   Person?
   settings UserSettings?
+  exportPresets ExportPreset[]
 
   createdAt DateTime @default(now())
 }
@@ -47,6 +48,21 @@ model UserSettings {
   data      Json     @default("{}")
   user      User     @relation(fields: [userId], references: [id])
   updatedAt DateTime @updatedAt
+}
+
+model ExportPreset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  key       String
+  label     String
+  sortOrder Int      @default(0)
+  data      Json
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
+  @@index([userId, sortOrder])
 }
 
 model Organization {

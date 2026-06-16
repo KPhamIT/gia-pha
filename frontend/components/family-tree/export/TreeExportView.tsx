@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FamilyTreeData } from '@/components/types/family-tree-types';
 import type { FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
 import { UI } from '@/lib/constants/ui-strings';
+import { api } from '@/lib/api';
 import {
   buildEmbeddedFontFace,
   buildExportModel,
@@ -18,10 +19,14 @@ import { ensureCalligraphyFontLoaded, getCalligraphyFontDef } from '@/components
 import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
 import {
   defaultTreeExportSettings,
+  getTreeExportPresets,
   loadTreeExportSettings,
+  normalizeTreeExportSettings,
+  normalizeTreeExportPresets,
   saveTreeExportSettings,
   type ExportCoupletCfg,
   type ExportImageCfg,
+  type TreeExportPreset,
   type TreeExportSettings,
 } from '@/lib/family-tree/tree-export-settings';
 import TreeExportControls from './TreeExportControls';
@@ -45,6 +50,8 @@ export default function TreeExportView({
 }: TreeExportViewProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [settings, setSettings] = useState<TreeExportSettings>(loadTreeExportSettings);
+  const [presets, setPresets] = useState<TreeExportPreset[]>(() => getTreeExportPresets());
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<DraggableId | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -53,6 +60,43 @@ export default function TreeExportView({
   useEffect(() => {
     saveTreeExportSettings(settings);
   }, [settings]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const defaults = getTreeExportPresets();
+
+    api.exportPreset
+      .getMine()
+      .then(async (mine) => {
+        if (cancelled) return;
+        const fromDb = normalizeTreeExportPresets(mine, defaults);
+        setPresets(fromDb);
+        if (mine.length > 0) return;
+        try {
+          const seeded = await api.exportPreset.replaceMine(defaults);
+          if (!cancelled) setPresets(normalizeTreeExportPresets(seeded, defaults));
+        } catch {
+          /* keep local defaults if preset API is unavailable */
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setPresets(defaults);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const normalizedCurrent = normalizeTreeExportSettings(settings);
+    const matched = presets.find(
+      (preset) =>
+        JSON.stringify(normalizeTreeExportSettings(preset.settings)) ===
+        JSON.stringify(normalizedCurrent),
+    );
+    setActivePresetId(matched?.id ?? null);
+  }, [presets, settings]);
 
   // Load the calligraphy font so the live preview renders the couplets correctly.
   useEffect(() => {
@@ -123,6 +167,21 @@ export default function TreeExportView({
     }
   }, []);
 
+  const handleApplyPreset = useCallback(
+    (presetId: string | null) => {
+      if (!presetId) {
+        setActivePresetId(null);
+        return;
+      }
+      const preset = presets.find((item) => item.id === presetId);
+      if (!preset) return;
+      setSettings(normalizeTreeExportSettings(preset.settings));
+      setSelectedId(null);
+      setActivePresetId(preset.id);
+    },
+    [presets],
+  );
+
   const handleExport = useCallback(async () => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -168,6 +227,8 @@ export default function TreeExportView({
 
       <TreeExportControls
         settings={settings}
+        presets={presets}
+        activePresetId={activePresetId}
         collapsed={collapsed}
         exporting={exporting}
         assetsReady={dataUris !== null}
@@ -175,6 +236,7 @@ export default function TreeExportView({
         onPatch={patch}
         onPatchImage={patchImage}
         onPatchCouplet={patchCouplet}
+        onApplyPreset={handleApplyPreset}
         onReset={handleReset}
         onClose={onClose}
         onExport={handleExport}
