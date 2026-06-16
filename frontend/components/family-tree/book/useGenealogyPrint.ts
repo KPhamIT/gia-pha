@@ -37,6 +37,7 @@ export function useGenealogyPrint(onBeforePrintAll: () => void, pageCount: numbe
     const resetPrintAll = () => {
       const root = viewerRootRef.current;
       root?.classList.remove(styles.printPreparing);
+      root?.removeAttribute('data-print-root');
       resetGenealogyPrintFit(root);
       setIsPrintAllLayout(false);
     };
@@ -48,6 +49,7 @@ export function useGenealogyPrint(onBeforePrintAll: () => void, pageCount: numbe
     async (printAll: boolean) => {
       const root = viewerRootRef.current;
       root?.classList.add(styles.printPreparing);
+      root?.setAttribute('data-print-root', 'true');
       await nextFrame();
       await loadCalligraphyFont(coverFontId);
 

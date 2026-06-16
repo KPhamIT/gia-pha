@@ -560,13 +560,8 @@
     margin: 8mm;
   }
 
-  :global(body *) {
-    visibility: hidden;
-  }
-
-  .viewerRoot,
-  .viewerRoot * {
-    visibility: visible;
+  :global(body > *:not([data-print-root='true'])) {
+    display: none !important;
   }
 
   .noPrint {
