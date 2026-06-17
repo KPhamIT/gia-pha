@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import TreeFilters from '@/components/family-tree/graph/TreeFilters';
 import WelcomeBranchSheet from '@/components/family-tree/graph/WelcomeBranchSheet';
 import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet';
@@ -53,10 +54,12 @@ type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
 type MainView = 'book' | 'tree';
 
 export default function FamilyTreePage() {
+  const router = useRouter();
   const {
     treeData,
     loading,
     error,
+    authRequired,
     reload,
     addPerson,
     removePerson,
@@ -239,7 +242,15 @@ export default function FamilyTreePage() {
   }
 
   if (error && !treeData) {
-    return <FamilyTreeStatus theme={theme} type="error" message={error} onRetry={reload} />;
+    return (
+      <FamilyTreeStatus
+        theme={theme}
+        type="error"
+        message={error}
+        onRetry={reload}
+        onLogin={authRequired ? () => router.push('/login') : undefined}
+      />
+    );
   }
 
   if (!loading && !treeData) {

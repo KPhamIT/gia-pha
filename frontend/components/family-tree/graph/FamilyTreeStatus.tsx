@@ -9,6 +9,7 @@ type FamilyTreeStatusProps = {
   type: 'loading' | 'error' | 'empty';
   message?: string;
   onRetry?: () => void;
+  onLogin?: () => void;
 };
 
 export default function FamilyTreeStatus({
@@ -16,6 +17,7 @@ export default function FamilyTreeStatus({
   type,
   message,
   onRetry,
+  onLogin,
 }: FamilyTreeStatusProps) {
   const shellClass = `flex h-screen w-full items-center justify-center ${getPageShellClass(theme)}`;
 
@@ -48,14 +50,24 @@ export default function FamilyTreeStatus({
           {UI.ERROR_TITLE}
         </p>
         <p className={`mt-2 ${theme === 'dark' ? 'text-slate-200' : 'text-red-500'}`}>{message}</p>
-        {onRetry ? (
-          <button
-            onClick={onRetry}
-            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-          >
-            {UI.RETRY}
-          </button>
-        ) : null}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+          {onLogin ? (
+            <button
+              onClick={onLogin}
+              className="rounded-lg bg-[#0068ff] px-4 py-2 text-white hover:bg-[#0056d6]"
+            >
+              {UI.LOGIN_BUTTON}
+            </button>
+          ) : null}
+          {onRetry ? (
+            <button
+              onClick={onRetry}
+              className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            >
+              {UI.RETRY}
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

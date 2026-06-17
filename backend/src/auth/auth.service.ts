@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service.js';
+import type { ZaloProfile } from './zalo-oauth.service.js';
 
 interface FacebookProfile {
   id: string;
@@ -8,6 +9,14 @@ interface FacebookProfile {
   name: string;
   pictureUrl: string | null;
 }
+
+type ProviderProfile = {
+  provider: string;
+  providerId: string;
+  email: string | null;
+  name: string;
+  pictureUrl: string | null;
+};
 
 @Injectable()
 export class AuthService {
@@ -18,13 +27,40 @@ export class AuthService {
 
   async loginWithFacebook(accessToken: string) {
     const profile = await this.fetchFacebookProfile(accessToken);
+    return this.completeProviderLogin({
+      provider: 'facebook',
+      providerId: profile.id,
+      email: profile.email,
+      name: profile.name,
+      pictureUrl: profile.pictureUrl,
+    });
+  }
 
+  async loginWithZaloProfile(profile: ZaloProfile) {
+    return this.completeProviderLogin({
+      provider: 'zalo',
+      providerId: profile.id,
+      email: null,
+      name: profile.name,
+      pictureUrl: profile.pictureUrl,
+    });
+  }
+
+  signAccessToken(user: { id: number; providerId: string; email: string | null }) {
+    return this.jwtService.sign({
+      sub: user.id,
+      providerId: user.providerId,
+      email: user.email,
+    });
+  }
+
+  private async completeProviderLogin(profile: ProviderProfile) {
     const user = await this.prisma.user.upsert({
-      where: { providerId: profile.id },
-      update: { email: profile.email },
+      where: { providerId: profile.providerId },
+      update: { email: profile.email ?? undefined },
       create: {
-        provider: 'facebook',
-        providerId: profile.id,
+        provider: profile.provider,
+        providerId: profile.providerId,
         email: profile.email,
       },
     });
@@ -48,11 +84,7 @@ export class AuthService {
     }
 
     return {
-      accessToken: this.jwtService.sign({
-        sub: user.id,
-        providerId: user.providerId,
-        email: user.email,
-      }),
+      accessToken: this.signAccessToken(user),
       user,
       person,
     };
