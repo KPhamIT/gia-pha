@@ -1,5 +1,6 @@
 export const API_ROUTES = {
   AUTH_ME: '/auth/me',
+  AUTH_ZALO: '/auth/zalo',
   PERSON_LIST: '/person',
   PERSON_ROOT_TREE: '/person/root/tree',
   PERSON_DETAILS: '/person/details',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { FamilyTreeData, Person, Relationship } from '@/components/types/family-tree-types';
 import {
   addPersonToTree,
@@ -12,21 +13,30 @@ import {
 import { api } from '@/lib/api';
 import { getErrorMessage } from '@/utils/errors';
 import { UI } from '@/lib/constants/ui-strings';
-import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
+import { clearToken, getToken } from '@/lib/auth/session';
+import axios from 'axios';
 
 const ALLOW_PUBLIC_ACCESS = process.env.NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS === 'true';
 
 export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
+  const router = useRouter();
   const [treeData, setTreeData] = useState<FamilyTreeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authRequired, setAuthRequired] = useState(false);
 
   const loadFamilyTree = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
+      setAuthRequired(false);
 
-      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      const token = getToken();
+
+      if (!token && !allowPublicAccess) {
+        router.replace('/login');
+        return;
+      }
 
       if (token) {
         try {
@@ -36,12 +46,21 @@ export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
             return;
           }
         } catch (err) {
-          console.error('Error fetching user info:', err);
+          if (axios.isAxiosError(err) && err.response?.status === 401) {
+            clearToken();
+            if (!allowPublicAccess) {
+              router.replace('/login');
+              return;
+            }
+          } else {
+            console.error('Error fetching user info:', err);
+          }
         }
       }
 
       if (!allowPublicAccess) {
-        setError(UI.ERR_FETCH_USER);
+        setAuthRequired(true);
+        setError(UI.ERR_AUTH_REQUIRED);
         setTreeData(null);
         return;
       }
@@ -54,7 +73,7 @@ export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
     } finally {
       setLoading(false);
     }
-  }, [allowPublicAccess]);
+  }, [allowPublicAccess, router]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -85,6 +104,7 @@ export function useFamilyTree(allowPublicAccess = ALLOW_PUBLIC_ACCESS) {
     treeData,
     loading,
     error,
+    authRequired,
     reload: loadFamilyTree,
     addPerson,
     removePerson,

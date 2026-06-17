@@ -11,8 +11,18 @@ export const UI = {
   ERROR_TITLE: 'Lỗi',
   RETRY: 'Thử lại',
 
+  // Auth
+  LOGIN_TITLE: 'Đăng nhập',
+  LOGIN_SUBTITLE: 'Đăng nhập để xem và quản lý gia phả của bạn',
+  LOGIN_ZALO: 'Đăng nhập bằng Zalo',
+  LOGIN_REDIRECTING: 'Đang hoàn tất đăng nhập...',
+  LOGIN_GO_HOME: 'Về trang chủ',
+  LOGIN_ERROR_DEFAULT: 'Đăng nhập thất bại. Vui lòng thử lại.',
+  LOGIN_BUTTON: 'Đăng nhập',
+
   // Error messages
   ERR_FETCH_USER: 'Không thể lấy dữ liệu người dùng',
+  ERR_AUTH_REQUIRED: 'Vui lòng đăng nhập để tiếp tục',
   ERR_FETCH_DATA: 'Không thể tải dữ liệu',
   ERR_DELETE: 'Lỗi khi xóa',
   ERR_CREATE_CHILD: 'Lỗi khi tạo con',

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
 
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -15,5 +15,18 @@ axiosClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
+      if (process.env.NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS !== 'true') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default axiosClient;
