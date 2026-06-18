@@ -4,11 +4,14 @@ import { Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UI } from '@/lib/constants/ui-strings';
 import { loginWithZalo } from '@/lib/auth/session';
+import { isZaloLoginEnabled } from '@/lib/auth/facebook-sdk';
+import FacebookLoginButton from '@/components/auth/FacebookLoginButton';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 
 function LoginContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+  const showZaloLogin = isZaloLoginEnabled();
 
   const handleZaloLogin = useCallback(() => {
     loginWithZalo();
@@ -26,13 +29,19 @@ function LoginContent() {
           </p>
         ) : null}
 
-        <button
-          type="button"
-          onClick={handleZaloLogin}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0068ff] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#0056d6]"
-        >
-          {UI.LOGIN_ZALO}
-        </button>
+        <div className="mt-6 space-y-3">
+          <FacebookLoginButton />
+
+          {showZaloLogin ? (
+            <button
+              type="button"
+              onClick={handleZaloLogin}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0068ff] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#0056d6]"
+            >
+              {UI.LOGIN_ZALO}
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

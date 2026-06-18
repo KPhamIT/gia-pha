@@ -66,6 +66,8 @@ sequenceDiagram
 
 6. Nếu Zalo yêu cầu whitelist domain, thêm domain frontend (ví dụ `http://localhost:3000`, `https://gia-pha.example.com`).
 
+> **Lưu ý UI:** Nút Zalo trên trang login mặc định **ẩn**. Bật bằng `NEXT_PUBLIC_ENABLE_ZALO_LOGIN=true` trong `frontend/.env.local`. Hiện tại khuyến nghị dùng Facebook login — xem [`facebook-login-setup.md`](facebook-login-setup.md).
+
 > **Lưu ý:** App mới có thể cần Zalo duyệt hoặc bật thêm quyền trước khi login production hoạt động.
 
 ---
