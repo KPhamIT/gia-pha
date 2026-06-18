@@ -35,6 +35,8 @@ export class PersonService {
       deathDate: createPersonDto.deathDate
         ? new Date(createPersonDto.deathDate)
         : undefined,
+      deathLunarDay: createPersonDto.deathLunarDay,
+      deathLunarMonth: createPersonDto.deathLunarMonth,
       deceased: createPersonDto.deceased ?? false,
       avatar: createPersonDto.avatar,
       generation: Number.isNaN(generation) ? undefined : generation,

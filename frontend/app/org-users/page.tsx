@@ -4,6 +4,7 @@ import { useState } from 'react';
 import BookPageShell from '@/components/ui/BookPageShell';
 import UserSection from '@/components/system/UserSection';
 import StandardFeaturesSection from '@/components/system/StandardFeaturesSection';
+import NotificationStatsPanel from '@/components/notifications/NotificationStatsPanel';
 import { useOrgAdminAccess } from '@/hooks/useOrgAdminAccess';
 import { useAuthStore } from '@/store/authStore';
 import { BT } from '@/lib/constants/ui-theme';
@@ -31,12 +32,22 @@ export default function OrgUsersPage() {
         <TabButton active={tab === 'features'} onClick={() => setTab('features')} label={UI.ORG_TAB_FEATURES} />
       </div>
       {tab === 'users' ? (
-        <UserSection mode="org" />
+        <div className="space-y-6">
+          <NotificationStatsPanel />
+          <UserSection mode="org" />
+        </div>
       ) : organizationId != null ? (
         <StandardFeaturesSection mode="org" organizationId={organizationId} />
       ) : (
         <p className={`text-sm ${BT.mutedOnDark}`}>{UI.SYSTEM_USER_ORG_REQUIRED}</p>
       )}
+      {tab === 'users' ? (
+        <div className="mt-6">
+          <a href="/ceremonies/templates" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline} inline-flex`}>
+            {UI.CEREMONY_TEMPLATES_OPEN}
+          </a>
+        </div>
+      ) : null}
     </BookPageShell>
   );
 }

@@ -4,6 +4,8 @@ export type Person = {
   gender?: string | null;
   birthDate?: string | null;
   deathDate?: string | null;
+  deathLunarDay?: number | null;
+  deathLunarMonth?: number | null;
   deceased?: boolean | null;
   avatar?: string | null;
   generation?: number | null;
@@ -57,6 +59,8 @@ export type UpdatePersonDetailInput = {
   gender?: string;
   birthDate?: string;
   deathDate?: string;
+  deathLunarDay?: number;
+  deathLunarMonth?: number;
   deceased?: boolean;
   avatar?: string;
   generation?: number | null;

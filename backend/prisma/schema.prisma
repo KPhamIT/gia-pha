@@ -46,13 +46,23 @@ model User {
   organizationId Int?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
+  isActive Boolean @default(true)
+
+  onesignalSubscriptionId String?
+
+  notificationDeathAnniversaryEnabled Boolean @default(false)
+  notificationEventEnabled            Boolean @default(false)
+  notificationPostEnabled             Boolean @default(false)
+
   person   Person?
   settings UserSettings?
   exportPresets ExportPreset[]
+  notificationLogs NotificationLog[]
 
   createdAt DateTime @default(now())
 
   @@index([organizationId, role])
+  @@index([notificationDeathAnniversaryEnabled, isActive])
 }
 
 model UserSettings {
@@ -90,7 +100,31 @@ model Organization {
 
   events Event[]
 
+  notificationLogs NotificationLog[]
+
+  ceremonyTemplates CeremonyTemplate[]
+
   createdAt DateTime @default(now())
+}
+
+model CeremonyTemplate {
+  id Int @id @default(autoincrement())
+
+  organizationId Int
+
+  name String
+
+  /// HTML với biến {{person.full_name}}, {{organization.name}}, ...
+  content String @db.Text
+
+  isDefault Boolean @default(false)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, isDefault])
 }
 
 model AppConfig {
@@ -195,6 +229,12 @@ model Person {
 
   deathDate DateTime?
 
+  /// Ngày mất theo âm lịch (1–30).
+  deathLunarDay Int?
+
+  /// Tháng mất theo âm lịch (1–12).
+  deathLunarMonth Int?
+
   // Explicit life status — set when the death date is unknown but the person
   // is known to have passed away.
   deceased Boolean @default(false)
@@ -235,7 +275,41 @@ model Person {
 
   donations EventDonation[]
 
+  notificationLogs NotificationLog[]
+
   createdAt DateTime @default(now())
+
+  @@index([organizationId, deceased, deathLunarMonth, deathLunarDay])
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+  SKIPPED
+}
+
+model NotificationLog {
+  id Int @id @default(autoincrement())
+
+  organizationId Int
+  userId         Int
+  personId       Int?
+
+  title   String
+  message String @db.Text
+
+  status NotificationStatus @default(SENT)
+
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  person       Person?      @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([organizationId, createdAt])
+  @@index([personId, userId, createdAt])
 }
 
 model Biography {

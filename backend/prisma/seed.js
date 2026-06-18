@@ -198,6 +198,50 @@ async function main() {
     console.log('Created organization:', organization.name);
   }
 
+  const existingCeremonyTemplate = await prisma.ceremonyTemplate.findFirst({
+    where: { organizationId: organization.id },
+  });
+
+  if (!existingCeremonyTemplate) {
+    await prisma.ceremonyTemplate.create({
+      data: {
+        organizationId: organization.id,
+        name: 'Bài cúng ngày giỗ (mặc định)',
+        isDefault: true,
+        content: `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bài cúng — {{person.full_name}}</title>
+  <style>
+    body { font-family: "Noto Serif", Georgia, serif; max-width: 720px; margin: 2rem auto; padding: 1.5rem; line-height: 1.8; color: #1a1a1a; }
+    h1 { text-align: center; font-size: 1.5rem; margin-bottom: 1.5rem; }
+    .meta { text-align: center; margin-bottom: 2rem; color: #555; }
+    .content { white-space: pre-wrap; }
+    @media print { body { margin: 0; padding: 1rem; } }
+  </style>
+</head>
+<body>
+  <h1>BÀI CÚNG NGÀY GIỖ</h1>
+  <p class="meta">{{organization.name}} — {{ceremony.lunar_date}}</p>
+  <div class="content">
+Kính cúng linh hồn cụ {{person.full_name}}
+
+Hôm nay, ngày {{ceremony.lunar_date}}, con cháu dòng họ {{organization.name}} thành kính dâng lễ vật, thắp hương thành tâm, tưởng nhớ công lao và đức hạnh của cụ.
+
+Cụ sinh năm {{person.birth_date}}, mất năm {{person.death_date}}.
+
+Nguyện cầu linh hồn cụ được an lạc, phù hộ con cháu mạnh khỏe, gia đạo hưng thịnh.
+
+Nam mô A Di Đà Phật.
+  </div>
+</body>
+</html>`,
+      },
+    });
+    console.log('Created default ceremony template');
+  }
+
   const existingRoot = await prisma.person.findFirst({
     where: {
       organizationId: organization.id,

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import UserAccountSheet from '@/components/auth/UserAccountSheet';
 import AuthRequiredSheet from '@/components/auth/AuthRequiredSheet';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
@@ -38,6 +39,7 @@ import { getPageShellClass } from '@/utils/theme';
 import { UI } from '@/lib/constants/ui-strings';
 import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
 import type { FamilyTreeGraphApi } from '@/hooks/useFamilyTreeGraph';
+import NotificationOptInBanner from '@/components/notifications/NotificationOptInBanner';
 
 const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/FamilyTreeGraph'), {
   ssr: false,
@@ -58,7 +60,8 @@ type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
 type MainView = 'book' | 'tree';
 
 export default function FamilyTreePage() {
-  const { requireFeature, canUseFeature, isAdmin, isSystem } = useFeatureAccess();
+  const router = useRouter();
+  const { requireFeature, canUseFeature, canMutate, requireAdmin, isAdmin, isSystem } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const {
     treeData,
@@ -151,6 +154,10 @@ export default function FamilyTreePage() {
     setShowExport(false);
     setExportPositionOverrides(undefined);
   }, []);
+  const handleOpenCeremonyTemplates = useCallback(() => {
+    if (!requireAdmin()) return;
+    router.push('/ceremonies/templates');
+  }, [requireAdmin, router]);
   const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
   const handleCloseAddPerson = useCallback(() => setViewMode(null), []);
   const handleOpenEdit = useCallback(() => setViewMode('edit'), []);
@@ -283,6 +290,9 @@ export default function FamilyTreePage() {
             <IconRoundButton icon="userPlus" variant="outline" label={UI.BTN_USERS} tabIndex={-1} aria-hidden />
           </a>
         ) : null}
+        <a href="/notifications">
+          <IconRoundButton icon="calendar" variant="outline" label={UI.NOTIF_OPEN_CENTER} tabIndex={-1} aria-hidden />
+        </a>
         <IconRoundButton
           icon="userPlus"
           variant="outline"
@@ -305,6 +315,8 @@ export default function FamilyTreePage() {
           onMaxGenerationChange={setMaxGeneration}
         />
       ) : null}
+
+      <NotificationOptInBanner />
 
       {mainView === 'tree' ? (
         treeData ? (
@@ -334,11 +346,13 @@ export default function FamilyTreePage() {
       {treeData ? (
         <TreeFab
           canUseFeature={canUseFeature}
+          canManageCeremonyTemplates={canMutate}
           onAddPerson={handleOpenAddPerson}
           onSearch={handleOpenSearch}
           onOpenBook={handleOpenBook}
           onOpenEvents={handleOpenEvents}
           onOpenExport={handleOpenExport}
+          onOpenCeremonyTemplates={handleOpenCeremonyTemplates}
           onCenterTree={handleCenterTree}
         />
       ) : null}

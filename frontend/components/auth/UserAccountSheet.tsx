@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { getErrorMessage } from '@/utils/errors';
 import ContactInfoPanel from '@/components/auth/ContactInfoPanel';
+import NotificationStatsPanel from '@/components/notifications/NotificationStatsPanel';
 
 type UserAccountSheetProps = {
   persons: Person[];
@@ -127,9 +128,23 @@ export default function UserAccountSheet({ persons, relationships, onClose, onLi
           ) : null}
 
           {user && isAdmin ? (
-            <div className="mt-6 flex justify-center">
-              <a href="/org-users">
-                <IconRoundButton icon="userPlus" variant="gold" label={UI.BTN_USERS} tabIndex={-1} aria-hidden />
+            <div className="mt-6 space-y-3">
+              <div className="flex justify-center">
+                <a href="/org-users">
+                  <IconRoundButton icon="userPlus" variant="gold" label={UI.BTN_USERS} tabIndex={-1} aria-hidden />
+                </a>
+              </div>
+              <NotificationStatsPanel />
+            </div>
+          ) : null}
+
+          {user ? (
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              <a href="/settings/notifications">
+                <IconRoundButton icon="settings" variant="outline" label={UI.NOTIF_OPEN_SETTINGS} tabIndex={-1} aria-hidden />
+              </a>
+              <a href="/ceremonies/upcoming">
+                <IconRoundButton icon="calendar" variant="outline" label={UI.NOTIF_OPEN_UPCOMING} tabIndex={-1} aria-hidden />
               </a>
             </div>
           ) : null}
