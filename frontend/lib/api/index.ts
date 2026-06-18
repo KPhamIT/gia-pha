@@ -7,6 +7,8 @@ import { exportPreset } from './modules/export-preset';
 import { organizations } from './modules/organizations';
 import { users } from './modules/users';
 import { standardFeatures } from './modules/standard-features';
+import { notifications } from './modules/notifications';
+import { ceremonies } from './modules/ceremonies';
 
 export const api = {
   auth,
@@ -18,5 +20,7 @@ export const api = {
   organizations,
   users,
   standardFeatures,
+  notifications,
+  ceremonies,
 };
 export type ApiType = typeof api;

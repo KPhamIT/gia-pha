@@ -26,6 +26,8 @@ export const PERSON_FORM_SECTIONS: Section[] = [
       { key: 'birthDate', label: UI.BIRTH_DATE, type: 'date' },
       { key: 'deceased', label: UI.DECEASED_STATUS, type: 'checkbox' },
       { key: 'deathDate', label: UI.DEATH_DATE, type: 'date' },
+      { key: 'deathLunarDay', label: UI.DEATH_LUNAR_DAY, type: 'number', min: 1, max: 30 },
+      { key: 'deathLunarMonth', label: UI.DEATH_LUNAR_MONTH, type: 'number', min: 1, max: 12 },
     ],
   },
   {

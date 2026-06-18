@@ -42,6 +42,18 @@ export class UpdatePersonDetailDto {
   deathDate?: string;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  deathLunarDay?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  deathLunarMonth?: number;
+
+  @IsOptional()
   @IsBoolean()
   deceased?: boolean;
 

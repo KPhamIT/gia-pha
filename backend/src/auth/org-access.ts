@@ -15,6 +15,13 @@ export function assertOrgAccess(user: User, organizationId: number): void {
   throw new ForbiddenException('No access to this organization');
 }
 
+/** SYSTEM, org ADMIN, or org member (STANDARD) of the same organization. */
+export function assertOrgMemberAccess(user: User, organizationId: number): void {
+  if (user.role === UserRole.SYSTEM) return;
+  if (user.organizationId === organizationId) return;
+  throw new ForbiddenException('No access to this organization');
+}
+
 export function adminOrganizationId(user: User): number {
   if (user.role !== UserRole.ADMIN || user.organizationId == null) {
     throw new ForbiddenException('Admin organization is not configured');

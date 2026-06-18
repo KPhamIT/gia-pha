@@ -6,9 +6,23 @@ import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import type { StandardFeatureKey } from '@/lib/auth/standard-features';
 
-type FabAction = 'add' | 'search' | 'center' | 'book' | 'events' | 'export';
+import type { IconName } from '@/components/icons/icon-paths';
 
-const ACTION_FEATURES: Record<FabAction, StandardFeatureKey> = {
+type FabAction = 'add' | 'search' | 'center' | 'book' | 'events' | 'export' | 'ceremonyTemplates';
+type FeatureFabAction = Exclude<FabAction, 'ceremonyTemplates'>;
+
+type FabItem = { id: FabAction; label: string; icon: IconName };
+
+const FEATURE_FAB_ITEMS: { id: FeatureFabAction; label: string; icon: IconName }[] = [
+  { id: 'add', label: UI.ADD_PERSON, icon: 'plus' },
+  { id: 'search', label: UI.SEARCH_PERSON, icon: 'search' },
+  { id: 'book', label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' },
+  { id: 'events', label: UI.EVENTS_FAB, icon: 'calendar' },
+  { id: 'export', label: UI.BTN_EXPORT, icon: 'image' },
+  { id: 'center', label: UI.BTN_CENTER, icon: 'center' },
+];
+
+const ACTION_FEATURES: Record<FeatureFabAction, StandardFeatureKey> = {
   add: 'editTree',
   search: 'search',
   center: 'tree',
@@ -19,22 +33,26 @@ const ACTION_FEATURES: Record<FabAction, StandardFeatureKey> = {
 
 type TreeFabProps = {
   canUseFeature: (key: StandardFeatureKey) => boolean;
+  canManageCeremonyTemplates?: boolean;
   onAddPerson: () => void;
   onSearch: () => void;
   onCenterTree: () => void;
   onOpenBook: () => void;
   onOpenEvents: () => void;
   onOpenExport: () => void;
+  onOpenCeremonyTemplates?: () => void;
 };
 
 export default function TreeFab({
   canUseFeature,
+  canManageCeremonyTemplates = false,
   onAddPerson,
   onSearch,
   onCenterTree,
   onOpenBook,
   onOpenEvents,
   onOpenExport,
+  onOpenCeremonyTemplates,
 }: TreeFabProps) {
   const [open, setOpen] = useState(false);
 
@@ -45,22 +63,24 @@ export default function TreeFab({
     book: onOpenBook,
     events: onOpenEvents,
     export: onOpenExport,
+    ceremonyTemplates: () => onOpenCeremonyTemplates?.(),
   };
 
-  const actions = useMemo(
-    () =>
-      (
-        [
-          { id: 'add' as FabAction, label: UI.ADD_PERSON, icon: 'plus' as const },
-          { id: 'search' as FabAction, label: UI.SEARCH_PERSON, icon: 'search' as const },
-          { id: 'book' as FabAction, label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' as const },
-          { id: 'events' as FabAction, label: UI.EVENTS_FAB, icon: 'calendar' as const },
-          { id: 'export' as FabAction, label: UI.BTN_EXPORT, icon: 'image' as const },
-          { id: 'center' as FabAction, label: UI.BTN_CENTER, icon: 'center' as const },
-        ] as const
-      ).filter((action) => canUseFeature(ACTION_FEATURES[action.id])),
-    [canUseFeature],
-  );
+  const actions = useMemo(() => {
+    const base: FabItem[] = FEATURE_FAB_ITEMS.filter((action) =>
+      canUseFeature(ACTION_FEATURES[action.id]),
+    );
+
+    if (canManageCeremonyTemplates && onOpenCeremonyTemplates) {
+      base.push({
+        id: 'ceremonyTemplates',
+        label: UI.CEREMONY_TEMPLATES_OPEN,
+        icon: 'print',
+      });
+    }
+
+    return base;
+  }, [canManageCeremonyTemplates, canUseFeature, onOpenCeremonyTemplates]);
 
   if (actions.length === 0) return null;
 

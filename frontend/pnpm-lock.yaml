@@ -32,6 +32,9 @@ importers:
       react-dom:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
+      react-onesignal:
+        specifier: ^3.5.5
+        version: 3.5.5
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1990,6 +1993,10 @@ packages:
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  react-onesignal@3.5.5:
+    resolution: {integrity: sha512-5C4F2jUvT534hBY9Wjl7E9tdIn8KWJtsRH1yfR7wUWYXjrIVowajdVxCk3PUs0n5GGxrUug5L2yuLw/JWJ6zig==}
+    engines: {node: '>=18'}
 
   react@19.2.4:
     resolution: {integrity: sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==}
@@ -4316,6 +4323,8 @@ snapshots:
       scheduler: 0.27.0
 
   react-is@16.13.1: {}
+
+  react-onesignal@3.5.5: {}
 
   react@19.2.4: {}
 

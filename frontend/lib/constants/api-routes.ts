@@ -25,4 +25,13 @@ export const API_ROUTES = {
   EVENT_CONTRIBUTION: (id: number) => `/event/${id}/contribution`,
   EVENT_DONATION_LIST: (id: number) => `/event/${id}/donation`,
   EVENT_DONATION: (id: number, donationId: number) => `/event/${id}/donation/${donationId}`,
+  NOTIFICATIONS: '/notifications',
+  NOTIFICATIONS_SETTINGS: '/notifications/settings',
+  NOTIFICATIONS_UPCOMING: '/notifications/upcoming',
+  NOTIFICATIONS_STATS: '/notifications/stats',
+  CEREMONY_HTML: (personId: number) => `/ceremonies/${personId}/html`,
+  CEREMONY_TEMPLATES: '/ceremonies/templates',
+  CEREMONY_TEMPLATE: (id: number) => `/ceremonies/templates/${id}`,
+  CEREMONY_TEMPLATE_DEFAULT: (id: number) => `/ceremonies/templates/${id}/default`,
+  CEREMONY_TEMPLATE_VARIABLES: '/ceremonies/templates/variables',
 };
