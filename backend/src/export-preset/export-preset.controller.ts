@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Put, Request, UseGuards } from '@nestjs/common';
+import { FeatureMutateGuard } from '../standard-features/feature-mutate.guard.js';
+import { RequireFeature } from '../standard-features/require-feature.decorator.js';
 import { ExportPresetService } from './export-preset.service.js';
 
 interface AuthenticatedRequest {
@@ -14,6 +16,8 @@ export class ExportPresetController {
     return this.exportPresetService.findMine(req.user?.id);
   }
 
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('export')
   @Put()
   replaceMine(@Request() req: AuthenticatedRequest, @Body() body: unknown) {
     return this.exportPresetService.replaceMine(req.user?.id, body);

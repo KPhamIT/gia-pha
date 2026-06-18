@@ -1,4 +1,5 @@
 import type { FamilyTreeData } from '@/components/types/family-tree-types';
+import { getRootPerson } from '@/utils/family-tree-utils';
 
 export type TreeFilter = {
   /** A specific branch (1/2/3) or 'all' to show every branch. */
@@ -13,7 +14,7 @@ export type TreeFilter = {
  * ancestor, and edges are pruned to the surviving people.
  */
 export function filterTreeData(treeData: FamilyTreeData, { branch, maxGeneration }: TreeFilter): FamilyTreeData {
-  const rootId = treeData.root.id;
+  const rootId = getRootPerson(treeData.persons)?.id ?? treeData.root.id;
   const withinGeneration = (g?: number | null) => maxGeneration === 'all' || g == null || g <= maxGeneration;
   const matchesBranch = (b?: number | null) => branch === 'all' || b === branch;
 

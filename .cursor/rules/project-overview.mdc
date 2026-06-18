@@ -28,6 +28,7 @@ alwaysApply: true
 - **Relationship**: quan hệ `FATHER | MOTHER | SPOUSE | CHILD` giữa hai Person.
 - **Organization**: nhóm/tổ chức chứa danh sách Person.
 - **User / UserSettings**: đăng nhập (Facebook + JWT), cài đặt người dùng (JSON).
+- **Auth / role / permission**: xem `docs/auth-roles-permissions.md` — AI agents đọc `AGENTS.md`.
 
 ## Biến môi trường quan trọng
 

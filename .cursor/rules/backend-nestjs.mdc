@@ -54,9 +54,11 @@ import { PrismaService } from '../prisma/prisma.service';
 
 ## Auth
 
-- JWT guard: `JwtAuthGuard` — bảo vệ route cần đăng nhập.
-- `ALLOW_PUBLIC_ACCESS=true` (env): một số endpoint cho phép truy cập công khai (đồng bộ với frontend).
-- Payload JWT: `jwt-payload.interface.ts`.
+- JWT: `JwtOptionalGuard` (đọc công khai), `JwtRequiredGuard`, `MutateGuard`, `SystemGuard`, `FeatureMutateGuard`.
+- **Quy tắc đầy đủ:** `docs/auth-roles-permissions.md` và `.cursor/rules/auth-roles-permissions.mdc`.
+- Helper role: `backend/src/auth/org-access.ts` (`canMutate`, `assertOrgAccess`).
+- Feature keys & guard: `backend/src/standard-features/`.
+- Endpoint ghi nghiệp vụ → `FeatureMutateGuard` + `@RequireFeature('key')`. Quản trị user/org → `MutateGuard` / `SystemGuard`.
 
 ## Test
 

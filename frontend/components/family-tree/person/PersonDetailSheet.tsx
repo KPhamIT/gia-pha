@@ -3,9 +3,10 @@
 import { useMemo, useState } from 'react';
 import type { PersonDetail } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
-import Icon from '@/components/icons/Icon';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import { extractPersonRelationships } from '@/utils/person-relationships';
 import PersonDetailTabBody, { DETAIL_TABS, type DetailTab } from './PersonDetailTabs';
@@ -20,6 +21,7 @@ type PersonDetailSheetProps = {
   onAddChild: () => void;
   onDelete: () => void;
   onSelectPerson: (personId: number) => void;
+  canEdit?: boolean;
 };
 
 export default function PersonDetailSheet({
@@ -31,6 +33,7 @@ export default function PersonDetailSheet({
   onAddChild,
   onDelete,
   onSelectPerson,
+  canEdit = false,
 }: PersonDetailSheetProps) {
   const [tab, setTab] = useState<DetailTab>('info');
   const person = detail?.person;
@@ -44,15 +47,15 @@ export default function PersonDetailSheet({
       title={person?.fullName ?? ''}
       onClose={onClose}
       headerRight={
-        <button
-          type="button"
-          onClick={onEdit}
-          className="grid h-10 w-10 place-items-center rounded-full text-slate-600 active:bg-slate-100 md:hover:bg-slate-100"
-          aria-label={UI.EDIT_PERSON}
-          disabled={!person}
-        >
-          <Icon path="edit" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-        </button>
+        canEdit ? (
+          <IconRoundButton
+            icon="edit"
+            variant="gold"
+            label={UI.BTN_EDIT}
+            onClick={onEdit}
+            disabled={!person}
+          />
+        ) : null
       }
     >
       {loading ? (
@@ -60,25 +63,24 @@ export default function PersonDetailSheet({
           <LoadingSpinner size={36} label={UI.LOADING} />
         </div>
       ) : error ? (
-        <p className={`text-sm text-red-600 ${LAYOUT.pagePad}`}>{error}</p>
+        <p className={`text-sm ${BT.error} ${LAYOUT.pagePad}`}>{error}</p>
       ) : person ? (
         <>
-          <div className={`border-b border-slate-200 ${LAYOUT.pagePad} py-3`}>
+          <div className={`${BT.card} md:mx-6 md:mt-4`}>
+          <div className={`border-b ${BT.dividerOnLight} ${LAYOUT.pagePad} py-3`}>
             {person.generation != null ? (
-              <p className="text-sm text-slate-500">Đời thứ {person.generation}</p>
+              <p className={`text-sm ${BT.mutedOnLight}`}>Đời thứ {person.generation}</p>
             ) : null}
           </div>
 
-          <nav className="scrollbar-hide flex overflow-x-auto border-b border-slate-200">
+          <nav className={`scrollbar-hide flex overflow-x-auto border-b ${BT.dividerOnLight}`}>
             {DETAIL_TABS.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setTab(item.id)}
                 className={`shrink-0 px-4 py-3 text-sm font-medium transition md:px-6 ${
-                  tab === item.id
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-slate-500 active:text-slate-700 md:hover:text-slate-700'
+                  tab === item.id ? BT.tabActive : BT.tabIdle
                 }`}
               >
                 {item.label}
@@ -89,8 +91,9 @@ export default function PersonDetailSheet({
           <div className={LAYOUT.pagePad}>
             <PersonDetailTabBody tab={tab} person={person} relations={relations} onSelectPerson={onSelectPerson} />
           </div>
+          </div>
 
-          <PersonDetailFooter onAddChild={onAddChild} onDelete={onDelete} />
+          <PersonDetailFooter canEdit={canEdit} onAddChild={onAddChild} onDelete={onDelete} />
         </>
       ) : null}
     </FullScreenSheet>

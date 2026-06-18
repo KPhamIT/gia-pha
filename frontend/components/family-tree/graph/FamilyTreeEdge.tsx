@@ -5,6 +5,7 @@ import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from '@xyflow/react';
 import type { EdgeProps } from '@xyflow/react';
 import type { FamilyTreeEdgeData } from '@/components/types/family-tree-types';
 import { deleteRelationshipById } from '@/lib/family-tree/mutations';
+import { notify } from '@/lib/notify';
 import { UI } from '@/lib/constants/ui-strings';
 
 function FamilyTreeEdge({
@@ -35,8 +36,9 @@ function FamilyTreeEdge({
     try {
       await deleteRelationshipById(edgeData.relationshipId);
       edgeData.onRelationshipRemoved?.(edgeData.relationshipId);
+      notify.success(UI.TOAST_RELATIONSHIP_DELETED);
     } catch (error) {
-      console.error(UI.ERR_DELETE_RELATIONSHIP, error);
+      notify.error(error, UI.ERR_DELETE_RELATIONSHIP);
     }
   };
 

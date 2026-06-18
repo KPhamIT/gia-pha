@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from 'react';
 import BookShell from '@/components/ui/BookShell';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import Icon from '@/components/icons/Icon';
 import { getBranchLabel } from '@/lib/constants/branches';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import type { Person } from '@/components/types/family-tree-types';
 import type { BookPageConfig } from './book-page-config';
@@ -95,16 +97,13 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
           <h1 className="truncate text-lg font-semibold md:text-xl">{UI.BOOK_PAGES_TITLE}</h1>
           <p className="truncate text-xs text-amber-100/70">{UI.BOOK_PAGES_VISIBLE_COUNT(visibleCount, persons.length)}</p>
         </div>
-        <button
-          type="button"
-          onClick={handleSave}
+        <IconRoundButton
+          icon="save"
+          variant="gold"
+          label={UI.SAVE}
           disabled={!isDirty}
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-950 active:bg-amber-200 disabled:bg-white/10 disabled:text-amber-100/40"
-          aria-label={UI.BOOK_PAGES_SAVE}
-          title={isDirty ? UI.BOOK_PAGES_SAVE : UI.BOOK_PAGES_SAVED}
-        >
-          <Icon path="save" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-        </button>
+          onClick={handleSave}
+        />
       </header>
 
       <div className={`${LAYOUT.sheetBody} px-3 md:px-6`}>
@@ -115,14 +114,14 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
               <button
                 type="button"
                 onClick={showAll}
-                className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium active:bg-white/20 md:hover:bg-white/20"
+                className={BT.pillOnDark}
               >
                 {UI.BOOK_PAGES_SHOW_ALL}
               </button>
               <button
                 type="button"
                 onClick={resetOrder}
-                className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium active:bg-white/20 md:hover:bg-white/20"
+                className={BT.pillOnDark}
               >
                 {UI.BOOK_PAGES_RESET_ORDER}
               </button>

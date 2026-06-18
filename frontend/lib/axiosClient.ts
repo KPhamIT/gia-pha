@@ -19,10 +19,9 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (axios.isAxiosError(error) && error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEYS.TOKEN);
-      if (process.env.NEXT_PUBLIC_ALLOW_PUBLIC_ACCESS !== 'true') {
-        window.location.href = '/login';
+    if (axios.isAxiosError(error) && typeof window !== 'undefined') {
+      if (error.response?.status === 401) {
+        localStorage.removeItem(STORAGE_KEYS.TOKEN);
       }
     }
     return Promise.reject(error);

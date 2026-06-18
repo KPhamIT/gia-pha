@@ -3,18 +3,22 @@
 import { useCallback, useState } from 'react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import { api } from '@/lib/api';
 import { setToken } from '@/lib/auth/session';
+import { useAuthStore } from '@/store/authStore';
 import {
   getFacebookAppId,
   initFacebookSdk,
   requestFacebookAccessToken,
 } from '@/lib/auth/facebook-sdk';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import { getErrorMessage } from '@/utils/errors';
 
 export default function FacebookLoginButton() {
   const router = useRouter();
+  const refreshAuth = useAuthStore((state) => state.refresh);
   const appId = getFacebookAppId();
   const [sdkReady, setSdkReady] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,6 +38,7 @@ export default function FacebookLoginButton() {
       const accessToken = await requestFacebookAccessToken();
       const result = await api.auth.loginWithFacebook(accessToken);
       setToken(result.accessToken);
+      await refreshAuth();
       router.replace('/family-tree');
     } catch (err) {
       const message = getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT);
@@ -41,11 +46,11 @@ export default function FacebookLoginButton() {
     } finally {
       setLoading(false);
     }
-  }, [router, sdkReady]);
+  }, [router, sdkReady, refreshAuth]);
 
   if (!appId) {
     return (
-      <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700" role="alert">
+      <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800" role="alert">
         {UI.LOGIN_FACEBOOK_NOT_CONFIGURED}
       </p>
     );
@@ -58,19 +63,17 @@ export default function FacebookLoginButton() {
         strategy="lazyOnload"
         onLoad={handleSdkReady}
       />
-      {error ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
-          {error}
-        </p>
-      ) : null}
-      <button
-        type="button"
+      {error ? <p className={BT.errorBgLight} role="alert">{error}</p> : null}
+      <IconRoundButton
+        icon="userPlus"
+        variant="outline"
+        iconSize={18}
+        loading={loading}
+        disabled={!sdkReady}
+        label={UI.BTN_FACEBOOK}
+        compact={false}
         onClick={() => void handleLogin()}
-        disabled={!sdkReady || loading}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1877f2] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#166fe5] disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {loading ? UI.LOGIN_FACEBOOK_LOADING : UI.LOGIN_FACEBOOK}
-      </button>
+      />
     </>
   );
 }

@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import type { PersonDetail, UpdatePersonDetailInput } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import { buildPersonDraft, draftToUpdateInput, type PersonDraft } from '@/utils/person-detail-form';
 import PersonDetailFields from './PersonDetailFields';
@@ -37,29 +39,20 @@ export default function EditPersonSheet({ detail, loading, saving, onClose, onSa
     onSave(draftToUpdateInput(draft));
   };
 
+  const saveButton = (
+    <IconRoundButton icon="save" variant="gold" loading={saving} label={UI.SAVE} onClick={handleSave} />
+  );
+
   return (
-    <FullScreenSheet title={UI.EDIT_PERSON} onClose={onClose}>
+    <FullScreenSheet title={UI.EDIT_PERSON} onClose={onClose} headerRight={saveButton}>
       {loading ? (
         <div className="flex h-48 items-center justify-center">
           <LoadingSpinner size={36} label={UI.LOADING} />
         </div>
       ) : (
-        <>
-          <div className={LAYOUT.pagePad}>
-            <PersonDetailFields draft={draft} saving={saving} onChange={update} />
-          </div>
-
-          <div className={`sticky bottom-0 border-t border-slate-200 bg-white ${LAYOUT.pagePad} pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6`}>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-3.5 text-sm font-semibold text-white active:bg-blue-700 disabled:opacity-50"
-            >
-              {saving ? <LoadingSpinner size={18} label={UI.SAVING} /> : UI.SAVE}
-            </button>
-          </div>
-        </>
+        <div className={`${BT.card} ${LAYOUT.pagePad} md:mx-6 md:mt-4`}>
+          <PersonDetailFields draft={draft} saving={saving} onChange={update} />
+        </div>
       )}
     </FullScreenSheet>
   );

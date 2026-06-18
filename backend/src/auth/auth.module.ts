@@ -8,12 +8,14 @@ import { JwtStrategy } from './jwt.strategy.js';
 import { ZaloOAuthService } from './zalo-oauth.service.js';
 import { PersonModule } from '../person/person.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
+import { StandardFeaturesModule } from '../standard-features/standard-features.module.js';
 
 @Module({
   imports: [
     ConfigModule,
     PrismaModule,
     PersonModule,
+    StandardFeaturesModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

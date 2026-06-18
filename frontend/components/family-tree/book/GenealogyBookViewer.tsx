@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import OverlayPortal from '@/components/ui/OverlayPortal';
 import { useOverlayViewport } from '@/hooks/useOverlayViewport';
+import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import type { Person } from '@/components/types/family-tree-types';
 import BookPersonSearch from './BookPersonSearch';
 import BookStyleControls from './BookStyleControls';
@@ -19,12 +20,26 @@ type GenealogyBookViewerProps = {
 };
 
 export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookViewerProps) {
+  const { requireFeature, canUseFeature } = useFeatureAccess();
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   useOverlayViewport();
   const book = useGenealogyBook(persons);
-  const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef } = book;
+  const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef, ctx } = book;
+
+  const guardedUpdateSettings = useCallback(
+    (patch: Parameters<typeof updateSettings>[0]) => {
+      if (!requireFeature('editBook')) return;
+      updateSettings(patch);
+    },
+    [requireFeature, updateSettings],
+  );
+
+  const guardedCtx = useMemo(
+    () => ({ ...ctx, updateSettings: guardedUpdateSettings }),
+    [ctx, guardedUpdateSettings],
+  );
 
   if (!hydrated) return <BookViewerFallback kind="loading" onClose={onClose} />;
 
@@ -43,10 +58,11 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
         onOpenPages={() => setShowPages(true)}
         onPrint={book.handlePrint}
         onPrintAll={() => void book.handlePrintAll()}
+        canEditBook={canUseFeature('editBook')}
       />
 
       {showStyle ? (
-        <BookStyleControls settings={settings} onChange={updateSettings} onClose={() => setShowStyle(false)} />
+        <BookStyleControls settings={settings} onChange={guardedUpdateSettings} onClose={() => setShowStyle(false)} />
       ) : null}
 
       {showSearch ? (
@@ -61,13 +77,13 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
         <BookPagesManager
           persons={book.sortedPersons}
           pageConfig={settings.pageConfig}
-          onChange={(pageConfig) => updateSettings({ pageConfig })}
+          onChange={(pageConfig) => guardedUpdateSettings({ pageConfig })}
           onClose={() => setShowPages(false)}
         />
       ) : null}
 
       <BookStage
-        ctx={book.ctx}
+        ctx={guardedCtx}
         leaves={book.leaves}
         pageIndex={book.pageIndex}
         totalLeaves={book.totalLeaves}

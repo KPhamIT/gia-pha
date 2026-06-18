@@ -1,0 +1,102 @@
+'use client';
+
+import { create } from 'zustand';
+import type { AuthUser, Person } from '@/components/types/family-tree-types';
+import {
+  DEFAULT_STANDARD_FEATURES,
+  type StandardFeatureKey,
+  type StandardFeatures,
+  guestCanUseFeature,
+} from '@/lib/auth/standard-features';
+import { api } from '@/lib/api';
+import { clearToken, getToken } from '@/lib/auth/session';
+
+type AuthStore = {
+  user: AuthUser | null;
+  person: Person | null;
+  features: StandardFeatures;
+  loaded: boolean;
+  isSystem: boolean;
+  isAdmin: boolean;
+  canMutate: boolean;
+  isLoggedIn: boolean;
+  canUseFeature: (key: StandardFeatureKey) => boolean;
+  refresh: () => Promise<void>;
+  clear: () => void;
+};
+
+function deriveFlags(user: AuthUser | null) {
+  const isSystem = user?.role === 'SYSTEM';
+  const isAdmin = user?.role === 'ADMIN';
+  return {
+    isSystem,
+    isAdmin,
+    canMutate: isSystem || isAdmin,
+    isLoggedIn: Boolean(user),
+  };
+}
+
+function resolveFeatures(user: AuthUser | null, features?: StandardFeatures | null): StandardFeatures {
+  if (!user) return { ...DEFAULT_STANDARD_FEATURES };
+  return features ?? { ...DEFAULT_STANDARD_FEATURES };
+}
+
+export const useAuthStore = create<AuthStore>((set, get) => ({
+  user: null,
+  person: null,
+  features: { ...DEFAULT_STANDARD_FEATURES },
+  loaded: false,
+  isSystem: false,
+  isAdmin: false,
+  canMutate: false,
+  isLoggedIn: false,
+  canUseFeature: (key) => {
+    const state = get();
+    if (state.canMutate) return true;
+    if (!state.isLoggedIn) return guestCanUseFeature(key);
+    return state.features[key] ?? false;
+  },
+  refresh: async () => {
+    const token = getToken();
+    if (!token) {
+      set({
+        user: null,
+        person: null,
+        features: { ...DEFAULT_STANDARD_FEATURES },
+        loaded: true,
+        ...deriveFlags(null),
+      });
+      return;
+    }
+
+    try {
+      const me = await api.auth.me();
+      const user = me.user ?? null;
+      set({
+        user,
+        person: me.person ?? null,
+        features: resolveFeatures(user, me.features),
+        loaded: true,
+        ...deriveFlags(user),
+      });
+    } catch {
+      clearToken();
+      set({
+        user: null,
+        person: null,
+        features: { ...DEFAULT_STANDARD_FEATURES },
+        loaded: true,
+        ...deriveFlags(null),
+      });
+    }
+  },
+  clear: () => {
+    set({
+      user: null,
+      person: null,
+      features: { ...DEFAULT_STANDARD_FEATURES },
+      loaded: true,
+      ...deriveFlags(null),
+    });
+  },
+}));

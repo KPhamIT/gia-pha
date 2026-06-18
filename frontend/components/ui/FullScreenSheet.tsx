@@ -17,7 +17,7 @@ type FullScreenSheetProps = {
   tone?: SheetTone;
 };
 
-export default function FullScreenSheet({ title, onClose, children, headerRight, tone = 'light' }: FullScreenSheetProps) {
+export default function FullScreenSheet({ title, onClose, children, headerRight, tone = 'book' }: FullScreenSheetProps) {
   const isBook = tone === 'book';
   const panelClass = isBook ? LAYOUT.panelBook : LAYOUT.panelLight;
   const headerClass = isBook ? LAYOUT.sheetHeaderBook : LAYOUT.sheetHeaderLight;

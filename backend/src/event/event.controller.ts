@@ -16,7 +16,8 @@ import { SetContributionsDto } from './dto/set-contribution.dto.js';
 import { CreateDonationDto } from './dto/create-donation.dto.js';
 import { UpdateDonationDto } from './dto/update-donation.dto.js';
 import { SaveDonationsDto } from './dto/save-donations.dto.js';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { FeatureMutateGuard } from '../standard-features/feature-mutate.guard.js';
+import { RequireFeature } from '../standard-features/require-feature.decorator.js';
 
 @Controller('event')
 export class EventController {
@@ -32,43 +33,50 @@ export class EventController {
     return this.eventService.findOne(+id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Post()
   create(@Body() dto: CreateEventDto) {
     return this.eventService.create(dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateEventDto) {
     return this.eventService.update(+id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventService.remove(+id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Put(':id/contribution')
   setContributions(@Param('id') id: string, @Body() dto: SetContributionsDto) {
     return this.eventService.setContributions(+id, dto.contributions);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Put(':id/donation')
   setDonations(@Param('id') id: string, @Body() dto: SaveDonationsDto) {
     return this.eventService.setDonations(+id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Post(':id/donation')
   addDonation(@Param('id') id: string, @Body() dto: CreateDonationDto) {
     return this.eventService.addDonation(+id, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Patch(':id/donation/:donationId')
   updateDonation(
     @Param('id') id: string,
@@ -78,7 +86,8 @@ export class EventController {
     return this.eventService.updateDonation(+id, +donationId, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(FeatureMutateGuard)
+  @RequireFeature('editEvents')
   @Delete(':id/donation/:donationId')
   removeDonation(
     @Param('id') id: string,

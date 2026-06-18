@@ -1,0 +1,57 @@
+---
+description: Auth, role & feature permission — quy tắc bắt buộc, không mỗi page một kiểu
+alwaysApply: true
+---
+
+# Auth / Role / Permission
+
+**Đọc đầy đủ:** `docs/auth-roles-permissions.md` · Setup seed/env: `docs/auth-roles-setup.md`
+
+## 3 lớp
+
+1. **Auth** — JWT, `GET /auth/me`
+2. **Role** — `SYSTEM` | `ADMIN` | `STANDARD` (`canMutate` = SYSTEM hoặc ADMIN)
+3. **Feature** — quyền STANDARD: merge `AppConfig` + `Organization.standardFeatures` → `auth/me.features`
+
+ADMIN/SYSTEM: mọi feature `true`, bypass `FeatureMutateGuard`.
+
+## Backend — guard
+
+| Guard | Khi nào |
+|-------|---------|
+| `FeatureMutateGuard` + `@RequireFeature('key')` | API ghi nghiệp vụ (person, event, settings…) — STANDARD được nếu feature bật |
+| `MutateGuard` | Chỉ ADMIN/SYSTEM (users, org, cấu hình quyền org) |
+| `SystemGuard` | Chỉ SYSTEM (defaults feature, tạo/xóa org) |
+| `JwtOptionalGuard` | Đọc công khai |
+
+Helper: `backend/src/auth/org-access.ts`. Feature keys: `backend/src/standard-features/standard-features.types.ts`.
+
+**Endpoint ghi mới:** chọn guard đúng; module import `StandardFeaturesModule`; service dùng `assertOrgAccess`.
+
+## Frontend — một hook
+
+```typescript
+import { useFeatureAccess } from '@/hooks/useFeatureAccess';
+const { canUseFeature, requireFeature, requireAdmin } = useFeatureAccess();
+```
+
+| Việc | API |
+|------|-----|
+| Ẩn nút/FAB | `canUseFeature('editTree')` |
+| Trước API ghi | `if (!requireFeature('editTree')) return` |
+| Page `/system` | `useSystemAccess()` |
+| Page `/org-users` | `useOrgAdminAccess()` |
+| Quản trị user only | `requireAdmin()` |
+
+State: `authStore` (`canUseFeature`, `features`). Sheet: `AuthRequiredSheet` qua `authGateStore` (`login` | `admin` | `permission`).
+
+Keys FE: `frontend/lib/auth/standard-features.ts` — **phải đồng bộ** với backend.
+
+## Cấm
+
+- `if (user.role === 'ADMIN')` rải rác trong UI nghiệp vụ
+- `MutateGuard` trên API person/event khi STANDARD có thể được cấp quyền
+- Chỉ ẩn UI, không guard backend
+- Hook/gate auth tự chế từng page
+
+Thêm feature key → cập nhật **cả** BE + FE types, `FEATURE_LABELS`, guard API, `canUseFeature`/`requireFeature` UI.

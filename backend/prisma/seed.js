@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import bcrypt from 'bcrypt';
 import { PrismaClient } from '../dist/generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
@@ -225,10 +226,58 @@ async function main() {
   });
   if (!devUser) {
     devUser = await prisma.user.create({
-      data: { provider: 'dev', providerId: 'dev-local' },
+      data: { provider: 'dev', providerId: 'dev-local', role: 'STANDARD' },
     });
     console.log('Created dev user for settings seeding');
   }
+
+  const adminPassword = process.env.ADMIN_PASSWORD ?? 'admin123';
+  const adminHash = await bcrypt.hash(adminPassword, 10);
+  const primaryOrg =
+    (await prisma.organization.findFirst({
+      where: { name: 'Family Tree' },
+    })) ?? organization;
+  await prisma.user.upsert({
+    where: { providerId: 'local:admin' },
+    create: {
+      provider: 'local',
+      providerId: 'local:admin',
+      username: 'admin',
+      email: 'admin@local.dev',
+      passwordHash: adminHash,
+      role: 'ADMIN',
+      organizationId: primaryOrg.id,
+    },
+    update: {
+      username: 'admin',
+      passwordHash: adminHash,
+      role: 'ADMIN',
+      organizationId: primaryOrg.id,
+    },
+  });
+  console.log(`Seeded admin user (username: admin) → org ${primaryOrg.name}`);
+
+  const systemPassword = process.env.SYSTEM_PASSWORD ?? 'system123';
+  const systemHash = await bcrypt.hash(systemPassword, 10);
+  await prisma.user.upsert({
+    where: { providerId: 'local:system' },
+    create: {
+      provider: 'local',
+      providerId: 'local:system',
+      username: 'system',
+      email: 'system@local.dev',
+      passwordHash: systemHash,
+      role: 'SYSTEM',
+      organizationId: null,
+    },
+    update: {
+      username: 'system',
+      passwordHash: systemHash,
+      role: 'SYSTEM',
+      organizationId: null,
+    },
+  });
+  console.log('Seeded system user (username: system)');
 
   const presets = buildExportPresets();
   await prisma.$transaction([
@@ -249,6 +298,27 @@ async function main() {
     update: {},
   });
   console.log(`Seeded ${presets.length} export presets to export_preset table`);
+
+  await prisma.appConfig.upsert({
+    where: { key: 'standard_features_default' },
+    create: {
+      key: 'standard_features_default',
+      value: {
+        tree: true,
+        book: true,
+        events: true,
+        export: true,
+        search: true,
+        editTree: false,
+        editBook: false,
+        editEvents: false,
+        linkAccount: true,
+        settings: true,
+      },
+    },
+    update: {},
+  });
+  console.log('Seeded standard feature defaults');
 
   console.log('Seed completed');
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { fetchUserSettings, patchUserSettingsCache } from '@/lib/settings/user-settings-cache';
 import type { UserSettings } from '@/lib/api/modules/settings';
+import { notify } from '@/lib/notify';
 import { UI } from '@/lib/constants/ui-strings';
 
 type UseSettingsOptions = {
@@ -36,9 +37,11 @@ export function useSettings({ onLoaded }: UseSettingsOptions = {}) {
       await api.settings.upsert(data);
       patchUserSettingsCache(data);
       setSaveSuccess(true);
+      notify.success(UI.TOAST_SETTINGS_SAVED);
       setTimeout(() => setSaveSuccess(false), 2000);
-    } catch {
+    } catch (error) {
       setSaveError(UI.ERR_SAVE_SETTINGS);
+      notify.error(error, UI.ERR_SAVE_SETTINGS);
     } finally {
       setSaving(false);
     }

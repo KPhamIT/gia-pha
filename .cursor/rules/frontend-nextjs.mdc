@@ -60,6 +60,14 @@ axios.get("http://localhost:5000/person/1/tree");
 - Node/edge tùy chỉnh: `FamilyTreeNode.tsx`, `FamilyTreeEdge.tsx`.
 - Không nhét logic layout nặng vào component nhỏ — giữ trong hook hoặc file layout riêng.
 
+## Auth & permission
+
+- **Bắt buộc:** `docs/auth-roles-permissions.md` — không check role rải rác từng component.
+- Hook chuẩn: `useFeatureAccess()` — `canUseFeature(key)` (ẩn UI), `requireFeature(key)` (trước ghi DB).
+- Page admin: `useSystemAccess()` (`/system`), `useOrgAdminAccess()` (`/org-users`).
+- State: `authStore`; thông báo: `AuthRequiredSheet` + `authGateStore`.
+- Feature keys: `frontend/lib/auth/standard-features.ts` (đồng bộ với backend).
+
 ## Xử lý lỗi
 
 ```typescript

@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import type { CreateChildFormInput, Person } from '@/components/types/family-tree-types';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import { FormField, inputClassName } from '@/components/ui/CollapsibleSection';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 
 const EMPTY_CHILD_FORM = {
@@ -39,9 +41,13 @@ export default function AddChildSheet({ parent, onClose, onCreateChild, loading 
     });
   };
 
+  const saveButton = (
+    <IconRoundButton icon="save" variant="gold" loading={loading} label={UI.SAVE} onClick={handleSubmit} />
+  );
+
   return (
-    <FullScreenSheet title={`${UI.ADD_CHILD_FOR} ${parent.fullName}`} onClose={onClose}>
-      <div className={`relative space-y-4 ${LAYOUT.pagePad}`}>
+    <FullScreenSheet title={`${UI.ADD_CHILD_FOR} ${parent.fullName}`} onClose={onClose} headerRight={saveButton}>
+      <div className={`relative space-y-4 ${BT.card} ${LAYOUT.pagePad} md:mx-6 md:mt-4`}>
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
             <LoadingSpinner size={36} label={UI.SAVING} />
@@ -81,15 +87,6 @@ export default function AddChildSheet({ parent, onClose, onCreateChild, loading 
             disabled={loading}
           />
         </FormField>
-
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={loading}
-          className="mt-4 flex w-full items-center justify-center rounded-2xl bg-green-600 py-3.5 text-sm font-semibold text-white active:bg-green-700 disabled:opacity-50"
-        >
-          {UI.SAVE}
-        </button>
       </div>
     </FullScreenSheet>
   );

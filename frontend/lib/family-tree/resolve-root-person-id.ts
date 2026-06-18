@@ -12,6 +12,10 @@ export async function resolveRootPersonId(allowPublicAccess: boolean): Promise<n
       if (meResponse?.person?.id) {
         return meResponse.person.id;
       }
+      if (meResponse?.user) {
+        const tree = await api.person.getDefaultTree();
+        return tree.root?.id ?? getRootPerson(tree.persons as Person[])?.id ?? null;
+      }
     } catch (err) {
       console.error('Error fetching user info:', err);
     }

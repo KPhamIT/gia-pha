@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import { FormField, inputClassName, textareaClassName } from '@/components/ui/CollapsibleSection';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
 import type { CreateEventInput, EventType, FamilyEvent } from '@/components/types/event-types';
-import { ET } from './event-theme';
+import { BT } from '@/lib/constants/ui-theme';
 
 type Props = {
   initial?: FamilyEvent | null;
@@ -44,114 +45,114 @@ export default function EventFormSheet({ initial, saving, onSubmit, onClose }: P
     });
   };
 
+  const saveButton = (
+    <IconRoundButton icon="save" variant="gold" loading={saving} label={UI.SAVE} onClick={handleSubmit} />
+  );
+
   return (
-    <FullScreenSheet title={initial ? UI.EVENT_EDIT : UI.EVENT_ADD} onClose={onClose} tone="book">
-      <div className={`relative ${ET.pagePad}`}>
+    <FullScreenSheet
+      title={initial ? UI.EVENT_EDIT : UI.EVENT_ADD}
+      onClose={onClose}
+      tone="book"
+      headerRight={saveButton}
+    >
+      <div className={`relative ${BT.pagePad}`}>
         {saving ? (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20">
             <LoadingSpinner size={36} label={UI.SAVING} />
           </div>
         ) : null}
 
-        <div className="space-y-4 rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
-        <FormField label={UI.EVENT_TITLE_LABEL}>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={UI.EVENT_TITLE_PLACEHOLDER}
-            className={inputClassName}
-            disabled={saving}
-          />
-        </FormField>
-
-        <FormField label={UI.EVENT_TYPE_LABEL}>
-          <div className="grid grid-cols-1 gap-2">
-            {typeOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setType(option.value)}
-                disabled={saving}
-                className={`rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition-colors ${
-                  type === option.value
-                    ? 'border-amber-500 bg-amber-50 text-amber-800'
-                    : 'border-slate-300 bg-white text-slate-700'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </FormField>
-
-        {type === 'CONTRIBUTION' ? (
-          <>
-            <FormField label={UI.EVENT_AMOUNT_LABEL}>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ''))}
-                placeholder={UI.EVENT_AMOUNT_PLACEHOLDER}
-                className={inputClassName}
-                disabled={saving}
-              />
-            </FormField>
-
-            <button
-              type="button"
-              onClick={() => setMaleOnly((v) => !v)}
+        <div className={`space-y-4 ${BT.card} p-4`}>
+          <FormField label={UI.EVENT_TITLE_LABEL}>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={UI.EVENT_TITLE_PLACEHOLDER}
+              className={inputClassName}
               disabled={saving}
-              className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-left"
-            >
-              <span className="min-w-0">
-                <span className="block text-sm font-medium text-slate-800">{UI.EVENT_MALE_ONLY_LABEL}</span>
-                <span className="block text-xs text-slate-500">{UI.EVENT_MALE_ONLY_HINT}</span>
-              </span>
-              <span
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                  maleOnly ? 'bg-amber-600' : 'bg-slate-300'
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-                    maleOnly ? 'left-[1.375rem]' : 'left-0.5'
+            />
+          </FormField>
+
+          <FormField label={UI.EVENT_TYPE_LABEL}>
+            <div className="grid grid-cols-1 gap-2">
+              {typeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setType(option.value)}
+                  disabled={saving}
+                  className={`rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                    type === option.value
+                      ? 'border-amber-500 bg-amber-50 text-amber-950'
+                      : 'border-amber-200/80 bg-white text-neutral-700'
                   }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </FormField>
+
+          {type === 'CONTRIBUTION' ? (
+            <>
+              <FormField label={UI.EVENT_AMOUNT_LABEL}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ''))}
+                  placeholder={UI.EVENT_AMOUNT_PLACEHOLDER}
+                  className={inputClassName}
+                  disabled={saving}
                 />
-              </span>
-            </button>
-          </>
-        ) : null}
+              </FormField>
 
-        <FormField label={UI.EVENT_DATE_LABEL}>
-          <input
-            type="date"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            className={inputClassName}
-            disabled={saving}
-          />
-        </FormField>
+              <button
+                type="button"
+                onClick={() => setMaleOnly((v) => !v)}
+                disabled={saving}
+                className="flex w-full items-center justify-between gap-3 rounded-xl border border-amber-200/80 bg-white px-3 py-2.5 text-left"
+              >
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium text-neutral-900">{UI.EVENT_MALE_ONLY_LABEL}</span>
+                  <span className={`block text-xs ${BT.mutedOnLight}`}>{UI.EVENT_MALE_ONLY_HINT}</span>
+                </span>
+                <span
+                  className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                    maleOnly ? 'bg-amber-700' : 'bg-neutral-300'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                      maleOnly ? 'left-[1.375rem]' : 'left-0.5'
+                    }`}
+                  />
+                </span>
+              </button>
+            </>
+          ) : null}
 
-        <FormField label={UI.EVENT_DESC_LABEL}>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={UI.EVENT_DESC_PLACEHOLDER}
-            className={textareaClassName}
-            disabled={saving}
-          />
-        </FormField>
+          <FormField label={UI.EVENT_DATE_LABEL}>
+            <input
+              type="date"
+              value={eventDate}
+              onChange={(e) => setEventDate(e.target.value)}
+              className={inputClassName}
+              disabled={saving}
+            />
+          </FormField>
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={saving}
-          className={`mt-2 flex w-full items-center justify-center rounded-2xl py-3.5 text-sm font-semibold ${ET.primaryBtn}`}
-        >
-          {UI.EVENT_SAVE}
-        </button>
+          <FormField label={UI.EVENT_DESC_LABEL}>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={UI.EVENT_DESC_PLACEHOLDER}
+              className={textareaClassName}
+              disabled={saving}
+            />
+          </FormField>
         </div>
       </div>
     </FullScreenSheet>

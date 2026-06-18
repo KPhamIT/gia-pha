@@ -2,11 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import Icon from '@/components/icons/Icon';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
+import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { getBranchLabel } from '@/lib/constants/branches';
 import { api } from '@/lib/api';
+import { notify } from '@/lib/notify';
 import type { Person, Relationship } from '@/components/types/family-tree-types';
 import type { EventContribution, FamilyEvent, FamilyEventDetail } from '@/components/types/event-types';
 import { groupLivingByFamily } from './event-grouping';
@@ -82,6 +85,7 @@ const summaryPatch = (detail: FamilyEventDetail): Partial<FamilyEvent> => ({
 });
 
 export default function EventContributionView({ event, persons, relationships, onClose, onEventPatched }: Props) {
+  const { requireFeature } = useFeatureAccess();
   const [savedAmounts, setSavedAmounts] = useState<Map<number, number>>(new Map());
   const [draftAmounts, setDraftAmounts] = useState<Map<number, number>>(new Map());
   const [inputTexts, setInputTexts] = useState<Map<number, string>>(new Map());
@@ -186,6 +190,7 @@ export default function EventContributionView({ event, persons, relationships, o
   };
 
   const handleSave = async () => {
+    if (!requireFeature('editEvents')) return;
     if (!isDirty || saving) return;
 
     const nextDraft = resolveDraftAmounts(draftAmounts, inputTexts);
@@ -206,8 +211,10 @@ export default function EventContributionView({ event, persons, relationships, o
       setSavedAmounts(synced);
       setDraftAmounts(new Map(synced));
       onEventPatched(summaryPatch(detail));
-    } catch {
+      notify.success(UI.TOAST_CONTRIBUTIONS_SAVED);
+    } catch (error) {
       setDraftAmounts(new Map(savedAmounts));
+      notify.error(error, UI.ERR_SAVE);
     } finally {
       setSaving(false);
     }
@@ -219,20 +226,14 @@ export default function EventContributionView({ event, persons, relationships, o
   };
 
   const saveButton = (
-    <button
-      type="button"
-      onClick={() => void handleSave()}
+    <IconRoundButton
+      icon="save"
+      variant="gold"
+      label={UI.SAVE}
+      loading={saving}
       disabled={!isDirty || saving}
-      className="grid h-10 w-10 place-items-center rounded-full bg-amber-100 text-amber-950 active:bg-amber-200 disabled:bg-white/10 disabled:text-amber-100/40"
-      aria-label={UI.BOOK_PAGES_SAVE}
-      title={isDirty ? UI.BOOK_PAGES_SAVE : UI.BOOK_PAGES_SAVED}
-    >
-      {saving ? (
-        <LoadingSpinner size={20} />
-      ) : (
-        <Icon path="save" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-      )}
-    </button>
+      onClick={() => void handleSave()}
+    />
   );
 
   return (
