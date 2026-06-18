@@ -1,18 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useRef, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, type TextareaHTMLAttributes } from 'react';
 
 type AutoGrowTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-/** Textarea grows with content; page scroll only (no inner scroll). */
-export default function AutoGrowTextarea({
-  value,
-  onChange,
-  className = '',
-  rows = 1,
-  ...props
-}: AutoGrowTextareaProps) {
+/** Textarea grows with content; page scroll only (no inner scroll). Forwards its ref. */
+const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, AutoGrowTextareaProps>(function AutoGrowTextarea(
+  { value, onChange, className = '', rows = 1, ...props },
+  forwardedRef,
+) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  useImperativeHandle(forwardedRef, () => ref.current as HTMLTextAreaElement, []);
 
   const resize = useCallback(() => {
     const el = ref.current;
@@ -39,4 +37,6 @@ export default function AutoGrowTextarea({
       {...props}
     />
   );
-}
+});
+
+export default AutoGrowTextarea;
