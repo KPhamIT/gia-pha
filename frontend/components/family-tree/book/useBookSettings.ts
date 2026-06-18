@@ -9,6 +9,8 @@ import {
   persistRemoteBookSettings,
   saveBookSettings,
 } from './book-settings';
+import { notify } from '@/lib/notify';
+import { UI } from '@/lib/constants/ui-strings';
 
 /**
  * Book settings live in the user's backend settings (cross-device) with
@@ -63,9 +65,10 @@ export function useBookSettings() {
       void persistRemoteBookSettings(settings)
         .then(() => {
           lastPersistedJson.current = json;
+          notify.success(UI.TOAST_SAVE_SUCCESS);
         })
-        .catch(() => {
-          /* keep local copy if the backend is unreachable */
+        .catch((error) => {
+          notify.error(error, UI.ERR_SAVE_SETTINGS);
         });
     }, 500);
 

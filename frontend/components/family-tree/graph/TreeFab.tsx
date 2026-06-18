@@ -1,12 +1,24 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Icon from '@/components/icons/Icon';
+import IconRoundButton from '@/components/ui/IconRoundButton';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
+import type { StandardFeatureKey } from '@/lib/auth/standard-features';
 
 type FabAction = 'add' | 'search' | 'center' | 'book' | 'events' | 'export';
 
+const ACTION_FEATURES: Record<FabAction, StandardFeatureKey> = {
+  add: 'editTree',
+  search: 'search',
+  center: 'tree',
+  book: 'book',
+  events: 'events',
+  export: 'export',
+};
+
 type TreeFabProps = {
+  canUseFeature: (key: StandardFeatureKey) => boolean;
   onAddPerson: () => void;
   onSearch: () => void;
   onCenterTree: () => void;
@@ -15,60 +27,75 @@ type TreeFabProps = {
   onOpenExport: () => void;
 };
 
-export default function TreeFab({ onAddPerson, onSearch, onCenterTree, onOpenBook, onOpenEvents, onOpenExport }: TreeFabProps) {
+export default function TreeFab({
+  canUseFeature,
+  onAddPerson,
+  onSearch,
+  onCenterTree,
+  onOpenBook,
+  onOpenEvents,
+  onOpenExport,
+}: TreeFabProps) {
   const [open, setOpen] = useState(false);
 
-  const actions = useMemo(() => [
-    { id: 'add' as FabAction, label: UI.ADD_PERSON, icon: 'plus' as const, onClick: onAddPerson },
-    { id: 'search' as FabAction, label: UI.SEARCH_PERSON, icon: 'search' as const, onClick: onSearch },
-    { id: 'book' as FabAction, label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' as const, onClick: onOpenBook },
-    { id: 'events' as FabAction, label: UI.EVENTS_FAB, icon: 'calendar' as const, onClick: onOpenEvents },
-    { id: 'export' as FabAction, label: UI.EXPORT_FAB, icon: 'image' as const, onClick: onOpenExport },
-    { id: 'center' as FabAction, label: UI.CENTER_TREE, icon: 'center' as const, onClick: onCenterTree },
-  ], [onAddPerson, onSearch, onOpenBook, onOpenEvents, onOpenExport, onCenterTree]);
+  const handlers: Record<FabAction, () => void> = {
+    add: onAddPerson,
+    search: onSearch,
+    center: onCenterTree,
+    book: onOpenBook,
+    events: onOpenEvents,
+    export: onOpenExport,
+  };
+
+  const actions = useMemo(
+    () =>
+      (
+        [
+          { id: 'add' as FabAction, label: UI.ADD_PERSON, icon: 'plus' as const },
+          { id: 'search' as FabAction, label: UI.SEARCH_PERSON, icon: 'search' as const },
+          { id: 'book' as FabAction, label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' as const },
+          { id: 'events' as FabAction, label: UI.EVENTS_FAB, icon: 'calendar' as const },
+          { id: 'export' as FabAction, label: UI.BTN_EXPORT, icon: 'image' as const },
+          { id: 'center' as FabAction, label: UI.BTN_CENTER, icon: 'center' as const },
+        ] as const
+      ).filter((action) => canUseFeature(ACTION_FEATURES[action.id])),
+    [canUseFeature],
+  );
+
+  if (actions.length === 0) return null;
 
   const handleAction = (action: (typeof actions)[number]) => {
     setOpen(false);
-    action.onClick();
+    handlers[action.id]();
   };
 
   return (
-    <div className="fixed bottom-6 left-4 z-20 flex flex-col-reverse items-start gap-3 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
+    <div className="fixed bottom-6 left-4 z-[45] flex flex-col-reverse items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
       {open ? (
         <div className="flex flex-col gap-2">
           {actions.map((action) => (
-            <button
+            <IconRoundButton
               key={action.id}
-              type="button"
+              icon={action.icon}
+              label={action.label}
+              variant="outline"
+              compact={false}
+              className={`shadow-lg ${BT.card}`}
               onClick={() => handleAction(action)}
-              className="flex items-center gap-3 rounded-full border border-slate-200 bg-white py-2.5 pl-3 pr-4 shadow-lg active:bg-slate-50"
-            >
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-blue-600 text-white">
-                <Icon path={action.icon} size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-              </span>
-              <span className="text-sm font-medium text-slate-800">{action.label}</span>
-            </button>
+            />
           ))}
         </div>
       ) : null}
 
-      <button
-        type="button"
+      <IconRoundButton
+        icon="plus"
+        variant="fab"
+        iconSize={24}
         onClick={() => setOpen((prev) => !prev)}
-        className="grid h-14 w-14 place-items-center rounded-full bg-blue-600 text-white shadow-lg active:bg-blue-700"
-        aria-label="Hành động"
+        aria-label={open ? UI.CANCEL : UI.BTN_CREATE}
         aria-expanded={open}
-      >
-        <Icon
-          path="plus"
-          size={24}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          pointer={false}
-          className={`transition-transform ${open ? 'rotate-45' : ''}`}
-        />
-      </button>
+        className={open ? '[&_svg]:rotate-45' : ''}
+      />
     </div>
   );
 }

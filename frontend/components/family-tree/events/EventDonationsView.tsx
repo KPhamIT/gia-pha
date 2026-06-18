@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import Icon from '@/components/icons/Icon';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
+import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { api } from '@/lib/api';
+import { notify } from '@/lib/notify';
 import type { Person } from '@/components/types/family-tree-types';
 import type {
   CreateDonationInput,
@@ -40,6 +43,7 @@ const summaryPatch = (detail: FamilyEventDetail): Partial<FamilyEvent> => ({
 
 /** Full-screen list of free-form merit donations (công đức) for one event. */
 export default function EventDonationsView({ event, persons, onClose, onEventPatched }: Props) {
+  const { requireFeature } = useFeatureAccess();
   const [savedDonations, setSavedDonations] = useState<EventDonation[]>([]);
   const [draftDonations, setDraftDonations] = useState<DonationDraftItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,6 +134,7 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
   };
 
   const handleSave = async () => {
+    if (!requireFeature('editEvents')) return;
     if (!isDirty || saving) return;
 
     const payload = buildSaveDonationsPayload(savedDonations, draftDonations);
@@ -140,8 +145,10 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
       setSavedDonations(donations);
       setDraftDonations(donationsToDraft(donations));
       onEventPatched(summaryPatch(detail));
-    } catch {
+      notify.success(UI.TOAST_DONATIONS_SAVED);
+    } catch (error) {
       setDraftDonations(donationsToDraft(savedDonations));
+      notify.error(error, UI.ERR_SAVE);
     } finally {
       setSaving(false);
     }
@@ -154,31 +161,23 @@ export default function EventDonationsView({ event, persons, onClose, onEventPat
 
   const headerActions = (
     <div className="flex shrink-0 items-center gap-2">
-      <button
-        type="button"
+      <IconRoundButton
+        icon="plus"
+        variant="gold"
+        label={UI.BTN_CREATE}
         onClick={() => {
           setEditingKey(null);
           setFormOpen(true);
         }}
-        className={`grid h-10 w-10 place-items-center rounded-full ${ET.roundBtn}`}
-        aria-label={UI.EVENT_DONATION_ADD}
-      >
-        <Icon path="plus" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-      </button>
-      <button
-        type="button"
-        onClick={() => void handleSave()}
+      />
+      <IconRoundButton
+        icon="save"
+        variant="gold"
+        label={UI.SAVE}
+        loading={saving}
         disabled={!isDirty || saving}
-        className="grid h-10 w-10 place-items-center rounded-full bg-amber-100 text-amber-950 active:bg-amber-200 disabled:bg-white/10 disabled:text-amber-100/40"
-        aria-label={UI.BOOK_PAGES_SAVE}
-        title={isDirty ? UI.BOOK_PAGES_SAVE : UI.BOOK_PAGES_SAVED}
-      >
-        {saving ? (
-          <LoadingSpinner size={20} />
-        ) : (
-          <Icon path="save" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-        )}
-      </button>
+        onClick={() => void handleSave()}
+      />
     </div>
   );
 

@@ -9,6 +9,9 @@ import { RelationshipModule } from './relationship/relationship.module.js';
 import { SettingsModule } from './settings/settings.module.js';
 import { EventModule } from './event/event.module.js';
 import { ExportPresetModule } from './export-preset/export-preset.module.js';
+import { OrganizationModule } from './organization/organization.module.js';
+import { UsersModule } from './users/users.module.js';
+import { StandardFeaturesModule } from './standard-features/standard-features.module.js';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { ExportPresetModule } from './export-preset/export-preset.module.js';
     SettingsModule,
     EventModule,
     ExportPresetModule,
+    OrganizationModule,
+    UsersModule,
+    StandardFeaturesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

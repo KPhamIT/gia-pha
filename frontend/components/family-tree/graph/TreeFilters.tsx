@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/icons/Icon';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import { BRANCH_OPTIONS, getBranchLabel } from '@/lib/constants/branches';
 
@@ -19,13 +20,7 @@ type TreeFiltersProps = {
 
 function Tag({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition ${
-        active ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 active:bg-slate-200'
-      }`}
-    >
+    <button type="button" onClick={onClick} className={active ? BT.pillActive : 'rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-600 active:bg-amber-100'}>
       {label}
     </button>
   );
@@ -61,15 +56,15 @@ export default function TreeFilters({ branch, maxGeneration, onBranchChange, onM
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-sm active:bg-slate-50 md:text-sm md:hover:bg-slate-50"
+        className={`flex max-w-[10rem] items-center gap-1 rounded-full border border-amber-200/80 bg-white px-3 py-2 text-xs font-medium text-amber-950 shadow-sm active:bg-amber-50 md:max-w-[14rem] md:text-sm`}
       >
-        <span className="max-w-[10rem] truncate md:max-w-[14rem]">{summary}</span>
+        <span className="truncate">{summary}</span>
         <Icon path={open ? 'chevronUp' : 'chevronDown'} size={14} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
       </button>
 
       {open ? (
-        <div className="mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl md:w-72 md:p-4">
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{UI.FILTER_BRANCH_LABEL}</p>
+        <div className={`mt-2 w-64 p-3 shadow-xl md:w-72 md:p-4 ${BT.card}`}>
+          <p className={`mb-1.5 text-[11px] font-semibold uppercase tracking-wide ${BT.mutedOnLight}`}>{UI.FILTER_BRANCH_LABEL}</p>
           <div className="flex flex-wrap gap-1.5">
             <Tag active={branch === 'all'} label={UI.FILTER_ALL} onClick={() => onBranchChange('all')} />
             {BRANCH_OPTIONS.map((option) => (
@@ -82,7 +77,7 @@ export default function TreeFilters({ branch, maxGeneration, onBranchChange, onM
             ))}
           </div>
 
-          <p className="mb-1.5 mt-3 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{UI.FILTER_GENERATION_LABEL}</p>
+          <p className={`mb-1.5 mt-3 text-[11px] font-semibold uppercase tracking-wide ${BT.mutedOnLight}`}>{UI.FILTER_GENERATION_LABEL}</p>
           <div className="flex flex-wrap gap-1.5">
             {GENERATION_OPTIONS.map((gen) => (
               <Tag

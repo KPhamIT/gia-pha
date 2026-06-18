@@ -93,10 +93,29 @@ export type FamilyTreeData = {
   relationships: Relationship[];
 };
 
+export type UserRole = 'SYSTEM' | 'ADMIN' | 'STANDARD';
+
+export type Organization = {
+  id: number;
+  name: string;
+};
+
+export type AuthUser = {
+  id: number;
+  email: string | null;
+  username: string | null;
+  provider: string;
+  providerId: string;
+  role: UserRole;
+  organizationId: number | null;
+  organization?: Organization | null;
+  person?: { id: number; fullName: string } | null;
+};
+
 export type AuthResponse = {
   accessToken: string;
-  user: { id: number; email: string | null; provider: string };
-  person: Person;
+  user: AuthUser;
+  person: Person | null;
 };
 
 export type ThemeMode = 'light' | 'dark';

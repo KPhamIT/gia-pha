@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module.js';
+import { StandardFeaturesModule } from '../standard-features/standard-features.module.js';
 import { SettingsService } from './settings.service.js';
 import { SettingsController } from './settings.controller.js';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, StandardFeaturesModule],
   controllers: [SettingsController],
   providers: [SettingsService],
 })

@@ -1,7 +1,11 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { getErrorMessage } from '@/utils/errors';
+import { notify } from '@/lib/notify';
+
+type RunOptions = {
+  success?: string;
+};
 
 export function useAsyncAction() {
   const [loading, setLoading] = useState(false);
@@ -9,13 +13,15 @@ export function useAsyncAction() {
   const run = useCallback(async <T>(
     action: () => Promise<T>,
     errorMessage: string,
-    onError: (message: string) => void = alert,
+    options?: RunOptions,
   ): Promise<T | undefined> => {
     setLoading(true);
     try {
-      return await action();
+      const result = await action();
+      if (options?.success) notify.success(options.success);
+      return result;
     } catch (error) {
-      onError(getErrorMessage(error, errorMessage));
+      notify.error(error, errorMessage);
       return undefined;
     } finally {
       setLoading(false);

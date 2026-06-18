@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import { FormField, inputClassName, textareaClassName } from '@/components/ui/CollapsibleSection';
 import Icon from '@/components/icons/Icon';
 import { LAYOUT } from '@/lib/constants/ui-layout';
@@ -9,6 +10,7 @@ import { UI } from '@/lib/constants/ui-strings';
 import { getBranchLabel } from '@/lib/constants/branches';
 import type { Person } from '@/components/types/family-tree-types';
 import type { CreateDonationInput, DonationDraftItem, DonationKind } from '@/components/types/event-types';
+import { filterPersonsByName } from '@/utils/person-search';
 import { ET } from './event-theme';
 
 type Props = {
@@ -55,11 +57,7 @@ export default function EventDonationFormSheet({ initial, persons, onSubmit, onC
     [personId, persons],
   );
 
-  const results = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return [];
-    return persons.filter((p) => p.fullName.toLowerCase().includes(normalized)).slice(0, 20);
-  }, [persons, query]);
+  const results = useMemo(() => filterPersonsByName(persons, query), [persons, query]);
 
   const selectMember = (person: Person) => {
     setPersonId(person.id);
@@ -93,7 +91,12 @@ export default function EventDonationFormSheet({ initial, persons, onSubmit, onC
   };
 
   return (
-    <FullScreenSheet title={initial ? UI.EVENT_DONATION_EDIT : UI.EVENT_DONATION_ADD} onClose={onClose} tone="book">
+    <FullScreenSheet
+      title={initial ? UI.EVENT_DONATION_EDIT : UI.EVENT_DONATION_ADD}
+      onClose={onClose}
+      tone="book"
+      headerRight={<IconRoundButton icon="check" variant="gold" label={UI.EVENT_DONATION_FORM_DONE} onClick={handleSubmit} />}
+    >
       <div className={LAYOUT.pagePad}>
         <div className="space-y-4 rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
           <FormField label={UI.EVENT_DONATION_KIND_LABEL}>
@@ -224,14 +227,6 @@ export default function EventDonationFormSheet({ initial, persons, onSubmit, onC
               className={textareaClassName}
             />
           </FormField>
-
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className={`mt-2 flex w-full items-center justify-center rounded-2xl py-3.5 text-sm font-semibold ${ET.primaryBtn}`}
-          >
-            {UI.EVENT_DONATION_FORM_DONE}
-          </button>
         </div>
       </div>
     </FullScreenSheet>

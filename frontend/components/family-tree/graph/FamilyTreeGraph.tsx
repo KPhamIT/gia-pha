@@ -41,6 +41,7 @@ export type FamilyTreeGraphProps = {
   onPersonAdded?: (person: Person, relationship: Relationship) => void;
   onRelationshipAdded?: (relationship: Relationship) => void;
   onRelationshipRemoved?: (relationshipId: number) => void;
+  assertCanMutate?: () => boolean;
   theme?: ThemeMode;
 };
 

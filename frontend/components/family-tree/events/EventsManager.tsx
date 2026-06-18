@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import FullScreenSheet from '@/components/ui/FullScreenSheet';
-import Icon from '@/components/icons/Icon';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { UI } from '@/lib/constants/ui-strings';
+import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { useEvents } from '@/hooks/useEvents';
 import type { Person, Relationship } from '@/components/types/family-tree-types';
 import type { CreateEventInput, FamilyEvent } from '@/components/types/event-types';
@@ -27,6 +28,7 @@ function formatDate(iso?: string | null): string | null {
 }
 
 export default function EventsManager({ persons, relationships, onClose }: Props) {
+  const { requireFeature, canUseFeature } = useFeatureAccess();
   const { events, loading, error, saving, createEvent, updateEvent, deleteEvent, patchEvent } = useEvents();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<FamilyEvent | null>(null);
@@ -44,27 +46,30 @@ export default function EventsManager({ persons, relationships, onClose }: Props
   };
 
   const handleSubmit = async (input: CreateEventInput) => {
-    if (editing) await updateEvent(editing.id, input);
-    else await createEvent(input);
-    setFormOpen(false);
-    setEditing(null);
+    if (!requireFeature('editEvents')) return;
+    try {
+      if (editing) await updateEvent(editing.id, input);
+      else await createEvent(input);
+      setFormOpen(false);
+      setEditing(null);
+    } catch {
+      /* toast shown in useEvents */
+    }
   };
 
   const handleDelete = async (event: FamilyEvent) => {
+    if (!requireFeature('editEvents')) return;
     if (!window.confirm(UI.EVENT_DELETE_CONFIRM)) return;
-    await deleteEvent(event.id);
+    try {
+      await deleteEvent(event.id);
+    } catch {
+      /* toast shown in useEvents */
+    }
   };
 
-  const addButton = (
-    <button
-      type="button"
-      onClick={openCreate}
-      className={`grid h-10 w-10 place-items-center rounded-full ${ET.roundBtn}`}
-      aria-label={UI.EVENT_ADD}
-    >
-      <Icon path="plus" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-    </button>
-  );
+  const addButton = canUseFeature('editEvents') ? (
+    <IconRoundButton icon="plus" variant="gold" label={UI.BTN_CREATE} onClick={openCreate} />
+  ) : null;
 
   return (
     <>
@@ -106,24 +111,24 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                       </div>
                       <h2 className="mt-1.5 text-base font-semibold text-neutral-900 md:text-lg">{event.title}</h2>
                     </div>
-                    <div className="flex shrink-0 gap-1">
-                      <button
-                        type="button"
-                        onClick={() => openEdit(event)}
-                        className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100 md:hover:bg-neutral-100"
-                        aria-label={UI.EVENT_EDIT}
-                      >
-                        <Icon path="edit" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => void handleDelete(event)}
-                        className="grid h-8 w-8 place-items-center rounded-full text-rose-500 active:bg-rose-50 md:hover:bg-rose-50"
-                        aria-label={UI.DELETE_PERSON}
-                      >
-                        <Icon path="trash" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-                      </button>
-                    </div>
+                    {canUseFeature('editEvents') ? (
+                      <div className="flex shrink-0 gap-1">
+                        <IconRoundButton
+                          icon="edit"
+                          variant="outline"
+                          iconSize={14}
+                          label={UI.BTN_EDIT}
+                          onClick={() => openEdit(event)}
+                        />
+                        <IconRoundButton
+                          icon="trash"
+                          variant="danger"
+                          iconSize={14}
+                          label={UI.DELETE_PERSON}
+                          onClick={() => void handleDelete(event)}
+                        />
+                      </div>
+                    ) : null}
                   </div>
 
                   {event.description ? (
@@ -139,25 +144,25 @@ export default function EventsManager({ persons, relationships, onClose }: Props
                       </span>
                       <span className={`font-bold tabular-nums ${ET.money}`}>{formatVnd(event.grandTotal)}</span>
                     </div>
-                    <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <div className="mt-3 flex gap-2">
                       {isContribution ? (
-                        <button
-                          type="button"
+                        <IconRoundButton
+                          icon="list"
+                          variant="primary"
+                          label={UI.EVENT_VIEW_CONTRIBUTION}
+                          compact={false}
+                          className="flex-1"
                           onClick={() => setContributionEvent(event)}
-                          className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-colors md:py-2 ${ET.contribBtn} md:hover:bg-amber-800`}
-                        >
-                          <Icon path="list" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-                          {UI.EVENT_VIEW_CONTRIBUTION}
-                        </button>
+                        />
                       ) : null}
-                      <button
-                        type="button"
+                      <IconRoundButton
+                        icon="userPlus"
+                        variant="outline"
+                        label={UI.EVENT_VIEW_DONATION}
+                        compact={false}
+                        className={isContribution ? 'flex-1' : 'w-full'}
                         onClick={() => setDonationEvent(event)}
-                        className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-colors md:py-2 ${ET.donationBtn} md:hover:bg-amber-200`}
-                      >
-                        <Icon path="userPlus" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-                        {UI.EVENT_VIEW_DONATION}
-                      </button>
+                      />
                     </div>
                   </div>
                 </article>

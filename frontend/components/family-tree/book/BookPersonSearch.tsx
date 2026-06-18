@@ -8,6 +8,7 @@ import { getBranchLabel } from '@/lib/constants/branches';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { UI } from '@/lib/constants/ui-strings';
 import type { Person } from '@/components/types/family-tree-types';
+import { filterPersonsByName } from '@/utils/person-search';
 
 type Props = {
   persons: Person[];
@@ -27,11 +28,7 @@ function personSubtitle(person: Person): string | null {
 export default function BookPersonSearch({ persons, onClose, onSelect }: Props) {
   const [query, setQuery] = useState('');
 
-  const results = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return [];
-    return persons.filter((person) => person.fullName.toLowerCase().includes(normalized)).slice(0, 20);
-  }, [persons, query]);
+  const results = useMemo(() => filterPersonsByName(persons, query), [persons, query]);
 
   const close = () => {
     dismissOverlayFocus();

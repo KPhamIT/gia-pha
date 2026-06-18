@@ -28,7 +28,7 @@ export function usePersonActions({
       await deletePersonById(selectedNode.id);
       removePerson(selectedNode.id);
       setSelectedNode(null);
-    }, UI.ERR_DELETE);
+    }, UI.ERR_DELETE, { success: UI.TOAST_PERSON_DELETED });
   }, [selectedNode, removePerson, run, setSelectedNode]);
 
   const createChild = useCallback(
@@ -45,7 +45,7 @@ export function usePersonActions({
           branch: input.branch ? Number(input.branch) : undefined,
         });
         addPerson(person, relationship);
-      }, UI.ERR_CREATE_CHILD);
+      }, UI.ERR_CREATE_CHILD, { success: UI.TOAST_CHILD_CREATED });
     },
     [addPerson, run, selectedNode],
   );

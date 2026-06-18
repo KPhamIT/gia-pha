@@ -15,9 +15,19 @@ type Props = {
   onOpenPages: () => void;
   onPrint: () => void;
   onPrintAll: () => void;
+  canEditBook?: boolean;
 };
 
-export default function BookViewerHeader({ totalLeaves, onClose, onToggleStyle, onOpenSearch, onOpenPages, onPrint, onPrintAll }: Props) {
+export default function BookViewerHeader({
+  totalLeaves,
+  onClose,
+  onToggleStyle,
+  onOpenSearch,
+  onOpenPages,
+  onPrint,
+  onPrintAll,
+  canEditBook = false,
+}: Props) {
   return (
     <header className={`${styles.noPrint} flex shrink-0 items-center gap-2 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-6 md:py-4 md:pt-4`}>
       <button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10" aria-label={UI.CANCEL}>
@@ -30,12 +40,16 @@ export default function BookViewerHeader({ totalLeaves, onClose, onToggleStyle, 
       <button type="button" onClick={onOpenSearch} className={iconBtn} aria-label={UI.BOOK_OPEN_SEARCH}>
         <Icon path="search" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
       </button>
-      <button type="button" onClick={onOpenPages} className={iconBtn} aria-label={UI.BOOK_OPEN_PAGES}>
-        <Icon path="list" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-      </button>
-      <button type="button" onClick={onToggleStyle} className={iconBtn} aria-label={UI.BOOK_OPEN_STYLE}>
-        <Icon path="settings" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-      </button>
+      {canEditBook ? (
+        <>
+          <button type="button" onClick={onOpenPages} className={iconBtn} aria-label={UI.BOOK_OPEN_PAGES}>
+            <Icon path="list" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+          </button>
+          <button type="button" onClick={onToggleStyle} className={iconBtn} aria-label={UI.BOOK_OPEN_STYLE}>
+            <Icon path="settings" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+          </button>
+        </>
+      ) : null}
       <button type="button" onClick={onPrint} className={iconBtn} aria-label={UI.BOOK_PRINT_PAGE}>
         <Icon path="print" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
       </button>

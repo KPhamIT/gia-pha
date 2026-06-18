@@ -1,14 +1,15 @@
 'use client';
 
-import Icon from '@/components/icons/Icon';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 import { LAYOUT } from '@/lib/constants/ui-layout';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 
 export function InfoRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex justify-between gap-4 py-2">
-      <span className="shrink-0 text-sm text-slate-500">{label}</span>
-      <span className="text-right text-sm font-medium text-slate-900">{value || UI.NO_INFO}</span>
+      <span className={`shrink-0 text-sm ${BT.mutedOnLight}`}>{label}</span>
+      <span className="text-right text-sm font-medium text-neutral-900">{value || UI.NO_INFO}</span>
     </div>
   );
 }
@@ -21,14 +22,14 @@ export function RelationRow({ label, persons, onSelectPerson }: {
   if (persons.length === 0) return <InfoRow label={label} value={null} />;
   return (
     <div className="py-2">
-      <span className="text-sm text-slate-500">{label}</span>
+      <span className={`text-sm ${BT.mutedOnLight}`}>{label}</span>
       <div className="mt-1 flex flex-wrap gap-2">
         {persons.map((person) => (
           <button
             key={person.id}
             type="button"
             onClick={() => onSelectPerson(person.id)}
-            className="rounded-full bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700 active:bg-blue-100"
+            className="rounded-full bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-950 active:bg-amber-200"
           >
             {person.fullName}
           </button>
@@ -38,25 +39,21 @@ export function RelationRow({ label, persons, onSelectPerson }: {
   );
 }
 
-export function PersonDetailFooter({ onAddChild, onDelete }: { onAddChild: () => void; onDelete: () => void }) {
+export function PersonDetailFooter({
+  canEdit = false,
+  onAddChild,
+  onDelete,
+}: {
+  canEdit?: boolean;
+  onAddChild: () => void;
+  onDelete: () => void;
+}) {
+  if (!canEdit) return null;
+
   return (
-    <div className={`sticky bottom-0 flex gap-3 border-t border-slate-200 bg-white pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6 ${LAYOUT.pagePad}`}>
-      <button
-        type="button"
-        onClick={onAddChild}
-        className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-green-600 py-3 text-sm font-semibold text-white active:bg-green-700"
-      >
-        <Icon path="userPlus" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-        {UI.ADD_CHILD}
-      </button>
-      <button
-        type="button"
-        onClick={onDelete}
-        className="flex items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-600 active:bg-red-100"
-        aria-label={UI.DELETE_PERSON}
-      >
-        <Icon path="trash" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-      </button>
+    <div className={`sticky bottom-0 flex justify-end gap-2 pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6 ${LAYOUT.pagePad}`}>
+      <IconRoundButton icon="userPlus" variant="gold" label={UI.ADD_CHILD} onClick={onAddChild} />
+      <IconRoundButton icon="trash" variant="danger" label={UI.DELETE_PERSON} onClick={onDelete} />
     </div>
   );
 }

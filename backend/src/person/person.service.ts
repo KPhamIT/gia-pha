@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { UserRole, type User } from '../../generated/prisma/client.js';
+import { adminOrganizationId, isSystem } from '../auth/org-access.js';
+import { assertPersonOrgAccess } from '../auth/person-org-access.js';
+import { OrganizationService } from '../organization/organization.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreatePersonDto } from './dto/create-person.dto.js';
 import { UpdatePersonDto } from './dto/update-person.dto.js';
@@ -6,26 +10,16 @@ import { UpdatePersonDetailDto } from './dto/update-person-detail.dto.js';
 
 @Injectable()
 export class PersonService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly organizationService: OrganizationService,
+  ) {}
 
-  private async getDefaultOrganization() {
-    const defaultName = 'Family Tree';
-    const existing = await this.prisma.organization.findFirst({
-      where: { name: defaultName },
-    });
-    if (existing) {
-      return existing;
-    }
-    return this.prisma.organization.create({ data: { name: defaultName } });
-  }
-
-  async create(createPersonDto: CreatePersonDto) {
-    const organization =
-      createPersonDto.organizationId || createPersonDto.organizationId === 0
-        ? await this.prisma.organization.findUnique({
-            where: { id: createPersonDto.organizationId },
-          })
-        : await this.getDefaultOrganization();
+  async create(createPersonDto: CreatePersonDto, user: User) {
+    const organizationId = await this.resolveCreateOrganizationId(
+      createPersonDto.organizationId,
+      user,
+    );
 
     const generation =
       createPersonDto.generation != null
@@ -52,8 +46,7 @@ export class PersonService {
       religion: createPersonDto.religion,
       ethnicity: createPersonDto.ethnicity,
       achievements: createPersonDto.achievements,
-      organizationId:
-        organization?.id ?? (await this.getDefaultOrganization()).id,
+      organizationId,
       userId: createPersonDto.userId,
     };
 
@@ -96,7 +89,10 @@ export class PersonService {
     return this.prisma.person.findUnique({ where: { userId } });
   }
 
-  async update(id: number, updatePersonDto: UpdatePersonDto) {
+  async update(id: number, updatePersonDto: UpdatePersonDto, user: User) {
+    const person = await this.findOne(id);
+    assertPersonOrgAccess(user, person);
+
     const generation =
       updatePersonDto.generation != null
         ? Number(updatePersonDto.generation)
@@ -135,8 +131,9 @@ export class PersonService {
     return { person, relationships };
   }
 
-  async updatePersonDetail(id: number, dto: UpdatePersonDetailDto) {
-    await this.findOne(id);
+  async updatePersonDetail(id: number, dto: UpdatePersonDetailDto, user: User) {
+    const person = await this.findOne(id);
+    assertPersonOrgAccess(user, person);
 
     const { biography, graveInfo, ...personFields } = dto;
 
@@ -180,22 +177,34 @@ export class PersonService {
     return this.getPersonDetail(id);
   }
 
-  async remove(id: number) {
+  async remove(id: number, user: User) {
+    const person = await this.findOne(id);
+    assertPersonOrgAccess(user, person);
+
     await this.prisma.relationship.deleteMany({
       where: { OR: [{ fromId: id }, { toId: id }] },
     });
     return this.prisma.person.delete({ where: { id } });
   }
 
-  async getDefaultFamilyGraph() {
+  async getDefaultFamilyGraphForUser(user?: User | null, requestedOrgId?: number) {
+    const organizationId = await this.organizationService.resolveDefaultOrganizationId(
+      user,
+      requestedOrgId,
+    );
     const persons = await this.prisma.person.findMany({
+      where: { organizationId },
       orderBy: { fullName: 'asc' },
     });
     const root = persons.find((person) => person.generation === 0) ?? persons[0];
     if (!root) {
-      throw new NotFoundException('No persons found');
+      throw new NotFoundException('No persons found for organization');
     }
     return this.getFamilyGraph(root.id);
+  }
+
+  async getDefaultFamilyGraph() {
+    return this.getDefaultFamilyGraphForUser();
   }
 
   async getFamilyGraph(rootId: number) {
@@ -219,5 +228,18 @@ export class PersonService {
     );
 
     return { root, persons, relationships: filteredRelationships };
+  }
+
+  private async resolveCreateOrganizationId(
+    requestedOrgId: number | undefined,
+    user: User,
+  ): Promise<number> {
+    if (user.role === UserRole.ADMIN) {
+      return adminOrganizationId(user);
+    }
+    if (!isSystem(user)) {
+      throw new ForbiddenException('Cannot create person');
+    }
+    return this.organizationService.resolveDefaultOrganizationId(user, requestedOrgId);
   }
 }

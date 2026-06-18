@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Query,
   Request,
@@ -11,6 +12,8 @@ import {
 import type { Response } from 'express';
 import { AuthService } from './auth.service.js';
 import { FacebookLoginDto } from './dto/facebook-login.dto.js';
+import { PasswordLoginDto } from './dto/password-login.dto.js';
+import { LinkPersonDto } from './dto/link-person.dto.js';
 import { PersonService } from '../person/person.service.js';
 import {
   ZALO_OAUTH_COOKIE,
@@ -18,10 +21,11 @@ import {
   ZaloOAuthService,
 } from './zalo-oauth.service.js';
 import { JwtRequiredGuard } from './jwt-required.guard.js';
+import { JwtOptionalGuard } from './jwt-optional.guard.js';
+import type { User } from '../../generated/prisma/client.js';
+import { StandardFeaturesService } from '../standard-features/standard-features.service.js';
 
-interface AuthenticatedRequest {
-  user?: { id: number; email: string | null; provider: string };
-}
+type RequestUser = User;
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +33,13 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly personService: PersonService,
     private readonly zaloOAuthService: ZaloOAuthService,
+    private readonly standardFeaturesService: StandardFeaturesService,
   ) {}
+
+  @Post('login')
+  loginWithPassword(@Body() body: PasswordLoginDto) {
+    return this.authService.loginWithPassword(body.username, body.password);
+  }
 
   @Post('facebook')
   async loginWithFacebook(@Body() body: FacebookLoginDto) {
@@ -91,14 +101,33 @@ export class AuthController {
   }
 
   @Get('me')
-  @UseGuards(JwtRequiredGuard)
-  async me(@Request() req: AuthenticatedRequest) {
+  @UseGuards(JwtOptionalGuard)
+  async me(@Request() req: { user?: RequestUser | null }) {
     const user = req.user;
     if (!user) {
       return { user: null, person: null };
     }
 
     const person = await this.personService.findByUserId(user.id);
-    return { user, person };
+    const features = await this.standardFeaturesService.resolveForUser(user);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        provider: user.provider,
+        providerId: user.providerId,
+        role: user.role,
+        organizationId: user.organizationId,
+      },
+      person,
+      features,
+    };
+  }
+
+  @Patch('me/person')
+  @UseGuards(JwtRequiredGuard)
+  linkPerson(@Request() req: { user: RequestUser }, @Body() body: LinkPersonDto) {
+    return this.authService.linkPerson(req.user, body.personId ?? null);
   }
 }

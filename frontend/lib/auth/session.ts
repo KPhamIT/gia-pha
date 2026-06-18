@@ -1,5 +1,6 @@
 import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
 import { API_ROUTES } from '@/lib/constants/api-routes';
+import { useAuthStore } from '@/store/authStore';
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').replace(/\/$/, '');
 
@@ -32,5 +33,6 @@ export function loginWithZalo(): void {
 
 export function logout(): void {
   clearToken();
+  useAuthStore.getState().clear();
   window.location.href = '/login';
 }

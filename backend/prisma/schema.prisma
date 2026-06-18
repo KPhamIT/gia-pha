@@ -29,17 +29,30 @@ enum DonationKind {
   IN_KIND
 }
 
+enum UserRole {
+  SYSTEM
+  ADMIN
+  STANDARD
+}
+
 model User {
-  id         Int     @id @default(autoincrement())
-  email      String? @unique
-  provider   String
-  providerId String  @unique
+  id           Int      @id @default(autoincrement())
+  email        String?  @unique
+  username     String?  @unique
+  passwordHash String?
+  role         UserRole @default(STANDARD)
+  provider     String
+  providerId   String   @unique
+  organizationId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   person   Person?
   settings UserSettings?
   exportPresets ExportPreset[]
 
   createdAt DateTime @default(now())
+
+  @@index([organizationId, role])
 }
 
 model UserSettings {
@@ -69,11 +82,21 @@ model Organization {
   id   Int    @id @default(autoincrement())
   name String
 
+  /// Per-org overrides for STANDARD user feature flags (merged over system defaults).
+  standardFeatures Json?
+
   persons Person[]
+  users   User[]
 
   events Event[]
 
   createdAt DateTime @default(now())
+}
+
+model AppConfig {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
