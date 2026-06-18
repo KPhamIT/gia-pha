@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import UserAccountSheet from '@/components/auth/UserAccountSheet';
 import AuthRequiredSheet from '@/components/auth/AuthRequiredSheet';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { useAuthStore } from '@/store/authStore';
@@ -96,7 +95,6 @@ export default function FamilyTreePage() {
   const [selectedNode, setSelectedNode] = useState<Person | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [showAccount, setShowAccount] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [mainView, setMainView] = useState<MainView>('book');
   const [showEvents, setShowEvents] = useState(false);
@@ -135,8 +133,9 @@ export default function FamilyTreePage() {
 
   const handleNodeClick = useCallback((_personId: number, person: Person) => openPersonDetail(person), [openPersonDetail]);
   const handleOpenSettings = useCallback(() => setShowSettings(true), []);
-  const handleOpenAccount = useCallback(() => setShowAccount(true), []);
-  const handleCloseAccount = useCallback(() => setShowAccount(false), []);
+  const handleOpenAccount = useCallback(() => router.push('/account'), [router]);
+  const handleOpenUsers = useCallback(() => router.push('/org-users'), [router]);
+  const handleOpenNotifications = useCallback(() => router.push('/notifications'), [router]);
   const handleOpenSearch = useCallback(() => setShowSearch(true), []);
   const handleOpenBook = useCallback(() => setMainView('book'), []);
   const handleCenterTree = useCallback(() => setCenterTreeKey((k) => k + 1), []);
@@ -285,20 +284,6 @@ export default function FamilyTreePage() {
             <IconRoundButton icon="list" variant="outline" label={UI.BTN_SYSTEM} tabIndex={-1} aria-hidden />
           </a>
         ) : null}
-        {isAdmin ? (
-          <a href="/org-users">
-            <IconRoundButton icon="userPlus" variant="outline" label={UI.BTN_USERS} tabIndex={-1} aria-hidden />
-          </a>
-        ) : null}
-        <a href="/notifications">
-          <IconRoundButton icon="calendar" variant="outline" label={UI.NOTIF_OPEN_CENTER} tabIndex={-1} aria-hidden />
-        </a>
-        <IconRoundButton
-          icon="userPlus"
-          variant="outline"
-          label={UI.ACCOUNT_OPEN}
-          onClick={handleOpenAccount}
-        />
         <IconRoundButton
           icon="settings"
           variant="outline"
@@ -347,12 +332,16 @@ export default function FamilyTreePage() {
         <TreeFab
           canUseFeature={canUseFeature}
           canManageCeremonyTemplates={canMutate}
+          isAdmin={isAdmin}
           onAddPerson={handleOpenAddPerson}
           onSearch={handleOpenSearch}
           onOpenBook={handleOpenBook}
           onOpenEvents={handleOpenEvents}
           onOpenExport={handleOpenExport}
           onOpenCeremonyTemplates={handleOpenCeremonyTemplates}
+          onOpenUsers={handleOpenUsers}
+          onOpenNotifications={handleOpenNotifications}
+          onOpenAccount={handleOpenAccount}
           onCenterTree={handleCenterTree}
         />
       ) : null}
@@ -368,15 +357,6 @@ export default function FamilyTreePage() {
           saving={savingSettings}
           saveSuccess={saveSuccess}
           saveError={settingsSaveError}
-        />
-      ) : null}
-
-      {showAccount ? (
-        <UserAccountSheet
-          persons={persons}
-          relationships={treeData?.relationships ?? []}
-          onClose={handleCloseAccount}
-          onLinked={reload}
         />
       ) : null}
 

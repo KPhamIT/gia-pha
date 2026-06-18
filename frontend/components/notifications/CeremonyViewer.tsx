@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { notify } from '@/lib/notify';
 import { UI } from '@/lib/constants/ui-strings';
 import { BT } from '@/lib/constants/ui-theme';
+import IconRoundButton from '@/components/ui/IconRoundButton';
 
 type CeremonyViewerProps = {
   personId: number;
@@ -66,9 +67,9 @@ export default function CeremonyViewer({ personId }: CeremonyViewerProps) {
 
   return (
     <div className="space-y-4">
-      <button type="button" className={BT.btnPrimary} onClick={handlePrint}>
-        🖨 {UI.CEREMONY_PRINT}
-      </button>
+      <div className="flex justify-end">
+        <IconRoundButton icon="print" variant="gold" label={UI.CEREMONY_PRINT} onClick={handlePrint} />
+      </div>
 
       <iframe
         ref={iframeRef}

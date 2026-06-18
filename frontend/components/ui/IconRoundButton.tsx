@@ -35,6 +35,10 @@ type IconRoundButtonProps = {
   iconSize?: number;
   loading?: boolean;
   compact?: boolean;
+  /** Căn icon + label trong nút có chữ (menu FAB, danh sách…) */
+  labeledAlign?: 'center' | 'start';
+  /** Nút nhỏ gọn (menu FAB mobile) */
+  size?: 'default' | 'dense';
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>;
 
 export default function IconRoundButton({
@@ -44,30 +48,50 @@ export default function IconRoundButton({
   iconSize = 18,
   loading = false,
   compact = true,
+  labeledAlign = 'center',
+  size = 'default',
   className = '',
   disabled,
   type = 'button',
   ...rest
 }: IconRoundButtonProps) {
   const hasLabel = Boolean(label?.trim());
-  const sizeClass = hasLabel && !compact ? BT.btnSm : hasLabel ? BT.btnCompact : '';
+  const isDense = size === 'dense' && hasLabel;
+  const sizeClass = isDense
+    ? 'h-8 rounded-xl px-2 py-1 text-xs'
+    : hasLabel && !compact
+      ? BT.btnSm
+      : hasLabel
+        ? BT.btnCompact
+        : '';
   const variantClass = hasLabel
-    ? `${LABELED_VARIANT[variant]} ${sizeClass}`.trim()
+    ? isDense
+      ? `${BT.btnBase} ${BT.btnOutline} ${sizeClass}`.trim()
+      : `${LABELED_VARIANT[variant]} ${sizeClass}`.trim()
     : (ICON_ONLY_VARIANT[variant as keyof typeof ICON_ONLY_VARIANT] ?? ICON_ONLY_VARIANT.gold);
+  const alignClass =
+    hasLabel && labeledAlign === 'start' ? `justify-start ${isDense ? 'gap-1.5' : 'gap-2'}` : '';
+  const iconSlotClass = isDense ? 'h-7 w-7' : 'h-9 w-9';
+
+  const iconNode = loading ? (
+    <LoadingSpinner size={iconSize} />
+  ) : (
+    <Icon path={icon} size={iconSize} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+  );
 
   return (
     <button
       type={type}
       disabled={disabled || loading}
-      className={`${variantClass} ${className}`.trim()}
+      className={`${variantClass} ${alignClass} ${className}`.trim()}
       {...rest}
     >
-      {loading ? (
-        <LoadingSpinner size={iconSize} />
+      {hasLabel && labeledAlign === 'start' ? (
+        <span className={`grid shrink-0 place-items-center ${iconSlotClass}`}>{iconNode}</span>
       ) : (
-        <Icon path={icon} size={iconSize} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        iconNode
       )}
-      {hasLabel ? <span>{label}</span> : null}
+      {hasLabel ? <span className="min-w-0 text-left">{label}</span> : null}
     </button>
   );
 }

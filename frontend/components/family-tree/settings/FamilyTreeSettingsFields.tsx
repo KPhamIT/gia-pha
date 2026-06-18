@@ -3,11 +3,14 @@
 import { Dispatch, SetStateAction } from 'react';
 import type { LayoutConfig, ThemeMode } from '@/components/types/family-tree-types';
 import Icon from '@/components/icons/Icon';
+import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 
-const numberInputClass =
-  'mt-2 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-slate-500';
-const labelClass = 'block text-sm font-medium text-slate-700 dark:text-slate-200';
+const labelClass = `block text-sm font-medium text-neutral-800`;
+const fieldClass = BT.input;
+const colorRowClass = `mt-2 flex items-center gap-2 rounded-xl border border-amber-200/80 bg-white px-3 py-2`;
+const colorPickerClass = 'h-9 w-10 shrink-0 cursor-pointer rounded-lg border border-amber-200/80 bg-white p-0.5';
+const colorHexClass = 'min-w-0 flex-1 text-sm text-neutral-900';
 
 type NumberKey = 'horizontalGap' | 'verticalStep' | 'nodeWidth' | 'nodeHeight';
 type ColorKey = 'nodeBgColor' | 'nodeTextColor';
@@ -36,7 +39,7 @@ export default function FamilyTreeSettingsFields({ layoutConfig, setLayoutConfig
     <div className="mt-5 space-y-4">
       <label className={labelClass}>
         {UI.DISPLAY_MODE}
-        <div className="mt-2 flex items-center gap-3 rounded-2xl border border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+        <div className={`mt-2 flex items-center gap-3 rounded-xl border border-amber-200/80 bg-amber-50/40 px-3 py-2.5 text-sm text-neutral-900`}>
           <span>{theme === 'dark' ? UI.THEME_DARK : UI.THEME_LIGHT}</span>
           <Icon
             path={theme === 'dark' ? 'sun' : 'moon'}
@@ -44,7 +47,7 @@ export default function FamilyTreeSettingsFields({ layoutConfig, setLayoutConfig
             buttonProps={{
               onClick: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
               className:
-                'ml-auto rounded-full border border-slate-300 bg-white p-2 text-slate-900 transition hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-700',
+                'ml-auto rounded-full border border-amber-200/80 bg-white p-2 text-neutral-900 transition active:bg-amber-50',
               'aria-label': theme === 'dark' ? UI.SWITCH_TO_LIGHT : UI.SWITCH_TO_DARK,
             }}
             width={18}
@@ -66,7 +69,7 @@ export default function FamilyTreeSettingsFields({ layoutConfig, setLayoutConfig
             onChange={(event) =>
               setLayoutConfig((prev) => ({ ...prev, [key]: Math.max(min, Number(event.target.value) || min) }))
             }
-            className={numberInputClass}
+            className={`mt-2 ${fieldClass}`}
           />
         </label>
       ))}
@@ -74,14 +77,15 @@ export default function FamilyTreeSettingsFields({ layoutConfig, setLayoutConfig
       {COLOR_FIELDS.map(({ key, label }) => (
         <label key={key} className={labelClass}>
           {label}
-          <div className="mt-2 flex items-center gap-2">
+          <div className={colorRowClass}>
             <input
               type="color"
               value={layoutConfig[key]}
               onChange={(event) => setLayoutConfig((prev) => ({ ...prev, [key]: event.target.value }))}
-              className="h-8 w-8 cursor-pointer rounded border border-slate-300"
+              className={colorPickerClass}
+              aria-label={label}
             />
-            <span className="font-mono text-xs text-slate-500">{layoutConfig[key]}</span>
+            <span className={`${colorHexClass} font-mono`}>{layoutConfig[key]}</span>
           </div>
         </label>
       ))}

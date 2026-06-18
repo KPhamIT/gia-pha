@@ -7,6 +7,8 @@ import type { UpcomingCeremonyItem } from '@/lib/api/modules/notifications';
 import { UI } from '@/lib/constants/ui-strings';
 import { BT } from '@/lib/constants/ui-theme';
 
+const viewCeremonyBtnClass = `${BT.btnBase} ${BT.btnCompact} ${BT.btnGold} w-full justify-center sm:w-auto`;
+
 type UpcomingCeremoniesListProps = {
   highlightPersonId?: number | null;
 };
@@ -47,7 +49,7 @@ export default function UpcomingCeremoniesList({ highlightPersonId }: UpcomingCe
               </div>
               <Link
                 href={`/ceremonies/upcoming?personId=${item.personId}&view=ceremony`}
-                className={BT.btnPrimary}
+                className={viewCeremonyBtnClass}
               >
                 {UI.CEREMONIES_VIEW}
               </Link>

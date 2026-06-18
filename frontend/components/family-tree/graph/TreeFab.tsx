@@ -8,8 +8,18 @@ import type { StandardFeatureKey } from '@/lib/auth/standard-features';
 
 import type { IconName } from '@/components/icons/icon-paths';
 
-type FabAction = 'add' | 'search' | 'center' | 'book' | 'events' | 'export' | 'ceremonyTemplates';
-type FeatureFabAction = Exclude<FabAction, 'ceremonyTemplates'>;
+type FabAction =
+  | 'add'
+  | 'search'
+  | 'center'
+  | 'book'
+  | 'events'
+  | 'export'
+  | 'ceremonyTemplates'
+  | 'users'
+  | 'notifications'
+  | 'account';
+type FeatureFabAction = Exclude<FabAction, 'ceremonyTemplates' | 'users' | 'notifications' | 'account'>;
 
 type FabItem = { id: FabAction; label: string; icon: IconName };
 
@@ -34,6 +44,7 @@ const ACTION_FEATURES: Record<FeatureFabAction, StandardFeatureKey> = {
 type TreeFabProps = {
   canUseFeature: (key: StandardFeatureKey) => boolean;
   canManageCeremonyTemplates?: boolean;
+  isAdmin?: boolean;
   onAddPerson: () => void;
   onSearch: () => void;
   onCenterTree: () => void;
@@ -41,11 +52,15 @@ type TreeFabProps = {
   onOpenEvents: () => void;
   onOpenExport: () => void;
   onOpenCeremonyTemplates?: () => void;
+  onOpenUsers?: () => void;
+  onOpenNotifications: () => void;
+  onOpenAccount: () => void;
 };
 
 export default function TreeFab({
   canUseFeature,
   canManageCeremonyTemplates = false,
+  isAdmin = false,
   onAddPerson,
   onSearch,
   onCenterTree,
@@ -53,6 +68,9 @@ export default function TreeFab({
   onOpenEvents,
   onOpenExport,
   onOpenCeremonyTemplates,
+  onOpenUsers,
+  onOpenNotifications,
+  onOpenAccount,
 }: TreeFabProps) {
   const [open, setOpen] = useState(false);
 
@@ -64,6 +82,9 @@ export default function TreeFab({
     events: onOpenEvents,
     export: onOpenExport,
     ceremonyTemplates: () => onOpenCeremonyTemplates?.(),
+    users: () => onOpenUsers?.(),
+    notifications: onOpenNotifications,
+    account: onOpenAccount,
   };
 
   const actions = useMemo(() => {
@@ -79,8 +100,17 @@ export default function TreeFab({
       });
     }
 
+    if (isAdmin && onOpenUsers) {
+      base.push({ id: 'users', label: UI.BTN_USERS, icon: 'userPlus' });
+    }
+
+    base.push(
+      { id: 'notifications', label: UI.NOTIF_OPEN_CENTER, icon: 'calendar' },
+      { id: 'account', label: UI.ACCOUNT_OPEN, icon: 'userPlus' },
+    );
+
     return base;
-  }, [canManageCeremonyTemplates, canUseFeature, onOpenCeremonyTemplates]);
+  }, [canManageCeremonyTemplates, canUseFeature, isAdmin, onOpenCeremonyTemplates, onOpenUsers]);
 
   if (actions.length === 0) return null;
 
@@ -92,15 +122,17 @@ export default function TreeFab({
   return (
     <div className="fixed bottom-6 left-4 z-[45] flex flex-col-reverse items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
       {open ? (
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-[9.25rem] flex-col gap-1">
           {actions.map((action) => (
             <IconRoundButton
               key={action.id}
               icon={action.icon}
               label={action.label}
               variant="outline"
-              compact={false}
-              className={`shadow-lg ${BT.card}`}
+              size="dense"
+              iconSize={15}
+              labeledAlign="start"
+              className={`w-full shadow-lg ${BT.card}`}
               onClick={() => handleAction(action)}
             />
           ))}

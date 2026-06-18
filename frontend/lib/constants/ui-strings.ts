@@ -96,6 +96,7 @@ export const UI = {
   ACCOUNT_LINK_SAVED: 'Đã lưu liên kết',
   ACCOUNT_CLEAR_LINK: 'Bỏ liên kết',
   ACCOUNT_OPEN: 'Tài khoản',
+  ACCOUNT_SUBTITLE: 'Thông tin đăng nhập và liên kết thành viên gia phả',
   ERR_ADMIN_REQUIRED: 'Chỉ tài khoản quản trị mới có thể chỉnh sửa và lưu dữ liệu. Vui lòng đăng nhập bằng tài khoản quản trị.',
 
   // Contact (admin / edit permission)
@@ -486,6 +487,7 @@ export const UI = {
   CEREMONY_TEMPLATE_CONTENT_HINT: 'Nhập văn bản thuần — giữ Enter để xuống dòng. Dùng {{person.full_name}}, {{today.lunar_day}}… Hệ thống tự giữ format khi in.',
   CEREMONY_TEMPLATE_HINT: 'Biến dùng {{person.full_name}} hoặc {person.full_name}. Hỗ trợ person, organization, ceremony, today, worshipper.',
   CEREMONY_TEMPLATE_VARIABLES: 'Biến có thể dùng',
+  CEREMONY_TEMPLATE_VARIABLES_COUNT: '{count} biến',
   CEREMONY_TEMPLATE_SET_DEFAULT: 'Đặt làm mẫu mặc định',
   CEREMONY_TEMPLATE_USE_DEFAULT: 'Dùng mặc định',
   CEREMONY_TEMPLATE_DEFAULT_BADGE: 'Mặc định',

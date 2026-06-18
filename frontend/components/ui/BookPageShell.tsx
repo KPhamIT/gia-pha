@@ -24,8 +24,8 @@ export default function BookPageShell({
   tabs,
 }: BookPageShellProps) {
   return (
-    <div className={`min-h-dvh ${BT.shell} ${BT.shellText}`}>
-      <header className={`${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}>
+    <div className={`flex h-dvh min-h-0 flex-col overflow-hidden ${BT.shell} ${BT.shellText}`}>
+      <header className={`shrink-0 ${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}>
         <Link
           href={backHref}
           className={BT.iconGhost}
@@ -39,7 +39,7 @@ export default function BookPageShell({
         </div>
       </header>
 
-      <main className={`${LAYOUT.sheetBody} mx-auto w-full max-w-5xl`}>
+      <main className={`${LAYOUT.sheetBody} mx-auto min-h-0 w-full max-w-5xl flex-1`}>
         {tabs ? <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div> : null}
         <div className={BT.pagePad}>{children}</div>
       </main>
