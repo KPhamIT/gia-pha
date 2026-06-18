@@ -9,6 +9,8 @@ import IconRoundButton from '@/components/ui/IconRoundButton';
 
 type CeremonyViewerProps = {
   personId: number;
+  /** Render với một mẫu cụ thể; bỏ trống = mẫu mặc định của dòng họ. */
+  templateId?: number;
 };
 
 function measureIframeContent(iframe: HTMLIFrameElement | null): number {
@@ -17,7 +19,7 @@ function measureIframeContent(iframe: HTMLIFrameElement | null): number {
   return Math.max(doc.body?.scrollHeight ?? 0, doc.documentElement?.scrollHeight ?? 0);
 }
 
-export default function CeremonyViewer({ personId }: CeremonyViewerProps) {
+export default function CeremonyViewer({ personId, templateId }: CeremonyViewerProps) {
   const [html, setHtml] = useState<string | null>(null);
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(true);
@@ -31,14 +33,14 @@ export default function CeremonyViewer({ personId }: CeremonyViewerProps) {
   useEffect(() => {
     setLoading(true);
     api.ceremonies
-      .getHtml(personId)
+      .getHtml(personId, templateId)
       .then((res) => {
         setHtml(res.html);
         setFullName(res.fullName);
       })
       .catch((err) => notify.error(err, UI.CEREMONY_ERR))
       .finally(() => setLoading(false));
-  }, [personId]);
+  }, [personId, templateId]);
 
   useEffect(() => {
     if (!html) return;

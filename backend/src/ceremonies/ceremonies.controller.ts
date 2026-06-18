@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -75,7 +76,15 @@ export class CeremoniesController {
 
   @Get(':personId/html')
   @UseGuards(JwtRequiredGuard)
-  renderHtml(@Request() req: { user: User }, @Param('personId') personId: string) {
-    return this.ceremoniesService.renderCeremonyHtml(req.user, +personId);
+  renderHtml(
+    @Request() req: { user: User },
+    @Param('personId') personId: string,
+    @Query('templateId') templateId?: string,
+  ) {
+    return this.ceremoniesService.renderCeremonyHtml(
+      req.user,
+      +personId,
+      templateId ? +templateId : undefined,
+    );
   }
 }

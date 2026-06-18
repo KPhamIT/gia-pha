@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
 import { assertOrgMemberAccess } from '../auth/org-access.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -17,7 +17,7 @@ export class CeremoniesService {
     private readonly ceremonyTemplates: CeremonyTemplatesService,
   ) {}
 
-  async renderCeremonyHtml(user: User, personId: number) {
+  async renderCeremonyHtml(user: User, personId: number, templateId?: number) {
     const person = await this.prisma.person.findUnique({
       where: { id: personId },
       include: {
@@ -41,9 +41,18 @@ export class CeremoniesService {
       select: { fullName: true, currentLocation: true, birthPlace: true },
     });
 
-    const templateContent =
-      (await this.ceremonyTemplates.resolveTemplateContent(person.organizationId)) ??
-      DEFAULT_CEREMONY_TEMPLATE;
+    let templateContent: string;
+    if (templateId != null) {
+      const template = await this.ceremonyTemplates.findOne(user, templateId);
+      if (template.organizationId !== person.organizationId) {
+        throw new ForbiddenException('Template does not belong to the person organization');
+      }
+      templateContent = template.content;
+    } else {
+      templateContent =
+        (await this.ceremonyTemplates.resolveTemplateContent(person.organizationId)) ??
+        DEFAULT_CEREMONY_TEMPLATE;
+    }
 
     const vars = buildCeremonyVars(person, worshipper);
     const rendered = renderCeremonyTemplate(templateContent, vars);

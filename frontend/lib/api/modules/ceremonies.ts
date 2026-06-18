@@ -32,9 +32,11 @@ export type CreateCeremonyTemplateInput = {
 export type UpdateCeremonyTemplateInput = Partial<CreateCeremonyTemplateInput>;
 
 export const ceremonies = {
-  getHtml: (personId: number) =>
+  getHtml: (personId: number, templateId?: number) =>
     axiosClient
-      .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_HTML(personId))
+      .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_HTML(personId), {
+        params: templateId != null ? { templateId } : undefined,
+      })
       .then((r) => r.data),
 
   listTemplates: () =>
