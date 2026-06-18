@@ -14,6 +14,10 @@ export const UI = {
   // Auth
   LOGIN_TITLE: 'Đăng nhập',
   LOGIN_SUBTITLE: 'Đăng nhập để xem và quản lý gia phả của bạn',
+  LOGIN_FACEBOOK: 'Đăng nhập bằng Facebook',
+  LOGIN_FACEBOOK_LOADING: 'Đang đăng nhập...',
+  LOGIN_FACEBOOK_CANCELLED: 'Bạn đã hủy đăng nhập Facebook',
+  LOGIN_FACEBOOK_NOT_CONFIGURED: 'Chưa cấu hình Facebook App ID (NEXT_PUBLIC_FACEBOOK_APP_ID)',
   LOGIN_ZALO: 'Đăng nhập bằng Zalo',
   LOGIN_REDIRECTING: 'Đang hoàn tất đăng nhập...',
   LOGIN_GO_HOME: 'Về trang chủ',

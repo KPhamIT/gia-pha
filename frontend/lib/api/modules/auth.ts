@@ -10,5 +10,9 @@ type MeResponse = {
 
 export const auth = {
   me: () => axiosClient.get<MeResponse>(API_ROUTES.AUTH_ME).then((r) => r.data),
+  loginWithFacebook: (accessToken: string) =>
+    axiosClient
+      .post<AuthResponse>(API_ROUTES.AUTH_FACEBOOK, { accessToken })
+      .then((r) => r.data),
   getZaloLoginUrl,
 };
