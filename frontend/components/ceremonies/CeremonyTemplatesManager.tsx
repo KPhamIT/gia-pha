@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Icon from '@/components/icons/Icon';
 import { api } from '@/lib/api';
 import type {
@@ -18,11 +18,27 @@ import { inputClassName } from '@/components/ui/CollapsibleSection';
 const EMPTY_FORM = { name: '', content: '', isDefault: false };
 type FormState = typeof EMPTY_FORM;
 
+/** Either edit an existing template or create one from a prefilled draft. */
+type EditTarget = { template: CeremonyTemplate | null; initial: FormState };
+
+/** Matches {{key}} or {key} variable tokens. */
+const TOKEN_RE = /\{\{\s*([\w.]+)\s*\}\}|\{\s*([\w.]+)\s*\}/g;
+
+/** Tiêu đề nhóm biến (theo prefix của key) bằng tiếng Việt. */
+const NS_LABELS: Record<string, string> = {
+  person: UI.CEREMONY_TEMPLATE_NS_PERSON,
+  organization: UI.CEREMONY_TEMPLATE_NS_ORGANIZATION,
+  ceremony: UI.CEREMONY_TEMPLATE_NS_CEREMONY,
+  today: UI.CEREMONY_TEMPLATE_NS_TODAY,
+  worshipper: UI.CEREMONY_TEMPLATE_NS_WORSHIPPER,
+};
+const nsLabel = (ns: string) => NS_LABELS[ns] ?? (ns === '•' ? UI.CEREMONY_TEMPLATE_NS_OTHER : ns);
+
 export default function CeremonyTemplatesManager() {
   const [templates, setTemplates] = useState<CeremonyTemplate[]>([]);
   const [variables, setVariables] = useState<CeremonyTemplateVariable[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<CeremonyTemplate | 'new' | null>(null);
+  const [target, setTarget] = useState<EditTarget | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -48,6 +64,22 @@ export default function CeremonyTemplatesManager() {
     () => [...templates].sort((a, b) => Number(b.isDefault) - Number(a.isDefault)),
     [templates],
   );
+
+  const openCreate = () => setTarget({ template: null, initial: EMPTY_FORM });
+  const openEdit = (template: CeremonyTemplate) =>
+    setTarget({
+      template,
+      initial: { name: template.name, content: template.content, isDefault: template.isDefault },
+    });
+  const openDuplicate = (template: CeremonyTemplate) =>
+    setTarget({
+      template: null,
+      initial: {
+        name: template.name + UI.CEREMONY_TEMPLATE_COPY_SUFFIX,
+        content: template.content,
+        isDefault: false,
+      },
+    });
 
   const handleSetDefault = async (id: number) => {
     try {
@@ -85,7 +117,7 @@ export default function CeremonyTemplatesManager() {
             icon="plus"
             variant="gold"
             label={UI.CEREMONY_TEMPLATE_CREATE}
-            onClick={() => setEditing('new')}
+            onClick={openCreate}
             className="w-full shrink-0 sm:w-auto"
           />
         </div>
@@ -94,11 +126,7 @@ export default function CeremonyTemplatesManager() {
       {sorted.length === 0 ? (
         <div className={`${BT.card} p-6 text-center`}>
           <p className={`text-sm ${BT.mutedOnLight}`}>{UI.CEREMONY_TEMPLATE_EMPTY}</p>
-          <button
-            type="button"
-            className={`mt-4 ${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mx-auto`}
-            onClick={() => setEditing('new')}
-          >
+          <button type="button" className={`mt-4 ${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mx-auto`} onClick={openCreate}>
             <Icon path="plus" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
             {UI.CEREMONY_TEMPLATE_CREATE}
           </button>
@@ -107,11 +135,7 @@ export default function CeremonyTemplatesManager() {
         <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {sorted.map((template) => (
             <li key={template.id} className={`${BT.card} flex flex-col p-3 md:p-4`}>
-              <button
-                type="button"
-                onClick={() => setEditing(template)}
-                className="min-w-0 flex-1 text-left"
-              >
+              <button type="button" onClick={() => openEdit(template)} className="min-w-0 flex-1 text-left">
                 <div className="flex items-center gap-2">
                   <p className="min-w-0 flex-1 truncate font-semibold text-neutral-900">{template.name}</p>
                   {template.isDefault ? (
@@ -136,26 +160,22 @@ export default function CeremonyTemplatesManager() {
                     {UI.CEREMONY_TEMPLATE_USE_DEFAULT}
                   </button>
                 ) : null}
-                <IconRoundButton icon="edit" variant="outline" onClick={() => setEditing(template)} aria-label={UI.BTN_EDIT} />
-                <IconRoundButton
-                  icon="trash"
-                  variant="danger"
-                  onClick={() => void handleDelete(template)}
-                  aria-label={UI.DELETE_PERSON}
-                />
+                <IconRoundButton icon="userPlus" variant="outline" onClick={() => openDuplicate(template)} aria-label={UI.CEREMONY_TEMPLATE_DUPLICATE} />
+                <IconRoundButton icon="edit" variant="outline" onClick={() => openEdit(template)} aria-label={UI.BTN_EDIT} />
+                <IconRoundButton icon="trash" variant="danger" onClick={() => void handleDelete(template)} aria-label={UI.DELETE_PERSON} />
               </div>
             </li>
           ))}
         </ul>
       )}
 
-      {editing ? (
+      {target ? (
         <TemplateEditorSheet
-          template={editing === 'new' ? null : editing}
+          target={target}
           variables={variables}
-          onClose={() => setEditing(null)}
+          onClose={() => setTarget(null)}
           onSaved={async () => {
-            setEditing(null);
+            setTarget(null);
             await reload();
           }}
         />
@@ -165,27 +185,39 @@ export default function CeremonyTemplatesManager() {
 }
 
 function TemplateEditorSheet({
-  template,
+  target,
   variables,
   onClose,
   onSaved,
 }: {
-  template: CeremonyTemplate | null;
+  target: EditTarget;
   variables: CeremonyTemplateVariable[];
   onClose: () => void;
   onSaved: () => Promise<void>;
 }) {
-  const [form, setForm] = useState<FormState>(
-    template
-      ? { name: template.name, content: template.content, isDefault: template.isDefault }
-      : EMPTY_FORM,
-  );
+  const { template, initial } = target;
+  const [form, setForm] = useState<FormState>(initial);
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState<'edit' | 'preview'>('edit');
   const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const knownKeys = useMemo(() => new Set(variables.map((v) => v.key)), [variables]);
+  const unknownCount = useMemo(() => {
+    let n = 0;
+    for (const m of form.content.matchAll(TOKEN_RE)) {
+      const key = m[1] ?? m[2];
+      if (key && !knownKeys.has(key)) n += 1;
+    }
+    return n;
+  }, [form.content, knownKeys]);
+
+  const dirty =
+    form.name !== initial.name || form.content !== initial.content || form.isDefault !== initial.isDefault;
 
   const insertVariable = useCallback((key: string) => {
     const token = `{{${key}}}`;
     const el = contentRef.current;
+    setTab('edit');
     setForm((prev) => {
       if (!el) return { ...prev, content: prev.content + token };
       const start = el.selectionStart ?? prev.content.length;
@@ -200,7 +232,7 @@ function TemplateEditorSheet({
     });
   }, []);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!form.name.trim() || !form.content.trim()) {
       notify.error(null, UI.CEREMONY_TEMPLATE_REQUIRED);
       return;
@@ -220,13 +252,30 @@ function TemplateEditorSheet({
     } finally {
       setSaving(false);
     }
-  };
+  }, [form, template, onSaved]);
+
+  const requestClose = useCallback(() => {
+    if (dirty && !window.confirm(UI.CEREMONY_TEMPLATE_UNSAVED_CONFIRM)) return;
+    onClose();
+  }, [dirty, onClose]);
+
+  // Ctrl/Cmd+S saves without leaving the editor.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        void handleSave();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [handleSave]);
 
   return (
     <FullScreenSheet
       tone="book"
       title={template ? UI.CEREMONY_TEMPLATE_EDIT : UI.CEREMONY_TEMPLATE_CREATE}
-      onClose={onClose}
+      onClose={requestClose}
       headerRight={
         <IconRoundButton icon="save" variant="gold" loading={saving} label={UI.SAVE} onClick={() => void handleSave()} />
       }
@@ -244,16 +293,44 @@ function TemplateEditorSheet({
               />
             </label>
 
-            <label className="block text-sm">
-              <span className={BT.mutedOnDark}>{UI.CEREMONY_TEMPLATE_CONTENT}</span>
+            <div className="text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className={BT.mutedOnDark}>{UI.CEREMONY_TEMPLATE_CONTENT}</span>
+                <div className="flex gap-1 rounded-full bg-white/10 p-0.5">
+                  {(['edit', 'preview'] as const).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setTab(key)}
+                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                        tab === key ? 'bg-amber-100 text-amber-950' : 'text-amber-100/80 active:bg-white/10'
+                      }`}
+                    >
+                      {key === 'edit' ? UI.CEREMONY_TEMPLATE_TAB_EDIT : UI.CEREMONY_TEMPLATE_TAB_PREVIEW}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <p className={`mt-1 text-xs ${BT.mutedOnDark}`}>{UI.CEREMONY_TEMPLATE_CONTENT_HINT}</p>
-              <AutoGrowTextarea
-                ref={contentRef}
-                className={`${inputClassName} mt-2 min-h-[40vh] font-mono text-xs leading-relaxed`}
-                value={form.content}
-                onChange={(e) => setForm((prev) => ({ ...prev, content: e.target.value }))}
-              />
-            </label>
+
+              {tab === 'edit' ? (
+                <AutoGrowTextarea
+                  ref={contentRef}
+                  className={`${inputClassName} mt-2 min-h-[40vh] font-mono text-xs leading-relaxed`}
+                  value={form.content}
+                  onChange={(e) => setForm((prev) => ({ ...prev, content: e.target.value }))}
+                />
+              ) : (
+                <TemplatePreview content={form.content} variables={variables} knownKeys={knownKeys} />
+              )}
+
+              {unknownCount > 0 ? (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-red-300">
+                  <Icon path="alertTriangle" size={14} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+                  {UI.CEREMONY_TEMPLATE_UNKNOWN_COUNT.replace('{count}', String(unknownCount))}
+                </p>
+              ) : null}
+            </div>
 
             <label className="flex items-center gap-2 text-sm text-amber-50">
               <input
@@ -273,6 +350,60 @@ function TemplateEditorSheet({
   );
 }
 
+/** Renders content with recognized variables highlighted and unknown ones flagged. */
+function TemplatePreview({
+  content,
+  variables,
+  knownKeys,
+}: {
+  content: string;
+  variables: CeremonyTemplateVariable[];
+  knownKeys: Set<string>;
+}) {
+  const labelByKey = useMemo(
+    () => new Map(variables.map((v) => [v.key, v.label])),
+    [variables],
+  );
+
+  const nodes = useMemo<ReactNode[]>(() => {
+    if (!content.trim()) return [];
+    const out: ReactNode[] = [];
+    let last = 0;
+    let i = 0;
+    for (const m of content.matchAll(TOKEN_RE)) {
+      const idx = m.index ?? 0;
+      if (idx > last) out.push(content.slice(last, idx));
+      const key = m[1] ?? m[2] ?? '';
+      const known = knownKeys.has(key);
+      out.push(
+        <span
+          key={`tok-${i}`}
+          title={known ? labelByKey.get(key) : UI.CEREMONY_TEMPLATE_UNKNOWN_VAR}
+          className={`rounded px-1 py-0.5 font-medium ${
+            known ? 'bg-amber-100 text-amber-900' : 'bg-red-100 text-red-700 line-through decoration-red-400'
+          }`}
+        >
+          {known ? labelByKey.get(key) : m[0]}
+        </span>,
+      );
+      last = idx + m[0].length;
+      i += 1;
+    }
+    if (last < content.length) out.push(content.slice(last));
+    return out;
+  }, [content, knownKeys, labelByKey]);
+
+  return (
+    <div className={`${BT.panel} mt-2 min-h-[40vh] whitespace-pre-wrap p-3 font-mono text-xs leading-relaxed`}>
+      {nodes.length === 0 ? (
+        <span className={BT.mutedOnLight}>{UI.CEREMONY_TEMPLATE_PREVIEW_EMPTY}</span>
+      ) : (
+        nodes
+      )}
+    </div>
+  );
+}
+
 function VariablePicker({
   variables,
   onInsert,
@@ -282,12 +413,19 @@ function VariablePicker({
 }) {
   const [query, setQuery] = useState('');
 
-  const filtered = useMemo(() => {
+  const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return variables;
-    return variables.filter(
-      (v) => v.key.toLowerCase().includes(q) || v.label.toLowerCase().includes(q),
-    );
+    const matched = q
+      ? variables.filter((v) => v.key.toLowerCase().includes(q) || v.label.toLowerCase().includes(q))
+      : variables;
+    const map = new Map<string, CeremonyTemplateVariable[]>();
+    for (const v of matched) {
+      const ns = v.key.includes('.') ? v.key.split('.')[0] : '•';
+      const list = map.get(ns) ?? [];
+      list.push(v);
+      map.set(ns, list);
+    }
+    return [...map.entries()];
   }, [variables, query]);
 
   if (variables.length === 0) return null;
@@ -297,9 +435,7 @@ function VariablePicker({
   return (
     <aside className={`${BT.card} flex max-h-[60vh] min-h-0 flex-col p-3 md:sticky md:top-4 md:max-h-[calc(100dvh-12rem)] md:w-72 md:shrink-0`}>
       <div className="flex items-center gap-2">
-        <span className="min-w-0 flex-1 text-sm font-semibold text-neutral-900">
-          {UI.CEREMONY_TEMPLATE_VARIABLES}
-        </span>
+        <span className="min-w-0 flex-1 text-sm font-semibold text-neutral-900">{UI.CEREMONY_TEMPLATE_VARIABLES}</span>
         <span className={`shrink-0 text-xs ${BT.mutedOnLight}`}>{countLabel}</span>
       </div>
       <p className={`mt-0.5 text-xs ${BT.mutedOnLight}`}>{UI.CEREMONY_TEMPLATE_VARIABLES_INSERT_HINT}</p>
@@ -316,23 +452,27 @@ function VariablePicker({
         />
       </div>
 
-      <div className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto">
-        {filtered.length === 0 ? (
+      <div className="mt-2 min-h-0 flex-1 space-y-3 overflow-y-auto">
+        {groups.length === 0 ? (
           <p className={`px-1 py-2 text-xs ${BT.mutedOnLight}`}>{UI.CEREMONY_TEMPLATE_VARIABLES_NONE}</p>
         ) : (
-          filtered.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => onInsert(item.key)}
-              className="flex w-full min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors active:bg-amber-50 md:hover:bg-amber-50"
-            >
-              <code className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 font-mono text-xs text-amber-950">
-                {`{{${item.key}}}`}
-              </code>
-              <span className={`min-w-0 flex-1 truncate text-xs ${BT.mutedOnLight}`}>{item.label}</span>
-              <Icon path="plus" size={14} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} className="shrink-0 text-amber-600" />
-            </button>
+          groups.map(([ns, items]) => (
+            <div key={ns}>
+              <p className="px-1 pb-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">{nsLabel(ns)}</p>
+              <div className="space-y-1">
+                {items.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => onInsert(item.key)}
+                    className="flex w-full min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors active:bg-amber-50 md:hover:bg-amber-50"
+                  >
+                    <span className="min-w-0 flex-1 text-sm leading-snug text-neutral-800">{item.label}</span>
+                    <Icon path="plus" size={16} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} className="shrink-0 text-amber-600" />
+                  </button>
+                ))}
+              </div>
+            </div>
           ))
         )}
       </div>

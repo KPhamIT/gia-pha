@@ -41,13 +41,6 @@ export default function OrgUsersPage() {
       ) : (
         <p className={`text-sm ${BT.mutedOnDark}`}>{UI.SYSTEM_USER_ORG_REQUIRED}</p>
       )}
-      {tab === 'users' ? (
-        <div className="mt-6">
-          <a href="/ceremonies/templates" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline} inline-flex`}>
-            {UI.CEREMONY_TEMPLATES_OPEN}
-          </a>
-        </div>
-      ) : null}
     </BookPageShell>
   );
 }

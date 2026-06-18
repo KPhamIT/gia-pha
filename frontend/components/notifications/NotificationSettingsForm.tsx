@@ -72,19 +72,19 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
 
   const permissionLabel =
     hasPermission ? UI.NOTIF_PERMISSION_GRANTED : UI.NOTIF_PERMISSION_DENIED;
-  const permissionDot = hasPermission ? '🟢' : '🔴';
 
   return (
     <div className="space-y-6">
       <section className={`${BT.card} p-4`}>
-        <h2 className="text-sm font-semibold">{UI.NOTIF_BROWSER_STATUS}</h2>
-        <p className={`mt-2 text-sm ${BT.mutedOnLight}`}>
-          {permissionDot} {permissionLabel}
+        <h2 className="text-sm font-semibold text-neutral-900">{UI.NOTIF_BROWSER_STATUS}</h2>
+        <p className="mt-2 flex items-center gap-2 text-sm text-neutral-700">
+          <span className={`h-2.5 w-2.5 rounded-full ${hasPermission ? 'bg-green-500' : 'bg-red-500'}`} />
+          {permissionLabel}
         </p>
         {!hasPermission && permission !== 'unsupported' ? (
           <button
             type="button"
-            className={`${BT.btnPrimary} mt-3`}
+            className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mt-3`}
             disabled={saving || osLoading}
             onClick={() => void handleEnablePush()}
           >
@@ -93,32 +93,37 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
         ) : null}
       </section>
 
-      <section className={`${BT.card} p-4 space-y-3`}>
-        <ToggleRow
-          label={UI.NOTIF_DEATH_ANNIVERSARY}
-          checked={settings.notificationDeathAnniversaryEnabled}
-          disabled={saving}
-          onChange={(v) => handleToggle('notificationDeathAnniversaryEnabled', v)}
-        />
-        <ToggleRow
-          label={UI.NOTIF_EVENTS}
-          checked={settings.notificationEventEnabled}
-          disabled={saving}
-          onChange={(v) => handleToggle('notificationEventEnabled', v)}
-        />
-        <ToggleRow
-          label={UI.NOTIF_POSTS}
-          checked={settings.notificationPostEnabled}
-          disabled={saving}
-          onChange={(v) => handleToggle('notificationPostEnabled', v)}
-        />
+      <section className={`overflow-hidden ${BT.card}`}>
+        <h2 className="border-b border-amber-200/60 px-4 py-3 text-sm font-semibold text-neutral-900">
+          {UI.NOTIF_TYPES_TITLE}
+        </h2>
+        <div className="divide-y divide-amber-200/60">
+          <ToggleRow
+            label={UI.NOTIF_DEATH_ANNIVERSARY}
+            checked={settings.notificationDeathAnniversaryEnabled}
+            disabled={saving}
+            onChange={(v) => handleToggle('notificationDeathAnniversaryEnabled', v)}
+          />
+          <ToggleRow
+            label={UI.NOTIF_EVENTS}
+            checked={settings.notificationEventEnabled}
+            disabled={saving}
+            onChange={(v) => handleToggle('notificationEventEnabled', v)}
+          />
+          <ToggleRow
+            label={UI.NOTIF_POSTS}
+            checked={settings.notificationPostEnabled}
+            disabled={saving}
+            onChange={(v) => handleToggle('notificationPostEnabled', v)}
+          />
+        </div>
       </section>
 
       <div className="flex flex-wrap gap-3">
-        <Link href="/notifications" className={BT.btnGhost}>
+        <Link href="/notifications" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOnDark}`}>
           {UI.NOTIF_OPEN_CENTER}
         </Link>
-        <Link href="/ceremonies/upcoming" className={BT.btnGhost}>
+        <Link href="/ceremonies/upcoming" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOnDark}`}>
           {UI.NOTIF_OPEN_UPCOMING}
         </Link>
       </div>
@@ -138,15 +143,25 @@ function ToggleRow({
   onChange: (value: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-3 text-sm">
-      <input
-        type="checkbox"
-        className="size-4 rounded border-amber-300"
-        checked={checked}
+    <label className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm text-neutral-900">
+      <span className="min-w-0 flex-1">{label}</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
         disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span>{label}</span>
+        onClick={() => onChange(!checked)}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
+          checked ? 'bg-amber-600' : 'bg-neutral-300'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+            checked ? 'translate-x-5' : ''
+          }`}
+        />
+      </button>
     </label>
   );
 }

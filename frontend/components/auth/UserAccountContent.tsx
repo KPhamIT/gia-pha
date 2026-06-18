@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { Person, Relationship } from '@/components/types/family-tree-types';
+import type { IconName } from '@/components/icons/icon-paths';
+import Icon from '@/components/icons/Icon';
 import PersonSearchPanel from '@/components/family-tree/person/PersonSearchPanel';
 import { UI } from '@/lib/constants/ui-strings';
 import IconRoundButton from '@/components/ui/IconRoundButton';
@@ -20,6 +22,13 @@ type UserAccountContentProps = {
   persons: Person[];
   relationships: Relationship[];
   onLinked?: () => void;
+};
+
+const PROVIDER_LABELS: Record<string, string> = {
+  google: 'Google',
+  facebook: 'Facebook',
+  local: 'Tài khoản nội bộ',
+  credentials: 'Tài khoản nội bộ',
 };
 
 export default function UserAccountContent({ persons, relationships, onLinked }: UserAccountContentProps) {
@@ -59,13 +68,6 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
     }
   }, [onLinked, personId, refresh, requireFeature]);
 
-  const roleLabel =
-    user?.role === 'SYSTEM'
-      ? UI.ACCOUNT_ROLE_SYSTEM
-      : user?.role === 'ADMIN'
-        ? UI.ACCOUNT_ROLE_ADMIN
-        : UI.ACCOUNT_ROLE_STANDARD;
-
   if (!user) {
     return (
       <div className="space-y-4">
@@ -77,28 +79,55 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
     );
   }
 
-  return (
-    <div className="space-y-6">
-      <div className={`space-y-2 text-sm text-amber-50/90`}>
-        <p>
-          <span className="font-medium">{UI.LOGIN_USERNAME}:</span> {user.username ?? '—'}
-        </p>
-        <p>
-          <span className="font-medium">Email:</span> {user.email ?? '—'}
-        </p>
-        <p>
-          <span className="font-medium">Provider:</span> {user.provider}
-        </p>
-        <p>
-          <span className="font-medium">Role:</span> {roleLabel}
-          {isAdmin || isSystem ? null : ` (${UI.ACCOUNT_ROLE_STANDARD})`}
-        </p>
-      </div>
+  const roleLabel = isSystem
+    ? UI.ACCOUNT_ROLE_SYSTEM
+    : isAdmin
+      ? UI.ACCOUNT_ROLE_ADMIN
+      : UI.ACCOUNT_ROLE_STANDARD;
+  const roleBadgeClass = isSystem
+    ? 'bg-red-100 text-red-700'
+    : isAdmin
+      ? 'bg-amber-100 text-amber-800'
+      : 'bg-neutral-100 text-neutral-600';
 
+  const displayName = user.username || user.email || person?.fullName || '—';
+  const initial = (person?.fullName || user.username || user.email || '?').trim().charAt(0).toUpperCase();
+  const providerLabel = PROVIDER_LABELS[user.provider] ?? user.provider;
+  const orgName = user.organization?.name ?? null;
+
+  return (
+    <div className="space-y-5">
+      {/* Hồ sơ */}
+      <section className={`${BT.card} p-4`}>
+        <div className="flex items-center gap-4">
+          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-amber-100 text-2xl font-semibold text-amber-800">
+            {initial}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-base font-semibold text-neutral-900">{displayName}</p>
+            <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${roleBadgeClass}`}>
+              {roleLabel}
+            </span>
+          </div>
+        </div>
+
+        <dl className="mt-4 divide-y divide-amber-200/60 text-sm">
+          {user.email ? <InfoRow label="Email" value={user.email} /> : null}
+          <InfoRow label={UI.ACCOUNT_PROVIDER} value={providerLabel} />
+          {orgName ? <InfoRow label={UI.ACCOUNT_ORG} value={orgName} /> : null}
+          <InfoRow
+            label={UI.ACCOUNT_LINKED_MEMBER}
+            value={person?.fullName ?? UI.ACCOUNT_NOT_LINKED}
+            muted={!person?.fullName}
+          />
+        </dl>
+      </section>
+
+      {/* Liên kết thành viên */}
       {canUseFeature('linkAccount') ? (
-        <div className={`space-y-3 ${BT.card} p-4`}>
+        <section className={`${BT.card} space-y-3 p-4`}>
           <div>
-            <label className={`block text-sm font-medium ${BT.mutedOnLight}`}>{UI.ACCOUNT_LINK_PERSON}</label>
+            <h2 className="text-sm font-semibold text-neutral-900">{UI.ACCOUNT_LINK_PERSON}</h2>
             <p className={`mt-1 text-xs ${BT.mutedOnLight}`}>{UI.ACCOUNT_LINK_PERSON_HINT}</p>
           </div>
           <PersonSearchPanel
@@ -119,36 +148,62 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
               onClick={() => void handleSaveLink()}
             />
           </div>
-          {message ? <p className={`text-sm ${BT.gold}`}>{message}</p> : null}
+          {message ? <p className={`text-sm font-medium ${BT.gold}`}>{message}</p> : null}
           {error ? <p className={BT.errorBgLight}>{error}</p> : null}
-        </div>
+        </section>
       ) : null}
 
-      {isAdmin ? (
-        <div className="space-y-3">
-          <div className="flex justify-start">
-            <Link href="/org-users">
-              <IconRoundButton icon="userPlus" variant="gold" label={UI.BTN_USERS} tabIndex={-1} aria-hidden />
-            </Link>
-          </div>
-          <NotificationStatsPanel />
+      {/* Truy cập nhanh */}
+      <section className={`overflow-hidden ${BT.card}`}>
+        <h2 className={`border-b border-amber-200/60 px-4 py-3 text-sm font-semibold text-neutral-900`}>
+          {UI.ACCOUNT_QUICK_ACTIONS}
+        </h2>
+        <div className="divide-y divide-amber-200/60">
+          {isAdmin ? <MenuRow href="/org-users" icon="userPlus" label={UI.BTN_USERS} /> : null}
+          {isAdmin ? <MenuRow href="/ceremonies/templates" icon="book" label={UI.CEREMONY_TEMPLATES_OPEN} /> : null}
+          <MenuRow href="/settings/notifications" icon="settings" label={UI.NOTIF_OPEN_SETTINGS} />
+          <MenuRow href="/ceremonies/upcoming" icon="calendar" label={UI.NOTIF_OPEN_UPCOMING} />
         </div>
-      ) : null}
+      </section>
 
-      <div className="flex flex-wrap gap-2">
-        <Link href="/settings/notifications">
-          <IconRoundButton icon="settings" variant="outline" label={UI.NOTIF_OPEN_SETTINGS} tabIndex={-1} aria-hidden />
-        </Link>
-        <Link href="/ceremonies/upcoming">
-          <IconRoundButton icon="calendar" variant="outline" label={UI.NOTIF_OPEN_UPCOMING} tabIndex={-1} aria-hidden />
-        </Link>
-      </div>
+      {isAdmin ? <NotificationStatsPanel /> : null}
 
       {!isAdmin && !isSystem ? <ContactInfoPanel /> : null}
 
-      <div className="pt-2">
-        <IconRoundButton icon="arrowLeft" variant="danger" label={UI.ACCOUNT_LOGOUT} onClick={() => logout()} />
-      </div>
+      <button
+        type="button"
+        onClick={() => logout()}
+        className={`${BT.btnBase} ${BT.btnSm} ${BT.btnDanger} w-full`}
+      >
+        <Icon path="arrowLeft" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        {UI.ACCOUNT_LOGOUT}
+      </button>
     </div>
+  );
+}
+
+function InfoRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-2.5">
+      <dt className={BT.mutedOnLight}>{label}</dt>
+      <dd className={`min-w-0 truncate text-right font-medium ${muted ? 'text-neutral-400' : 'text-neutral-900'}`}>
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+function MenuRow({ href, icon, label }: { href: string; icon: IconName; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 px-4 py-3 transition-colors active:bg-amber-50 md:hover:bg-amber-50"
+    >
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-800">
+        <Icon path={icon} size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+      </span>
+      <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral-900">{label}</span>
+      <Icon path="chevronRight" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} className="shrink-0 text-neutral-400" />
+    </Link>
   );
 }

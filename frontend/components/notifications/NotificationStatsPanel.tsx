@@ -21,15 +21,15 @@ export default function NotificationStatsPanel() {
       <dl className={`mt-3 space-y-2 text-sm ${BT.mutedOnLight}`}>
         <div className="flex justify-between gap-4">
           <dt>{UI.NOTIF_STATS_TOTAL}</dt>
-          <dd className="font-medium text-amber-50">{stats.totalMembers}</dd>
+          <dd className="font-medium text-neutral-900">{stats.totalMembers}</dd>
         </div>
         <div className="flex justify-between gap-4">
           <dt>{UI.NOTIF_STATS_SUBSCRIBED}</dt>
-          <dd className="font-medium text-amber-50">{stats.subscribed}</dd>
+          <dd className="font-medium text-neutral-900">{stats.subscribed}</dd>
         </div>
         <div className="flex justify-between gap-4">
           <dt>{UI.NOTIF_STATS_RATE}</dt>
-          <dd className="font-medium text-amber-50">{stats.rate}%</dd>
+          <dd className="font-medium text-neutral-900">{stats.rate}%</dd>
         </div>
       </dl>
     </section>

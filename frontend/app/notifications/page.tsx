@@ -29,7 +29,7 @@ export default function NotificationsPage() {
   return (
     <BookPageShell title={UI.NOTIFICATIONS_TITLE} subtitle={UI.NOTIFICATIONS_SUBTITLE}>
       <div className="mb-4">
-        <Link href="/settings/notifications" className={BT.btnGhost}>
+        <Link href="/settings/notifications" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOnDark}`}>
           {UI.NOTIF_OPEN_SETTINGS}
         </Link>
       </div>
