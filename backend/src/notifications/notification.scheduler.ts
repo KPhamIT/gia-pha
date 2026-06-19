@@ -14,7 +14,9 @@ export class NotificationScheduler {
     this.logger.log('Running death anniversary notification cron');
     try {
       const result = await this.notificationsService.runDeathAnniversaryCron();
-      this.logger.log(`Death anniversary cron finished: sent=${result.sentCount}`);
+      this.logger.log(
+        `Death anniversary cron finished: sent=${result.sentCount}, deletedLogs=${result.deletedLogCount}`,
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       this.logger.error(`Death anniversary cron failed: ${message}`);

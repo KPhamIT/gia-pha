@@ -19,6 +19,7 @@ import { UpdateNotificationSettingsDto } from './dto/update-notification-setting
 import {
   daysUntilDeathAnniversary,
   formatLunarDeathDate,
+  isPastDeathAnniversaryThisCycle,
 } from './utils/lunar-death-anniversary.js';
 
 export type DeathAnniversaryMessage = {
@@ -278,6 +279,8 @@ export class NotificationsService {
   }
 
   async runDeathAnniversaryCron(referenceDate = new Date()) {
+    const deletedLogCount = await this.cleanupExpiredDeathAnniversaryLogs(referenceDate);
+
     const persons = await this.prisma.person.findMany({
       where: {
         OR: [{ deceased: true }, { deathDate: { not: null } }],
@@ -358,7 +361,35 @@ export class NotificationsService {
       }
     }
 
-    return { sentCount };
+    return { sentCount, deletedLogCount };
+  }
+
+  /** Remove in-app notification history once this year's lunar death anniversary has passed. */
+  async cleanupExpiredDeathAnniversaryLogs(referenceDate = new Date()) {
+    const persons = await this.prisma.person.findMany({
+      where: {
+        deathLunarDay: { not: null },
+        deathLunarMonth: { not: null },
+      },
+      select: { id: true, deathLunarDay: true, deathLunarMonth: true },
+    });
+
+    const pastPersonIds = persons
+      .filter((p) =>
+        isPastDeathAnniversaryThisCycle(
+          p.deathLunarMonth!,
+          p.deathLunarDay!,
+          referenceDate,
+        ),
+      )
+      .map((p) => p.id);
+
+    if (pastPersonIds.length === 0) return 0;
+
+    const result = await this.prisma.notificationLog.deleteMany({
+      where: { personId: { in: pastPersonIds } },
+    });
+    return result.count;
   }
 
   private buildCeremonyUrl(personId?: number): string | undefined {

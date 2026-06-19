@@ -27,6 +27,20 @@ export function daysUntilDeathAnniversary(
   return diff;
 }
 
+/** True when today's solar date is after this lunar year's death anniversary. */
+export function isPastDeathAnniversaryThisCycle(
+  deathLunarMonth: number,
+  deathLunarDay: number,
+  referenceDate = new Date(),
+): boolean {
+  const todayLunar = Lunar.fromDate(referenceDate);
+  const lunarYear = todayLunar.getYear();
+  const anniversary = Lunar.fromYmd(lunarYear, deathLunarMonth, deathLunarDay);
+  const anniversaryKey = solarYmdToNumber(anniversary.getSolar().toYmd());
+  const todayKey = solarYmdToNumber(todayLunar.getSolar().toYmd());
+  return todayKey > anniversaryKey;
+}
+
 export function formatLunarDeathDate(month: number, day: number): string {
   const dayStr = String(day).padStart(2, '0');
   const monthStr = String(month).padStart(2, '0');
