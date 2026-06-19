@@ -3,6 +3,26 @@
 Base URL: `NEXT_PUBLIC_API_URL` (mặc định `http://localhost:5000`).  
 Tất cả endpoint dưới đây yêu cầu header `Authorization: Bearer <JWT>` trừ khi ghi chú khác.
 
+## Cron (Vercel / HTTP trigger)
+
+### `POST /notifications/cron/death-anniversary`
+
+Chạy job gửi push ngày giỗ. **Không dùng JWT** — xác thực bằng `CRON_SECRET`:
+
+```http
+Authorization: Bearer <CRON_SECRET>
+```
+
+Response:
+
+```json
+{ "sentCount": 3 }
+```
+
+Production: Vercel Cron → `GET /api/cron/death-anniversary` (Next.js) → endpoint này.  
+Local dev: có thể bật `ENABLE_INTERNAL_CRON=true` để dùng `@Cron` 07:00 ICT trong NestJS.  
+Production khuyến nghị: [GitHub Actions](./cron-github-actions.md) gọi trực tiếp endpoint này.
+
 ## Settings
 
 ### `GET /notifications/settings`

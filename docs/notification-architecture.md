@@ -6,7 +6,7 @@ Hệ thống gửi push notification qua **OneSignal** khi sắp đến ngày gi
 
 ```mermaid
 flowchart LR
-  Cron["Cron 07:00 ICT"] --> Service["NotificationsService"]
+  Cron["GitHub Actions 07:00 ICT"] --> Service["NotificationsService"]
   Service --> Lunar["lunar-javascript"]
   Service --> DB[(PostgreSQL)]
   Service --> OS["OneSignal REST API"]
@@ -57,7 +57,8 @@ Lưu mọi lần gửi (SENT / FAILED), tránh trùng trong cùng ngày.
 | | `GET /notifications/stats` | Thống kê admin |
 | `ceremonies` | `GET /ceremonies/:personId/html` | Render bài cúng runtime |
 
-Cron: `@Cron(EVERY_DAY_AT_7AM, { timeZone: 'Asia/Ho_Chi_Minh' })`.
+Cron: GitHub Actions `0 0 * * *` UTC → `POST /notifications/cron/death-anniversary` (xem [cron-github-actions.md](./cron-github-actions.md)).  
+Local: `@Cron(EVERY_DAY_AT_7AM)` khi `ENABLE_INTERNAL_CRON=true`.
 
 ## Frontend
 
@@ -91,4 +92,5 @@ Click mở: `/ceremonies/upcoming?personId={id}`.
 ## Tài liệu liên quan
 
 - [ONESIGNAL_SETUP.md](./ONESIGNAL_SETUP.md) — cấu hình OneSignal
+- [cron-github-actions.md](./cron-github-actions.md) — cron production (GitHub Actions)
 - [feature-notification.md](./feature-notification.md) — spec nghiệp vụ

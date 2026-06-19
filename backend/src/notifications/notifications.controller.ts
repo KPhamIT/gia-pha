@@ -1,5 +1,6 @@
-import { Controller, Get, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
+import { CronGuard } from '../auth/cron.guard.js';
 import { JwtRequiredGuard } from '../auth/jwt-required.guard.js';
 import { MutateGuard } from '../auth/mutate.guard.js';
 import { NotificationsService } from './notifications.service.js';
@@ -8,6 +9,13 @@ import { UpdateNotificationSettingsDto } from './dto/update-notification-setting
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
+
+  /** Triggered by GitHub Actions or manual HTTP call — see docs/cron-github-actions.md */
+  @Post('cron/death-anniversary')
+  @UseGuards(CronGuard)
+  runDeathAnniversaryCron() {
+    return this.notificationsService.runDeathAnniversaryCron();
+  }
 
   @Get('settings')
   @UseGuards(JwtRequiredGuard)

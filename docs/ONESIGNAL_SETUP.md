@@ -67,27 +67,45 @@ FRONTEND_URL=http://localhost:3000
 
 7. Nhập **ngày/tháng mất âm lịch** cho Person (form chi tiết thành viên).
 
-8. Test cron thủ công (tuỳ chọn): gọi logic trong `NotificationsService.runDeathAnniversaryCron()` từ REPL hoặc tạm endpoint dev.
+8. Test cron thủ công: xem [cron-github-actions.md](./cron-github-actions.md) (curl hoặc **Run workflow** trên GitHub).
 
 ## Production Deployment Guide
 
 1. Cập nhật **Site URL** trong OneSignal Dashboard = domain production.
-2. Deploy frontend (HTTPS bắt buộc cho Web Push).
-3. Deploy backend với `ONESIGNAL_*` và `FRONTEND_URL` production.
-4. Đảm bảo cron NestJS chạy (process luôn bật hoặc worker riêng) — `@nestjs/schedule` chạy trong cùng process `nest start`.
+2. Deploy frontend (HTTPS bắt buộc cho Web Push) — vd. Vercel.
+3. Deploy backend với `ONESIGNAL_*`, `FRONTEND_URL`, `CRON_SECRET`, `ENABLE_INTERNAL_CRON=false`.
+4. Cấu hình **GitHub Actions cron** — hướng dẫn đầy đủ: **[docs/cron-github-actions.md](./cron-github-actions.md)**.
 
-## Vercel Setup Guide
+## Vercel Setup Guide (frontend only)
 
-1. Import repo frontend lên Vercel.
-2. Environment: `NEXT_PUBLIC_ONESIGNAL_APP_ID`, `NEXT_PUBLIC_API_URL` → URL backend production.
+1. Import repo lên Vercel, **Root Directory:** `frontend`.
+2. Environment:
+   - `NEXT_PUBLIC_ONESIGNAL_APP_ID`
+   - `NEXT_PUBLIC_API_URL` → URL backend production
 3. OneSignal Site URL = URL Vercel (`https://xxx.vercel.app`).
-4. **Lưu ý:** Cron gửi notification chạy trên **backend NestJS**, không phải Vercel serverless — host backend trên VPS/Railway/Fly.io có process persistent.
+4. **Cron notification:** không dùng Vercel Cron — cấu hình [GitHub Actions](./cron-github-actions.md) (miễn phí).
+
+## GitHub Actions Cron (production)
+
+**→ Đọc hướng dẫn chi tiết tại [docs/cron-github-actions.md](./cron-github-actions.md)**
+
+Tóm tắt:
+
+1. Backend: `CRON_SECRET`, `ENABLE_INTERNAL_CRON=false`.
+2. GitHub repo → **Settings → Secrets and variables → Actions**:
+   - `API_URL` — URL backend (vd. `https://api.example.com`)
+   - `CRON_SECRET` — cùng giá trị backend
+3. Push `.github/workflows/death-anniversary-cron.yml` (đã có trong repo).
+4. Tab **Actions** → **Death anniversary cron** → **Run workflow** để test.
+
+Lịch: **07:00 Asia/Ho_Chi_Minh** mỗi ngày (`0 0 * * *` UTC).
 
 ## NestJS Setup Guide
 
 Module: `backend/src/notifications/`
 
-- `NotificationScheduler` — cron `0 7 * * *` timezone `Asia/Ho_Chi_Minh`
+- `NotificationScheduler` — cron nội bộ 07:00 ICT (chỉ khi `ENABLE_INTERNAL_CRON=true`, local dev)
+- `POST /notifications/cron/death-anniversary` — trigger production qua [GitHub Actions](./cron-github-actions.md)
 - `OneSignalService` — gọi REST API
 - `NotificationsModule` — import trong `AppModule` cùng `ScheduleModule.forRoot()`
 
@@ -103,7 +121,7 @@ cd backend && pnpm add @nestjs/schedule lunar-javascript
 | -------------------------------- | ------------------------------------------------------------------ |
 | Không thấy prompt quyền          | Kiểm tra `NEXT_PUBLIC_ONESIGNAL_APP_ID`, HTTPS/localhost           |
 | Đã Allow nhưng không nhận push   | Kiểm tra subscription ID đã sync (`PATCH /notifications/settings`) |
-| Cron không chạy                  | Backend phải chạy liên tục; xem log `NotificationScheduler`        |
+| Cron không chạy                  | Xem [cron-github-actions.md](./cron-github-actions.md): secrets `API_URL` + `CRON_SECRET`, `ENABLE_INTERNAL_CRON=false`, test **Run workflow** |
 | Gửi FAILED trong NotificationLog | Kiểm tra REST API Key, App ID, subscription còn valid              |
 | Sai ngày giỗ                     | Kiểm tra `deathLunarDay` / `deathLunarMonth` trên Person           |
 
