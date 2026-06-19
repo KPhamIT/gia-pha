@@ -3,14 +3,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import {
+  ensurePushSubscribed,
   getBrowserPermission,
   getSubscriptionId,
   initOneSignal,
   isOneSignalConfigured,
   isPushSubscribed,
-  optInPush,
   optOutPush,
-  requestPushPermission,
 } from '@/lib/services/onesignal.service';
 
 type UseOneSignalState = {
@@ -65,12 +64,7 @@ export function useOneSignal() {
 
   const enableNotifications = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true }));
-    let granted = await requestPushPermission();
-    if (!granted && typeof window !== 'undefined' && Notification.permission === 'granted') {
-      await optInPush();
-      granted = true;
-    }
-    const subscriptionId = granted ? await getSubscriptionId() : null;
+    const { ok, subscriptionId } = await ensurePushSubscribed();
 
     if (subscriptionId) {
       await api.notifications.updateSettings({
@@ -80,7 +74,7 @@ export function useOneSignal() {
     }
 
     await refresh();
-    return { granted, subscriptionId };
+    return { granted: ok, subscriptionId };
   }, [refresh]);
 
   const disableNotifications = useCallback(async () => {
@@ -99,10 +93,11 @@ export function useOneSignal() {
   }, [refresh]);
 
   const syncSubscription = useCallback(async () => {
+    if (typeof window === 'undefined' || Notification.permission !== 'granted') {
+      return null;
+    }
     const subscriptionId = await getSubscriptionId();
     if (!subscriptionId) return null;
-    const subscribed = await isPushSubscribed();
-    if (!subscribed) return null;
     await api.notifications.updateSettings({ onesignalSubscriptionId: subscriptionId });
     await refresh();
     return subscriptionId;
@@ -115,6 +110,5 @@ export function useOneSignal() {
     disableNotifications,
     syncSubscription,
     hasPermission: state.permission === 'granted',
-    pushActive: state.subscribed && state.permission === 'granted',
   };
 }

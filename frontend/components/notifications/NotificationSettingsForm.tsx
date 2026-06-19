@@ -18,11 +18,12 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
     configured,
     hasPermission,
     permission,
-    pushActive,
+    subscriptionId,
     loading: osLoading,
     enableNotifications,
     disableNotifications,
     syncSubscription,
+    refresh: refreshOneSignal,
   } = useOneSignal();
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [saving, setSaving] = useState(false);
@@ -73,10 +74,11 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
     setSaving(true);
     try {
       if (enabled) {
-        const { granted, subscriptionId } = await enableNotifications();
+        const { granted, subscriptionId: newId } = await enableNotifications();
         const updated = await api.notifications.getSettings();
         setSettings(updated);
-        if (granted && subscriptionId) {
+        await refreshOneSignal();
+        if (granted && newId) {
           notify.success(UI.NOTIF_SAVED);
         } else if (typeof window !== 'undefined' && Notification.permission === 'denied') {
           notify.error(null, UI.NOTIF_PERMISSION_BLOCKED);
@@ -100,6 +102,10 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
     return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
   }
 
+  const isDeviceRegistered =
+    Boolean(subscriptionId) && settings.pushSubscriptionIds.includes(subscriptionId!);
+  const pushOn = hasPermission && isDeviceRegistered;
+
   const statusHint = !configured
     ? UI.NOTIF_NOT_CONFIGURED
     : permission === 'unsupported'
@@ -109,8 +115,6 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
         : hasPermission
           ? UI.NOTIF_PERMISSION_GRANTED
           : UI.NOTIF_PERMISSION_DENIED;
-
-  const pushOn = pushActive;
 
   return (
     <div className="space-y-6">

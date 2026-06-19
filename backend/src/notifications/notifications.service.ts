@@ -68,8 +68,10 @@ export class NotificationsService {
   ) {}
 
   async getSettings(user: User) {
-    const pushSubscriptionCount = await this.prisma.userPushSubscription.count({
+    const subs = await this.prisma.userPushSubscription.findMany({
       where: { userId: user.id },
+      select: { onesignalSubscriptionId: true },
+      orderBy: { updatedAt: 'desc' },
     });
     return {
       notificationDeathAnniversaryEnabled:
@@ -77,7 +79,8 @@ export class NotificationsService {
       notificationEventEnabled: user.notificationEventEnabled,
       notificationPostEnabled: user.notificationPostEnabled,
       onesignalSubscriptionId: user.onesignalSubscriptionId,
-      pushSubscriptionCount,
+      pushSubscriptionCount: subs.length,
+      pushSubscriptionIds: subs.map((s) => s.onesignalSubscriptionId),
     };
   }
 
