@@ -16,4 +16,9 @@ export class UpdateNotificationSettingsDto {
   @IsOptional()
   @IsString()
   onesignalSubscriptionId?: string | null;
+
+  /** Gỡ subscription của thiết bị hiện tại (không xóa thiết bị khác). */
+  @IsOptional()
+  @IsString()
+  removeOnesignalSubscriptionId?: string;
 }

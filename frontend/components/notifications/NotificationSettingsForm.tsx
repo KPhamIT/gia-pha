@@ -22,6 +22,7 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
     loading: osLoading,
     enableNotifications,
     disableNotifications,
+    syncSubscription,
   } = useOneSignal();
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [saving, setSaving] = useState(false);
@@ -34,6 +35,13 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
       .catch(() => notify.error(null, UI.NOTIF_ERR_LOAD))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!configured || osLoading || !hasPermission) return;
+    void syncSubscription().then((id) => {
+      if (id) void api.notifications.getSettings().then(setSettings);
+    });
+  }, [configured, hasPermission, osLoading, syncSubscription]);
 
   const saveSettings = useCallback(
     async (patch: Partial<NotificationSettings>) => {
@@ -102,7 +110,7 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
           ? UI.NOTIF_PERMISSION_GRANTED
           : UI.NOTIF_PERMISSION_DENIED;
 
-  const pushOn = pushActive || Boolean(settings.onesignalSubscriptionId);
+  const pushOn = pushActive;
 
   return (
     <div className="space-y-6">
@@ -124,6 +132,11 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
           />
           {statusHint}
         </p>
+        {settings.pushSubscriptionCount > 0 ? (
+          <p className="border-t border-amber-200/60 px-4 py-2 text-xs text-neutral-500">
+            {UI.NOTIF_DEVICES_REGISTERED(settings.pushSubscriptionCount)}
+          </p>
+        ) : null}
       </section>
 
       <section className={`overflow-hidden ${BT.card}`}>
@@ -134,19 +147,19 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
           <ToggleRow
             label={UI.NOTIF_DEATH_ANNIVERSARY}
             checked={settings.notificationDeathAnniversaryEnabled}
-            disabled={saving || !pushOn}
+            disabled={saving}
             onChange={(v) => handleToggle('notificationDeathAnniversaryEnabled', v)}
           />
           <ToggleRow
             label={UI.NOTIF_EVENTS}
             checked={settings.notificationEventEnabled}
-            disabled={saving || !pushOn}
+            disabled={saving}
             onChange={(v) => handleToggle('notificationEventEnabled', v)}
           />
           <ToggleRow
             label={UI.NOTIF_POSTS}
             checked={settings.notificationPostEnabled}
-            disabled={saving || !pushOn}
+            disabled={saving}
             onChange={(v) => handleToggle('notificationPostEnabled', v)}
           />
         </div>

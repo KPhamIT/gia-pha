@@ -453,7 +453,9 @@ export const UI = {
   NOTIF_EVENTS: 'Nhận thông báo sự kiện dòng họ',
   NOTIF_POSTS: 'Nhận thông báo bài viết mới',
   NOTIF_BROWSER_STATUS: 'Thông báo trình duyệt',
-  NOTIF_PUSH_MASTER: 'Bật thông báo push',
+  NOTIF_PUSH_MASTER: 'Bật thông báo push trên thiết bị này',
+  NOTIF_DEVICES_REGISTERED: (n: number) =>
+    n <= 1 ? '1 thiết bị đang nhận push' : `${n} thiết bị đang nhận push`,
   NOTIF_PERMISSION_GRANTED: 'Đã cấp quyền trình duyệt',
   NOTIF_PERMISSION_DENIED: 'Chưa cấp quyền trình duyệt',
   NOTIF_PERMISSION_BLOCKED: 'Trình duyệt đang chặn thông báo — mở biểu tượng ổ khóa trên thanh địa chỉ → Cho phép thông báo, rồi bật lại.',

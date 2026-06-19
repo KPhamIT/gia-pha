@@ -54,6 +54,8 @@ model User {
   notificationEventEnabled            Boolean @default(false)
   notificationPostEnabled             Boolean @default(false)
 
+  pushSubscriptions UserPushSubscription[]
+
   person   Person?
   settings UserSettings?
   exportPresets ExportPreset[]
@@ -63,6 +65,18 @@ model User {
 
   @@index([organizationId, role])
   @@index([notificationDeathAnniversaryEnabled, isActive])
+}
+
+/// One row per browser/device — user có thể nhận push trên nhiều thiết bị.
+model UserPushSubscription {
+  id                      Int      @id @default(autoincrement())
+  userId                  Int
+  onesignalSubscriptionId String   @unique
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model UserSettings {

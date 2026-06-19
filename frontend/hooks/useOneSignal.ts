@@ -85,19 +85,25 @@ export function useOneSignal() {
 
   const disableNotifications = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true }));
+    const subscriptionId = await getSubscriptionId();
     await optOutPush();
-    await api.notifications.updateSettings({
-      onesignalSubscriptionId: null,
-      notificationDeathAnniversaryEnabled: false,
+    const updated = await api.notifications.updateSettings({
+      removeOnesignalSubscriptionId: subscriptionId ?? undefined,
     });
+    if (updated.pushSubscriptionCount === 0) {
+      await api.notifications.updateSettings({
+        notificationDeathAnniversaryEnabled: false,
+      });
+    }
     await refresh();
   }, [refresh]);
 
   const syncSubscription = useCallback(async () => {
     const subscriptionId = await getSubscriptionId();
-    if (subscriptionId) {
-      await api.notifications.updateSettings({ onesignalSubscriptionId: subscriptionId });
-    }
+    if (!subscriptionId) return null;
+    const subscribed = await isPushSubscribed();
+    if (!subscribed) return null;
+    await api.notifications.updateSettings({ onesignalSubscriptionId: subscriptionId });
     await refresh();
     return subscriptionId;
   }, [refresh]);

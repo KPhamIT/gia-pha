@@ -67,17 +67,53 @@ export class NotificationsService {
     private readonly config: ConfigService,
   ) {}
 
-  getSettings(user: User) {
+  async getSettings(user: User) {
+    const pushSubscriptionCount = await this.prisma.userPushSubscription.count({
+      where: { userId: user.id },
+    });
     return {
       notificationDeathAnniversaryEnabled:
         user.notificationDeathAnniversaryEnabled,
       notificationEventEnabled: user.notificationEventEnabled,
       notificationPostEnabled: user.notificationPostEnabled,
       onesignalSubscriptionId: user.onesignalSubscriptionId,
+      pushSubscriptionCount,
     };
   }
 
   async updateSettings(user: User, dto: UpdateNotificationSettingsDto) {
+    if (dto.removeOnesignalSubscriptionId) {
+      await this.prisma.userPushSubscription.deleteMany({
+        where: {
+          userId: user.id,
+          onesignalSubscriptionId: dto.removeOnesignalSubscriptionId,
+        },
+      });
+    }
+
+    if (dto.onesignalSubscriptionId) {
+      await this.prisma.userPushSubscription.upsert({
+        where: { onesignalSubscriptionId: dto.onesignalSubscriptionId },
+        create: {
+          userId: user.id,
+          onesignalSubscriptionId: dto.onesignalSubscriptionId,
+        },
+        update: { userId: user.id },
+      });
+    } else if (
+      dto.onesignalSubscriptionId === null &&
+      !dto.removeOnesignalSubscriptionId
+    ) {
+      await this.prisma.userPushSubscription.deleteMany({
+        where: { userId: user.id },
+      });
+    }
+
+    const latestSub = await this.prisma.userPushSubscription.findFirst({
+      where: { userId: user.id },
+      orderBy: { updatedAt: 'desc' },
+    });
+
     const updated = await this.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -85,10 +121,7 @@ export class NotificationsService {
           dto.notificationDeathAnniversaryEnabled,
         notificationEventEnabled: dto.notificationEventEnabled,
         notificationPostEnabled: dto.notificationPostEnabled,
-        onesignalSubscriptionId:
-          dto.onesignalSubscriptionId === undefined
-            ? undefined
-            : dto.onesignalSubscriptionId,
+        onesignalSubscriptionId: latestSub?.onesignalSubscriptionId ?? null,
       },
     });
     return this.getSettings(updated);
@@ -128,7 +161,7 @@ export class NotificationsService {
           ...where,
           isActive: true,
           notificationDeathAnniversaryEnabled: true,
-          onesignalSubscriptionId: { not: null },
+          pushSubscriptions: { some: {} },
         },
       }),
     ]);
@@ -223,13 +256,14 @@ export class NotificationsService {
       where: {
         id: { in: userIds },
         isActive: true,
-        onesignalSubscriptionId: { not: null },
+        pushSubscriptions: { some: {} },
       },
+      include: { pushSubscriptions: true },
     });
 
-    const subscriptionIds = users
-      .map((u) => u.onesignalSubscriptionId)
-      .filter((id): id is string => Boolean(id));
+    const subscriptionIds = users.flatMap((u) =>
+      u.pushSubscriptions.map((s) => s.onesignalSubscriptionId),
+    );
 
     return this.oneSignal.sendNotification({
       subscriptionIds,
@@ -252,8 +286,6 @@ export class NotificationsService {
       },
     });
 
-    console.log('persons', persons);
-
     let sentCount = 0;
 
     for (const person of persons) {
@@ -269,8 +301,9 @@ export class NotificationsService {
           organizationId: person.organizationId,
           isActive: true,
           notificationDeathAnniversaryEnabled: true,
-          onesignalSubscriptionId: { not: null },
+          pushSubscriptions: { some: {} },
         },
+        include: { pushSubscriptions: true },
       });
 
       for (const subscriber of subscribers) {
@@ -284,6 +317,11 @@ export class NotificationsService {
         });
         if (alreadySent) continue;
 
+        const subscriptionIds = subscriber.pushSubscriptions.map(
+          (s) => s.onesignalSubscriptionId,
+        );
+        if (subscriptionIds.length === 0) continue;
+
         const data = {
           type: 'DEATH_ANNIVERSARY',
           personId: person.id,
@@ -292,7 +330,7 @@ export class NotificationsService {
         };
 
         const result = await this.oneSignal.sendNotification({
-          subscriptionIds: [subscriber.onesignalSubscriptionId!],
+          subscriptionIds,
           title: message.title,
           content: message.body,
           data,

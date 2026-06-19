@@ -6,6 +6,7 @@ export type NotificationSettings = {
   notificationEventEnabled: boolean;
   notificationPostEnabled: boolean;
   onesignalSubscriptionId: string | null;
+  pushSubscriptionCount: number;
 };
 
 export type NotificationLogItem = {
@@ -35,7 +36,11 @@ export type NotificationStats = {
   rate: number;
 };
 
-export type UpdateNotificationSettingsInput = Partial<NotificationSettings>;
+export type UpdateNotificationSettingsInput = Partial<
+  Omit<NotificationSettings, 'pushSubscriptionCount'>
+> & {
+  removeOnesignalSubscriptionId?: string;
+};
 
 export const notifications = {
   getSettings: () =>
