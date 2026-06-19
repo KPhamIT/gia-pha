@@ -14,7 +14,15 @@ type NotificationSettingsFormProps = {
 };
 
 export default function NotificationSettingsForm({ onSaved }: NotificationSettingsFormProps) {
-  const { hasPermission, permission, loading: osLoading, enableNotifications } = useOneSignal();
+  const {
+    configured,
+    hasPermission,
+    permission,
+    pushActive,
+    loading: osLoading,
+    enableNotifications,
+    disableNotifications,
+  } = useOneSignal();
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -52,13 +60,27 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
     void saveSettings({ [key]: value });
   };
 
-  const handleEnablePush = async () => {
+  const handlePushMasterToggle = async (enabled: boolean) => {
+    if (!configured) return;
     setSaving(true);
     try {
-      await enableNotifications();
-      const updated = await api.notifications.getSettings();
-      setSettings(updated);
-      notify.success(UI.NOTIF_SAVED);
+      if (enabled) {
+        const { granted, subscriptionId } = await enableNotifications();
+        const updated = await api.notifications.getSettings();
+        setSettings(updated);
+        if (granted && subscriptionId) {
+          notify.success(UI.NOTIF_SAVED);
+        } else if (typeof window !== 'undefined' && Notification.permission === 'denied') {
+          notify.error(null, UI.NOTIF_PERMISSION_BLOCKED);
+        } else {
+          notify.error(null, UI.NOTIF_PERMISSION_DENIED);
+        }
+      } else {
+        await disableNotifications();
+        const updated = await api.notifications.getSettings();
+        setSettings(updated);
+        notify.success(UI.NOTIF_SAVED);
+      }
     } catch (err) {
       notify.error(err, UI.NOTIF_ERR_SAVE);
     } finally {
@@ -70,27 +92,38 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
     return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
   }
 
-  const permissionLabel =
-    hasPermission ? UI.NOTIF_PERMISSION_GRANTED : UI.NOTIF_PERMISSION_DENIED;
+  const statusHint = !configured
+    ? UI.NOTIF_NOT_CONFIGURED
+    : permission === 'unsupported'
+      ? UI.NOTIF_UNSUPPORTED
+      : permission === 'denied'
+        ? UI.NOTIF_PERMISSION_BLOCKED
+        : hasPermission
+          ? UI.NOTIF_PERMISSION_GRANTED
+          : UI.NOTIF_PERMISSION_DENIED;
+
+  const pushOn = pushActive || Boolean(settings.onesignalSubscriptionId);
 
   return (
     <div className="space-y-6">
-      <section className={`${BT.card} p-4`}>
-        <h2 className="text-sm font-semibold text-neutral-900">{UI.NOTIF_BROWSER_STATUS}</h2>
-        <p className="mt-2 flex items-center gap-2 text-sm text-neutral-700">
-          <span className={`h-2.5 w-2.5 rounded-full ${hasPermission ? 'bg-green-500' : 'bg-red-500'}`} />
-          {permissionLabel}
+      <section className={`overflow-hidden ${BT.card}`}>
+        <h2 className="border-b border-amber-200/60 px-4 py-3 text-sm font-semibold text-neutral-900">
+          {UI.NOTIF_BROWSER_STATUS}
+        </h2>
+        <ToggleRow
+          label={UI.NOTIF_PUSH_MASTER}
+          checked={pushOn}
+          disabled={saving || osLoading || !configured || permission === 'unsupported'}
+          onChange={(v) => void handlePushMasterToggle(v)}
+        />
+        <p className="flex items-start gap-2 border-t border-amber-200/60 px-4 py-3 text-xs leading-relaxed text-neutral-600">
+          <span
+            className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+              pushOn && hasPermission ? 'bg-green-500' : 'bg-red-500'
+            }`}
+          />
+          {statusHint}
         </p>
-        {!hasPermission && permission !== 'unsupported' ? (
-          <button
-            type="button"
-            className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mt-3`}
-            disabled={saving || osLoading}
-            onClick={() => void handleEnablePush()}
-          >
-            {UI.NOTIF_ENABLE}
-          </button>
-        ) : null}
       </section>
 
       <section className={`overflow-hidden ${BT.card}`}>
@@ -101,19 +134,19 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
           <ToggleRow
             label={UI.NOTIF_DEATH_ANNIVERSARY}
             checked={settings.notificationDeathAnniversaryEnabled}
-            disabled={saving}
+            disabled={saving || !pushOn}
             onChange={(v) => handleToggle('notificationDeathAnniversaryEnabled', v)}
           />
           <ToggleRow
             label={UI.NOTIF_EVENTS}
             checked={settings.notificationEventEnabled}
-            disabled={saving}
+            disabled={saving || !pushOn}
             onChange={(v) => handleToggle('notificationEventEnabled', v)}
           />
           <ToggleRow
             label={UI.NOTIF_POSTS}
             checked={settings.notificationPostEnabled}
-            disabled={saving}
+            disabled={saving || !pushOn}
             onChange={(v) => handleToggle('notificationPostEnabled', v)}
           />
         </div>

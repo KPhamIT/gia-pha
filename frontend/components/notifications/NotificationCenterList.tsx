@@ -28,7 +28,9 @@ export default function NotificationCenterList() {
   }
 
   return (
-    <ul className="space-y-3">
+    <>
+      <p className={`mb-4 text-xs leading-relaxed ${BT.mutedOnDark}`}>{UI.NOTIF_IN_APP_HINT}</p>
+      <ul className="space-y-3">
       {items.map((item) => (
         <li key={item.id}>
           <button
@@ -40,7 +42,18 @@ export default function NotificationCenterList() {
               }
             }}
           >
-            <p className="font-medium">🔔 {item.title}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-medium">🔔 {item.title}</p>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                  item.status === 'SENT'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
+                {item.status === 'SENT' ? UI.NOTIF_PUSH_SENT : UI.NOTIF_PUSH_FAILED}
+              </span>
+            </div>
             <p className={`mt-1 text-sm whitespace-pre-wrap ${BT.mutedOnLight}`}>{item.message}</p>
             {item.person ? (
               <p className={`mt-2 text-xs ${BT.mutedOnLight}`}>{item.person.fullName}</p>
@@ -49,5 +62,6 @@ export default function NotificationCenterList() {
         </li>
       ))}
     </ul>
+    </>
   );
 }

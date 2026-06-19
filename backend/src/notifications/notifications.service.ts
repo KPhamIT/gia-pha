@@ -69,7 +69,8 @@ export class NotificationsService {
 
   getSettings(user: User) {
     return {
-      notificationDeathAnniversaryEnabled: user.notificationDeathAnniversaryEnabled,
+      notificationDeathAnniversaryEnabled:
+        user.notificationDeathAnniversaryEnabled,
       notificationEventEnabled: user.notificationEventEnabled,
       notificationPostEnabled: user.notificationPostEnabled,
       onesignalSubscriptionId: user.onesignalSubscriptionId,
@@ -80,7 +81,8 @@ export class NotificationsService {
     const updated = await this.prisma.user.update({
       where: { id: user.id },
       data: {
-        notificationDeathAnniversaryEnabled: dto.notificationDeathAnniversaryEnabled,
+        notificationDeathAnniversaryEnabled:
+          dto.notificationDeathAnniversaryEnabled,
         notificationEventEnabled: dto.notificationEventEnabled,
         notificationPostEnabled: dto.notificationPostEnabled,
         onesignalSubscriptionId:
@@ -115,9 +117,7 @@ export class NotificationsService {
   }
 
   async getOrgStats(actor: User) {
-    const organizationId = isSystem(actor)
-      ? null
-      : adminOrganizationId(actor);
+    const organizationId = isSystem(actor) ? null : adminOrganizationId(actor);
 
     const where = organizationId != null ? { organizationId } : {};
 
@@ -174,7 +174,8 @@ export class NotificationsService {
             person.deathLunarDay!,
           ),
           daysUntil,
-          message: buildDeathAnniversaryMessage(person.fullName, daysUntil).body,
+          message: buildDeathAnniversaryMessage(person.fullName, daysUntil)
+            .body,
         };
       })
       .filter((item): item is NonNullable<typeof item> => item != null)
@@ -182,7 +183,9 @@ export class NotificationsService {
   }
 
   async getUpcomingCeremony(user: User, personId: number) {
-    const person = await this.prisma.person.findUnique({ where: { id: personId } });
+    const person = await this.prisma.person.findUnique({
+      where: { id: personId },
+    });
     if (!person) {
       throw new NotFoundException('Person not found');
     }
@@ -202,7 +205,10 @@ export class NotificationsService {
       fullName: person.fullName,
       deathLunarDay: person.deathLunarDay,
       deathLunarMonth: person.deathLunarMonth,
-      lunarDateLabel: formatLunarDeathDate(person.deathLunarMonth, person.deathLunarDay),
+      lunarDateLabel: formatLunarDeathDate(
+        person.deathLunarMonth,
+        person.deathLunarDay,
+      ),
       daysUntil,
     };
   }
@@ -245,6 +251,8 @@ export class NotificationsService {
         organization: { select: { id: true, name: true } },
       },
     });
+
+    console.log('persons', persons);
 
     let sentCount = 0;
 
@@ -298,7 +306,9 @@ export class NotificationsService {
             personId: person.id,
             title: message.title,
             message: message.body,
-            status: result.ok ? NotificationStatus.SENT : NotificationStatus.FAILED,
+            status: result.ok
+              ? NotificationStatus.SENT
+              : NotificationStatus.FAILED,
             sentAt: result.ok ? new Date() : null,
           },
         });
@@ -311,7 +321,8 @@ export class NotificationsService {
   }
 
   private buildCeremonyUrl(personId?: number): string | undefined {
-    const base = this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:3000';
+    const base =
+      this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:3000';
     if (personId == null) return `${base}/ceremonies/upcoming`;
     return `${base}/ceremonies/upcoming?personId=${personId}`;
   }

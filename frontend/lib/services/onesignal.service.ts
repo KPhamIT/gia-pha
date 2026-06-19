@@ -64,3 +64,11 @@ export async function optOutPush(): Promise<void> {
   const OneSignal = (await import('react-onesignal')).default;
   await OneSignal.User.PushSubscription.optOut();
 }
+
+export async function optInPush(): Promise<void> {
+  await initOneSignal();
+  if (!APP_ID) return;
+
+  const OneSignal = (await import('react-onesignal')).default;
+  await OneSignal.User.PushSubscription.optIn();
+}

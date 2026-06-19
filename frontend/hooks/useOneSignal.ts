@@ -8,6 +8,8 @@ import {
   initOneSignal,
   isOneSignalConfigured,
   isPushSubscribed,
+  optInPush,
+  optOutPush,
   requestPushPermission,
 } from '@/lib/services/onesignal.service';
 
@@ -63,7 +65,11 @@ export function useOneSignal() {
 
   const enableNotifications = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true }));
-    const granted = await requestPushPermission();
+    let granted = await requestPushPermission();
+    if (!granted && typeof window !== 'undefined' && Notification.permission === 'granted') {
+      await optInPush();
+      granted = true;
+    }
     const subscriptionId = granted ? await getSubscriptionId() : null;
 
     if (subscriptionId) {
@@ -75,6 +81,16 @@ export function useOneSignal() {
 
     await refresh();
     return { granted, subscriptionId };
+  }, [refresh]);
+
+  const disableNotifications = useCallback(async () => {
+    setState((prev) => ({ ...prev, loading: true }));
+    await optOutPush();
+    await api.notifications.updateSettings({
+      onesignalSubscriptionId: null,
+      notificationDeathAnniversaryEnabled: false,
+    });
+    await refresh();
   }, [refresh]);
 
   const syncSubscription = useCallback(async () => {
@@ -90,7 +106,9 @@ export function useOneSignal() {
     ...state,
     refresh,
     enableNotifications,
+    disableNotifications,
     syncSubscription,
     hasPermission: state.permission === 'granted',
+    pushActive: state.subscribed && state.permission === 'granted',
   };
 }
