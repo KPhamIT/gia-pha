@@ -1,12 +1,11 @@
-# Gửi push notification ngày giỗ.
-# TEST: mỗi 1 phút — đổi lại production: cron: '0 0 * * *' (07:00 VN)
+# Gửi push notification ngày giỗ — 07:00 Asia/Ho_Chi_Minh (00:00 UTC).
 # Cấu hình secrets: docs/cron-github-actions.md
 
 name: Death anniversary cron
 
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:

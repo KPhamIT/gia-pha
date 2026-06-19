@@ -44,6 +44,39 @@ openssl rand -hex 32
 
 Deploy lại backend sau khi đổi env.
 
+> **Quan trọng:** `CRON_SECRET` phải có trên **cả hai** nơi — GitHub Secrets **và** env backend production. Chỉ cấu hình GitHub mà quên backend → HTTP 401 `"CRON_SECRET is not configured"`.
+
+### Backend deploy trên Vercel
+
+NestJS trên Vercel chạy **serverless** — `@nestjs/schedule` **không** chạy được; dùng GitHub Actions + endpoint HTTP (đúng với setup hiện tại).
+
+1. [Vercel Dashboard](https://vercel.com/dashboard) → chọn **project backend** (khác project frontend nếu tách riêng).
+2. **Settings** → **Environment Variables**.
+3. Thêm (Production, và Preview nếu test trên preview URL):
+
+   | Name | Value |
+   |------|--------|
+   | `CRON_SECRET` | Cùng chuỗi với GitHub Secret `CRON_SECRET` |
+   | `ENABLE_INTERNAL_CRON` | `false` |
+   | `DATABASE_URL` | … |
+   | `ONESIGNAL_APP_ID` | … |
+   | `ONESIGNAL_REST_API_KEY` | … |
+   | `FRONTEND_URL` | URL frontend Vercel |
+   | `JWT_SECRET` | … |
+
+4. **Deployments** → deployment mới nhất → **⋯** → **Redeploy** (bắt buộc sau khi thêm env).
+5. GitHub Secret `API_URL` = URL gốc backend Vercel, ví dụ `https://gia-pha-api.vercel.app` (không `/` cuối, không path `/api` trừ khi bạn cấu hình rewrite riêng).
+
+Test:
+
+```bash
+curl -sS -X POST \
+  -H "Authorization: Bearer YOUR_CRON_SECRET" \
+  "https://YOUR-BACKEND.vercel.app/notifications/cron/death-anniversary"
+```
+
+Phải trả `200` và `{"sentCount":...}` — nếu vẫn `"CRON_SECRET is not configured"` → env chưa redeploy hoặc nhầm project Vercel.
+
 ## Bước 2 — GitHub repository secrets
 
 1. Mở repo trên GitHub → **Settings** → **Secrets and variables** → **Actions**.
@@ -83,8 +116,6 @@ Kết quả: `{"sentCount": number}`.
 
 ## Lịch chạy
 
-### Production (sau khi test xong)
-
 | Múi giờ | Giờ chạy |
 |---------|----------|
 | UTC | 00:00 mỗi ngày |
@@ -97,22 +128,9 @@ schedule:
   - cron: '0 0 * * *'
 ```
 
-### Chế độ test (hiện tại trong repo)
-
-Đang cấu hình **mỗi 1 phút** để test:
-
-```yaml
-schedule:
-  - cron: '* * * * *'
-```
-
-Push lên GitHub → tab **Actions** sẽ thấy run mới khoảng mỗi phút (GitHub có thể trễ 1–2 phút).
-
-**Nhớ đổi lại `0 0 * * *` trước khi lên production** — tránh spam notification và tốn quota Actions.
-
 Test nhanh không cần đợi schedule: **Actions → Death anniversary cron → Run workflow**.
 
-Muốn đổi giờ production: ví dụ 08:00 VN = `0 1 * * *` UTC.
+Muốn đổi giờ: ví dụ 08:00 VN = `0 1 * * *` UTC.
 
 ## Frontend (Vercel)
 
@@ -133,7 +151,8 @@ Route tùy chọn `frontend/app/api/cron/death-anniversary/route.ts` chỉ để
 |-------------|------------|
 | Workflow không xuất hiện | Push file `.github/workflows/...` lên default branch; bật Actions trong repo |
 | `Missing GitHub secrets` | Thêm `API_URL` và `CRON_SECRET` trong Settings → Secrets |
-| HTTP 401 | `CRON_SECRET` GitHub ≠ backend; redeploy backend |
+| HTTP 401 + `"CRON_SECRET is not configured"` | **Backend** chưa set env `CRON_SECRET` — thêm trên Railway/Render/VPS rồi **redeploy** (GitHub secret alone không đủ) |
+| HTTP 401 + `"Invalid cron authorization"` | `CRON_SECRET` backend ≠ GitHub Secrets — sửa cho khớp, redeploy backend |
 | HTTP 502 / connection refused | `API_URL` sai hoặc backend không public |
 | `sentCount: 0` mãi | Bình thường nếu không có giỗ trong 0–3 ngày tới; kiểm tra `deathLunarDay/Month`, user bật notification + subscription OneSignal |
 | Gửi trùng 2 lần/ngày | Đặt `ENABLE_INTERNAL_CRON=false` trên production |
