@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 
 /** Keeps CSS variables in sync with the visual viewport (iOS keyboard / pinch zoom). */
 export function syncOverlayViewport(): void {
@@ -45,6 +45,36 @@ export function useOverlayViewport(): void {
       vv?.removeEventListener('scroll', syncOverlayViewport);
       window.removeEventListener('resize', syncOverlayViewport);
       window.removeEventListener('orientationchange', syncOverlayViewport);
+    };
+  }, []);
+}
+
+/** Resync overlay sizing after iOS bfcache / tab restore so fixed layers receive touches again. */
+export function useOverlayPageRecovery(onRestore?: () => void): void {
+  const handleRestore = useEffectEvent(() => {
+    onRestore?.();
+  });
+
+  useEffect(() => {
+    const resyncViewport = () => {
+      syncOverlayViewport();
+      dismissOverlayFocus();
+    };
+
+    const onPageShow = (event: PageTransitionEvent) => {
+      resyncViewport();
+      if (event.persisted) handleRestore();
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') resyncViewport();
+    };
+
+    window.addEventListener('pageshow', onPageShow);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 }

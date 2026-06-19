@@ -39,6 +39,7 @@ import { UI } from '@/lib/constants/ui-strings';
 import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
 import type { FamilyTreeGraphApi } from '@/hooks/useFamilyTreeGraph';
 import NotificationOptInBanner from '@/components/notifications/NotificationOptInBanner';
+import { useOverlayPageRecovery, syncOverlayViewport } from '@/hooks/useOverlayViewport';
 
 const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/FamilyTreeGraph'), {
   ssr: false,
@@ -55,6 +56,7 @@ const TreeExportView = dynamic(() => import('@/components/family-tree/export/Tre
   ssr: false,
 });
 
+const BOOK_TOUCH_RECOVERY_KEY = 'gia-pha:book-touch-recover';
 type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
 type MainView = 'book' | 'tree';
 
@@ -105,6 +107,30 @@ export default function FamilyTreePage() {
   const [centerTreeKey, setCenterTreeKey] = useState(0);
   const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
   const [maxGeneration, setMaxGeneration] = useState<number | 'all'>(4);
+  const [bookViewerKey, setBookViewerKey] = useState(0);
+
+  const resetTransientOverlays = useCallback(() => {
+    setShowSettings(false);
+    setShowSearch(false);
+    setShowEvents(false);
+    setShowExport(false);
+    setExportPositionOverrides(undefined);
+    setBookViewerKey((key) => key + 1);
+  }, []);
+
+  useOverlayPageRecovery(resetTransientOverlays);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.sessionStorage.getItem(BOOK_TOUCH_RECOVERY_KEY) !== '1') return;
+    window.sessionStorage.removeItem(BOOK_TOUCH_RECOVERY_KEY);
+    resetTransientOverlays();
+    syncOverlayViewport();
+  }, [resetTransientOverlays]);
+
+  useEffect(() => {
+    void refreshAuth();
+  }, [refreshAuth]);
 
   const { branch: userBranch, setBranch: setUserBranch, hydrated: branchHydrated } = useUserBranch();
 
@@ -133,11 +159,19 @@ export default function FamilyTreePage() {
 
   const handleNodeClick = useCallback((_personId: number, person: Person) => openPersonDetail(person), [openPersonDetail]);
   const handleOpenSettings = useCallback(() => setShowSettings(true), []);
-  const handleOpenAccount = useCallback(() => router.push('/account'), [router]);
+  const handleOpenAccount = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(BOOK_TOUCH_RECOVERY_KEY, '1');
+    }
+    router.push('/account');
+  }, [router]);
   const handleOpenUsers = useCallback(() => router.push('/org-users'), [router]);
   const handleOpenNotifications = useCallback(() => router.push('/notifications'), [router]);
   const handleOpenSearch = useCallback(() => setShowSearch(true), []);
-  const handleOpenBook = useCallback(() => setMainView('book'), []);
+  const handleOpenBook = useCallback(() => {
+    setShowSettings(false);
+    setMainView('book');
+  }, []);
   const handleCenterTree = useCallback(() => setCenterTreeKey((k) => k + 1), []);
   const handleCloseSettings = useCallback(() => setShowSettings(false), []);
   const handleCloseSearch = useCallback(() => setShowSearch(false), []);
@@ -184,10 +218,6 @@ export default function FamilyTreePage() {
     },
     [createChild, reloadDetail, requireFeature],
   );
-
-  useEffect(() => {
-    void refreshAuth();
-  }, [refreshAuth]);
 
   const closeAllSheets = useCallback(() => {
     setSelectedPersonId(null);
@@ -284,12 +314,14 @@ export default function FamilyTreePage() {
             <IconRoundButton icon="list" variant="outline" label={UI.BTN_SYSTEM} tabIndex={-1} aria-hidden />
           </a>
         ) : null}
-        <IconRoundButton
-          icon="settings"
-          variant="outline"
-          label={UI.SETTINGS_TITLE}
-          onClick={handleOpenSettings}
-        />
+        {mainView === 'tree' ? (
+          <IconRoundButton
+            icon="settings"
+            variant="outline"
+            label={UI.SETTINGS_TITLE}
+            onClick={handleOpenSettings}
+          />
+        ) : null}
       </div>
 
       {mainView === 'tree' ? (
@@ -325,10 +357,10 @@ export default function FamilyTreePage() {
           <FamilyTreeStatus theme={theme} type="loading" />
         )
       ) : (
-        <GenealogyBookViewer persons={persons} onClose={handleCloseBook} />
+        <GenealogyBookViewer key={bookViewerKey} persons={persons} onClose={handleCloseBook} />
       )}
 
-      {treeData ? (
+      {treeData && mainView === 'tree' ? (
         <TreeFab
           canUseFeature={canUseFeature}
           canManageCeremonyTemplates={canMutate}

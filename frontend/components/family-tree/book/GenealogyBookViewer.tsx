@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import OverlayPortal from '@/components/ui/OverlayPortal';
-import { useOverlayViewport } from '@/hooks/useOverlayViewport';
+import { useOverlayPageRecovery, useOverlayViewport } from '@/hooks/useOverlayViewport';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import type { Person } from '@/components/types/family-tree-types';
 import BookPersonSearch from './BookPersonSearch';
@@ -25,6 +25,13 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
   const [showPages, setShowPages] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   useOverlayViewport();
+  useOverlayPageRecovery(
+    useCallback(() => {
+      setShowStyle(false);
+      setShowPages(false);
+      setShowSearch(false);
+    }, []),
+  );
   const book = useGenealogyBook(persons);
   const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef, ctx } = book;
 
@@ -47,7 +54,7 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
     <OverlayPortal>
       <div
         ref={viewerRootRef}
-        className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} fixed inset-0 z-50 flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
+        className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} overlay-viewport z-50 flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
       >
       <BookViewerHeader
         pageIndex={book.pageIndex}

@@ -58,7 +58,7 @@ export default function IconRoundButton({
   const hasLabel = Boolean(label?.trim());
   const isDense = size === 'dense' && hasLabel;
   const sizeClass = isDense
-    ? 'h-8 rounded-xl px-2 py-1 text-xs'
+    ? 'min-h-11 h-11 rounded-xl px-3 py-2 text-xs md:min-h-10 md:h-10'
     : hasLabel && !compact
       ? BT.btnSm
       : hasLabel
@@ -70,8 +70,8 @@ export default function IconRoundButton({
       : `${LABELED_VARIANT[variant]} ${sizeClass}`.trim()
     : (ICON_ONLY_VARIANT[variant as keyof typeof ICON_ONLY_VARIANT] ?? ICON_ONLY_VARIANT.gold);
   const alignClass =
-    hasLabel && labeledAlign === 'start' ? `justify-start ${isDense ? 'gap-1.5' : 'gap-2'}` : '';
-  const iconSlotClass = isDense ? 'h-7 w-7' : 'h-9 w-9';
+    hasLabel && labeledAlign === 'start' ? `justify-start ${isDense ? 'gap-2' : 'gap-2'}` : '';
+  const iconSlotClass = isDense ? 'h-8 w-8 shrink-0' : 'h-9 w-9 shrink-0';
 
   const iconNode = loading ? (
     <LoadingSpinner size={iconSize} />

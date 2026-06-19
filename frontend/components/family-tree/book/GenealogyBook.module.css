@@ -273,6 +273,12 @@
   /* root container for book viewer + print scope */
 }
 
+.bookHeader {
+  position: relative;
+  z-index: 60;
+  isolation: isolate;
+}
+
 .printPreparing {
   /* toggled before window.print() for layout measurement */
 }
@@ -287,6 +293,20 @@
 
 .stageArea {
   /* interactive flip stage — collapsed when printing all pages */
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* iOS Safari: 3D page-flip layers can steal touches from the header above. */
+.stageArea .scene {
+  pointer-events: none;
+}
+
+.stageArea .scene .page,
+.stageArea .scene button {
+  pointer-events: auto;
 }
 
 .printSingleStack {

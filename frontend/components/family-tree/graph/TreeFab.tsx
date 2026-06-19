@@ -130,7 +130,7 @@ export default function TreeFab({
               label={action.label}
               variant="outline"
               size="dense"
-              iconSize={15}
+              iconSize={18}
               labeledAlign="start"
               className={`w-full shadow-lg ${BT.card}`}
               onClick={() => handleAction(action)}
