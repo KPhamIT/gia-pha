@@ -39,7 +39,7 @@ export default function FacebookLoginButton() {
       const result = await api.auth.loginWithFacebook(accessToken);
       setToken(result.accessToken);
       await refreshAuth();
-      router.replace('/family-tree');
+      router.replace('/book');
     } catch (err) {
       const message = getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT);
       setError(message.includes('facebook_login_cancelled') ? UI.LOGIN_FACEBOOK_CANCELLED : message);

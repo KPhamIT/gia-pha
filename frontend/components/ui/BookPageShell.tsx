@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Icon from '@/components/icons/Icon';
+import AppNavFab from '@/components/navigation/AppNavFab';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
@@ -13,15 +14,18 @@ type BookPageShellProps = {
   backHref?: string;
   children: ReactNode;
   tabs?: ReactNode;
+  /** Ẩn menu FAB góc trái dưới (mặc định hiện). */
+  hideNavFab?: boolean;
 };
 
 /** Full-page admin shell — cùng palette sổ gia phả. */
 export default function BookPageShell({
   title,
   subtitle,
-  backHref = '/family-tree',
+  backHref = '/book',
   children,
   tabs,
+  hideNavFab = false,
 }: BookPageShellProps) {
   return (
     <div className={`flex h-dvh min-h-0 flex-col overflow-hidden ${BT.shell} ${BT.shellText}`}>
@@ -43,6 +47,8 @@ export default function BookPageShell({
         {tabs ? <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div> : null}
         <div className={BT.pagePad}>{children}</div>
       </main>
+
+      {hideNavFab ? null : <AppNavFab />}
     </div>
   );
 }

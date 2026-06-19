@@ -39,7 +39,7 @@ export default function UpcomingCeremoniesPageContent() {
     <BookPageShell
       title={showCeremony ? UI.CEREMONY_TITLE : UI.CEREMONIES_UPCOMING_TITLE}
       subtitle={showCeremony ? undefined : UI.CEREMONIES_UPCOMING_SUBTITLE}
-      backHref={showCeremony ? '/ceremonies/upcoming' : '/family-tree'}
+      backHref={showCeremony ? '/ceremonies/upcoming' : '/book'}
     >
       {showCeremony ? (
         <CeremonyViewer personId={personId} />

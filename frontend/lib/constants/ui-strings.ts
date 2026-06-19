@@ -258,6 +258,7 @@ export const UI = {
   SEARCH_PERSON: 'Tìm kiếm',
   CENTER_TREE: 'Căn giữa cây',
   VIEW_GENEALOGY_BOOK: 'Sổ gia phả',
+  OPEN_FAMILY_TREE: 'Cây gia phả',
   BOOK_PAGE_OF: (current: number, total: number) => `Trang ${current} / ${total}`,
   BOOK_BRANCH: 'Nhánh',
   BOOK_GENERATION: 'Đời',
@@ -334,6 +335,7 @@ export const UI = {
   // Events
   EVENTS_FAB: 'Sự kiện',
   EVENTS_TITLE: 'Quản lý sự kiện',
+  EVENTS_SUBTITLE: 'Đóng góp, công đức và thông tin sự kiện dòng họ',
   EVENTS_LOAD_ERROR: 'Không tải được danh sách sự kiện.',
   EVENTS_EMPTY: 'Chưa có sự kiện nào. Nhấn + để thêm.',
   EVENT_ADD: 'Thêm sự kiện',

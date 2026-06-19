@@ -36,7 +36,7 @@ function LoginContent() {
         const result = await api.auth.login(username.trim(), password);
         setToken(result.accessToken);
         await refreshAuth();
-        router.replace('/family-tree');
+        router.replace('/book');
       } catch (err) {
         setError(getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT));
       } finally {

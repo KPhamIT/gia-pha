@@ -18,7 +18,7 @@ export function useSystemAccess() {
   useEffect(() => {
     if (!loaded) return;
     if (!isSystem) {
-      router.replace('/family-tree');
+      router.replace('/book');
     }
   }, [isSystem, loaded, router]);
 

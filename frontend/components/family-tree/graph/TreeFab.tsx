@@ -5,43 +5,15 @@ import IconRoundButton from '@/components/ui/IconRoundButton';
 import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import type { StandardFeatureKey } from '@/lib/auth/standard-features';
-
-import type { IconName } from '@/components/icons/icon-paths';
-
-type FabAction =
-  | 'add'
-  | 'search'
-  | 'center'
-  | 'book'
-  | 'events'
-  | 'export'
-  | 'ceremonyTemplates'
-  | 'users'
-  | 'notifications'
-  | 'account';
-type FeatureFabAction = Exclude<FabAction, 'ceremonyTemplates' | 'users' | 'notifications' | 'account'>;
-
-type FabItem = { id: FabAction; label: string; icon: IconName };
-
-const FEATURE_FAB_ITEMS: { id: FeatureFabAction; label: string; icon: IconName }[] = [
-  { id: 'add', label: UI.ADD_PERSON, icon: 'plus' },
-  { id: 'search', label: UI.SEARCH_PERSON, icon: 'search' },
-  { id: 'book', label: UI.VIEW_GENEALOGY_BOOK, icon: 'book' },
-  { id: 'events', label: UI.EVENTS_FAB, icon: 'calendar' },
-  { id: 'export', label: UI.BTN_EXPORT, icon: 'image' },
-  { id: 'center', label: UI.BTN_CENTER, icon: 'center' },
-];
-
-const ACTION_FEATURES: Record<FeatureFabAction, StandardFeatureKey> = {
-  add: 'editTree',
-  search: 'search',
-  center: 'tree',
-  book: 'book',
-  events: 'events',
-  export: 'export',
-};
+import {
+  buildFabMenuItems,
+  type FabAction,
+  type FabPageContext,
+} from '@/lib/navigation/fab-actions';
 
 type TreeFabProps = {
+  context: FabPageContext;
+  pathname: string;
   canUseFeature: (key: StandardFeatureKey) => boolean;
   canManageCeremonyTemplates?: boolean;
   isAdmin?: boolean;
@@ -49,6 +21,7 @@ type TreeFabProps = {
   onSearch: () => void;
   onCenterTree: () => void;
   onOpenBook: () => void;
+  onOpenTree: () => void;
   onOpenEvents: () => void;
   onOpenExport: () => void;
   onOpenCeremonyTemplates?: () => void;
@@ -58,6 +31,8 @@ type TreeFabProps = {
 };
 
 export default function TreeFab({
+  context,
+  pathname,
   canUseFeature,
   canManageCeremonyTemplates = false,
   isAdmin = false,
@@ -65,6 +40,7 @@ export default function TreeFab({
   onSearch,
   onCenterTree,
   onOpenBook,
+  onOpenTree,
   onOpenEvents,
   onOpenExport,
   onOpenCeremonyTemplates,
@@ -79,6 +55,7 @@ export default function TreeFab({
     search: onSearch,
     center: onCenterTree,
     book: onOpenBook,
+    tree: onOpenTree,
     events: onOpenEvents,
     export: onOpenExport,
     ceremonyTemplates: () => onOpenCeremonyTemplates?.(),
@@ -87,30 +64,17 @@ export default function TreeFab({
     account: onOpenAccount,
   };
 
-  const actions = useMemo(() => {
-    const base: FabItem[] = FEATURE_FAB_ITEMS.filter((action) =>
-      canUseFeature(ACTION_FEATURES[action.id]),
-    );
-
-    if (canManageCeremonyTemplates && onOpenCeremonyTemplates) {
-      base.push({
-        id: 'ceremonyTemplates',
-        label: UI.CEREMONY_TEMPLATES_OPEN,
-        icon: 'print',
-      });
-    }
-
-    if (isAdmin && onOpenUsers) {
-      base.push({ id: 'users', label: UI.BTN_USERS, icon: 'userPlus' });
-    }
-
-    base.push(
-      { id: 'notifications', label: UI.NOTIF_OPEN_CENTER, icon: 'calendar' },
-      { id: 'account', label: UI.ACCOUNT_OPEN, icon: 'userPlus' },
-    );
-
-    return base;
-  }, [canManageCeremonyTemplates, canUseFeature, isAdmin, onOpenCeremonyTemplates, onOpenUsers]);
+  const actions = useMemo(
+    () =>
+      buildFabMenuItems({
+        context,
+        pathname,
+        canUseFeature,
+        canManageCeremonyTemplates,
+        isAdmin,
+      }),
+    [canManageCeremonyTemplates, canUseFeature, context, isAdmin, pathname],
+  );
 
   if (actions.length === 0) return null;
 

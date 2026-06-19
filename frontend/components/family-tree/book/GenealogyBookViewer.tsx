@@ -16,11 +16,21 @@ import styles from './GenealogyBook.module.css';
 
 type GenealogyBookViewerProps = {
   persons: Person[];
-  onClose: () => void;
+  /** Chế độ trang riêng `/book` — không dùng overlay portal. */
+  standalone?: boolean;
+  /** Đóng overlay (legacy). */
+  onClose?: () => void;
+  /** Mở cây gia phả — dùng khi `standalone`. */
+  onOpenTree?: () => void;
 };
 
-export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookViewerProps) {
-  const { requireFeature, canUseFeature } = useFeatureAccess();
+export default function GenealogyBookViewer({
+  persons,
+  standalone = false,
+  onClose,
+  onOpenTree,
+}: GenealogyBookViewerProps) {
+  const { requireFeature } = useFeatureAccess();
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -48,24 +58,33 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
     [ctx, guardedUpdateSettings],
   );
 
-  if (!hydrated) return <BookViewerFallback kind="loading" onClose={onClose} />;
+  const handleHeaderBack = standalone ? onOpenTree : onClose;
 
-  return (
-    <OverlayPortal>
-      <div
-        ref={viewerRootRef}
-        className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} overlay-viewport z-50 flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
-      >
+  if (!hydrated) {
+    return (
+      <BookViewerFallback
+        kind="loading"
+        standalone={standalone}
+        onClose={handleHeaderBack}
+      />
+    );
+  }
+
+  const viewer = (
+    <div
+      ref={viewerRootRef}
+      className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} ${standalone ? '' : 'overlay-viewport z-50'} flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
+    >
       <BookViewerHeader
         pageIndex={book.pageIndex}
         totalLeaves={book.totalLeaves}
-        onClose={onClose}
+        standalone={standalone}
+        onClose={handleHeaderBack}
         onToggleStyle={() => setShowStyle((v) => !v)}
         onOpenSearch={() => setShowSearch(true)}
         onOpenPages={() => setShowPages(true)}
         onPrint={book.handlePrint}
         onPrintAll={() => void book.handlePrintAll()}
-        canEditBook={canUseFeature('editBook')}
       />
 
       {showStyle ? (
@@ -102,7 +121,10 @@ export default function GenealogyBookViewer({ persons, onClose }: GenealogyBookV
         onTouchStart={book.handleTouchStart}
         onTouchEnd={book.handleTouchEnd}
       />
-      </div>
-    </OverlayPortal>
+    </div>
   );
+
+  if (standalone) return viewer;
+
+  return <OverlayPortal>{viewer}</OverlayPortal>;
 }

@@ -25,7 +25,7 @@ export default function AuthCallbackPage() {
         setToken(token);
         window.history.replaceState(null, '', window.location.pathname);
         await refreshAuth();
-        router.replace('/family-tree');
+        router.replace('/book');
         return;
       }
 

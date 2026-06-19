@@ -17,7 +17,7 @@ export function useOrgAdminAccess() {
   useEffect(() => {
     if (!loaded) return;
     if (!isAdmin) {
-      router.replace('/family-tree');
+      router.replace('/book');
     }
   }, [isAdmin, loaded, router]);
 

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
 import AuthRequiredSheet from '@/components/auth/AuthRequiredSheet';
 import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { useAuthStore } from '@/store/authStore';
@@ -14,12 +13,10 @@ import AddChildSheet from '@/components/family-tree/person/AddChildSheet';
 import AddPersonSheet from '@/components/family-tree/person/AddPersonSheet';
 import DeletePersonSheet from '@/components/family-tree/person/DeletePersonSheet';
 import SearchSheet from '@/components/family-tree/person/SearchSheet';
-import TreeFab from '@/components/family-tree/graph/TreeFab';
-import GenealogyBookViewer from '@/components/family-tree/book/GenealogyBookViewer';
+import AppNavFab from '@/components/navigation/AppNavFab';
 import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
 import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
 import IconRoundButton from '@/components/ui/IconRoundButton';
-import { BT } from '@/lib/constants/ui-theme';
 import { useFamilyTree } from '@/hooks/useFamilyTree';
 import { useUserBranch } from '@/hooks/useUserBranch';
 import { useLayoutConfig } from '@/hooks/useLayoutConfig';
@@ -39,7 +36,6 @@ import { UI } from '@/lib/constants/ui-strings';
 import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
 import type { FamilyTreeGraphApi } from '@/hooks/useFamilyTreeGraph';
 import NotificationOptInBanner from '@/components/notifications/NotificationOptInBanner';
-import { useOverlayPageRecovery, syncOverlayViewport } from '@/hooks/useOverlayViewport';
 
 const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/FamilyTreeGraph'), {
   ssr: false,
@@ -48,21 +44,14 @@ const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/Fam
   ),
 });
 
-const EventsManager = dynamic(() => import('@/components/family-tree/events/EventsManager'), {
-  ssr: false,
-});
-
 const TreeExportView = dynamic(() => import('@/components/family-tree/export/TreeExportView'), {
   ssr: false,
 });
 
-const BOOK_TOUCH_RECOVERY_KEY = 'gia-pha:book-touch-recover';
 type ViewMode = 'detail' | 'edit' | 'addChild' | 'addPerson' | 'deleteConfirm';
-type MainView = 'book' | 'tree';
 
 export default function FamilyTreePage() {
-  const router = useRouter();
-  const { requireFeature, canUseFeature, canMutate, requireAdmin, isAdmin, isSystem } = useFeatureAccess();
+  const { requireFeature, canUseFeature, isSystem } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const {
     treeData,
@@ -98,8 +87,6 @@ export default function FamilyTreePage() {
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [mainView, setMainView] = useState<MainView>('book');
-  const [showEvents, setShowEvents] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [exportPositionOverrides, setExportPositionOverrides] = useState<NodePositionOverrides | undefined>();
   const graphApiRef = useRef<FamilyTreeGraphApi | null>(null);
@@ -107,26 +94,6 @@ export default function FamilyTreePage() {
   const [centerTreeKey, setCenterTreeKey] = useState(0);
   const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
   const [maxGeneration, setMaxGeneration] = useState<number | 'all'>(4);
-  const [bookViewerKey, setBookViewerKey] = useState(0);
-
-  const resetTransientOverlays = useCallback(() => {
-    setShowSettings(false);
-    setShowSearch(false);
-    setShowEvents(false);
-    setShowExport(false);
-    setExportPositionOverrides(undefined);
-    setBookViewerKey((key) => key + 1);
-  }, []);
-
-  useOverlayPageRecovery(resetTransientOverlays);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (window.sessionStorage.getItem(BOOK_TOUCH_RECOVERY_KEY) !== '1') return;
-    window.sessionStorage.removeItem(BOOK_TOUCH_RECOVERY_KEY);
-    resetTransientOverlays();
-    syncOverlayViewport();
-  }, [resetTransientOverlays]);
 
   useEffect(() => {
     void refreshAuth();
@@ -159,25 +126,10 @@ export default function FamilyTreePage() {
 
   const handleNodeClick = useCallback((_personId: number, person: Person) => openPersonDetail(person), [openPersonDetail]);
   const handleOpenSettings = useCallback(() => setShowSettings(true), []);
-  const handleOpenAccount = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(BOOK_TOUCH_RECOVERY_KEY, '1');
-    }
-    router.push('/account');
-  }, [router]);
-  const handleOpenUsers = useCallback(() => router.push('/org-users'), [router]);
-  const handleOpenNotifications = useCallback(() => router.push('/notifications'), [router]);
   const handleOpenSearch = useCallback(() => setShowSearch(true), []);
-  const handleOpenBook = useCallback(() => {
-    setShowSettings(false);
-    setMainView('book');
-  }, []);
   const handleCenterTree = useCallback(() => setCenterTreeKey((k) => k + 1), []);
   const handleCloseSettings = useCallback(() => setShowSettings(false), []);
   const handleCloseSearch = useCallback(() => setShowSearch(false), []);
-  const handleCloseBook = useCallback(() => setMainView('tree'), []);
-  const handleOpenEvents = useCallback(() => setShowEvents(true), []);
-  const handleCloseEvents = useCallback(() => setShowEvents(false), []);
   const handleOpenExport = useCallback(() => {
     const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
     setExportPositionOverrides(Object.keys(moved).length > 0 ? moved : undefined);
@@ -187,10 +139,6 @@ export default function FamilyTreePage() {
     setShowExport(false);
     setExportPositionOverrides(undefined);
   }, []);
-  const handleOpenCeremonyTemplates = useCallback(() => {
-    if (!requireAdmin()) return;
-    router.push('/ceremonies/templates');
-  }, [requireAdmin, router]);
   const handleOpenAddPerson = useCallback(() => setViewMode('addPerson'), []);
   const handleCloseAddPerson = useCallback(() => setViewMode(null), []);
   const handleOpenEdit = useCallback(() => setViewMode('edit'), []);
@@ -285,9 +233,8 @@ export default function FamilyTreePage() {
     [treeData, effectiveBranch, maxGeneration],
   );
 
-  const persons = treeData?.persons ?? [];
 
-  if (loading && mainView === 'tree') {
+  if (loading && !treeData) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
 
@@ -314,67 +261,52 @@ export default function FamilyTreePage() {
             <IconRoundButton icon="list" variant="outline" label={UI.BTN_SYSTEM} tabIndex={-1} aria-hidden />
           </a>
         ) : null}
-        {mainView === 'tree' ? (
-          <IconRoundButton
-            icon="settings"
-            variant="outline"
-            label={UI.SETTINGS_TITLE}
-            onClick={handleOpenSettings}
-          />
-        ) : null}
+        <IconRoundButton
+          icon="settings"
+          variant="outline"
+          label={UI.SETTINGS_TITLE}
+          onClick={handleOpenSettings}
+        />
       </div>
 
-      {mainView === 'tree' ? (
-        <TreeFilters
-          branch={effectiveBranch}
-          maxGeneration={maxGeneration}
-          onBranchChange={setFilterBranch}
-          onMaxGenerationChange={setMaxGeneration}
-        />
-      ) : null}
+      <TreeFilters
+        branch={effectiveBranch}
+        maxGeneration={maxGeneration}
+        onBranchChange={setFilterBranch}
+        onMaxGenerationChange={setMaxGeneration}
+      />
 
       <NotificationOptInBanner />
 
-      {mainView === 'tree' ? (
-        treeData ? (
-          <div className="h-dvh overflow-hidden">
-            <FamilyTreeGraph
-              treeData={filteredTreeData ?? treeData}
-              layoutConfig={layoutConfig}
-              graphApiRef={graphApiRef}
-              selectedNodeId={selectedPersonId}
-              focusNodeId={focusNodeId}
-              centerTreeKey={centerTreeKey}
-              onNodeClick={handleNodeClick}
-              onPersonAdded={addPerson}
-              onRelationshipAdded={addRelationship}
-              onRelationshipRemoved={removeRelationship}
-              assertCanMutate={() => requireFeature('editTree')}
-              theme={theme}
-            />
-          </div>
-        ) : (
-          <FamilyTreeStatus theme={theme} type="loading" />
-        )
+      {treeData ? (
+        <div className="h-dvh overflow-hidden">
+          <FamilyTreeGraph
+            treeData={filteredTreeData ?? treeData}
+            layoutConfig={layoutConfig}
+            graphApiRef={graphApiRef}
+            selectedNodeId={selectedPersonId}
+            focusNodeId={focusNodeId}
+            centerTreeKey={centerTreeKey}
+            onNodeClick={handleNodeClick}
+            onPersonAdded={addPerson}
+            onRelationshipAdded={addRelationship}
+            onRelationshipRemoved={removeRelationship}
+            assertCanMutate={() => requireFeature('editTree')}
+            theme={theme}
+          />
+        </div>
       ) : (
-        <GenealogyBookViewer key={bookViewerKey} persons={persons} onClose={handleCloseBook} />
+        <FamilyTreeStatus theme={theme} type="loading" />
       )}
 
-      {treeData && mainView === 'tree' ? (
-        <TreeFab
-          canUseFeature={canUseFeature}
-          canManageCeremonyTemplates={canMutate}
-          isAdmin={isAdmin}
-          onAddPerson={handleOpenAddPerson}
-          onSearch={handleOpenSearch}
-          onOpenBook={handleOpenBook}
-          onOpenEvents={handleOpenEvents}
-          onOpenExport={handleOpenExport}
-          onOpenCeremonyTemplates={handleOpenCeremonyTemplates}
-          onOpenUsers={handleOpenUsers}
-          onOpenNotifications={handleOpenNotifications}
-          onOpenAccount={handleOpenAccount}
-          onCenterTree={handleCenterTree}
+      {treeData ? (
+        <AppNavFab
+          treeActions={{
+            onAddPerson: handleOpenAddPerson,
+            onSearch: handleOpenSearch,
+            onCenterTree: handleCenterTree,
+            onOpenExport: handleOpenExport,
+          }}
         />
       ) : null}
 
@@ -392,15 +324,7 @@ export default function FamilyTreePage() {
         />
       ) : null}
 
-      {mainView === 'tree' && showEvents && treeData ? (
-        <EventsManager
-          persons={treeData.persons}
-          relationships={treeData.relationships}
-          onClose={handleCloseEvents}
-        />
-      ) : null}
-
-      {mainView === 'tree' && showExport && (filteredTreeData ?? treeData) ? (
+      {showExport && (filteredTreeData ?? treeData) ? (
         <TreeExportView
           treeData={(filteredTreeData ?? treeData)!}
           layoutConfig={layoutConfig}

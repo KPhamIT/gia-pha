@@ -21,7 +21,7 @@ export function useAuth() {
     const accessToken = await requestFacebookAccessToken();
     const result = await api.auth.loginWithFacebook(accessToken);
     setToken(result.accessToken);
-    window.location.href = '/family-tree';
+    window.location.href = '/book';
   }, []);
 
   const logout = useCallback(() => clearSession(), []);
