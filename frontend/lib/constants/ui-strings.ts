@@ -484,6 +484,15 @@ export const UI = {
   CEREMONIES_VIEW: 'Xem bài cúng',
   CEREMONY_TITLE: 'Bài cúng',
   CEREMONY_PRINT: 'In trực tiếp',
+  CEREMONY_SHARE: 'Chia sẻ',
+  CEREMONY_SHARE_MESSAGE: (fullName: string) =>
+    `Bài cúng ngày giỗ cụ ${fullName}. Mở link để xem và in — không cần đăng nhập.`,
+  CEREMONY_SHARE_SUCCESS: 'Đã mở chia sẻ',
+  CEREMONY_SHARE_COPIED: 'Đã copy link bài cúng',
+  CEREMONY_SHARE_FAILED: 'Không thể chia sẻ link',
+  CEREMONY_SHARE_HINT:
+    'Gửi link cho người có máy in — họ mở trên điện thoại hoặc máy tính rồi bấm In trực tiếp, không cần đăng nhập.',
+  CEREMONY_PUBLIC_SUBTITLE: 'Xem và in bài cúng — không cần đăng nhập',
   CEREMONY_LOADING: 'Đang tải bài cúng...',
   CEREMONY_ERR: 'Không thể tải bài cúng',
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import ShareCeremonyActions from '@/components/ceremonies/ShareCeremonyActions';
 import { api } from '@/lib/api';
 import type { UpcomingCeremonyItem } from '@/lib/api/modules/notifications';
 import { UI } from '@/lib/constants/ui-strings';
@@ -47,12 +48,15 @@ export default function UpcomingCeremoniesList({ highlightPersonId }: UpcomingCe
                 <p className={`text-sm ${BT.mutedOnLight}`}>{item.lunarDateLabel}</p>
                 <p className={`text-sm ${BT.gold}`}>{UI.CEREMONIES_DAYS_UNTIL(item.daysUntil)}</p>
               </div>
-              <Link
-                href={`/ceremonies/upcoming?personId=${item.personId}&view=ceremony`}
-                className={viewCeremonyBtnClass}
-              >
-                {UI.CEREMONIES_VIEW}
-              </Link>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/ceremonies/upcoming?personId=${item.personId}&view=ceremony`}
+                  className={viewCeremonyBtnClass}
+                >
+                  {UI.CEREMONIES_VIEW}
+                </Link>
+                <ShareCeremonyActions personId={item.personId} fullName={item.fullName} compact />
+              </div>
             </div>
           </li>
         );

@@ -30,6 +30,8 @@ export const API_ROUTES = {
   NOTIFICATIONS_UPCOMING: '/notifications/upcoming',
   NOTIFICATIONS_STATS: '/notifications/stats',
   CEREMONY_HTML: (personId: number) => `/ceremonies/${personId}/html`,
+  CEREMONY_SHARE_TOKEN: (personId: number) => `/ceremonies/${personId}/share-token`,
+  CEREMONY_PUBLIC_HTML: (token: string) => `/ceremonies/public/${encodeURIComponent(token)}/html`,
   CEREMONY_TEMPLATES: '/ceremonies/templates',
   CEREMONY_TEMPLATE: (id: number) => `/ceremonies/templates/${id}`,
   CEREMONY_TEMPLATE_DEFAULT: (id: number) => `/ceremonies/templates/${id}/default`,

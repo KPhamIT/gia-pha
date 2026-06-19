@@ -13,6 +13,7 @@ import {
   assertOrgMemberAccess,
   isSystem,
 } from '../auth/org-access.js';
+import { createCeremonyShareToken } from '../ceremonies/ceremony-share-token.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { OneSignalService } from './onesignal.service.js';
 import { UpdateNotificationSettingsDto } from './dto/update-notification-settings.dto.js';
@@ -396,7 +397,9 @@ export class NotificationsService {
     const base =
       this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:3000';
     if (personId == null) return `${base}/ceremonies/upcoming`;
-    return `${base}/ceremonies/upcoming?personId=${personId}`;
+    const secret = this.config.get<string>('JWT_SECRET', 'change-me');
+    const token = createCeremonyShareToken(personId, secret);
+    return `${base}/ceremonies/share/${encodeURIComponent(token)}`;
   }
 }
 

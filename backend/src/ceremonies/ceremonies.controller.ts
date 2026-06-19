@@ -74,6 +74,17 @@ export class CeremoniesController {
     return this.ceremonyTemplatesService.remove(req.user, +id);
   }
 
+  @Get('public/:token/html')
+  renderPublicHtml(@Param('token') token: string) {
+    return this.ceremoniesService.renderCeremonyHtmlByShareToken(token);
+  }
+
+  @Get(':personId/share-token')
+  @UseGuards(JwtRequiredGuard)
+  getShareToken(@Request() req: { user: User }, @Param('personId') personId: string) {
+    return this.ceremoniesService.createShareToken(req.user, +personId);
+  }
+
   @Get(':personId/html')
   @UseGuards(JwtRequiredGuard)
   renderHtml(

@@ -6,9 +6,11 @@ import { notify } from '@/lib/notify';
 import { UI } from '@/lib/constants/ui-strings';
 import { BT } from '@/lib/constants/ui-theme';
 import IconRoundButton from '@/components/ui/IconRoundButton';
+import ShareCeremonyActions from '@/components/ceremonies/ShareCeremonyActions';
 
 type CeremonyViewerProps = {
-  personId: number;
+  personId?: number;
+  shareToken?: string;
   /** Render với một mẫu cụ thể; bỏ trống = mẫu mặc định của dòng họ. */
   templateId?: number;
 };
@@ -19,7 +21,7 @@ function measureIframeContent(iframe: HTMLIFrameElement | null): number {
   return Math.max(doc.body?.scrollHeight ?? 0, doc.documentElement?.scrollHeight ?? 0);
 }
 
-export default function CeremonyViewer({ personId, templateId }: CeremonyViewerProps) {
+export default function CeremonyViewer({ personId, shareToken, templateId }: CeremonyViewerProps) {
   const [html, setHtml] = useState<string | null>(null);
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(true);
@@ -32,15 +34,21 @@ export default function CeremonyViewer({ personId, templateId }: CeremonyViewerP
 
   useEffect(() => {
     setLoading(true);
-    api.ceremonies
-      .getHtml(personId, templateId)
+    const request =
+      shareToken != null
+        ? api.ceremonies.getPublicHtml(shareToken)
+        : personId != null
+          ? api.ceremonies.getHtml(personId, templateId)
+          : Promise.reject(new Error('Missing ceremony source'));
+
+    request
       .then((res) => {
         setHtml(res.html);
         setFullName(res.fullName);
       })
       .catch((err) => notify.error(err, UI.CEREMONY_ERR))
       .finally(() => setLoading(false));
-  }, [personId, templateId]);
+  }, [personId, shareToken, templateId]);
 
   useEffect(() => {
     if (!html) return;
@@ -67,11 +75,22 @@ export default function CeremonyViewer({ personId, templateId }: CeremonyViewerP
     return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.CEREMONY_ERR}</p>;
   }
 
+  const shareUrl =
+    typeof window !== 'undefined' && shareToken
+      ? `${window.location.origin}/ceremonies/share/${encodeURIComponent(shareToken)}`
+      : undefined;
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <ShareCeremonyActions
+          personId={personId}
+          fullName={fullName}
+          shareUrl={shareUrl}
+        />
         <IconRoundButton icon="print" variant="gold" label={UI.CEREMONY_PRINT} onClick={handlePrint} />
       </div>
+      <p className={`text-xs leading-relaxed ${BT.mutedOnDark}`}>{UI.CEREMONY_SHARE_HINT}</p>
 
       <iframe
         ref={iframeRef}
