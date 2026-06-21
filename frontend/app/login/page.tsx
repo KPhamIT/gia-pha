@@ -9,6 +9,7 @@ import { loginWithZalo, setToken } from '@/lib/auth/session';
 import { isZaloLoginEnabled } from '@/lib/auth/facebook-sdk';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import AppNavFab from '@/components/navigation/AppNavFab';
 import ContactInfoPanel from '@/components/auth/ContactInfoPanel';
 import FacebookLoginButton from '@/components/auth/FacebookLoginButton';
 import { inputClassName } from '@/components/ui/CollapsibleSection';
@@ -107,6 +108,8 @@ function LoginContent() {
 
         <ContactInfoPanel />
       </div>
+
+      <AppNavFab />
     </div>
   );
 }

@@ -84,34 +84,44 @@ export default function TreeFab({
   };
 
   return (
-    <div className="fixed bottom-6 left-4 z-[45] flex flex-col-reverse items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
+    <>
       {open ? (
-        <div className="flex min-w-[9.25rem] flex-col gap-1">
-          {actions.map((action) => (
-            <IconRoundButton
-              key={action.id}
-              icon={action.icon}
-              label={action.label}
-              variant="outline"
-              size="dense"
-              iconSize={18}
-              labeledAlign="start"
-              className={`w-full shadow-lg ${BT.card}`}
-              onClick={() => handleAction(action)}
-            />
-          ))}
-        </div>
+        <div
+          className="fixed inset-0 z-[44]"
+          aria-hidden
+          onClick={() => setOpen(false)}
+        />
       ) : null}
 
-      <IconRoundButton
-        icon="plus"
-        variant="fab"
-        iconSize={24}
-        onClick={() => setOpen((prev) => !prev)}
-        aria-label={open ? UI.CANCEL : UI.BTN_CREATE}
-        aria-expanded={open}
-        className={open ? '[&_svg]:rotate-45' : ''}
-      />
-    </div>
+      <div className="fixed bottom-6 left-4 z-[45] flex flex-col-reverse items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
+          {open ? (
+          <div className="flex min-w-[9.25rem] flex-col gap-1">
+            {actions.map((action) => (
+              <IconRoundButton
+                key={action.id}
+                icon={action.icon}
+                label={action.label}
+                variant="outline"
+                size="dense"
+                iconSize={18}
+                labeledAlign="start"
+                className={`w-full shadow-lg ${BT.card}`}
+                onClick={() => handleAction(action)}
+              />
+            ))}
+          </div>
+        ) : null}
+
+        <IconRoundButton
+          icon="plus"
+          variant="fab"
+          iconSize={24}
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label={open ? UI.CANCEL : UI.BTN_CREATE}
+          aria-expanded={open}
+          className={open ? '[&_svg]:rotate-45' : ''}
+        />
+      </div>
+    </>
   );
 }
