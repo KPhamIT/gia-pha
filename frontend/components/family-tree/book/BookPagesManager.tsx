@@ -4,12 +4,12 @@ import { useMemo, useState } from 'react';
 import BookShell from '@/components/ui/BookShell';
 import IconRoundButton from '@/components/ui/IconRoundButton';
 import Icon from '@/components/icons/Icon';
-import { getBranchLabel } from '@/lib/constants/branches';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';
 import type { Person } from '@/components/types/family-tree-types';
 import type { BookPageConfig } from './book-page-config';
+import BookPageRow from './BookPageRow';
 
 type Props = {
   /** All persons in natural book order (including hidden ones). */
@@ -140,51 +140,17 @@ export default function BookPagesManager({ persons, pageConfig, onChange, onClos
                 </tr>
               </thead>
               <tbody>
-                {persons.map((person, naturalIndex) => {
-                  const entry = draft[person.id];
-                  const hidden = !!entry?.hidden;
-                  const orderValue = entry?.order;
-                  const meta = [
-                    person.branch != null ? getBranchLabel(person.branch) : null,
-                    person.generation != null ? `${UI.BOOK_GENERATION} ${person.generation}` : null,
-                  ]
-                    .filter(Boolean)
-                    .join(' · ');
-
-                  return (
-                    <tr
-                      key={person.id}
-                      onClick={() => toggleHidden(person.id)}
-                      className={`cursor-pointer border-t border-amber-100 transition-colors ${hidden ? 'bg-slate-100 text-slate-400' : 'active:bg-amber-50 md:hover:bg-amber-50/80'}`}
-                    >
-                      <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          value={orderValue ?? ''}
-                          placeholder={String(naturalIndex + 1)}
-                          onChange={(e) => setOrder(person.id, e.target.value)}
-                          className="w-12 rounded-md border border-amber-300/70 bg-amber-50/60 px-1 py-1 text-center text-sm outline-none focus:border-amber-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <span className={`block truncate font-medium ${hidden ? 'line-through' : ''}`}>
-                          {person.fullName?.trim() || UI.BOOK_EMPTY_FIELD}
-                        </span>
-                        {meta ? <span className="block truncate text-xs text-slate-400">{meta}</span> : null}
-                      </td>
-                      <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          checked={!hidden}
-                          onChange={() => toggleHidden(person.id)}
-                          className="h-5 w-5 cursor-pointer accent-amber-600"
-                          aria-label={UI.BOOK_PAGES_COL_SHOW}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {persons.map((person, naturalIndex) => (
+                  <BookPageRow
+                    key={person.id}
+                    person={person}
+                    naturalIndex={naturalIndex}
+                    hidden={!!draft[person.id]?.hidden}
+                    orderValue={draft[person.id]?.order}
+                    onToggleHidden={toggleHidden}
+                    onSetOrder={setOrder}
+                  />
+                ))}
               </tbody>
             </table>
           )}

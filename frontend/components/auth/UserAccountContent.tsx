@@ -1,13 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Link from 'next/link';
 import type { Person, Relationship } from '@/components/types/family-tree-types';
-import type { IconName } from '@/components/icons/icon-paths';
 import Icon from '@/components/icons/Icon';
-import PersonSearchPanel from '@/components/family-tree/person/PersonSearchPanel';
 import { UI } from '@/lib/constants/ui-strings';
-import IconRoundButton from '@/components/ui/IconRoundButton';
 import { BT } from '@/lib/constants/ui-theme';
 import { api } from '@/lib/api';
 import { logout } from '@/lib/auth/session';
@@ -17,6 +14,9 @@ import { useFeatureAccess } from '@/hooks/useFeatureAccess';
 import { getErrorMessage } from '@/utils/errors';
 import ContactInfoPanel from '@/components/auth/ContactInfoPanel';
 import NotificationStatsPanel from '@/components/notifications/NotificationStatsPanel';
+import AccountLinkSection from './AccountLinkSection';
+import AccountQuickActions from './AccountQuickActions';
+import { InfoRow } from './AccountRows';
 
 type UserAccountContentProps = {
   persons: Person[];
@@ -44,9 +44,15 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setPersonId(person?.id ?? null);
-  }, [person?.id]);
+  // Re-sync the editable selection when the linked person changes (e.g. after
+  // saving a link). Done during render via a previous-value guard instead of an
+  // effect to avoid an extra commit.
+  const linkedId = person?.id ?? null;
+  const [prevLinkedId, setPrevLinkedId] = useState(linkedId);
+  if (linkedId !== prevLinkedId) {
+    setPrevLinkedId(linkedId);
+    setPersonId(linkedId);
+  }
 
   const handleSaveLink = useCallback(async () => {
     if (!requireFeature('linkAccount')) return;
@@ -125,46 +131,19 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
 
       {/* Liên kết thành viên */}
       {canUseFeature('linkAccount') ? (
-        <section className={`${BT.card} space-y-3 p-4`}>
-          <div>
-            <h2 className="text-sm font-semibold text-neutral-900">{UI.ACCOUNT_LINK_PERSON}</h2>
-            <p className={`mt-1 text-xs ${BT.mutedOnLight}`}>{UI.ACCOUNT_LINK_PERSON_HINT}</p>
-          </div>
-          <PersonSearchPanel
-            persons={persons}
-            relationships={relationships}
-            selectedPersonId={personId}
-            onSelect={(item) => setPersonId(item.id)}
-            onClear={() => setPersonId(null)}
-            clearLabel={UI.ACCOUNT_CLEAR_LINK}
-            listClassName="max-h-52 overflow-y-auto rounded-xl border border-amber-100 bg-amber-50/30 px-1 py-1"
-          />
-          <div className="flex justify-end">
-            <IconRoundButton
-              icon="save"
-              variant="gold"
-              loading={saving}
-              label={UI.SAVE}
-              onClick={() => void handleSaveLink()}
-            />
-          </div>
-          {message ? <p className={`text-sm font-medium ${BT.gold}`}>{message}</p> : null}
-          {error ? <p className={BT.errorBgLight}>{error}</p> : null}
-        </section>
+        <AccountLinkSection
+          persons={persons}
+          relationships={relationships}
+          personId={personId}
+          onSelectPerson={setPersonId}
+          saving={saving}
+          message={message}
+          error={error}
+          onSave={() => void handleSaveLink()}
+        />
       ) : null}
 
-      {/* Truy cập nhanh */}
-      <section className={`overflow-hidden ${BT.card}`}>
-        <h2 className={`border-b border-amber-200/60 px-4 py-3 text-sm font-semibold text-neutral-900`}>
-          {UI.ACCOUNT_QUICK_ACTIONS}
-        </h2>
-        <div className="divide-y divide-amber-200/60">
-          {isAdmin ? <MenuRow href="/org-users" icon="userPlus" label={UI.BTN_USERS} /> : null}
-          {isAdmin ? <MenuRow href="/ceremonies/templates" icon="book" label={UI.CEREMONY_TEMPLATES_OPEN} /> : null}
-          <MenuRow href="/settings/notifications" icon="settings" label={UI.NOTIF_OPEN_SETTINGS} />
-          <MenuRow href="/ceremonies/upcoming" icon="calendar" label={UI.NOTIF_OPEN_UPCOMING} />
-        </div>
-      </section>
+      <AccountQuickActions isAdmin={isAdmin} />
 
       {isAdmin ? <NotificationStatsPanel /> : null}
 
@@ -179,31 +158,5 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
         {UI.ACCOUNT_LOGOUT}
       </button>
     </div>
-  );
-}
-
-function InfoRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-4 py-2.5">
-      <dt className={BT.mutedOnLight}>{label}</dt>
-      <dd className={`min-w-0 truncate text-right font-medium ${muted ? 'text-neutral-400' : 'text-neutral-900'}`}>
-        {value}
-      </dd>
-    </div>
-  );
-}
-
-function MenuRow({ href, icon, label }: { href: string; icon: IconName; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 px-4 py-3 transition-colors active:bg-amber-50 md:hover:bg-amber-50"
-    >
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-800">
-        <Icon path={icon} size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
-      </span>
-      <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral-900">{label}</span>
-      <Icon path="chevronRight" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} className="shrink-0 text-neutral-400" />
-    </Link>
   );
 }

@@ -19,6 +19,19 @@ export function donationsToDraft(donations: EventDonation[]): DonationDraftItem[
   }));
 }
 
+/** Build a draft row from form input, reusing an existing key when editing. */
+export function draftFromInput(input: CreateDonationInput, draftKey: string): DonationDraftItem {
+  return {
+    draftKey,
+    donorName: input.donorName,
+    personId: input.personId,
+    kind: input.kind ?? 'MONEY',
+    amount: input.amount ?? 0,
+    itemDescription: input.itemDescription ?? null,
+    note: input.note ?? null,
+  };
+}
+
 function toCreateInput(item: DonationDraftItem): CreateDonationInput {
   return {
     donorName: item.donorName,

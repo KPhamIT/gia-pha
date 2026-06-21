@@ -3,7 +3,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import type { LayoutConfig, ThemeMode } from '@/components/types/family-tree-types';
 import IconRoundButton from '@/components/ui/IconRoundButton';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
 import { LAYOUT } from '@/lib/constants/ui-layout';
 import { BT } from '@/lib/constants/ui-theme';
 import { UI } from '@/lib/constants/ui-strings';

@@ -7,6 +7,13 @@ export function formatVnd(amount: number): string {
   return `${vnd.format(amount)} đ`;
 }
 
+/** Format an ISO date as a vi-VN date, or null if missing/invalid. */
+export function formatEventDate(iso?: string | null): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? null : date.toLocaleDateString('vi-VN');
+}
+
 /** Parse digits from a money input field into VND (integer). */
 export function parseVndInput(raw: string): number {
   const parsed = Number.parseInt(raw.replace(/\D/g, ''), 10);

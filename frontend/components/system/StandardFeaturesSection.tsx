@@ -33,27 +33,26 @@ export default function StandardFeaturesSection({ mode, organizationId }: Standa
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      if (mode === 'defaults') {
-        const defaults = await api.standardFeatures.getDefaults();
-        setBaseline(defaults);
-        setDraft(defaults);
-        return;
-      }
-      if (organizationId == null) {
-        throw new Error(UI.SYSTEM_USER_ORG_REQUIRED);
-      }
-      const config = await api.standardFeatures.getOrg(organizationId);
-      setBaseline(config.effective);
-      setDraft(config.effective);
-    } catch (err) {
-      setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
-    } finally {
-      setLoading(false);
-    }
+  const load = useCallback(() => {
+    const request =
+      mode === 'defaults'
+        ? api.standardFeatures.getDefaults()
+        : organizationId == null
+          ? Promise.reject(new Error(UI.SYSTEM_USER_ORG_REQUIRED))
+          : api.standardFeatures.getOrg(organizationId).then((config) => config.effective);
+
+    return request
+      .then((features) => {
+        setBaseline(features);
+        setDraft(features);
+        setError(null);
+      })
+      .catch((err) => {
+        setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [mode, organizationId]);
 
   useEffect(() => {

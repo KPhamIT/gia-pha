@@ -8,7 +8,7 @@ import {
 } from "@xyflow/react";
 import type { Node } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useRef, type RefObject } from "react";
+import { useCallback, useEffect, useRef, type RefObject } from "react";
 import type {
   FamilyTreeData,
   Person,
@@ -48,7 +48,9 @@ export type FamilyTreeGraphProps = {
 function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
   const graph = useFamilyTreeGraph(props);
   const onNodeClickRef = useRef(props.onNodeClick);
-  onNodeClickRef.current = props.onNodeClick;
+  useEffect(() => {
+    onNodeClickRef.current = props.onNodeClick;
+  });
 
   const handleNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     const person = (node.data as { person?: Person }).person;

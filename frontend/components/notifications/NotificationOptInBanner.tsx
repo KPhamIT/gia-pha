@@ -9,7 +9,7 @@ import { BT } from '@/lib/constants/ui-theme';
 const DISMISS_KEY = 'gia-pha:notif-banner-dismissed';
 
 export default function NotificationOptInBanner() {
-  const { configured, hasPermission, enableNotifications } = useOneSignal();
+  const { configured, hasPermission, enableNotifications } = useOneSignal({ lazy: true });
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 

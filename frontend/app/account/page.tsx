@@ -16,21 +16,20 @@ export default function AccountPage() {
   const { loaded, isLoggedIn } = useAuthBootstrap();
   const [persons, setPersons] = useState<Person[]>([]);
   const [relationships, setRelationships] = useState<Relationship[]>([]);
-  const [dataLoading, setDataLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) return;
 
     let cancelled = false;
-    setDataLoading(true);
-    setDataError(null);
 
     Promise.all([api.person.list(), api.relationship.list()])
       .then(([nextPersons, nextRelationships]) => {
         if (cancelled) return;
         setPersons(nextPersons);
         setRelationships(nextRelationships);
+        setDataError(null);
       })
       .catch((err) => {
         if (cancelled) return;

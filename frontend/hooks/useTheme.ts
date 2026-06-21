@@ -11,6 +11,9 @@ export function useTheme() {
   const [theme, setTheme] = useState<ThemeMode>(INITIAL_THEME);
 
   useEffect(() => {
+    // Đọc theme đã lưu sau khi hydrate: localStorage chỉ có ở client, nên phải
+    // sync trong effect để tránh hydration mismatch (SSR luôn render 'light').
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(loadStoredTheme());
   }, []);
 

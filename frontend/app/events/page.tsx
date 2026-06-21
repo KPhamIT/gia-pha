@@ -32,8 +32,6 @@ export default function EventsPage() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
 
     Promise.all([api.person.list(), api.relationship.list()])
       .then(([nextPersons, nextRelationships]) => {

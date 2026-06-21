@@ -33,7 +33,7 @@ export default function CeremonyViewer({ personId, shareToken, templateId }: Cer
   }, []);
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
     const request =
       shareToken != null
         ? api.ceremonies.getPublicHtml(shareToken)
@@ -43,11 +43,20 @@ export default function CeremonyViewer({ personId, shareToken, templateId }: Cer
 
     request
       .then((res) => {
+        if (cancelled) return;
         setHtml(res.html);
         setFullName(res.fullName);
       })
-      .catch((err) => notify.error(err, UI.CEREMONY_ERR))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (!cancelled) notify.error(err, UI.CEREMONY_ERR);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [personId, shareToken, templateId]);
 
   useEffect(() => {

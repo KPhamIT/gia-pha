@@ -1,120 +1,22 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { api } from '@/lib/api';
-import type { NotificationSettings } from '@/lib/api/modules/notifications';
-import { useOneSignal } from '@/hooks/useOneSignal';
-import { notify } from '@/lib/notify';
 import { UI } from '@/lib/constants/ui-strings';
 import { BT } from '@/lib/constants/ui-theme';
+import { useNotificationSettings } from '@/hooks/useNotificationSettings';
+import ToggleRow from './ToggleRow';
 
 type NotificationSettingsFormProps = {
   onSaved?: () => void;
 };
 
 export default function NotificationSettingsForm({ onSaved }: NotificationSettingsFormProps) {
-  const {
-    configured,
-    hasPermission,
-    permission,
-    subscriptionId,
-    loading: osLoading,
-    enableNotifications,
-    disableNotifications,
-    syncSubscription,
-    refresh: refreshOneSignal,
-  } = useOneSignal();
-  const [settings, setSettings] = useState<NotificationSettings | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api.notifications
-      .getSettings()
-      .then(setSettings)
-      .catch(() => notify.error(null, UI.NOTIF_ERR_LOAD))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!configured || osLoading || !hasPermission) return;
-    void syncSubscription().then((id) => {
-      if (id) void api.notifications.getSettings().then(setSettings);
-    });
-  }, [configured, hasPermission, osLoading, syncSubscription]);
-
-  const saveSettings = useCallback(
-    async (patch: Partial<NotificationSettings>) => {
-      if (!settings) return;
-      setSaving(true);
-      try {
-        const updated = await api.notifications.updateSettings(patch);
-        setSettings(updated);
-        notify.success(UI.NOTIF_SAVED);
-        onSaved?.();
-      } catch (err) {
-        notify.error(err, UI.NOTIF_ERR_SAVE);
-      } finally {
-        setSaving(false);
-      }
-    },
-    [onSaved, settings],
-  );
-
-  const handleToggle = (key: keyof NotificationSettings, value: boolean) => {
-    if (!settings) return;
-    const next = { ...settings, [key]: value };
-    setSettings(next);
-    void saveSettings({ [key]: value });
-  };
-
-  const handlePushMasterToggle = async (enabled: boolean) => {
-    if (!configured) return;
-    setSaving(true);
-    try {
-      if (enabled) {
-        const { granted, subscriptionId: newId } = await enableNotifications();
-        const updated = await api.notifications.getSettings();
-        setSettings(updated);
-        await refreshOneSignal();
-        if (granted && newId) {
-          notify.success(UI.NOTIF_SAVED);
-        } else if (typeof window !== 'undefined' && Notification.permission === 'denied') {
-          notify.error(null, UI.NOTIF_PERMISSION_BLOCKED);
-        } else {
-          notify.error(null, UI.NOTIF_PERMISSION_DENIED);
-        }
-      } else {
-        await disableNotifications();
-        const updated = await api.notifications.getSettings();
-        setSettings(updated);
-        notify.success(UI.NOTIF_SAVED);
-      }
-    } catch (err) {
-      notify.error(err, UI.NOTIF_ERR_SAVE);
-    } finally {
-      setSaving(false);
-    }
-  };
+  const { settings, saving, loading, configured, osLoading, permission, pushOn, statusHint, handleToggle, handlePushMasterToggle } =
+    useNotificationSettings(onSaved);
 
   if (loading || !settings) {
     return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
   }
-
-  const isDeviceRegistered =
-    Boolean(subscriptionId) && settings.pushSubscriptionIds.includes(subscriptionId!);
-  const pushOn = hasPermission && isDeviceRegistered;
-
-  const statusHint = !configured
-    ? UI.NOTIF_NOT_CONFIGURED
-    : permission === 'unsupported'
-      ? UI.NOTIF_UNSUPPORTED
-      : permission === 'denied'
-        ? UI.NOTIF_PERMISSION_BLOCKED
-        : hasPermission
-          ? UI.NOTIF_PERMISSION_GRANTED
-          : UI.NOTIF_PERMISSION_DENIED;
 
   return (
     <div className="space-y-6">
@@ -129,11 +31,7 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
           onChange={(v) => void handlePushMasterToggle(v)}
         />
         <p className="flex items-start gap-2 border-t border-amber-200/60 px-4 py-3 text-xs leading-relaxed text-neutral-600">
-          <span
-            className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-              pushOn && hasPermission ? 'bg-green-500' : 'bg-red-500'
-            }`}
-          />
+          <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${pushOn ? 'bg-green-500' : 'bg-red-500'}`} />
           {statusHint}
         </p>
         {settings.pushSubscriptionCount > 0 ? (
@@ -178,40 +76,5 @@ export default function NotificationSettingsForm({ onSaved }: NotificationSettin
         </Link>
       </div>
     </div>
-  );
-}
-
-function ToggleRow({
-  label,
-  checked,
-  disabled,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  return (
-    <label className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm text-neutral-900">
-      <span className="min-w-0 flex-1">{label}</span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        disabled={disabled}
-        onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
-          checked ? 'bg-amber-600' : 'bg-neutral-300'
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-            checked ? 'translate-x-5' : ''
-          }`}
-        />
-      </button>
-    </label>
   );
 }

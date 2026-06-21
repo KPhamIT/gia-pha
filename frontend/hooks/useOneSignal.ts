@@ -20,43 +20,53 @@ type UseOneSignalState = {
   loading: boolean;
 };
 
-export function useOneSignal() {
-  const [state, setState] = useState<UseOneSignalState>({
-    configured: isOneSignalConfigured(),
-    permission: 'loading',
-    subscribed: false,
-    subscriptionId: null,
-    loading: true,
+type UseOneSignalOptions = {
+  /**
+   * Chỉ đọc `Notification.permission`, KHÔNG init SDK OneSignal lúc mount.
+   * Dùng cho banner trên trang chính (book / family-tree) để tránh tải
+   * react-onesignal + đăng ký service worker trên critical path. SDK vẫn được
+   * nạp lười khi người dùng thực sự bật thông báo.
+   */
+  lazy?: boolean;
+};
+
+export function useOneSignal({ lazy = false }: UseOneSignalOptions = {}) {
+  const [state, setState] = useState<UseOneSignalState>(() => {
+    const configured = isOneSignalConfigured();
+    return {
+      configured,
+      // Khi không cấu hình OneSignal, trạng thái cuối cùng đã biết ngay từ
+      // đầu — khởi tạo luôn để effect không phải setState đồng bộ.
+      permission: configured ? 'loading' : 'unsupported',
+      subscribed: false,
+      subscriptionId: null,
+      loading: configured,
+    };
   });
 
-  const refresh = useCallback(async () => {
-    if (!isOneSignalConfigured()) {
-      setState((prev) => ({
-        ...prev,
-        configured: false,
-        permission: 'unsupported',
-        subscribed: false,
-        subscriptionId: null,
-        loading: false,
-      }));
-      return;
+  const refresh = useCallback((): Promise<void> => {
+    if (!isOneSignalConfigured()) return Promise.resolve();
+
+    if (lazy) {
+      return getBrowserPermission().then((permission) => {
+        setState((prev) => ({ ...prev, configured: true, permission, loading: false }));
+      });
     }
 
-    await initOneSignal();
-    const [permission, subscribed, subscriptionId] = await Promise.all([
-      getBrowserPermission(),
-      isPushSubscribed(),
-      getSubscriptionId(),
-    ]);
-
-    setState({
-      configured: true,
-      permission,
-      subscribed,
-      subscriptionId,
-      loading: false,
-    });
-  }, []);
+    return initOneSignal()
+      .then(() =>
+        Promise.all([getBrowserPermission(), isPushSubscribed(), getSubscriptionId()]),
+      )
+      .then(([permission, subscribed, subscriptionId]) => {
+        setState({
+          configured: true,
+          permission,
+          subscribed,
+          subscriptionId,
+          loading: false,
+        });
+      });
+  }, [lazy]);
 
   useEffect(() => {
     void refresh();

@@ -2,17 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
-import type { Connection, Edge, EdgeChange, FinalConnectionState, Node, NodeChange } from '@xyflow/react';
+import type { Edge, EdgeChange, Node, NodeChange } from '@xyflow/react';
 import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
-import type { FamilyTreeData, Person, Relationship, RelationshipType } from '@/components/types/family-tree-types';
-import { createChildPerson, createRelationship } from '@/lib/family-tree/mutations';
-import {
-  collectMovedNodePositions,
-  type NodePositionOverrides,
-} from '@/lib/family-tree/node-position-overrides';
-import { getErrorMessage } from '@/utils/errors';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
+import type { FamilyTreeData, Person, Relationship } from '@/components/types/family-tree-types';
+import { collectMovedNodePositions, type NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
+import { useGraphConnections } from '@/hooks/useGraphConnections';
 
 export type FamilyTreeGraphApi = {
   collectMovedNodePositions: () => NodePositionOverrides;
@@ -42,13 +36,12 @@ export function useFamilyTreeGraph({
 }: UseFamilyTreeGraphOptions) {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
-  const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
-  const [pendingType, setPendingType] = useState<RelationshipType>('CHILD');
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const connections = useGraphConnections({ onPersonAdded, onRelationshipAdded, assertCanMutate });
 
   const onRelationshipRemovedRef = useRef(onRelationshipRemoved);
-  onRelationshipRemovedRef.current = onRelationshipRemoved;
+  useEffect(() => {
+    onRelationshipRemovedRef.current = onRelationshipRemoved;
+  });
 
   useEffect(() => {
     const graph = buildFamilyTreeGraph(treeData, layoutConfig);
@@ -83,19 +76,15 @@ export function useFamilyTreeGraph({
         ...edge,
         data: {
           ...edge.data,
-          onRelationshipRemoved: (relationshipId: number) =>
-            onRelationshipRemovedRef.current?.(relationshipId),
+          onRelationshipRemoved: (relationshipId: number) => onRelationshipRemovedRef.current?.(relationshipId),
         },
       })),
     [edges],
   );
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange<Node>[]) => {
-      setNodes((currentNodes) => applyNodeChanges(changes, currentNodes));
-    },
-    [],
-  );
+  const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
+    setNodes((currentNodes) => applyNodeChanges(changes, currentNodes));
+  }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange[]) => {
     const nonRemoveChanges = changes.filter((change) => change.type !== 'remove');
@@ -104,75 +93,11 @@ export function useFamilyTreeGraph({
     }
   }, []);
 
-  const onConnect = useCallback((connection: Connection) => {
-    setSaveError(null);
-    setPendingConnection(connection);
-    setPendingType('CHILD');
-  }, []);
-
-  const cancelConnection = useCallback(() => {
-    setPendingConnection(null);
-    setSaveError(null);
-  }, []);
-
-  const confirmConnection = useCallback(async () => {
-    if (!pendingConnection) return;
-    if (assertCanMutate && !assertCanMutate()) return;
-
-    const fromId = Number(pendingConnection.source);
-    const toId = Number(pendingConnection.target);
-
-    try {
-      setSaving(true);
-      setSaveError(null);
-      const relationship = await createRelationship(fromId, toId, pendingType);
-      onRelationshipAdded?.(relationship);
-      setPendingConnection(null);
-      notify.success(UI.TOAST_RELATIONSHIP_SAVED);
-    } catch (error) {
-      notify.error(error, UI.ERR_SAVE_RELATIONSHIP);
-      setSaveError(getErrorMessage(error, UI.ERR_SAVE_RELATIONSHIP));
-    } finally {
-      setSaving(false);
-    }
-  }, [assertCanMutate, onRelationshipAdded, pendingConnection, pendingType]);
-
-  const onConnectEnd = useCallback(
-    (_event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
-      if (connectionState.isValid || !connectionState.fromNode) {
-        return;
-      }
-
-      const parentPerson = connectionState.fromNode.data.person as Person;
-
-      void (async () => {
-        if (assertCanMutate && !assertCanMutate()) return;
-        try {
-          const result = await createChildPerson(parentPerson, { fullName: UI.DEFAULT_NEW_PERSON });
-          onPersonAdded?.(result.person, result.relationship);
-          notify.success(UI.TOAST_CHILD_CREATED);
-        } catch (error) {
-          notify.error(error, UI.ERR_CREATE_PERSON);
-          setSaveError(getErrorMessage(error, UI.ERR_CREATE_PERSON));
-        }
-      })();
-    },
-    [assertCanMutate, onPersonAdded],
-  );
-
   return {
     enhancedNodes,
     enhancedEdges,
     onNodesChange,
     onEdgesChange,
-    onConnect,
-    onConnectEnd,
-    pendingConnection,
-    pendingType,
-    setPendingType,
-    saving,
-    saveError,
-    confirmConnection,
-    cancelConnection,
+    ...connections,
   };
 }

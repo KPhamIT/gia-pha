@@ -12,17 +12,22 @@ export function useOrganizations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const reload = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      setItems(await api.organizations.list());
-    } catch (err) {
-      setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const reload = useCallback(
+    () =>
+      api.organizations
+        .list()
+        .then((data) => {
+          setItems(data);
+          setError(null);
+        })
+        .catch((err) => {
+          setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
+        })
+        .finally(() => {
+          setLoading(false);
+        }),
+    [],
+  );
 
   useEffect(() => {
     void reload();

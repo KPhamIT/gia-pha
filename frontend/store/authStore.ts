@@ -41,6 +41,9 @@ function resolveFeatures(user: AuthUser | null, features?: StandardFeatures | nu
   return features ?? { ...DEFAULT_STANDARD_FEATURES };
 }
 
+/** Dedupe đồng thời nhiều lời gọi refresh() chung một request GET /auth/me. */
+let refreshInflight: Promise<void> | null = null;
+
 export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
   person: null,
@@ -56,39 +59,47 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (!state.isLoggedIn) return guestCanUseFeature(key);
     return state.features[key] ?? false;
   },
-  refresh: async () => {
-    const token = getToken();
-    if (!token) {
-      set({
-        user: null,
-        person: null,
-        features: { ...DEFAULT_STANDARD_FEATURES },
-        loaded: true,
-        ...deriveFlags(null),
-      });
-      return;
-    }
+  refresh: () => {
+    if (refreshInflight) return refreshInflight;
 
-    try {
-      const me = await api.auth.me();
-      const user = me.user ?? null;
-      set({
-        user,
-        person: me.person ?? null,
-        features: resolveFeatures(user, me.features),
-        loaded: true,
-        ...deriveFlags(user),
-      });
-    } catch {
-      clearToken();
-      set({
-        user: null,
-        person: null,
-        features: { ...DEFAULT_STANDARD_FEATURES },
-        loaded: true,
-        ...deriveFlags(null),
-      });
-    }
+    refreshInflight = (async () => {
+      const token = getToken();
+      if (!token) {
+        set({
+          user: null,
+          person: null,
+          features: { ...DEFAULT_STANDARD_FEATURES },
+          loaded: true,
+          ...deriveFlags(null),
+        });
+        return;
+      }
+
+      try {
+        const me = await api.auth.me();
+        const user = me.user ?? null;
+        set({
+          user,
+          person: me.person ?? null,
+          features: resolveFeatures(user, me.features),
+          loaded: true,
+          ...deriveFlags(user),
+        });
+      } catch {
+        clearToken();
+        set({
+          user: null,
+          person: null,
+          features: { ...DEFAULT_STANDARD_FEATURES },
+          loaded: true,
+          ...deriveFlags(null),
+        });
+      }
+    })().finally(() => {
+      refreshInflight = null;
+    });
+
+    return refreshInflight;
   },
   clear: () => {
     set({
