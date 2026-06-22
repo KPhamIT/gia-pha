@@ -1,9 +1,11 @@
-import { api } from '@/lib/api';
-import type { Person } from '@/components/types/family-tree-types';
-import { getRootPerson } from '@/utils/family-tree-utils';
-import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
+import { api } from "@/lib/api";
+import type { Person } from "@/components/types/family-tree-types";
+import { getRootPerson } from "@/utils/family-tree-utils";
+import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 
-export async function resolveRootPersonId(allowPublicAccess: boolean): Promise<number | null> {
+export async function resolveRootPersonId(
+  allowPublicAccess: boolean,
+): Promise<number | null> {
   const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
 
   if (token) {
@@ -14,10 +16,12 @@ export async function resolveRootPersonId(allowPublicAccess: boolean): Promise<n
       }
       if (meResponse?.user) {
         const tree = await api.person.getDefaultTree();
-        return tree.root?.id ?? getRootPerson(tree.persons as Person[])?.id ?? null;
+        return (
+          tree.root?.id ?? getRootPerson(tree.persons as Person[])?.id ?? null
+        );
       }
     } catch (err) {
-      console.error('Error fetching user info:', err);
+      console.error("Error fetching user info:", err);
     }
   }
 
@@ -29,7 +33,7 @@ export async function resolveRootPersonId(allowPublicAccess: boolean): Promise<n
     const tree = await api.person.getDefaultTree();
     return tree.root?.id ?? getRootPerson(tree.persons as Person[])?.id ?? null;
   } catch (err) {
-    console.error('Error fetching default tree:', err);
+    console.error("Error fetching default tree:", err);
     return null;
   }
 }

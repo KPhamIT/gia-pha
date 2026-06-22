@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { RelationshipType } from '@/components/types/family-tree-types';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { UI, RELATIONSHIP_LABELS } from '@/lib/constants/ui-strings';
+import { RelationshipType } from "@/components/types/family-tree-types";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
+import { UI, RELATIONSHIP_LABELS } from "@/lib/constants/ui-strings";
 
 type Props = {
   pendingType: RelationshipType;
@@ -13,19 +13,32 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function ConnectRelationshipModal({ pendingType, saving, saveError, onTypeChange, onConfirm, onCancel }: Props) {
+export default function ConnectRelationshipModal({
+  pendingType,
+  saving,
+  saveError,
+  onTypeChange,
+  onConfirm,
+  onCancel,
+}: Props) {
   return (
     <div className="absolute bottom-6 left-1/2 z-50 w-[min(100%,24rem)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-xl md:w-auto md:min-w-[28rem] md:px-6 md:py-5">
-      <p className="mb-3 text-sm font-semibold text-slate-700">{UI.SELECT_RELATIONSHIP}</p>
+      <p className="mb-3 text-sm font-semibold text-slate-700">
+        {UI.SELECT_RELATIONSHIP}
+      </p>
       <div className="flex items-center gap-3">
         <select
           className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500"
           value={pendingType}
           onChange={(e) => onTypeChange(e.target.value as RelationshipType)}
         >
-          {(Object.keys(RELATIONSHIP_LABELS) as RelationshipType[]).map((type) => (
-            <option key={type} value={type}>{RELATIONSHIP_LABELS[type]}</option>
-          ))}
+          {(Object.keys(RELATIONSHIP_LABELS) as RelationshipType[]).map(
+            (type) => (
+              <option key={type} value={type}>
+                {RELATIONSHIP_LABELS[type]}
+              </option>
+            ),
+          )}
         </select>
         <button
           onClick={onConfirm}

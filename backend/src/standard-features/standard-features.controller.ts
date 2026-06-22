@@ -16,7 +16,9 @@ import { StandardFeaturesService } from './standard-features.service.js';
 
 @Controller()
 export class StandardFeaturesController {
-  constructor(private readonly standardFeaturesService: StandardFeaturesService) {}
+  constructor(
+    private readonly standardFeaturesService: StandardFeaturesService,
+  ) {}
 
   @Get('standard-features/defaults')
   @UseGuards(SystemGuard)
@@ -46,6 +48,10 @@ export class StandardFeaturesController {
     @Request() req: { user: User },
     @Body() body: UpdateStandardFeaturesDto,
   ) {
-    return this.standardFeaturesService.updateOrgOverrides(id, req.user, body.features);
+    return this.standardFeaturesService.updateOrgOverrides(
+      id,
+      req.user,
+      body.features,
+    );
   }
 }

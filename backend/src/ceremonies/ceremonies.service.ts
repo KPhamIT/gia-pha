@@ -54,7 +54,12 @@ export class CeremoniesService {
       where: { userId: user.id },
       select: { fullName: true, currentLocation: true, birthPlace: true },
     });
-    return this.renderCeremonyHtmlForPerson(personId, worshipper, user, templateId);
+    return this.renderCeremonyHtmlForPerson(
+      personId,
+      worshipper,
+      user,
+      templateId,
+    );
   }
 
   private async renderCeremonyHtmlForPerson(
@@ -84,7 +89,11 @@ export class CeremoniesService {
   private async assertPersonInOrg(user: User, personId: number) {
     const person = await this.prisma.person.findUnique({
       where: { id: personId },
-      select: { organizationId: true, deathLunarDay: true, deathLunarMonth: true },
+      select: {
+        organizationId: true,
+        deathLunarDay: true,
+        deathLunarMonth: true,
+      },
     });
     if (!person) throw new NotFoundException('Person not found');
     assertOrgMemberAccess(user, person.organizationId);
@@ -114,10 +123,13 @@ export class CeremoniesService {
     templateId?: number,
   ) {
     if (templateId != null) {
-      if (!user) throw new ForbiddenException('Template selection requires login');
+      if (!user)
+        throw new ForbiddenException('Template selection requires login');
       const template = await this.ceremonyTemplates.findOne(user, templateId);
       if (template.organizationId !== organizationId) {
-        throw new ForbiddenException('Template does not belong to the person organization');
+        throw new ForbiddenException(
+          'Template does not belong to the person organization',
+        );
       }
       return template.content;
     }

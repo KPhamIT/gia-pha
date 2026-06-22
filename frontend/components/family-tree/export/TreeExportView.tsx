@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { FamilyTreeData } from '@/components/types/family-tree-types';
-import type { FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
-import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
-import TreeExportControls from './TreeExportControls';
-import TreeExportSvg from './TreeExportSvg';
-import { useTreeExport } from './useTreeExport';
+import type { FamilyTreeData } from "@/components/types/family-tree-types";
+import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
+import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import TreeExportControls from "./TreeExportControls";
+import TreeExportSvg from "./TreeExportSvg";
+import { useTreeExport } from "./useTreeExport";
 
 type TreeExportViewProps = {
   treeData: FamilyTreeData;
@@ -14,7 +14,12 @@ type TreeExportViewProps = {
   onClose: () => void;
 };
 
-export default function TreeExportView({ treeData, layoutConfig = {}, nodePositionOverrides, onClose }: TreeExportViewProps) {
+export default function TreeExportView({
+  treeData,
+  layoutConfig = {},
+  nodePositionOverrides,
+  onClose,
+}: TreeExportViewProps) {
   const {
     svgRef,
     model,
@@ -43,7 +48,7 @@ export default function TreeExportView({ treeData, layoutConfig = {}, nodePositi
     <div className="overlay-viewport z-40 bg-slate-300">
       <div
         className={`absolute inset-0 flex items-center justify-center p-2 md:p-4 md:pr-[22rem] md:pb-4 ${
-          collapsed ? 'pb-36' : 'pb-[calc(55vh+1.5rem)]'
+          collapsed ? "pb-36" : "pb-[calc(55vh+1.5rem)]"
         }`}
       >
         <TreeExportSvg

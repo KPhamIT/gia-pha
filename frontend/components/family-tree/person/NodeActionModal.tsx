@@ -1,12 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { CreateChildFormInput, Person } from '@/components/types/family-tree-types';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { LAYOUT } from '@/lib/constants/ui-layout';
-import { UI } from '@/lib/constants/ui-strings';
-import { ActionOptions, ConfirmDelete } from './NodeActionViews';
-import NodeChildForm from './NodeChildForm';
+import { useState } from "react";
+import type {
+  CreateChildFormInput,
+  Person,
+} from "@/components/types/family-tree-types";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
+import { LAYOUT } from "@/lib/constants/ui-layout";
+import { UI } from "@/lib/constants/ui-strings";
+import { ActionOptions, ConfirmDelete } from "./NodeActionViews";
+import NodeChildForm from "./NodeChildForm";
 
 type NodeActionModalProps = {
   node: Person;
@@ -16,7 +19,7 @@ type NodeActionModalProps = {
   loading?: boolean;
 };
 
-type View = 'options' | 'child' | 'confirm';
+type View = "options" | "child" | "confirm";
 
 export default function NodeActionModal({
   node,
@@ -25,7 +28,7 @@ export default function NodeActionModal({
   onDeleteNode,
   loading = false,
 }: NodeActionModalProps) {
-  const [view, setView] = useState<View>('options');
+  const [view, setView] = useState<View>("options");
 
   return (
     <div className={`${LAYOUT.centeredOverlay} ${LAYOUT.overlayBackdropLight}`}>
@@ -36,17 +39,27 @@ export default function NodeActionModal({
           </div>
         ) : null}
 
-        {view === 'confirm' ? (
-          <ConfirmDelete node={node} loading={loading} onBack={() => setView('options')} onConfirm={onDeleteNode} />
-        ) : view === 'child' ? (
-          <NodeChildForm node={node} loading={loading} onBack={() => setView('options')} onCreate={onCreateChild} />
+        {view === "confirm" ? (
+          <ConfirmDelete
+            node={node}
+            loading={loading}
+            onBack={() => setView("options")}
+            onConfirm={onDeleteNode}
+          />
+        ) : view === "child" ? (
+          <NodeChildForm
+            node={node}
+            loading={loading}
+            onBack={() => setView("options")}
+            onCreate={onCreateChild}
+          />
         ) : (
           <ActionOptions
             node={node}
             loading={loading}
             onClose={onClose}
-            onAddChild={() => setView('child')}
-            onDelete={() => setView('confirm')}
+            onAddChild={() => setView("child")}
+            onDelete={() => setView("confirm")}
           />
         )}
       </div>

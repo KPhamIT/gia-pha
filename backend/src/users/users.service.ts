@@ -66,7 +66,11 @@ export class UsersService {
     return this.serialize(user);
   }
 
-  async updateUser(userId: number, dto: UpdateUserDto, actor: User): Promise<UserWithOrg> {
+  async updateUser(
+    userId: number,
+    dto: UpdateUserDto,
+    actor: User,
+  ): Promise<UserWithOrg> {
     const existing = await this.findManagedUser(userId, actor);
     const payload = this.resolveUpdatePayload(dto, existing, actor);
 
@@ -155,7 +159,9 @@ export class UsersService {
     if (isSystem(actor)) {
       const nextRole = dto.role ?? existing.role;
       const nextOrgId =
-        dto.organizationId !== undefined ? dto.organizationId : existing.organizationId;
+        dto.organizationId !== undefined
+          ? dto.organizationId
+          : existing.organizationId;
       return {
         role: nextRole,
         organizationId: nextOrgId,
@@ -232,7 +238,9 @@ export class UsersService {
   ): Promise<void> {
     if (role === UserRole.SYSTEM) {
       if (organizationId != null) {
-        throw new BadRequestException('System users cannot belong to an organization');
+        throw new BadRequestException(
+          'System users cannot belong to an organization',
+        );
       }
       return;
     }
@@ -255,7 +263,9 @@ export class UsersService {
     }
 
     if (role === UserRole.STANDARD && organizationId != null) {
-      const org = await this.prisma.organization.findUnique({ where: { id: organizationId } });
+      const org = await this.prisma.organization.findUnique({
+        where: { id: organizationId },
+      });
       if (!org) {
         throw new BadRequestException('Organization not found');
       }

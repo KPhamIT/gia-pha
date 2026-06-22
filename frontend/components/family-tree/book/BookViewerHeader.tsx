@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import Icon from '@/components/icons/Icon';
-import { UI } from '@/lib/constants/ui-strings';
-import styles from './GenealogyBook.module.css';
+import Icon from "@/components/icons/Icon";
+import { UI } from "@/lib/constants/ui-strings";
+import styles from "./GenealogyBook.module.css";
 
-const iconBtn = 'grid h-10 w-10 shrink-0 place-items-center rounded-full active:bg-white/10 disabled:opacity-40';
+const iconBtn =
+  "grid h-10 w-10 shrink-0 place-items-center rounded-full active:bg-white/10 disabled:opacity-40";
 
 type Props = {
   pageIndex: number;
@@ -40,7 +41,7 @@ export default function BookViewerHeader({
           aria-label={standalone ? UI.OPEN_FAMILY_TREE : UI.CANCEL}
         >
           <Icon
-            path={standalone ? 'center' : 'arrowLeft'}
+            path={standalone ? "center" : "arrowLeft"}
             size={22}
             fill="none"
             stroke="currentColor"
@@ -50,21 +51,71 @@ export default function BookViewerHeader({
         </button>
       ) : null}
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-lg font-semibold md:text-xl">{UI.VIEW_GENEALOGY_BOOK}</h1>
+        <h1 className="truncate text-lg font-semibold md:text-xl">
+          {UI.VIEW_GENEALOGY_BOOK}
+        </h1>
         {/* <p className="text-xs text-amber-100/70">{UI.BOOK_TAP_HINT}</p> */}
       </div>
       <div className="flex shrink-0 items-center gap-1 overflow-x-auto">
-        <button type="button" onClick={onOpenSearch} className={iconBtn} aria-label={UI.BOOK_OPEN_SEARCH}>
-          <Icon path="search" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        <button
+          type="button"
+          onClick={onOpenSearch}
+          className={iconBtn}
+          aria-label={UI.BOOK_OPEN_SEARCH}
+        >
+          <Icon
+            path="search"
+            size={20}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
         </button>
-        <button type="button" onClick={onOpenPages} className={iconBtn} aria-label={UI.BOOK_OPEN_PAGES}>
-          <Icon path="list" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        <button
+          type="button"
+          onClick={onOpenPages}
+          className={iconBtn}
+          aria-label={UI.BOOK_OPEN_PAGES}
+        >
+          <Icon
+            path="list"
+            size={20}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
         </button>
-        <button type="button" onClick={onToggleStyle} className={iconBtn} aria-label={UI.BOOK_OPEN_STYLE}>
-          <Icon path="settings" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        <button
+          type="button"
+          onClick={onToggleStyle}
+          className={iconBtn}
+          aria-label={UI.BOOK_OPEN_STYLE}
+        >
+          <Icon
+            path="settings"
+            size={20}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
         </button>
-        <button type="button" onClick={onPrint} className={iconBtn} aria-label={UI.BOOK_PRINT_PAGE}>
-          <Icon path="print" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        <button
+          type="button"
+          onClick={onPrint}
+          className={iconBtn}
+          aria-label={UI.BOOK_PRINT_PAGE}
+        >
+          <Icon
+            path="print"
+            size={20}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
         </button>
         <button
           type="button"
@@ -73,7 +124,14 @@ export default function BookViewerHeader({
           className={iconBtn}
           aria-label={UI.BOOK_PRINT_ALL}
         >
-          <Icon path="printAll" size={20} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+          <Icon
+            path="printAll"
+            size={20}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
         </button>
       </div>
       {/* <span className="shrink-0 text-sm text-amber-100/80">{UI.BOOK_PAGE_OF(pageIndex + 1, totalLeaves)}</span> */}

@@ -1,5 +1,5 @@
-import axiosClient from '@/lib/axiosClient';
-import { API_ROUTES } from '@/lib/constants/api-routes';
+import axiosClient from "@/lib/axiosClient";
+import { API_ROUTES } from "@/lib/constants/api-routes";
 
 export type NotificationSettings = {
   notificationDeathAnniversaryEnabled: boolean;
@@ -38,14 +38,16 @@ export type NotificationStats = {
 };
 
 export type UpdateNotificationSettingsInput = Partial<
-  Omit<NotificationSettings, 'pushSubscriptionCount' | 'pushSubscriptionIds'>
+  Omit<NotificationSettings, "pushSubscriptionCount" | "pushSubscriptionIds">
 > & {
   removeOnesignalSubscriptionId?: string;
 };
 
 export const notifications = {
   getSettings: () =>
-    axiosClient.get<NotificationSettings>(API_ROUTES.NOTIFICATIONS_SETTINGS).then((r) => r.data),
+    axiosClient
+      .get<NotificationSettings>(API_ROUTES.NOTIFICATIONS_SETTINGS)
+      .then((r) => r.data),
 
   updateSettings: (input: UpdateNotificationSettingsInput) =>
     axiosClient
@@ -53,7 +55,9 @@ export const notifications = {
       .then((r) => r.data),
 
   list: () =>
-    axiosClient.get<NotificationLogItem[]>(API_ROUTES.NOTIFICATIONS).then((r) => r.data),
+    axiosClient
+      .get<NotificationLogItem[]>(API_ROUTES.NOTIFICATIONS)
+      .then((r) => r.data),
 
   upcoming: () =>
     axiosClient
@@ -61,5 +65,7 @@ export const notifications = {
       .then((r) => r.data),
 
   stats: () =>
-    axiosClient.get<NotificationStats>(API_ROUTES.NOTIFICATIONS_STATS).then((r) => r.data),
+    axiosClient
+      .get<NotificationStats>(API_ROUTES.NOTIFICATIONS_STATS)
+      .then((r) => r.data),
 };

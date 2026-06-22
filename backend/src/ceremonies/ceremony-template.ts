@@ -11,7 +11,10 @@ export const CEREMONY_TEMPLATE_VARIABLES = [
   { key: 'person.grave_address', label: 'Địa chỉ mộ (nghĩa trang + địa chỉ)' },
   { key: 'person.grave_notes', label: 'Ghi chú mộ' },
   { key: 'organization.name', label: 'Tên dòng họ / tổ chức' },
-  { key: 'ceremony.lunar_date', label: 'Ngày giỗ âm lịch (đủ: 15 tháng 07 âm lịch)' },
+  {
+    key: 'ceremony.lunar_date',
+    label: 'Ngày giỗ âm lịch (đủ: 15 tháng 07 âm lịch)',
+  },
   { key: 'ceremony.lunar_day', label: 'Ngày giỗ (âm lịch, số)' },
   { key: 'ceremony.lunar_month', label: 'Tháng giỗ (âm lịch, số)' },
   { key: 'ceremony.lunar_year', label: 'Năm âm lịch hiện tại' },
@@ -58,5 +61,8 @@ Nam mô A Di Đà Phật.
 </body>
 </html>`;
 
-export { buildCeremonyVars, renderCeremonyTemplate } from './build-ceremony-vars.js';
+export {
+  buildCeremonyVars,
+  renderCeremonyTemplate,
+} from './build-ceremony-vars.js';
 export type { CeremonyVarGroups } from './build-ceremony-vars.js';

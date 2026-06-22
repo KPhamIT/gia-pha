@@ -1,60 +1,87 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import { useAuthStore } from '@/store/authStore';
-import TreeFilters from '@/components/family-tree/graph/TreeFilters';
-import AppNavFab from '@/components/navigation/AppNavFab';
-import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
-import { useFamilyTree } from '@/hooks/useFamilyTree';
-import { useUserBranch } from '@/hooks/useUserBranch';
-import { useLayoutConfig } from '@/hooks/useLayoutConfig';
-import { filterTreeData } from '@/utils/filter-tree-data';
-import type { BranchValue } from '@/lib/constants/branches';
-import { useTheme } from '@/hooks/useTheme';
-import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
-import type { FamilyTreeGraphApi } from '@/hooks/useFamilyTreeGraph';
-import NotificationOptInBanner from '@/components/notifications/NotificationOptInBanner';
-import { getPageShellClass } from '@/utils/theme';
-import { UI } from '@/lib/constants/ui-strings';
-import { useTreeSettingsSync } from './useTreeSettingsSync';
-import { usePersonSheets } from './usePersonSheets';
-import FamilyTreeSheets from './FamilyTreeSheets';
-import TreeTopBar from './TreeTopBar';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { useAuthStore } from "@/store/authStore";
+import TreeFilters from "@/components/family-tree/graph/TreeFilters";
+import AppNavFab from "@/components/navigation/AppNavFab";
+import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
+import { useFamilyTree } from "@/hooks/useFamilyTree";
+import { useUserBranch } from "@/hooks/useUserBranch";
+import { useLayoutConfig } from "@/hooks/useLayoutConfig";
+import { filterTreeData } from "@/utils/filter-tree-data";
+import type { BranchValue } from "@/lib/constants/branches";
+import { useTheme } from "@/hooks/useTheme";
+import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
+import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
+import { getPageShellClass } from "@/utils/theme";
+import { UI } from "@/lib/constants/ui-strings";
+import { useTreeSettingsSync } from "./useTreeSettingsSync";
+import { usePersonSheets } from "./usePersonSheets";
+import FamilyTreeSheets from "./FamilyTreeSheets";
+import TreeTopBar from "./TreeTopBar";
 
-const FamilyTreeGraph = dynamic(() => import('@/components/family-tree/graph/FamilyTreeGraph'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full items-center justify-center text-sm text-slate-500">{UI.LOADING}</div>
-  ),
-});
+const FamilyTreeGraph = dynamic(
+  () => import("@/components/family-tree/graph/FamilyTreeGraph"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center text-sm text-slate-500">
+        {UI.LOADING}
+      </div>
+    ),
+  },
+);
 
 export default function FamilyTreePage() {
   const { requireFeature, canUseFeature, isSystem } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
-  const { treeData, loading, error, reload, addPerson, removePerson, addRelationship, removeRelationship, updatePerson } =
-    useFamilyTree();
+  const {
+    treeData,
+    loading,
+    error,
+    reload,
+    addPerson,
+    removePerson,
+    addRelationship,
+    removeRelationship,
+    updatePerson,
+  } = useFamilyTree();
   const { theme, setTheme } = useTheme();
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
-  const { branch: userBranch, setBranch: setUserBranch, hydrated: branchHydrated } = useUserBranch();
+  const {
+    branch: userBranch,
+    setBranch: setUserBranch,
+    hydrated: branchHydrated,
+  } = useUserBranch();
 
-  const { handleSaveSettings, savingSettings, settingsSaveError, saveSuccess } = useTreeSettingsSync({
-    theme,
-    layoutConfig,
-    setTheme,
-    setLayoutConfig,
+  const { handleSaveSettings, savingSettings, settingsSaveError, saveSuccess } =
+    useTreeSettingsSync({
+      theme,
+      layoutConfig,
+      setTheme,
+      setLayoutConfig,
+      requireFeature,
+    });
+  const sheets = usePersonSheets({
+    treeData,
     requireFeature,
+    addPerson,
+    removePerson,
+    updatePerson,
   });
-  const sheets = usePersonSheets({ treeData, requireFeature, addPerson, removePerson, updatePerson });
 
   const [showSettings, setShowSettings] = useState(false);
   const [showExport, setShowExport] = useState(false);
-  const [exportPositionOverrides, setExportPositionOverrides] = useState<NodePositionOverrides | undefined>();
+  const [exportPositionOverrides, setExportPositionOverrides] = useState<
+    NodePositionOverrides | undefined
+  >();
   const graphApiRef = useRef<FamilyTreeGraphApi | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
-  const [filterBranch, setFilterBranch] = useState<number | 'all' | null>(null);
-  const [maxGeneration, setMaxGeneration] = useState<number | 'all'>(4);
+  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(null);
+  const [maxGeneration, setMaxGeneration] = useState<number | "all">(4);
 
   useEffect(() => {
     void refreshAuth();
@@ -62,17 +89,22 @@ export default function FamilyTreePage() {
 
   const handleOpenExport = useCallback(() => {
     const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
-    setExportPositionOverrides(Object.keys(moved).length > 0 ? moved : undefined);
+    setExportPositionOverrides(
+      Object.keys(moved).length > 0 ? moved : undefined,
+    );
     setShowExport(true);
   }, []);
   const handleCloseExport = useCallback(() => {
     setShowExport(false);
     setExportPositionOverrides(undefined);
   }, []);
-  const handleSelectBranch = useCallback((branch: BranchValue) => setUserBranch(branch), [setUserBranch]);
+  const handleSelectBranch = useCallback(
+    (branch: BranchValue) => setUserBranch(branch),
+    [setUserBranch],
+  );
 
   // The on-page branch filter follows the user's saved branch until they override it.
-  const effectiveBranch = filterBranch ?? userBranch ?? 'all';
+  const effectiveBranch = filterBranch ?? userBranch ?? "all";
 
   // Re-fit the viewport whenever the visible subset of the tree changes.
   useEffect(() => {
@@ -81,7 +113,10 @@ export default function FamilyTreePage() {
   }, [effectiveBranch, maxGeneration]);
 
   const filteredTreeData = useMemo(
-    () => (treeData ? filterTreeData(treeData, { branch: effectiveBranch, maxGeneration }) : null),
+    () =>
+      treeData
+        ? filterTreeData(treeData, { branch: effectiveBranch, maxGeneration })
+        : null,
     [treeData, effectiveBranch, maxGeneration],
   );
 
@@ -89,15 +124,27 @@ export default function FamilyTreePage() {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
   if (error && !treeData) {
-    return <FamilyTreeStatus theme={theme} type="error" message={error} onRetry={reload} />;
+    return (
+      <FamilyTreeStatus
+        theme={theme}
+        type="error"
+        message={error}
+        onRetry={reload}
+      />
+    );
   }
   if (!loading && !treeData) {
     return <FamilyTreeStatus theme={theme} type="empty" />;
   }
 
   return (
-    <div className={`min-h-screen overflow-x-hidden ${getPageShellClass(theme)}`}>
-      <TreeTopBar isSystem={isSystem} onOpenSettings={() => setShowSettings(true)} />
+    <div
+      className={`min-h-screen overflow-x-hidden ${getPageShellClass(theme)}`}
+    >
+      <TreeTopBar
+        isSystem={isSystem}
+        onOpenSettings={() => setShowSettings(true)}
+      />
 
       <TreeFilters
         branch={effectiveBranch}
@@ -121,7 +168,7 @@ export default function FamilyTreePage() {
             onPersonAdded={addPerson}
             onRelationshipAdded={addRelationship}
             onRelationshipRemoved={removeRelationship}
-            assertCanMutate={() => requireFeature('editTree')}
+            assertCanMutate={() => requireFeature("editTree")}
             theme={theme}
           />
         </div>
@@ -143,7 +190,7 @@ export default function FamilyTreePage() {
       {treeData ? (
         <FamilyTreeSheets
           sheets={sheets}
-          canEdit={canUseFeature('editTree')}
+          canEdit={canUseFeature("editTree")}
           treeData={treeData}
           showSettings={showSettings}
           layoutConfig={layoutConfig}

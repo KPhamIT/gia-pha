@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import type { Person, Relationship } from '@/components/types/family-tree-types';
-import Icon from '@/components/icons/Icon';
-import { LAYOUT } from '@/lib/constants/ui-layout';
-import { UI } from '@/lib/constants/ui-strings';
-import { filterPersonsByName, personSearchSubtitle } from '@/utils/person-search';
-import PersonSearchResultRow from './PersonSearchResultRow';
+import { useMemo, useState } from "react";
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import Icon from "@/components/icons/Icon";
+import { LAYOUT } from "@/lib/constants/ui-layout";
+import { UI } from "@/lib/constants/ui-strings";
+import {
+  filterPersonsByName,
+  personSearchSubtitle,
+} from "@/utils/person-search";
+import PersonSearchResultRow from "./PersonSearchResultRow";
 
 type PersonSearchPanelProps = {
   persons: Person[];
@@ -31,12 +37,15 @@ export default function PersonSearchPanel({
   placeholder = UI.SEARCH_PLACEHOLDER,
   clearLabel = UI.EVENT_DONATION_CLEAR_MEMBER,
   autoFocus = false,
-  listClassName = '',
+  listClassName = "",
 }: PersonSearchPanelProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   const selectedPerson = useMemo(
-    () => (selectedPersonId != null ? persons.find((p) => p.id === selectedPersonId) ?? null : null),
+    () =>
+      selectedPersonId != null
+        ? (persons.find((p) => p.id === selectedPersonId) ?? null)
+        : null,
     [persons, selectedPersonId],
   );
 
@@ -46,7 +55,9 @@ export default function PersonSearchPanel({
   );
 
   const showSearch = !selectedPerson || onClear == null;
-  const selectedSubtitle = selectedPerson ? personSearchSubtitle(selectedPerson, relationships) : null;
+  const selectedSubtitle = selectedPerson
+    ? personSearchSubtitle(selectedPerson, relationships)
+    : null;
 
   const searchInput = (
     <div className="relative min-w-0 flex-1">
@@ -71,16 +82,20 @@ export default function PersonSearchPanel({
   );
 
   return (
-    <div className={`flex min-h-0 flex-col ${onCancel ? 'flex-1' : ''}`}>
+    <div className={`flex min-h-0 flex-col ${onCancel ? "flex-1" : ""}`}>
       {selectedPerson && onClear ? (
         <div className="mb-3 flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-600 text-sm font-semibold text-white">
             {selectedPerson.fullName.charAt(0)}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-slate-900">{selectedPerson.fullName}</p>
+            <p className="truncate text-sm font-medium text-slate-900">
+              {selectedPerson.fullName}
+            </p>
             {selectedSubtitle ? (
-              <p className="truncate text-xs text-slate-500">{selectedSubtitle}</p>
+              <p className="truncate text-xs text-slate-500">
+                {selectedSubtitle}
+              </p>
             ) : null}
           </div>
           <button
@@ -95,7 +110,9 @@ export default function PersonSearchPanel({
 
       {showSearch ? (
         onCancel ? (
-          <div className={`flex shrink-0 items-center gap-3 border-b border-slate-200 ${LAYOUT.pagePad} pb-3 min-w-0`}>
+          <div
+            className={`flex shrink-0 items-center gap-3 border-b border-slate-200 ${LAYOUT.pagePad} pb-3 min-w-0`}
+          >
             {searchInput}
             <button
               type="button"
@@ -111,9 +128,13 @@ export default function PersonSearchPanel({
       ) : null}
 
       {showSearch ? (
-        <div className={`${onCancel ? `${LAYOUT.scrollList} min-h-0 flex-1 px-2 py-2` : listClassName}`}>
+        <div
+          className={`${onCancel ? `${LAYOUT.scrollList} min-h-0 flex-1 px-2 py-2` : listClassName}`}
+        >
           {query.trim() && results.length === 0 ? (
-            <p className="px-3 py-4 text-center text-sm text-slate-500">{UI.NO_SEARCH_RESULTS}</p>
+            <p className="px-3 py-4 text-center text-sm text-slate-500">
+              {UI.NO_SEARCH_RESULTS}
+            </p>
           ) : null}
           {results.map((person) => (
             <PersonSearchResultRow
@@ -123,7 +144,7 @@ export default function PersonSearchPanel({
               selected={person.id === selectedPersonId}
               onClick={() => {
                 onSelect(person);
-                setQuery('');
+                setQuery("");
               }}
             />
           ))}

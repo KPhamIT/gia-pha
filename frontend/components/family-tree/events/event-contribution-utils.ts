@@ -1,8 +1,12 @@
-import { getBranchLabel } from '@/lib/constants/branches';
-import { UI } from '@/lib/constants/ui-strings';
-import { parseVndInput } from './event-format';
-import type { Person } from '@/components/types/family-tree-types';
-import type { EventContribution, FamilyEvent, FamilyEventDetail } from '@/components/types/event-types';
+import { getBranchLabel } from "@/lib/constants/branches";
+import { UI } from "@/lib/constants/ui-strings";
+import { parseVndInput } from "./event-format";
+import type { Person } from "@/components/types/family-tree-types";
+import type {
+  EventContribution,
+  FamilyEvent,
+  FamilyEventDetail,
+} from "@/components/types/event-types";
 
 export function personMeta(person: Person): string {
   return [
@@ -10,7 +14,7 @@ export function personMeta(person: Person): string {
     person.branch != null ? getBranchLabel(person.branch) : null,
   ]
     .filter(Boolean)
-    .join(' · ');
+    .join(" · ");
 }
 
 export function amountsFromContributions(
@@ -35,7 +39,10 @@ export function isFullyPaid(amount: number, amountPerPerson: number): boolean {
   return amount >= amountPerPerson;
 }
 
-export function mapsEqual(a: Map<number, number>, b: Map<number, number>): boolean {
+export function mapsEqual(
+  a: Map<number, number>,
+  b: Map<number, number>,
+): boolean {
   if (a.size !== b.size) return false;
   for (const [key, value] of a) {
     if (b.get(key) !== value) return false;
@@ -70,7 +77,10 @@ export function withAmount(
 }
 
 /** Immutable map delete returning a fresh map. */
-export function withoutKey<V>(map: Map<number, V>, personId: number): Map<number, V> {
+export function withoutKey<V>(
+  map: Map<number, V>,
+  personId: number,
+): Map<number, V> {
   const next = new Map(map);
   next.delete(personId);
   return next;
@@ -84,10 +94,15 @@ export function changedContributions(
 ): { personId: number; amountPaid: number }[] {
   return livingIds
     .filter((id) => (nextDraft.get(id) ?? 0) !== (savedAmounts.get(id) ?? 0))
-    .map((personId) => ({ personId, amountPaid: nextDraft.get(personId) ?? 0 }));
+    .map((personId) => ({
+      personId,
+      amountPaid: nextDraft.get(personId) ?? 0,
+    }));
 }
 
-export const summaryPatch = (detail: FamilyEventDetail): Partial<FamilyEvent> => ({
+export const summaryPatch = (
+  detail: FamilyEventDetail,
+): Partial<FamilyEvent> => ({
   paidCount: detail.paidCount,
   totalCollected: detail.totalCollected,
   donationTotal: detail.donationTotal,

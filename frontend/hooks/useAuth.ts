@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import { api } from '@/lib/api';
+import { useCallback } from "react";
+import { api } from "@/lib/api";
 import {
   clearToken,
   getToken,
@@ -9,8 +9,11 @@ import {
   loginWithZalo as startZaloLogin,
   logout as clearSession,
   setToken,
-} from '@/lib/auth/session';
-import { isZaloLoginEnabled, requestFacebookAccessToken } from '@/lib/auth/facebook-sdk';
+} from "@/lib/auth/session";
+import {
+  isZaloLoginEnabled,
+  requestFacebookAccessToken,
+} from "@/lib/auth/facebook-sdk";
 
 export function useAuth() {
   const loginWithZalo = useCallback(() => {
@@ -21,7 +24,7 @@ export function useAuth() {
     const accessToken = await requestFacebookAccessToken();
     const result = await api.auth.loginWithFacebook(accessToken);
     setToken(result.accessToken);
-    window.location.href = '/book';
+    window.location.href = "/book";
   }, []);
 
   const logout = useCallback(() => clearSession(), []);

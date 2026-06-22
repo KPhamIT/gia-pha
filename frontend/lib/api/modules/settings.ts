@@ -1,5 +1,5 @@
-import axiosClient from '@/lib/axiosClient';
-import { API_ROUTES } from '@/lib/constants/api-routes';
+import axiosClient from "@/lib/axiosClient";
+import { API_ROUTES } from "@/lib/constants/api-routes";
 
 export type UserSettings = {
   theme?: string;
@@ -13,7 +13,12 @@ export type UserSettings = {
 };
 
 export const settings = {
-  getMine: () => axiosClient.get<UserSettings | null>(API_ROUTES.SETTINGS).then((r) => r.data),
+  getMine: () =>
+    axiosClient
+      .get<UserSettings | null>(API_ROUTES.SETTINGS)
+      .then((r) => r.data),
   upsert: (data: UserSettings) =>
-    axiosClient.put<UserSettings>(API_ROUTES.SETTINGS, data).then((r) => r.data),
+    axiosClient
+      .put<UserSettings>(API_ROUTES.SETTINGS, data)
+      .then((r) => r.data),
 };

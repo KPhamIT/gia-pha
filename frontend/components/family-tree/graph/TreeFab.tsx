@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import IconRoundButton from '@/components/ui/IconRoundButton';
-import { BT } from '@/lib/constants/ui-theme';
-import { UI } from '@/lib/constants/ui-strings';
-import type { StandardFeatureKey } from '@/lib/auth/standard-features';
+import { useMemo, useState } from "react";
+import IconRoundButton from "@/components/ui/IconRoundButton";
+import { BT } from "@/lib/constants/ui-theme";
+import { UI } from "@/lib/constants/ui-strings";
+import type { StandardFeatureKey } from "@/lib/auth/standard-features";
 import {
   buildFabMenuItems,
   type FabAction,
   type FabPageContext,
-} from '@/lib/navigation/fab-actions';
+} from "@/lib/navigation/fab-actions";
 
 type TreeFabProps = {
   context: FabPageContext;
@@ -94,7 +94,7 @@ export default function TreeFab({
       ) : null}
 
       <div className="fixed bottom-6 left-4 z-[45] flex flex-col-reverse items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
-          {open ? (
+        {open ? (
           <div className="flex min-w-[9.25rem] flex-col gap-1">
             {actions.map((action) => (
               <IconRoundButton
@@ -119,7 +119,7 @@ export default function TreeFab({
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? UI.CANCEL : UI.BTN_CREATE}
           aria-expanded={open}
-          className={open ? '[&_svg]:rotate-45' : ''}
+          className={open ? "[&_svg]:rotate-45" : ""}
         />
       </div>
     </>

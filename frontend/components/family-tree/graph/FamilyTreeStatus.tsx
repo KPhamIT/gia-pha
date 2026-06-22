@@ -1,12 +1,12 @@
-import type { ThemeMode } from '@/components/types/family-tree-types';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { getMutedTextClass, getPageShellClass } from '@/utils/theme';
-import { LAYOUT } from '@/lib/constants/ui-layout';
-import { UI } from '@/lib/constants/ui-strings';
+import type { ThemeMode } from "@/components/types/family-tree-types";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
+import { getMutedTextClass, getPageShellClass } from "@/utils/theme";
+import { LAYOUT } from "@/lib/constants/ui-layout";
+import { UI } from "@/lib/constants/ui-strings";
 
 type FamilyTreeStatusProps = {
   theme: ThemeMode;
-  type: 'loading' | 'error' | 'empty';
+  type: "loading" | "error" | "empty";
   message?: string;
   onRetry?: () => void;
   onLogin?: () => void;
@@ -21,7 +21,7 @@ export default function FamilyTreeStatus({
 }: FamilyTreeStatusProps) {
   const shellClass = `flex h-screen w-full items-center justify-center ${getPageShellClass(theme)}`;
 
-  if (type === 'loading') {
+  if (type === "loading") {
     return (
       <div className={shellClass}>
         <div className="flex flex-col items-center gap-4">
@@ -31,10 +31,14 @@ export default function FamilyTreeStatus({
     );
   }
 
-  if (type === 'empty') {
+  if (type === "empty") {
     return (
       <div className={shellClass}>
-        <div className={`text-lg ${getMutedTextClass(theme)} ${LAYOUT.pagePad} text-center md:mx-auto md:max-w-md md:rounded-2xl md:bg-white/50 md:shadow-sm md:dark:bg-slate-900/50`}>{UI.NO_DATA}</div>
+        <div
+          className={`text-lg ${getMutedTextClass(theme)} ${LAYOUT.pagePad} text-center md:mx-auto md:max-w-md md:rounded-2xl md:bg-white/50 md:shadow-sm md:dark:bg-slate-900/50`}
+        >
+          {UI.NO_DATA}
+        </div>
       </div>
     );
   }
@@ -43,13 +47,21 @@ export default function FamilyTreeStatus({
     <div className={shellClass}>
       <div
         className={`mx-4 max-w-md rounded-2xl p-6 text-center shadow-lg md:p-8 ${
-          theme === 'dark' ? 'border border-slate-700 bg-slate-900' : 'bg-red-50'
+          theme === "dark"
+            ? "border border-slate-700 bg-slate-900"
+            : "bg-red-50"
         }`}
       >
-        <p className={`text-lg font-semibold ${theme === 'dark' ? 'text-red-300' : 'text-red-600'}`}>
+        <p
+          className={`text-lg font-semibold ${theme === "dark" ? "text-red-300" : "text-red-600"}`}
+        >
           {UI.ERROR_TITLE}
         </p>
-        <p className={`mt-2 ${theme === 'dark' ? 'text-slate-200' : 'text-red-500'}`}>{message}</p>
+        <p
+          className={`mt-2 ${theme === "dark" ? "text-slate-200" : "text-red-500"}`}
+        >
+          {message}
+        </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           {onLogin ? (
             <button

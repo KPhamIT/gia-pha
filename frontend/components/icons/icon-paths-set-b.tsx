@@ -1,17 +1,17 @@
-import type { IconDefinition, IconName } from './icon-paths';
+import type { IconDefinition, IconName } from "./icon-paths";
 
 /** Second half of the icon set (see icon-paths.tsx for the merged map). */
 export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
   chevronDown: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: <path d="m6 9 6 6 6-6" />,
   },
   chevronUp: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: <path d="m18 15-6-6-6 6" />,
   },
   book: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -20,15 +20,15 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   chevronLeft: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: <path d="m15 18-6-6 6-6" />,
   },
   chevronRight: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: <path d="m9 18 6-6-6-6" />,
   },
   print: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
@@ -38,7 +38,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   printAll: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M7 3h8l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
@@ -50,7 +50,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   list: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M8 6h13" />
@@ -63,7 +63,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   calendar: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -74,7 +74,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   image: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -84,7 +84,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   download: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -94,7 +94,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   lock: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <rect x="5" y="11" width="14" height="10" rx="2" />
@@ -103,7 +103,7 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   share: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />

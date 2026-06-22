@@ -1,9 +1,12 @@
-'use client';
+"use client";
 
-import type { Person, Relationship } from '@/components/types/family-tree-types';
-import BottomSheet from '@/components/ui/BottomSheet';
-import { dismissOverlayFocus } from '@/hooks/useOverlayViewport';
-import PersonSearchPanel from './PersonSearchPanel';
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import BottomSheet from "@/components/ui/BottomSheet";
+import { dismissOverlayFocus } from "@/hooks/useOverlayViewport";
+import PersonSearchPanel from "./PersonSearchPanel";
 
 type SearchSheetProps = {
   persons: Person[];
@@ -12,7 +15,12 @@ type SearchSheetProps = {
   onSelect: (person: Person) => void;
 };
 
-export default function SearchSheet({ persons, relationships, onClose, onSelect }: SearchSheetProps) {
+export default function SearchSheet({
+  persons,
+  relationships,
+  onClose,
+  onSelect,
+}: SearchSheetProps) {
   const handleClose = () => {
     dismissOverlayFocus();
     onClose();

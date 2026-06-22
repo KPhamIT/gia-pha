@@ -8,7 +8,7 @@ function mmToPx(mm: number): number {
 
 export function fitGenealogyPagesForPrint(
   container: HTMLElement | null,
-  scopeSelector = '[data-genealogy-paper]',
+  scopeSelector = "[data-genealogy-paper]",
 ): void {
   if (!container) return;
 
@@ -16,16 +16,17 @@ export function fitGenealogyPagesForPrint(
   const papers = container.querySelectorAll<HTMLElement>(scopeSelector);
 
   papers.forEach((paper) => {
-    paper.style.transform = '';
-    paper.style.width = '';
-    paper.style.marginBottom = '';
+    paper.style.transform = "";
+    paper.style.width = "";
+    paper.style.marginBottom = "";
 
-    const contentHeight = paper.getBoundingClientRect().height || paper.scrollHeight;
+    const contentHeight =
+      paper.getBoundingClientRect().height || paper.scrollHeight;
     if (contentHeight <= maxHeight) return;
 
     const scale = maxHeight / contentHeight;
     paper.style.transform = `scale(${scale})`;
-    paper.style.transformOrigin = 'top center';
+    paper.style.transformOrigin = "top center";
     paper.style.width = `${100 / scale}%`;
     paper.style.marginBottom = `${contentHeight * (scale - 1)}px`;
   });
@@ -34,9 +35,11 @@ export function fitGenealogyPagesForPrint(
 export function resetGenealogyPrintFit(container: HTMLElement | null): void {
   if (!container) return;
 
-  container.querySelectorAll<HTMLElement>('[data-genealogy-paper]').forEach((paper) => {
-    paper.style.transform = '';
-    paper.style.width = '';
-    paper.style.marginBottom = '';
-  });
+  container
+    .querySelectorAll<HTMLElement>("[data-genealogy-paper]")
+    .forEach((paper) => {
+      paper.style.transform = "";
+      paper.style.width = "";
+      paper.style.marginBottom = "";
+    });
 }

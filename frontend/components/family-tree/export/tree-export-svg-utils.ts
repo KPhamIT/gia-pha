@@ -5,13 +5,18 @@ import {
   SCROLL_ASPECT,
   type ResolvedCouplet,
   type Rect,
-} from '@/lib/family-tree/export-tree-svg';
+} from "@/lib/family-tree/export-tree-svg";
 
-export type DraggableId = 'scroll' | 'dragonLeft' | 'dragonRight' | 'coupletLeft' | 'coupletRight';
+export type DraggableId =
+  | "scroll"
+  | "dragonLeft"
+  | "dragonRight"
+  | "coupletLeft"
+  | "coupletRight";
 
 export type DragState = {
   id: DraggableId;
-  mode: 'move' | 'resize';
+  mode: "move" | "resize";
   startX: number;
   startY: number;
   boxX: number;
@@ -20,21 +25,25 @@ export type DragState = {
 
 export const SERIF = "'Times New Roman', 'Songti SC', serif";
 
-const birthDateFormatter = new Intl.DateTimeFormat('vi-VN');
+const birthDateFormatter = new Intl.DateTimeFormat("vi-VN");
 
 export function formatBirthDate(birthDate: string | null): string {
-  if (!birthDate) return '';
+  if (!birthDate) return "";
   const d = new Date(birthDate);
-  return Number.isNaN(d.getTime()) ? '' : birthDateFormatter.format(d);
+  return Number.isNaN(d.getTime()) ? "" : birthDateFormatter.format(d);
 }
 
-export const IMAGE_ASPECT: Record<'scroll' | 'dragonLeft' | 'dragonRight', number> = {
+export const IMAGE_ASPECT: Record<
+  "scroll" | "dragonLeft" | "dragonRight",
+  number
+> = {
   scroll: SCROLL_ASPECT,
   dragonLeft: DRAGON_ASPECT,
   dragonRight: DRAGON_ASPECT,
 };
 
-export const coupletLineGap = (fontSize: number) => fontSize * COUPLET_LINE_FACTOR;
+export const coupletLineGap = (fontSize: number) =>
+  fontSize * COUPLET_LINE_FACTOR;
 
 /** Bounding rect of a couplet's vertical syllable column (x is the column centre). */
 export function coupletBounds(c: ResolvedCouplet): Rect {

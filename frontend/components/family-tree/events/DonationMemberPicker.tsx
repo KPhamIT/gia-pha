@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import Icon from '@/components/icons/Icon';
-import { inputClassName } from '@/components/ui/CollapsibleSection';
-import { UI } from '@/lib/constants/ui-strings';
-import type { Person } from '@/components/types/family-tree-types';
-import { filterPersonsByName } from '@/utils/person-search';
-import { personMeta } from './event-contribution-utils';
+import { useMemo, useState } from "react";
+import Icon from "@/components/icons/Icon";
+import { inputClassName } from "@/components/ui/CollapsibleSection";
+import { UI } from "@/lib/constants/ui-strings";
+import type { Person } from "@/components/types/family-tree-types";
+import { filterPersonsByName } from "@/utils/person-search";
+import { personMeta } from "./event-contribution-utils";
 
 type Props = {
   persons: Person[];
@@ -15,9 +15,17 @@ type Props = {
   onClear: () => void;
 };
 
-export default function DonationMemberPicker({ persons, selectedPerson, onSelect, onClear }: Props) {
-  const [query, setQuery] = useState('');
-  const results = useMemo(() => filterPersonsByName(persons, query), [persons, query]);
+export default function DonationMemberPicker({
+  persons,
+  selectedPerson,
+  onSelect,
+  onClear,
+}: Props) {
+  const [query, setQuery] = useState("");
+  const results = useMemo(
+    () => filterPersonsByName(persons, query),
+    [persons, query],
+  );
 
   if (selectedPerson) {
     return (
@@ -26,9 +34,13 @@ export default function DonationMemberPicker({ persons, selectedPerson, onSelect
           {selectedPerson.fullName.charAt(0)}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-slate-900">{selectedPerson.fullName}</p>
+          <p className="truncate text-sm font-medium text-slate-900">
+            {selectedPerson.fullName}
+          </p>
           {personMeta(selectedPerson) ? (
-            <p className="truncate text-xs text-slate-500">{personMeta(selectedPerson)}</p>
+            <p className="truncate text-xs text-slate-500">
+              {personMeta(selectedPerson)}
+            </p>
           ) : null}
         </div>
         <button
@@ -70,7 +82,7 @@ export default function DonationMemberPicker({ persons, selectedPerson, onSelect
                 type="button"
                 onClick={() => {
                   onSelect(person);
-                  setQuery('');
+                  setQuery("");
                 }}
                 className="flex w-full items-center gap-3 px-3 py-2.5 text-left active:bg-amber-50"
               >
@@ -78,15 +90,23 @@ export default function DonationMemberPicker({ persons, selectedPerson, onSelect
                   {person.fullName.charAt(0)}
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-slate-900">{person.fullName}</p>
-                  {personMeta(person) ? <p className="truncate text-xs text-slate-500">{personMeta(person)}</p> : null}
+                  <p className="truncate text-sm font-medium text-slate-900">
+                    {person.fullName}
+                  </p>
+                  {personMeta(person) ? (
+                    <p className="truncate text-xs text-slate-500">
+                      {personMeta(person)}
+                    </p>
+                  ) : null}
                 </div>
               </button>
             </li>
           ))}
         </ul>
       ) : query.trim() ? (
-        <p className="mt-2 px-1 text-xs text-slate-400">{UI.NO_SEARCH_RESULTS}</p>
+        <p className="mt-2 px-1 text-xs text-slate-400">
+          {UI.NO_SEARCH_RESULTS}
+        </p>
       ) : null}
     </>
   );

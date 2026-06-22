@@ -1,22 +1,25 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import Link from 'next/link';
-import type { Person, Relationship } from '@/components/types/family-tree-types';
-import Icon from '@/components/icons/Icon';
-import { UI } from '@/lib/constants/ui-strings';
-import { BT } from '@/lib/constants/ui-theme';
-import { api } from '@/lib/api';
-import { logout } from '@/lib/auth/session';
-import { notify } from '@/lib/notify';
-import { useAuthStore } from '@/store/authStore';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import { getErrorMessage } from '@/utils/errors';
-import ContactInfoPanel from '@/components/auth/ContactInfoPanel';
-import NotificationStatsPanel from '@/components/notifications/NotificationStatsPanel';
-import AccountLinkSection from './AccountLinkSection';
-import AccountQuickActions from './AccountQuickActions';
-import { InfoRow } from './AccountRows';
+import { useCallback, useState } from "react";
+import Link from "next/link";
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import Icon from "@/components/icons/Icon";
+import { UI } from "@/lib/constants/ui-strings";
+import { BT } from "@/lib/constants/ui-theme";
+import { api } from "@/lib/api";
+import { logout } from "@/lib/auth/session";
+import { notify } from "@/lib/notify";
+import { useAuthStore } from "@/store/authStore";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { getErrorMessage } from "@/utils/errors";
+import ContactInfoPanel from "@/components/auth/ContactInfoPanel";
+import NotificationStatsPanel from "@/components/notifications/NotificationStatsPanel";
+import AccountLinkSection from "./AccountLinkSection";
+import AccountQuickActions from "./AccountQuickActions";
+import { InfoRow } from "./AccountRows";
 
 type UserAccountContentProps = {
   persons: Person[];
@@ -25,13 +28,17 @@ type UserAccountContentProps = {
 };
 
 const PROVIDER_LABELS: Record<string, string> = {
-  google: 'Google',
-  facebook: 'Facebook',
-  local: 'Tài khoản nội bộ',
-  credentials: 'Tài khoản nội bộ',
+  google: "Google",
+  facebook: "Facebook",
+  local: "Tài khoản nội bộ",
+  credentials: "Tài khoản nội bộ",
 };
 
-export default function UserAccountContent({ persons, relationships, onLinked }: UserAccountContentProps) {
+export default function UserAccountContent({
+  persons,
+  relationships,
+  onLinked,
+}: UserAccountContentProps) {
   const user = useAuthStore((state) => state.user);
   const person = useAuthStore((state) => state.person);
   const isAdmin = useAuthStore((state) => state.isAdmin);
@@ -55,7 +62,7 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
   }
 
   const handleSaveLink = useCallback(async () => {
-    if (!requireFeature('linkAccount')) return;
+    if (!requireFeature("linkAccount")) return;
     setSaving(true);
     setError(null);
     setMessage(null);
@@ -77,8 +84,13 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
   if (!user) {
     return (
       <div className="space-y-4">
-        <p className={`text-sm ${BT.mutedOnDark}`}>{UI.ACCOUNT_NOT_LOGGED_IN}</p>
-        <Link href="/login" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} inline-flex`}>
+        <p className={`text-sm ${BT.mutedOnDark}`}>
+          {UI.ACCOUNT_NOT_LOGGED_IN}
+        </p>
+        <Link
+          href="/login"
+          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} inline-flex`}
+        >
           {UI.BTN_LOGIN}
         </Link>
       </div>
@@ -91,13 +103,16 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
       ? UI.ACCOUNT_ROLE_ADMIN
       : UI.ACCOUNT_ROLE_STANDARD;
   const roleBadgeClass = isSystem
-    ? 'bg-red-100 text-red-700'
+    ? "bg-red-100 text-red-700"
     : isAdmin
-      ? 'bg-amber-100 text-amber-800'
-      : 'bg-neutral-100 text-neutral-600';
+      ? "bg-amber-100 text-amber-800"
+      : "bg-neutral-100 text-neutral-600";
 
-  const displayName = user.username || user.email || person?.fullName || '—';
-  const initial = (person?.fullName || user.username || user.email || '?').trim().charAt(0).toUpperCase();
+  const displayName = user.username || user.email || person?.fullName || "—";
+  const initial = (person?.fullName || user.username || user.email || "?")
+    .trim()
+    .charAt(0)
+    .toUpperCase();
   const providerLabel = PROVIDER_LABELS[user.provider] ?? user.provider;
   const orgName = user.organization?.name ?? null;
 
@@ -110,8 +125,12 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
             {initial}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-semibold text-neutral-900">{displayName}</p>
-            <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${roleBadgeClass}`}>
+            <p className="truncate text-base font-semibold text-neutral-900">
+              {displayName}
+            </p>
+            <span
+              className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${roleBadgeClass}`}
+            >
               {roleLabel}
             </span>
           </div>
@@ -130,7 +149,7 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
       </section>
 
       {/* Liên kết thành viên */}
-      {canUseFeature('linkAccount') ? (
+      {canUseFeature("linkAccount") ? (
         <AccountLinkSection
           persons={persons}
           relationships={relationships}
@@ -154,7 +173,14 @@ export default function UserAccountContent({ persons, relationships, onLinked }:
         onClick={() => logout()}
         className={`${BT.btnBase} ${BT.btnSm} ${BT.btnDanger} w-full`}
       >
-        <Icon path="arrowLeft" size={18} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+        <Icon
+          path="arrowLeft"
+          size={18}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          pointer={false}
+        />
         {UI.ACCOUNT_LOGOUT}
       </button>
     </div>

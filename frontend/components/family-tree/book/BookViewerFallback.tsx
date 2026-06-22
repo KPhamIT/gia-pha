@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Icon from '@/components/icons/Icon';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import type { ReactNode } from 'react';
-import OverlayPortal from '@/components/ui/OverlayPortal';
-import { UI } from '@/lib/constants/ui-strings';
+import Icon from "@/components/icons/Icon";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
+import type { ReactNode } from "react";
+import OverlayPortal from "@/components/ui/OverlayPortal";
+import { UI } from "@/lib/constants/ui-strings";
 
 type BookViewerFallbackProps = {
-  kind: 'loading' | 'error';
+  kind: "loading" | "error";
   standalone?: boolean;
   onClose?: () => void;
 };
@@ -38,7 +38,7 @@ export default function BookViewerFallback({
   standalone = false,
   onClose,
 }: BookViewerFallbackProps) {
-  if (kind === 'loading') {
+  if (kind === "loading") {
     return (
       <FallbackShell standalone={standalone}>
         <div className="flex flex-1 flex-col items-center justify-center gap-3">
@@ -59,7 +59,7 @@ export default function BookViewerFallback({
             aria-label={standalone ? UI.OPEN_FAMILY_TREE : UI.CANCEL}
           >
             <Icon
-              path={standalone ? 'center' : 'arrowLeft'}
+              path={standalone ? "center" : "arrowLeft"}
               size={22}
               fill="none"
               stroke="currentColor"
@@ -68,7 +68,9 @@ export default function BookViewerFallback({
             />
           </button>
         ) : null}
-        <h1 className="text-lg font-semibold md:text-xl">{UI.VIEW_GENEALOGY_BOOK}</h1>
+        <h1 className="text-lg font-semibold md:text-xl">
+          {UI.VIEW_GENEALOGY_BOOK}
+        </h1>
       </header>
       <p className="px-4 text-sm text-amber-100/80 md:px-6">{UI.ERROR_TITLE}</p>
     </FallbackShell>

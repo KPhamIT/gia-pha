@@ -16,7 +16,9 @@ export class ExportPresetService {
   async resolveUserId(userId?: number): Promise<number> {
     if (userId != null && userId > 0) return userId;
 
-    const existing = await this.prisma.user.findFirst({ orderBy: { id: 'asc' } });
+    const existing = await this.prisma.user.findFirst({
+      orderBy: { id: 'asc' },
+    });
     if (existing) return existing.id;
 
     const created = await this.prisma.user.create({
@@ -38,12 +40,17 @@ export class ExportPresetService {
     }));
   }
 
-  async replaceMine(userId: number | undefined, presetsInput: unknown): Promise<ExportPresetPayload[]> {
+  async replaceMine(
+    userId: number | undefined,
+    presetsInput: unknown,
+  ): Promise<ExportPresetPayload[]> {
     const resolvedUserId = await this.resolveUserId(userId);
     const presets = this.normalizePresetsInput(presetsInput);
 
     await this.prisma.$transaction([
-      this.prisma.exportPreset.deleteMany({ where: { userId: resolvedUserId } }),
+      this.prisma.exportPreset.deleteMany({
+        where: { userId: resolvedUserId },
+      }),
       this.prisma.exportPreset.createMany({
         data: presets.map((preset, index) => ({
           userId: resolvedUserId,
@@ -64,14 +71,28 @@ export class ExportPresetService {
     const byId = new Map<string, ExportPresetPayload>();
     for (const item of input) {
       if (!item || typeof item !== 'object') continue;
-      const id = typeof (item as { id?: unknown }).id === 'string' ? (item as { id: string }).id.trim() : '';
+      const id =
+        typeof (item as { id?: unknown }).id === 'string'
+          ? (item as { id: string }).id.trim()
+          : '';
       const label =
         typeof (item as { label?: unknown }).label === 'string'
           ? (item as { label: string }).label.trim()
           : '';
       const settings = (item as { settings?: unknown }).settings;
-      if (!id || !label || !settings || typeof settings !== 'object' || Array.isArray(settings)) continue;
-      byId.set(id, { id, label, settings: settings as Record<string, unknown> });
+      if (
+        !id ||
+        !label ||
+        !settings ||
+        typeof settings !== 'object' ||
+        Array.isArray(settings)
+      )
+        continue;
+      byId.set(id, {
+        id,
+        label,
+        settings: settings as Record<string, unknown>,
+      });
     }
 
     return [...byId.values()];

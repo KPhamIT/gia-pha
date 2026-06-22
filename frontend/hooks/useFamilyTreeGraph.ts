@@ -1,12 +1,29 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
-import { applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
-import type { Edge, EdgeChange, Node, NodeChange } from '@xyflow/react';
-import { buildFamilyTreeGraph, FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
-import type { FamilyTreeData, Person, Relationship } from '@/components/types/family-tree-types';
-import { collectMovedNodePositions, type NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
-import { useGraphConnections } from '@/hooks/useGraphConnections';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
+import { applyEdgeChanges, applyNodeChanges } from "@xyflow/react";
+import type { Edge, EdgeChange, Node, NodeChange } from "@xyflow/react";
+import {
+  buildFamilyTreeGraph,
+  FamilyTreeLayoutConfig,
+} from "@/components/family-tree/graph/layout";
+import type {
+  FamilyTreeData,
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import {
+  collectMovedNodePositions,
+  type NodePositionOverrides,
+} from "@/lib/family-tree/node-position-overrides";
+import { useGraphConnections } from "@/hooks/useGraphConnections";
 
 export type FamilyTreeGraphApi = {
   collectMovedNodePositions: () => NodePositionOverrides;
@@ -36,7 +53,11 @@ export function useFamilyTreeGraph({
 }: UseFamilyTreeGraphOptions) {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
-  const connections = useGraphConnections({ onPersonAdded, onRelationshipAdded, assertCanMutate });
+  const connections = useGraphConnections({
+    onPersonAdded,
+    onRelationshipAdded,
+    assertCanMutate,
+  });
 
   const onRelationshipRemovedRef = useRef(onRelationshipRemoved);
   useEffect(() => {
@@ -53,7 +74,8 @@ export function useFamilyTreeGraph({
   useEffect(() => {
     if (!graphApiRef) return;
     graphApiRef.current = {
-      collectMovedNodePositions: () => collectMovedNodePositions(nodes, treeData, layoutConfig),
+      collectMovedNodePositions: () =>
+        collectMovedNodePositions(nodes, treeData, layoutConfig),
     };
     return () => {
       graphApiRef.current = null;
@@ -65,7 +87,7 @@ export function useFamilyTreeGraph({
       nodes.map((node) => ({
         ...node,
         selected: node.id === String(selectedNodeId),
-        type: 'custom' as const,
+        type: "custom" as const,
       })),
     [nodes, selectedNodeId],
   );
@@ -76,7 +98,8 @@ export function useFamilyTreeGraph({
         ...edge,
         data: {
           ...edge.data,
-          onRelationshipRemoved: (relationshipId: number) => onRelationshipRemovedRef.current?.(relationshipId),
+          onRelationshipRemoved: (relationshipId: number) =>
+            onRelationshipRemovedRef.current?.(relationshipId),
         },
       })),
     [edges],
@@ -87,9 +110,13 @@ export function useFamilyTreeGraph({
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    const nonRemoveChanges = changes.filter((change) => change.type !== 'remove');
+    const nonRemoveChanges = changes.filter(
+      (change) => change.type !== "remove",
+    );
     if (nonRemoveChanges.length > 0) {
-      setEdges((currentEdges) => applyEdgeChanges(nonRemoveChanges, currentEdges));
+      setEdges((currentEdges) =>
+        applyEdgeChanges(nonRemoveChanges, currentEdges),
+      );
     }
   }, []);
 

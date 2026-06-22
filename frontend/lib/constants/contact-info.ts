@@ -1,4 +1,4 @@
-import { UI } from '@/lib/constants/ui-strings';
+import { UI } from "@/lib/constants/ui-strings";
 
 export type ContactInfo = {
   name?: string;
@@ -20,7 +20,9 @@ export function hasContactInfo(info: ContactInfo = getContactInfo()): boolean {
   return Boolean(info.name || info.phone || info.email || info.note);
 }
 
-export function formatContactLines(info: ContactInfo = getContactInfo()): string[] {
+export function formatContactLines(
+  info: ContactInfo = getContactInfo(),
+): string[] {
   const lines: string[] = [];
   if (info.name) lines.push(`${UI.CONTACT_NAME}: ${info.name}`);
   if (info.phone) lines.push(`${UI.CONTACT_PHONE}: ${info.phone}`);

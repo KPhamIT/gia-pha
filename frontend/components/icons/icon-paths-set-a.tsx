@@ -1,9 +1,9 @@
-import type { IconDefinition, IconName } from './icon-paths';
+import type { IconDefinition, IconName } from "./icon-paths";
 
 /** First half of the icon set (see icon-paths.tsx for the merged map). */
 export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
   settings: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
@@ -12,7 +12,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   close: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M18 6 6 18" />
@@ -21,7 +21,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   sun: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <circle cx="12" cy="12" r="4" />
@@ -37,11 +37,11 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   moon: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />,
   },
   trash: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M3 6h18" />
@@ -51,7 +51,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   userPlus: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -62,7 +62,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   arrowLeft: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M19 12H5" />
@@ -71,11 +71,11 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   check: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: <path d="M20 6 9 17l-5-5" />,
   },
   save: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
@@ -85,7 +85,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   alertTriangle: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -95,7 +95,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   search: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <circle cx="11" cy="11" r="8" />
@@ -104,7 +104,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   edit: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M12 20h9" />
@@ -113,7 +113,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   center: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <circle cx="12" cy="12" r="3" />
@@ -125,7 +125,7 @@ export const ICON_SET_A: Partial<Record<IconName, IconDefinition>> = {
     ),
   },
   plus: {
-    viewBox: '0 0 24 24',
+    viewBox: "0 0 24 24",
     paths: (
       <>
         <path d="M12 5v14" />

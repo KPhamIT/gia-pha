@@ -1,24 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import FullScreenSheet from '@/components/ui/FullScreenSheet';
-import IconRoundButton from '@/components/ui/IconRoundButton';
-import { FormField, inputClassName } from '@/components/ui/CollapsibleSection';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { LAYOUT } from '@/lib/constants/ui-layout';
-import { BT } from '@/lib/constants/ui-theme';
-import { UI } from '@/lib/constants/ui-strings';
+import { useState } from "react";
+import FullScreenSheet from "@/components/ui/FullScreenSheet";
+import IconRoundButton from "@/components/ui/IconRoundButton";
+import { FormField, inputClassName } from "@/components/ui/CollapsibleSection";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
+import { LAYOUT } from "@/lib/constants/ui-layout";
+import { BT } from "@/lib/constants/ui-theme";
+import { UI } from "@/lib/constants/ui-strings";
 
 type AddPersonSheetProps = {
   onClose: () => void;
-  onSubmit: (data: { fullName: string; gender: string; birthDate: string }) => void;
+  onSubmit: (data: {
+    fullName: string;
+    gender: string;
+    birthDate: string;
+  }) => void;
   loading?: boolean;
 };
 
-export default function AddPersonSheet({ onClose, onSubmit, loading = false }: AddPersonSheetProps) {
-  const [fullName, setFullName] = useState('');
-  const [gender, setGender] = useState('');
-  const [birthDate, setBirthDate] = useState('');
+export default function AddPersonSheet({
+  onClose,
+  onSubmit,
+  loading = false,
+}: AddPersonSheetProps) {
+  const [fullName, setFullName] = useState("");
+  const [gender, setGender] = useState("");
+  const [birthDate, setBirthDate] = useState("");
 
   const handleSubmit = () => {
     if (!fullName.trim()) {
@@ -29,12 +37,24 @@ export default function AddPersonSheet({ onClose, onSubmit, loading = false }: A
   };
 
   const saveButton = (
-    <IconRoundButton icon="save" variant="gold" loading={loading} label={UI.SAVE} onClick={handleSubmit} />
+    <IconRoundButton
+      icon="save"
+      variant="gold"
+      loading={loading}
+      label={UI.SAVE}
+      onClick={handleSubmit}
+    />
   );
 
   return (
-    <FullScreenSheet title={UI.ADD_PERSON} onClose={onClose} headerRight={saveButton}>
-      <div className={`relative ${BT.card} space-y-4 ${LAYOUT.pagePad} md:mx-6 md:mt-4`}>
+    <FullScreenSheet
+      title={UI.ADD_PERSON}
+      onClose={onClose}
+      headerRight={saveButton}
+    >
+      <div
+        className={`relative ${BT.card} space-y-4 ${LAYOUT.pagePad} md:mx-6 md:mt-4`}
+      >
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
             <LoadingSpinner size={36} label={UI.SAVING} />

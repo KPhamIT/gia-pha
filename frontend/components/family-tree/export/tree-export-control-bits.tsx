@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-export type ImageKey = 'scroll' | 'dragonLeft' | 'dragonRight';
-export type CoupletKey = 'coupletLeft' | 'coupletRight';
+export type ImageKey = "scroll" | "dragonLeft" | "dragonRight";
+export type CoupletKey = "coupletLeft" | "coupletRight";
 
-export const fieldLabel = 'mb-1 block text-xs font-medium text-slate-500';
+export const fieldLabel = "mb-1 block text-xs font-medium text-slate-500";
 export const selectClass =
-  'w-full rounded-lg border border-amber-300/50 bg-amber-50/90 px-3 py-2 text-sm text-amber-950 outline-none focus:border-amber-500';
+  "w-full rounded-lg border border-amber-300/50 bg-amber-50/90 px-3 py-2 text-sm text-amber-950 outline-none focus:border-amber-500";
 export const sectionTitle =
-  'mt-4 mb-2 text-[11px] font-semibold uppercase tracking-wide text-amber-700';
+  "mt-4 mb-2 text-[11px] font-semibold uppercase tracking-wide text-amber-700";
 
 export function Toggle({
   label,

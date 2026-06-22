@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-export type AuthGateReason = 'login' | 'admin' | 'permission';
+export type AuthGateReason = "login" | "admin" | "permission";
 
 type AuthGateStore = {
   reason: AuthGateReason | null;

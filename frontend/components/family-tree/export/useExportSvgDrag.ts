@@ -1,8 +1,16 @@
-'use client';
+"use client";
 
-import { useRef, type MutableRefObject, type PointerEvent as ReactPointerEvent } from 'react';
-import type { ExportBox } from '@/lib/family-tree/tree-export-settings';
-import { IMAGE_ASPECT, type DragState, type DraggableId } from './tree-export-svg-utils';
+import {
+  useRef,
+  type MutableRefObject,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
+import type { ExportBox } from "@/lib/family-tree/tree-export-settings";
+import {
+  IMAGE_ASPECT,
+  type DragState,
+  type DraggableId,
+} from "./tree-export-svg-utils";
 
 type Options = {
   interactive: boolean;
@@ -31,7 +39,7 @@ export function useExportSvgDrag(
   const beginDrag = (
     e: ReactPointerEvent,
     id: DraggableId,
-    mode: 'move' | 'resize',
+    mode: "move" | "resize",
     box: { x: number; y: number },
   ) => {
     if (!interactive) return;
@@ -40,7 +48,14 @@ export function useExportSvgDrag(
     onSelect?.(id);
     const p = toSvgPoint(e.clientX, e.clientY);
     if (!p) return;
-    dragRef.current = { id, mode, startX: p.x, startY: p.y, boxX: box.x, boxY: box.y };
+    dragRef.current = {
+      id,
+      mode,
+      startX: p.x,
+      startY: p.y,
+      boxX: box.x,
+      boxY: box.y,
+    };
     svgRef.current?.setPointerCapture(e.pointerId);
   };
 
@@ -50,16 +65,20 @@ export function useExportSvgDrag(
     const p = toSvgPoint(e.clientX, e.clientY);
     if (!p) return;
 
-    if (drag.mode === 'move') {
-      if (drag.id === 'coupletRight') {
+    if (drag.mode === "move") {
+      if (drag.id === "coupletRight") {
         onChange?.(drag.id, { y: drag.boxY + (p.y - drag.startY) });
       } else {
-        onChange?.(drag.id, { x: drag.boxX + (p.x - drag.startX), y: drag.boxY + (p.y - drag.startY) });
+        onChange?.(drag.id, {
+          x: drag.boxX + (p.x - drag.startX),
+          y: drag.boxY + (p.y - drag.startY),
+        });
       }
       return;
     }
     // resize (images only): anchor at top-left, lock aspect ratio.
-    const aspect = IMAGE_ASPECT[drag.id as 'scroll' | 'dragonLeft' | 'dragonRight'] ?? 1;
+    const aspect =
+      IMAGE_ASPECT[drag.id as "scroll" | "dragonLeft" | "dragonRight"] ?? 1;
     const width = Math.max(40, p.x - drag.boxX);
     onChange?.(drag.id, { width, height: width / aspect });
   };

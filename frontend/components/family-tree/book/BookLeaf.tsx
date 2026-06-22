@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import type { Person, PersonDetail } from '@/components/types/family-tree-types';
-import GenealogyBookPage, { type BookPageDraft } from './GenealogyBookPage';
-import BookCoverPage from './BookCoverPage';
-import BookPrefacePage from './BookPrefacePage';
-import { getBorderStyle } from './page-border-styles';
-import type { BookSettings } from './book-settings';
-import type { Leaf } from './book-leaves';
-import styles from './GenealogyBook.module.css';
+import type {
+  Person,
+  PersonDetail,
+} from "@/components/types/family-tree-types";
+import GenealogyBookPage, { type BookPageDraft } from "./GenealogyBookPage";
+import BookCoverPage from "./BookCoverPage";
+import BookPrefacePage from "./BookPrefacePage";
+import { getBorderStyle } from "./page-border-styles";
+import type { BookSettings } from "./book-settings";
+import type { Leaf } from "./book-leaves";
+import styles from "./GenealogyBook.module.css";
 
 export type BookLeafCtx = {
   leaves: Leaf[];
@@ -19,7 +22,11 @@ export type BookLeafCtx = {
 };
 
 /** Renders any leaf by index. `live` enables editing on cover and preface only. */
-export default function BookLeaf({ index, live, ctx }: {
+export default function BookLeaf({
+  index,
+  live,
+  ctx,
+}: {
   index: number;
   live?: boolean;
   ctx: BookLeafCtx;
@@ -27,16 +34,26 @@ export default function BookLeaf({ index, live, ctx }: {
   const leaf = ctx.leaves[index];
   if (!leaf) return null;
 
-  if (leaf.kind === 'cover') {
-    return <BookCoverPage settings={ctx.settings} readOnly={!live} onChange={ctx.updateSettings} />;
+  if (leaf.kind === "cover") {
+    return (
+      <BookCoverPage
+        settings={ctx.settings}
+        readOnly={!live}
+        onChange={ctx.updateSettings}
+      />
+    );
   }
 
-  if (leaf.kind === 'preface') {
+  if (leaf.kind === "preface") {
     const Border = getBorderStyle(ctx.settings.borderStyleId).Component;
     return (
       <div className={`${styles.paper} relative`} data-genealogy-paper>
         <Border>
-          <BookPrefacePage settings={ctx.settings} readOnly={!live} onChange={ctx.updateSettings} />
+          <BookPrefacePage
+            settings={ctx.settings}
+            readOnly={!live}
+            onChange={ctx.updateSettings}
+          />
         </Border>
       </div>
     );

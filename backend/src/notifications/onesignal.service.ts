@@ -24,7 +24,9 @@ export class OneSignalService {
     return Boolean(this.appId && this.restApiKey);
   }
 
-  async sendNotification(input: SendNotificationInput): Promise<{ ok: boolean; id?: string; error?: string }> {
+  async sendNotification(
+    input: SendNotificationInput,
+  ): Promise<{ ok: boolean; id?: string; error?: string }> {
     if (!this.isConfigured()) {
       this.logger.warn('OneSignal is not configured — skipping push');
       return { ok: false, error: 'OneSignal not configured' };

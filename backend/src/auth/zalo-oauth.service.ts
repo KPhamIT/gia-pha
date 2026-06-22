@@ -39,7 +39,9 @@ export class ZaloOAuthService {
     const redirectUri = this.requireConfig('ZALO_REDIRECT_URI');
     const state = randomBytes(16).toString('hex');
     const codeVerifier = randomBytes(32).toString('base64url');
-    const codeChallenge = createHash('sha256').update(codeVerifier).digest('base64url');
+    const codeChallenge = createHash('sha256')
+      .update(codeVerifier)
+      .digest('base64url');
 
     const params = new URLSearchParams({
       app_id: appId,
@@ -58,14 +60,21 @@ export class ZaloOAuthService {
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw) as Partial<ZaloOAuthCookie>;
-      if (typeof parsed.state !== 'string' || typeof parsed.codeVerifier !== 'string') return null;
+      if (
+        typeof parsed.state !== 'string' ||
+        typeof parsed.codeVerifier !== 'string'
+      )
+        return null;
       return { state: parsed.state, codeVerifier: parsed.codeVerifier };
     } catch {
       return null;
     }
   }
 
-  async exchangeCodeForToken(code: string, codeVerifier: string): Promise<string> {
+  async exchangeCodeForToken(
+    code: string,
+    codeVerifier: string,
+  ): Promise<string> {
     const appId = this.requireConfig('ZALO_APP_ID');
     const appSecret = this.requireConfig('ZALO_APP_SECRET');
 
@@ -87,7 +96,10 @@ export class ZaloOAuthService {
 
     const raw = (await response.json()) as ZaloTokenResponse;
     if (!response.ok || !raw.access_token) {
-      const reason = raw.error_description ?? raw.error_reason ?? 'Zalo token exchange failed';
+      const reason =
+        raw.error_description ??
+        raw.error_reason ??
+        'Zalo token exchange failed';
       throw new UnauthorizedException(reason);
     }
 
@@ -118,7 +130,9 @@ export class ZaloOAuthService {
     };
 
     if (!raw?.id) {
-      throw new UnauthorizedException(raw.message ?? 'Zalo profile is missing id');
+      throw new UnauthorizedException(
+        raw.message ?? 'Zalo profile is missing id',
+      );
     }
 
     const pictureUrl =
@@ -134,7 +148,9 @@ export class ZaloOAuthService {
   }
 
   getFrontendUrl(): string {
-    return this.config.get<string>('FRONTEND_URL', 'http://localhost:3000').replace(/\/$/, '');
+    return this.config
+      .get<string>('FRONTEND_URL', 'http://localhost:3000')
+      .replace(/\/$/, '');
   }
 
   buildAppSecretProof(accessToken: string, appSecret: string): string {

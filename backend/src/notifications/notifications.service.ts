@@ -280,7 +280,8 @@ export class NotificationsService {
   }
 
   async runDeathAnniversaryCron(referenceDate = new Date()) {
-    const deletedLogCount = await this.cleanupExpiredDeathAnniversaryLogs(referenceDate);
+    const deletedLogCount =
+      await this.cleanupExpiredDeathAnniversaryLogs(referenceDate);
 
     const persons = await this.prisma.person.findMany({
       where: {

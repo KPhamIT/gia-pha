@@ -1,11 +1,11 @@
-import type { FamilyTreeData } from '@/components/types/family-tree-types';
+import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import {
   buildFamilyTreeGraph,
   NODE_HEIGHT,
   NODE_WIDTH,
   type FamilyTreeLayoutConfig,
-} from '@/components/family-tree/graph/layout';
-import type { NodePositionOverrides } from './node-position-overrides';
+} from "@/components/family-tree/graph/layout";
+import type { NodePositionOverrides } from "./node-position-overrides";
 
 export type Rect = { x: number; y: number; width: number; height: number };
 
@@ -29,7 +29,11 @@ export type ExportModel = {
   rootCenterX: number;
 };
 
-function computeNodeBounds(exportNodes: ExportNode[], nodeWidth: number, nodeHeight: number): Rect {
+function computeNodeBounds(
+  exportNodes: ExportNode[],
+  nodeWidth: number,
+  nodeHeight: number,
+): Rect {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -59,12 +63,17 @@ function buildConnectors(
   for (const [parentId, childIds] of childrenByParent) {
     const parent = posById.get(parentId);
     if (!parent) continue;
-    const children = childIds.map((id) => posById.get(id)).filter((c): c is ExportNode => Boolean(c));
+    const children = childIds
+      .map((id) => posById.get(id))
+      .filter((c): c is ExportNode => Boolean(c));
     if (children.length === 0) continue;
 
     const stemX = parent.x + nodeWidth / 2;
     const parentBottomY = parent.y + nodeHeight;
-    const childCenters = children.map((c) => ({ x: c.x + nodeWidth / 2, top: c.y }));
+    const childCenters = children.map((c) => ({
+      x: c.x + nodeWidth / 2,
+      top: c.y,
+    }));
     const minTop = Math.min(...childCenters.map((c) => c.top));
     const busY = (parentBottomY + minTop) / 2;
     const busLeft = Math.min(stemX, ...childCenters.map((c) => c.x));
@@ -84,7 +93,11 @@ function buildConnectors(
  * Export-only: move the root (first ancestor) to the horizontal centre of the
  * tree extent. No other node coordinates are changed — layout algorithm untouched.
  */
-function applyExportRootXOnly(exportNodes: ExportNode[], nodeWidth: number, layoutBounds: Rect): void {
+function applyExportRootXOnly(
+  exportNodes: ExportNode[],
+  nodeWidth: number,
+  layoutBounds: Rect,
+): void {
   const root = exportNodes.find((n) => n.isRoot);
   if (!root) return;
   root.x = layoutBounds.x + layoutBounds.width / 2 - nodeWidth / 2;
@@ -101,14 +114,19 @@ export function buildExportModel(
   const nodeHeight = layoutConfig.nodeHeight ?? NODE_HEIGHT;
 
   const exportNodes: ExportNode[] = nodes.map((node) => {
-    const data = node.data as { fullName?: string; birthDate?: string | null; isRoot?: boolean; personId?: number };
+    const data = node.data as {
+      fullName?: string;
+      birthDate?: string | null;
+      isRoot?: boolean;
+      personId?: number;
+    };
     const id = data.personId ?? Number(node.id);
     const override = positionOverrides?.[id];
     return {
       id,
       x: override?.x ?? node.position.x,
       y: override?.y ?? node.position.y,
-      fullName: data.fullName ?? '',
+      fullName: data.fullName ?? "",
       birthDate: data.birthDate ?? null,
       isRoot: Boolean(data.isRoot),
     };
@@ -136,8 +154,22 @@ export function buildExportModel(
   }
 
   const bounds = computeNodeBounds(exportNodes, nodeWidth, nodeHeight);
-  const connectors = buildConnectors(childrenByParent, posById, nodeWidth, nodeHeight);
-  const rootCenterX = root ? root.x + nodeWidth / 2 : bounds.x + bounds.width / 2;
+  const connectors = buildConnectors(
+    childrenByParent,
+    posById,
+    nodeWidth,
+    nodeHeight,
+  );
+  const rootCenterX = root
+    ? root.x + nodeWidth / 2
+    : bounds.x + bounds.width / 2;
 
-  return { nodes: exportNodes, connectors, nodeWidth, nodeHeight, bounds, rootCenterX };
+  return {
+    nodes: exportNodes,
+    connectors,
+    nodeWidth,
+    nodeHeight,
+    bounds,
+    rootCenterX,
+  };
 }

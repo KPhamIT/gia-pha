@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { StandardFeatureKey } from '@/lib/auth/standard-features';
-import { useAuthStore } from '@/store/authStore';
-import { useAuthGateStore } from '@/store/authGateStore';
+import { useCallback } from "react";
+import type { StandardFeatureKey } from "@/lib/auth/standard-features";
+import { useAuthStore } from "@/store/authStore";
+import { useAuthGateStore } from "@/store/authGateStore";
 
 export function useFeatureAccess() {
   const canMutate = useAuthStore((state) => state.canMutate);
@@ -17,10 +17,10 @@ export function useFeatureAccess() {
     (key: StandardFeatureKey): boolean => {
       if (canUseFeature(key)) return true;
       if (!isLoggedIn) {
-        openAuthGate('login');
+        openAuthGate("login");
         return false;
       }
-      openAuthGate('permission');
+      openAuthGate("permission");
       return false;
     },
     [canUseFeature, isLoggedIn, openAuthGate],
@@ -28,11 +28,11 @@ export function useFeatureAccess() {
 
   const requireAdmin = useCallback((): boolean => {
     if (!isLoggedIn) {
-      openAuthGate('login');
+      openAuthGate("login");
       return false;
     }
     if (!canMutate) {
-      openAuthGate('admin');
+      openAuthGate("admin");
       return false;
     }
     return true;

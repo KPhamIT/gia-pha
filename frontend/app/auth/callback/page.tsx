@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import LoadingSpinner from '@/components/icons/LoadingSpinner';
-import { UI } from '@/lib/constants/ui-strings';
-import { setToken } from '@/lib/auth/session';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
+import { UI } from "@/lib/constants/ui-strings";
+import { setToken } from "@/lib/auth/session";
+import { useAuthStore } from "@/store/authStore";
 
 function readTokenFromHash(): string | null {
-  const hash = window.location.hash.replace(/^#/, '');
+  const hash = window.location.hash.replace(/^#/, "");
   if (!hash) return null;
   const params = new URLSearchParams(hash);
-  return params.get('token');
+  return params.get("token");
 }
 
 export default function AuthCallbackPage() {
@@ -23,13 +23,15 @@ export default function AuthCallbackPage() {
       const token = readTokenFromHash();
       if (token) {
         setToken(token);
-        window.history.replaceState(null, '', window.location.pathname);
+        window.history.replaceState(null, "", window.location.pathname);
         await refreshAuth();
-        router.replace('/book');
+        router.replace("/book");
         return;
       }
 
-      router.replace(`/login?error=${encodeURIComponent(UI.LOGIN_ERROR_DEFAULT)}`);
+      router.replace(
+        `/login?error=${encodeURIComponent(UI.LOGIN_ERROR_DEFAULT)}`,
+      );
     };
 
     void complete();

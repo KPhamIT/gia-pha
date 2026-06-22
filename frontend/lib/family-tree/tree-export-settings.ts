@@ -1,5 +1,5 @@
-import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
-import { isNodeCardId, isTreeBorderId } from './svg-border';
+import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
+import { isNodeCardId, isTreeBorderId } from "./svg-border";
 
 /**
  * A draggable box. Any of x/y/width/height may be `null`, meaning "auto" —
@@ -57,17 +57,23 @@ export type TreeExportPreset = {
   settings: TreeExportSettings;
 };
 
-export const TREE_EXPORT_PRESETS_KEY = 'treeExportPresets';
+export const TREE_EXPORT_PRESETS_KEY = "treeExportPresets";
 
-const GOLD = '#7c2d12';
-const COUPLET_COLOR = '#7f1d1d';
+const GOLD = "#7c2d12";
+const COUPLET_COLOR = "#7f1d1d";
 
-const autoImage = (): ExportImageCfg => ({ x: null, y: null, width: null, height: null, visible: true });
+const autoImage = (): ExportImageCfg => ({
+  x: null,
+  y: null,
+  width: null,
+  height: null,
+  visible: true,
+});
 
 export function defaultTreeExportSettings(): TreeExportSettings {
   return {
-    backgroundColor: '#f7f0dd',
-    borderStyleId: 'classic',
+    backgroundColor: "#f7f0dd",
+    borderStyleId: "classic",
     borderColor: GOLD,
     headerHeight: 420,
     scroll: autoImage(),
@@ -79,7 +85,7 @@ export function defaultTreeExportSettings(): TreeExportSettings {
       width: null,
       height: null,
       visible: true,
-      text: 'Tổ Tiên Công Đức Thiên Niên Thịnh',
+      text: "Tổ Tiên Công Đức Thiên Niên Thịnh",
     },
     coupletRight: {
       x: null,
@@ -87,15 +93,15 @@ export function defaultTreeExportSettings(): TreeExportSettings {
       width: null,
       height: null,
       visible: true,
-      text: 'Tử Hiếu Tôn Hiền Vạn Đại Vinh',
+      text: "Tử Hiếu Tôn Hiền Vạn Đại Vinh",
     },
-    coupletFontId: 'thanhcong',
+    coupletFontId: "thanhcong",
     coupletColor: COUPLET_COLOR,
     coupletFontSize: 62,
-    nodeBgColor: '#f20202',
-    nodeTextColor: '#ffdd00',
-    nodeBorderColor: '#ffea00',
-    nodeBorderStyleId: 'ornate',
+    nodeBgColor: "#f20202",
+    nodeTextColor: "#ffdd00",
+    nodeBorderColor: "#ffea00",
+    nodeBorderStyleId: "ornate",
     nodeFontSize: 20,
   };
 }
@@ -106,17 +112,26 @@ export {
   getTreeExportPresets,
   normalizeTreeExportPresets,
   serializeTreeExportPresets,
-} from './tree-export-presets';
+} from "./tree-export-presets";
 
-function normalizeImage(partial: Partial<ExportImageCfg> | undefined, base: ExportImageCfg): ExportImageCfg {
+function normalizeImage(
+  partial: Partial<ExportImageCfg> | undefined,
+  base: ExportImageCfg,
+): ExportImageCfg {
   return { ...base, ...(partial ?? {}) };
 }
 
-function normalizeCouplet(partial: Partial<ExportCoupletCfg> | undefined, base: ExportCoupletCfg): ExportCoupletCfg {
+function normalizeCouplet(
+  partial: Partial<ExportCoupletCfg> | undefined,
+  base: ExportCoupletCfg,
+): ExportCoupletCfg {
   return { ...base, ...(partial ?? {}) };
 }
 
-function normalizeCoupletRight(partial: Partial<ExportCoupletCfg> | undefined, base: ExportCoupletCfg): ExportCoupletCfg {
+function normalizeCoupletRight(
+  partial: Partial<ExportCoupletCfg> | undefined,
+  base: ExportCoupletCfg,
+): ExportCoupletCfg {
   return { ...normalizeCouplet(partial, base), x: null };
 }
 
@@ -132,27 +147,37 @@ export function normalizeTreeExportSettings(
     dragonLeft: normalizeImage(partial?.dragonLeft, base.dragonLeft),
     dragonRight: normalizeImage(partial?.dragonRight, base.dragonRight),
     coupletLeft: normalizeCouplet(partial?.coupletLeft, base.coupletLeft),
-    coupletRight: normalizeCoupletRight(partial?.coupletRight, base.coupletRight),
+    coupletRight: normalizeCoupletRight(
+      partial?.coupletRight,
+      base.coupletRight,
+    ),
   };
-  if (!isTreeBorderId(merged.borderStyleId)) merged.borderStyleId = base.borderStyleId;
-  if (!isNodeCardId(merged.nodeBorderStyleId)) merged.nodeBorderStyleId = base.nodeBorderStyleId;
+  if (!isTreeBorderId(merged.borderStyleId))
+    merged.borderStyleId = base.borderStyleId;
+  if (!isNodeCardId(merged.nodeBorderStyleId))
+    merged.nodeBorderStyleId = base.nodeBorderStyleId;
   return merged;
 }
 
 export function loadTreeExportSettings(): TreeExportSettings {
-  if (typeof window === 'undefined') return defaultTreeExportSettings();
+  if (typeof window === "undefined") return defaultTreeExportSettings();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEYS.TREE_EXPORT_SETTINGS);
-    return normalizeTreeExportSettings(raw ? (JSON.parse(raw) as Partial<TreeExportSettings>) : null);
+    return normalizeTreeExportSettings(
+      raw ? (JSON.parse(raw) as Partial<TreeExportSettings>) : null,
+    );
   } catch {
     return defaultTreeExportSettings();
   }
 }
 
 export function saveTreeExportSettings(settings: TreeExportSettings): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(STORAGE_KEYS.TREE_EXPORT_SETTINGS, JSON.stringify(settings));
+    window.localStorage.setItem(
+      STORAGE_KEYS.TREE_EXPORT_SETTINGS,
+      JSON.stringify(settings),
+    );
   } catch {
     /* ignore quota / serialization errors */
   }

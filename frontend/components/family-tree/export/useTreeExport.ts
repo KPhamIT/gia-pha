@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { FamilyTreeData } from '@/components/types/family-tree-types';
-import type { FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
-import { UI } from '@/lib/constants/ui-strings';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { FamilyTreeData } from "@/components/types/family-tree-types";
+import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
+import { UI } from "@/lib/constants/ui-strings";
 import {
   buildEmbeddedFontFace,
   buildExportModel,
   computeExportGeometry,
   downloadSvgElement,
   resolveExportLayout,
-} from '@/lib/family-tree/export-tree-svg';
-import { ensureCalligraphyFontLoaded, getCalligraphyFontDef } from '@/components/family-tree/book/calligraphy-font-loader';
-import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
+} from "@/lib/family-tree/export-tree-svg";
+import {
+  ensureCalligraphyFontLoaded,
+  getCalligraphyFontDef,
+} from "@/components/family-tree/book/calligraphy-font-loader";
+import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
 import {
   defaultTreeExportSettings,
   loadTreeExportSettings,
@@ -21,10 +24,10 @@ import {
   type ExportCoupletCfg,
   type ExportImageCfg,
   type TreeExportSettings,
-} from '@/lib/family-tree/tree-export-settings';
-import type { CoupletKey, ImageKey } from './tree-export-control-bits';
-import type { DraggableId } from './tree-export-svg-utils';
-import { useExportAssets } from './useExportAssets';
+} from "@/lib/family-tree/tree-export-settings";
+import type { CoupletKey, ImageKey } from "./tree-export-control-bits";
+import type { DraggableId } from "./tree-export-svg-utils";
+import { useExportAssets } from "./useExportAssets";
 
 type Args = {
   treeData: FamilyTreeData;
@@ -32,10 +35,16 @@ type Args = {
   nodePositionOverrides?: NodePositionOverrides;
 };
 
-export function useTreeExport({ treeData, layoutConfig = {}, nodePositionOverrides }: Args) {
+export function useTreeExport({
+  treeData,
+  layoutConfig = {},
+  nodePositionOverrides,
+}: Args) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const { presets, dataUris, imageSources } = useExportAssets();
-  const [settings, setSettings] = useState<TreeExportSettings>(loadTreeExportSettings);
+  const [settings, setSettings] = useState<TreeExportSettings>(
+    loadTreeExportSettings,
+  );
   const [activePresetId, setActivePresetId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<DraggableId | null>(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -48,7 +57,9 @@ export function useTreeExport({ treeData, layoutConfig = {}, nodePositionOverrid
   useEffect(() => {
     const normalizedCurrent = normalizeTreeExportSettings(settings);
     const matched = presets.find(
-      (preset) => JSON.stringify(normalizeTreeExportSettings(preset.settings)) === JSON.stringify(normalizedCurrent),
+      (preset) =>
+        JSON.stringify(normalizeTreeExportSettings(preset.settings)) ===
+        JSON.stringify(normalizedCurrent),
     );
     // Sync preset selection from settings; can't be a useMemo because the user
     // may explicitly pick "Custom" (null) even when settings match a preset.
@@ -66,28 +77,44 @@ export function useTreeExport({ treeData, layoutConfig = {}, nodePositionOverrid
     [treeData, layoutConfig, nodePositionOverrides],
   );
   const geometry = useMemo(
-    () => computeExportGeometry(model.bounds, settings.headerHeight, model.rootCenterX),
+    () =>
+      computeExportGeometry(
+        model.bounds,
+        settings.headerHeight,
+        model.rootCenterX,
+      ),
     [model.bounds, settings.headerHeight, model.rootCenterX],
   );
-  const layout = useMemo(() => resolveExportLayout(settings, geometry.headerRect), [settings, geometry.headerRect]);
+  const layout = useMemo(
+    () => resolveExportLayout(settings, geometry.headerRect),
+    [settings, geometry.headerRect],
+  );
 
-  const patch = useCallback((p: Partial<TreeExportSettings>) => setSettings((prev) => ({ ...prev, ...p })), []);
+  const patch = useCallback(
+    (p: Partial<TreeExportSettings>) =>
+      setSettings((prev) => ({ ...prev, ...p })),
+    [],
+  );
   const patchImage = useCallback(
-    (key: ImageKey, p: Partial<ExportImageCfg>) => setSettings((prev) => ({ ...prev, [key]: { ...prev[key], ...p } })),
+    (key: ImageKey, p: Partial<ExportImageCfg>) =>
+      setSettings((prev) => ({ ...prev, [key]: { ...prev[key], ...p } })),
     [],
   );
   const patchCouplet = useCallback(
     (key: CoupletKey, p: Partial<ExportCoupletCfg>) =>
       setSettings((prev) => ({
         ...prev,
-        [key]: key === 'coupletRight' ? { ...prev[key], ...p, x: null } : { ...prev[key], ...p },
+        [key]:
+          key === "coupletRight"
+            ? { ...prev[key], ...p, x: null }
+            : { ...prev[key], ...p },
       })),
     [],
   );
 
   const handleItemChange = useCallback(
     (id: DraggableId, p: Partial<ExportImageCfg & ExportCoupletCfg>) => {
-      if (id === 'coupletLeft' || id === 'coupletRight') patchCouplet(id, p);
+      if (id === "coupletLeft" || id === "coupletRight") patchCouplet(id, p);
       else patchImage(id, p);
     },
     [patchCouplet, patchImage],
@@ -123,13 +150,22 @@ export function useTreeExport({ treeData, layoutConfig = {}, nodePositionOverrid
 
     // Embed the calligraphy font so the standalone SVG renders the couplets.
     const fontDef = getCalligraphyFontDef(settings.coupletFontId);
-    const fontFaceCss = await buildEmbeddedFontFace(fontDef.family, fontDef.file);
+    const fontFaceCss = await buildEmbeddedFontFace(
+      fontDef.family,
+      fontDef.file,
+    );
 
     // Defer so the deselect re-render removes selection handles before serializing.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         try {
-          downloadSvgElement(svg, geometry.canvasWidth, geometry.canvasHeight, 'gia-pha.svg', fontFaceCss);
+          downloadSvgElement(
+            svg,
+            geometry.canvasWidth,
+            geometry.canvasHeight,
+            "gia-pha.svg",
+            fontFaceCss,
+          );
         } finally {
           setExporting(false);
         }
@@ -138,8 +174,26 @@ export function useTreeExport({ treeData, layoutConfig = {}, nodePositionOverrid
   }, [geometry.canvasWidth, geometry.canvasHeight, settings.coupletFontId]);
 
   return {
-    svgRef, model, geometry, layout, settings, presets, activePresetId, selectedId, collapsed, exporting,
-    dataUris, imageSources, setSelectedId, setCollapsed, patch, patchImage, patchCouplet, handleItemChange,
-    handleReset, handleApplyPreset, handleExport,
+    svgRef,
+    model,
+    geometry,
+    layout,
+    settings,
+    presets,
+    activePresetId,
+    selectedId,
+    collapsed,
+    exporting,
+    dataUris,
+    imageSources,
+    setSelectedId,
+    setCollapsed,
+    patch,
+    patchImage,
+    patchCouplet,
+    handleItemChange,
+    handleReset,
+    handleApplyPreset,
+    handleExport,
   };
 }

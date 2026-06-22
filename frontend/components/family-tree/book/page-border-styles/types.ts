@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from "react";
 
 export type PageBorderProps = {
   /** The page inner content the border decorates. */

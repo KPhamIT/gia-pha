@@ -1,4 +1,4 @@
-import type { Person } from '@/components/types/family-tree-types';
+import type { Person } from "@/components/types/family-tree-types";
 
 /** BFS from the root assigning each relevant person a signed generation level. */
 export function computeLevels(
@@ -36,7 +36,10 @@ export function computeLevels(
 }
 
 /** Prefer each person's explicit `generation`, falling back to the BFS level. */
-export function buildGenerationMap(persons: Person[], levels: Map<number, number>) {
+export function buildGenerationMap(
+  persons: Person[],
+  levels: Map<number, number>,
+) {
   const generationMap = new Map<number, number>();
 
   persons.forEach((person) => {

@@ -1,5 +1,5 @@
-import styles from '../Book.module.scss';
-import type { PageBorderComponent } from './types';
+import styles from "../Book.module.scss";
+import type { PageBorderComponent } from "./types";
 
 /** Double rule with decorative corner flourishes. */
 const OrnateBorder: PageBorderComponent = ({ children }) => (

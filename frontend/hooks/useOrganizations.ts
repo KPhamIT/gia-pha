@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import type { Organization } from '@/components/types/family-tree-types';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
-import { getErrorMessage } from '@/utils/errors';
+import { useCallback, useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import type { Organization } from "@/components/types/family-tree-types";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
+import { getErrorMessage } from "@/utils/errors";
 
 export function useOrganizations() {
   const [items, setItems] = useState<Organization[]>([]);

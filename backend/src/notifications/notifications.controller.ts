@@ -1,4 +1,13 @@
-import { Controller, Get, Patch, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
 import { CronGuard } from '../auth/cron.guard.js';
 import { JwtRequiredGuard } from '../auth/jwt-required.guard.js';
@@ -52,7 +61,10 @@ export class NotificationsController {
 
   @Get('upcoming/:personId')
   @UseGuards(JwtRequiredGuard)
-  upcomingOne(@Request() req: { user: User }, @Param('personId') personId: string) {
+  upcomingOne(
+    @Request() req: { user: User },
+    @Param('personId') personId: string,
+  ) {
     return this.notificationsService.getUpcomingCeremony(req.user, +personId);
   }
 }

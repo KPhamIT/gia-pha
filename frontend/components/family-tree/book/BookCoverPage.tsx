@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { UI } from '@/lib/constants/ui-strings';
-import { getCalligraphyFont } from './calligraphy-fonts';
-import { loadCalligraphyFont } from './calligraphy-font-loader';
-import type { BookSettings } from './book-settings';
-import styles from './Book.module.scss';
+import { useEffect } from "react";
+import { UI } from "@/lib/constants/ui-strings";
+import { getCalligraphyFont } from "./calligraphy-fonts";
+import { loadCalligraphyFont } from "./calligraphy-font-loader";
+import type { BookSettings } from "./book-settings";
+import styles from "./Book.module.scss";
 
 type BookCoverPageProps = {
   settings: BookSettings;
@@ -14,7 +14,11 @@ type BookCoverPageProps = {
 };
 
 /** The ornate calligraphy cover (trang bìa). Title/subtitle/lineage editable inline. */
-export default function BookCoverPage({ settings, readOnly = false, onChange }: BookCoverPageProps) {
+export default function BookCoverPage({
+  settings,
+  readOnly = false,
+  onChange,
+}: BookCoverPageProps) {
   const font = getCalligraphyFont(settings.coverFontId).cssValue;
 
   useEffect(() => {
@@ -24,10 +28,22 @@ export default function BookCoverPage({ settings, readOnly = false, onChange }: 
   return (
     <div className={styles.cover} data-genealogy-paper data-genealogy-cover>
       <div className={styles.coverFrame} aria-hidden />
-      <span className={styles.coverFrameCorner} style={{ top: 10, left: 10, borderRight: 'none', borderBottom: 'none' }} />
-      <span className={styles.coverFrameCorner} style={{ top: 10, right: 10, borderLeft: 'none', borderBottom: 'none' }} />
-      <span className={styles.coverFrameCorner} style={{ bottom: 10, left: 10, borderRight: 'none', borderTop: 'none' }} />
-      <span className={styles.coverFrameCorner} style={{ bottom: 10, right: 10, borderLeft: 'none', borderTop: 'none' }} />
+      <span
+        className={styles.coverFrameCorner}
+        style={{ top: 10, left: 10, borderRight: "none", borderBottom: "none" }}
+      />
+      <span
+        className={styles.coverFrameCorner}
+        style={{ top: 10, right: 10, borderLeft: "none", borderBottom: "none" }}
+      />
+      <span
+        className={styles.coverFrameCorner}
+        style={{ bottom: 10, left: 10, borderRight: "none", borderTop: "none" }}
+      />
+      <span
+        className={styles.coverFrameCorner}
+        style={{ bottom: 10, right: 10, borderLeft: "none", borderTop: "none" }}
+      />
 
       <div className={styles.coverInner}>
         <span className={styles.coverTopBadge}>家 譜</span>
@@ -69,7 +85,9 @@ export default function BookCoverPage({ settings, readOnly = false, onChange }: 
         </div>
 
         {readOnly ? (
-          <p className={styles.coverLineage}>{settings.coverLineage || UI.BOOK_COVER_DEFAULT_LINEAGE}</p>
+          <p className={styles.coverLineage}>
+            {settings.coverLineage || UI.BOOK_COVER_DEFAULT_LINEAGE}
+          </p>
         ) : (
           <textarea
             className={styles.coverLineage}

@@ -1,20 +1,32 @@
-'use client';
+"use client";
 
-import IconRoundButton from '@/components/ui/IconRoundButton';
-import { LAYOUT } from '@/lib/constants/ui-layout';
-import { BT } from '@/lib/constants/ui-theme';
-import { UI } from '@/lib/constants/ui-strings';
+import IconRoundButton from "@/components/ui/IconRoundButton";
+import { LAYOUT } from "@/lib/constants/ui-layout";
+import { BT } from "@/lib/constants/ui-theme";
+import { UI } from "@/lib/constants/ui-strings";
 
-export function InfoRow({ label, value }: { label: string; value?: string | null }) {
+export function InfoRow({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | null;
+}) {
   return (
     <div className="flex justify-between gap-4 py-2">
       <span className={`shrink-0 text-sm ${BT.mutedOnLight}`}>{label}</span>
-      <span className="text-right text-sm font-medium text-neutral-900">{value || UI.NO_INFO}</span>
+      <span className="text-right text-sm font-medium text-neutral-900">
+        {value || UI.NO_INFO}
+      </span>
     </div>
   );
 }
 
-export function RelationRow({ label, persons, onSelectPerson }: {
+export function RelationRow({
+  label,
+  persons,
+  onSelectPerson,
+}: {
   label: string;
   persons: { id: number; fullName: string }[];
   onSelectPerson: (personId: number) => void;
@@ -51,9 +63,21 @@ export function PersonDetailFooter({
   if (!canEdit) return null;
 
   return (
-    <div className={`sticky bottom-0 flex justify-end gap-2 pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6 ${LAYOUT.pagePad}`}>
-      <IconRoundButton icon="userPlus" variant="gold" label={UI.ADD_CHILD} onClick={onAddChild} />
-      <IconRoundButton icon="trash" variant="danger" label={UI.DELETE_PERSON} onClick={onDelete} />
+    <div
+      className={`sticky bottom-0 flex justify-end gap-2 pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6 ${LAYOUT.pagePad}`}
+    >
+      <IconRoundButton
+        icon="userPlus"
+        variant="gold"
+        label={UI.ADD_CHILD}
+        onClick={onAddChild}
+      />
+      <IconRoundButton
+        icon="trash"
+        variant="danger"
+        label={UI.DELETE_PERSON}
+        onClick={onDelete}
+      />
     </div>
   );
 }

@@ -1,19 +1,25 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import AuthRequiredSheet from '@/components/auth/AuthRequiredSheet';
-import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
-import AppNavFab from '@/components/navigation/AppNavFab';
-import NotificationOptInBanner from '@/components/notifications/NotificationOptInBanner';
-import { consumeBookTouchRecovery, useAppNavigation } from '@/hooks/useAppNavigation';
-import { useFamilyTree } from '@/hooks/useFamilyTree';
-import { useTheme } from '@/hooks/useTheme';
-import { useAuthStore } from '@/store/authStore';
-import { useOverlayPageRecovery, syncOverlayViewport } from '@/hooks/useOverlayViewport';
+import { useCallback, useEffect } from "react";
+import dynamic from "next/dynamic";
+import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
+import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
+import AppNavFab from "@/components/navigation/AppNavFab";
+import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
+import {
+  consumeBookTouchRecovery,
+  useAppNavigation,
+} from "@/hooks/useAppNavigation";
+import { useFamilyTree } from "@/hooks/useFamilyTree";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuthStore } from "@/store/authStore";
+import {
+  useOverlayPageRecovery,
+  syncOverlayViewport,
+} from "@/hooks/useOverlayViewport";
 
 const GenealogyBookViewer = dynamic(
-  () => import('@/components/family-tree/book/GenealogyBookViewer'),
+  () => import("@/components/family-tree/book/GenealogyBookViewer"),
   { ssr: false },
 );
 
@@ -44,7 +50,12 @@ export default function BookPage() {
 
   if (error && !treeData) {
     return (
-      <FamilyTreeStatus theme={theme} type="error" message={error} onRetry={reload} />
+      <FamilyTreeStatus
+        theme={theme}
+        type="error"
+        message={error}
+        onRetry={reload}
+      />
     );
   }
 

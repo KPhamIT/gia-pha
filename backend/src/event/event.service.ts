@@ -3,7 +3,10 @@ import type { Prisma } from '../../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
-import { CreateDonationDto, DonationKindDto } from './dto/create-donation.dto.js';
+import {
+  CreateDonationDto,
+  DonationKindDto,
+} from './dto/create-donation.dto.js';
 import { UpdateDonationDto } from './dto/update-donation.dto.js';
 
 @Injectable()
@@ -86,7 +89,10 @@ export class EventService {
       },
     });
     const { contributions, donations, ...rest } = event;
-    return { ...rest, ...this.summarize(rest.amountPerPerson, contributions, donations) };
+    return {
+      ...rest,
+      ...this.summarize(rest.amountPerPerson, contributions, donations),
+    };
   }
 
   async findAll() {
@@ -107,14 +113,20 @@ export class EventService {
     const event = await this.prisma.event.findUnique({
       where: { id },
       include: {
-        contributions: { select: { personId: true, paid: true, amountPaid: true } },
+        contributions: {
+          select: { personId: true, paid: true, amountPaid: true },
+        },
         donations: { orderBy: { createdAt: 'asc' } },
       },
     });
     if (!event) throw new NotFoundException('Event not found');
     return {
       ...event,
-      ...this.summarize(event.amountPerPerson, event.contributions, event.donations),
+      ...this.summarize(
+        event.amountPerPerson,
+        event.contributions,
+        event.donations,
+      ),
     };
   }
 
@@ -150,7 +162,9 @@ export class EventService {
     eventId: number,
     items: { personId: number; amountPaid: number }[],
   ) {
-    const event = await this.prisma.event.findUnique({ where: { id: eventId } });
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+    });
     if (!event) throw new NotFoundException('Event not found');
 
     await this.prisma.$transaction(async (tx) => {
@@ -199,7 +213,9 @@ export class EventService {
 
         await tx.eventDonation.update({
           where: { id },
-          data: this.normalizeDonationFields(this.mergeDonationUpdate(donation, data)),
+          data: this.normalizeDonationFields(
+            this.mergeDonationUpdate(donation, data),
+          ),
         });
       }
 

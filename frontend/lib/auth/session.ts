@@ -1,21 +1,23 @@
-import { STORAGE_KEYS } from '@/lib/constants/storage-keys';
-import { API_ROUTES } from '@/lib/constants/api-routes';
-import { useAuthStore } from '@/store/authStore';
+import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
+import { API_ROUTES } from "@/lib/constants/api-routes";
+import { useAuthStore } from "@/store/authStore";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+).replace(/\/$/, "");
 
 export function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(STORAGE_KEYS.TOKEN);
 }
 
 export function setToken(token: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEYS.TOKEN, token);
 }
 
 export function clearToken(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEYS.TOKEN);
 }
 
@@ -34,5 +36,5 @@ export function loginWithZalo(): void {
 export function logout(): void {
   clearToken();
   useAuthStore.getState().clear();
-  window.location.href = '/login';
+  window.location.href = "/login";
 }

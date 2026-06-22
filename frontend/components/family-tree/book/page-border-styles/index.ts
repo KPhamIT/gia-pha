@@ -4,26 +4,30 @@
  *   2. Add decorative classes to ../Book.module.scss if needed.
  *   3. Append it to PAGE_BORDER_STYLES below.
  */
-import PlainBorder from './PlainBorder';
-import ClassicBorder from './ClassicBorder';
-import DoubleBorder from './DoubleBorder';
-import OrnateBorder from './OrnateBorder';
-import CloudBorder from './CloudBorder';
-import ModernBorder from './ModernBorder';
-import type { PageBorderStyle } from './types';
+import PlainBorder from "./PlainBorder";
+import ClassicBorder from "./ClassicBorder";
+import DoubleBorder from "./DoubleBorder";
+import OrnateBorder from "./OrnateBorder";
+import CloudBorder from "./CloudBorder";
+import ModernBorder from "./ModernBorder";
+import type { PageBorderStyle } from "./types";
 
-export type { PageBorderStyle, PageBorderComponent, PageBorderProps } from './types';
+export type {
+  PageBorderStyle,
+  PageBorderComponent,
+  PageBorderProps,
+} from "./types";
 
 export const PAGE_BORDER_STYLES: PageBorderStyle[] = [
-  { id: 'classic', label: 'Cổ điển', Component: ClassicBorder },
-  { id: 'double', label: 'Khung kép', Component: DoubleBorder },
-  { id: 'ornate', label: 'Hoa văn góc', Component: OrnateBorder },
-  { id: 'cloud', label: 'Mây bo tròn', Component: CloudBorder },
-  { id: 'modern', label: 'Tối giản', Component: ModernBorder },
-  { id: 'plain', label: 'Không viền', Component: PlainBorder },
+  { id: "classic", label: "Cổ điển", Component: ClassicBorder },
+  { id: "double", label: "Khung kép", Component: DoubleBorder },
+  { id: "ornate", label: "Hoa văn góc", Component: OrnateBorder },
+  { id: "cloud", label: "Mây bo tròn", Component: CloudBorder },
+  { id: "modern", label: "Tối giản", Component: ModernBorder },
+  { id: "plain", label: "Không viền", Component: PlainBorder },
 ];
 
-export const DEFAULT_BORDER_STYLE_ID = 'classic';
+export const DEFAULT_BORDER_STYLE_ID = "classic";
 
 export function getBorderStyle(id: string): PageBorderStyle {
   return PAGE_BORDER_STYLES.find((s) => s.id === id) ?? PAGE_BORDER_STYLES[0];

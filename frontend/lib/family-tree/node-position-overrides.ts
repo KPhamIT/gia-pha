@@ -1,6 +1,9 @@
-import type { Node } from '@xyflow/react';
-import { buildFamilyTreeGraph, type FamilyTreeLayoutConfig } from '@/components/family-tree/graph/layout';
-import type { FamilyTreeData } from '@/components/types/family-tree-types';
+import type { Node } from "@xyflow/react";
+import {
+  buildFamilyTreeGraph,
+  type FamilyTreeLayoutConfig,
+} from "@/components/family-tree/graph/layout";
+import type { FamilyTreeData } from "@/components/types/family-tree-types";
 
 export type NodePositionOverride = { x: number; y: number };
 export type NodePositionOverrides = Record<number, NodePositionOverride>;
@@ -14,7 +17,9 @@ export function collectMovedNodePositions(
   layoutConfig: FamilyTreeLayoutConfig = {},
 ): NodePositionOverrides {
   const { nodes: defaultNodes } = buildFamilyTreeGraph(treeData, layoutConfig);
-  const defaultById = new Map(defaultNodes.map((node) => [node.id, node.position]));
+  const defaultById = new Map(
+    defaultNodes.map((node) => [node.id, node.position]),
+  );
   const moved: NodePositionOverrides = {};
 
   for (const node of currentNodes) {

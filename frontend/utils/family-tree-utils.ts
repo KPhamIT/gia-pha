@@ -1,4 +1,8 @@
-import type { FamilyTreeData, Person, Relationship } from '@/components/types/family-tree-types';
+import type {
+  FamilyTreeData,
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
 
 export function getRootPerson(persons: Person[]): Person | null {
   if (!Array.isArray(persons) || persons.length === 0) {
@@ -12,7 +16,8 @@ function enrichRelationship(
   relationship: Relationship,
   persons: Person[],
 ): Relationship {
-  const from = relationship.from ?? persons.find((p) => p.id === relationship.fromId);
+  const from =
+    relationship.from ?? persons.find((p) => p.id === relationship.fromId);
   const to = relationship.to ?? persons.find((p) => p.id === relationship.toId);
   if (!from || !to) {
     return relationship;
@@ -55,7 +60,8 @@ export function removePersonFromTree(
     ...treeData,
     persons: treeData.persons.filter((person) => person.id !== personId),
     relationships: treeData.relationships.filter(
-      (relationship) => relationship.fromId !== personId && relationship.toId !== personId,
+      (relationship) =>
+        relationship.fromId !== personId && relationship.toId !== personId,
     ),
   };
 }
@@ -89,18 +95,30 @@ export function removeRelationshipFromTree(
   };
 }
 
-export function updatePersonInTree(treeData: FamilyTreeData, updated: Person): FamilyTreeData {
+export function updatePersonInTree(
+  treeData: FamilyTreeData,
+  updated: Person,
+): FamilyTreeData {
   const persons = treeData.persons.map((person) =>
     person.id === updated.id ? { ...person, ...updated } : person,
   );
 
   const relationships = treeData.relationships.map((relationship) => ({
     ...relationship,
-    from: relationship.from.id === updated.id ? { ...relationship.from, ...updated } : relationship.from,
-    to: relationship.to.id === updated.id ? { ...relationship.to, ...updated } : relationship.to,
+    from:
+      relationship.from.id === updated.id
+        ? { ...relationship.from, ...updated }
+        : relationship.from,
+    to:
+      relationship.to.id === updated.id
+        ? { ...relationship.to, ...updated }
+        : relationship.to,
   }));
 
-  const root = treeData.root.id === updated.id ? { ...treeData.root, ...updated } : treeData.root;
+  const root =
+    treeData.root.id === updated.id
+      ? { ...treeData.root, ...updated }
+      : treeData.root;
 
   return { root, persons, relationships };
 }

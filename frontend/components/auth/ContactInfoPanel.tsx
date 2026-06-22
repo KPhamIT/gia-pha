@@ -1,7 +1,11 @@
-'use client';
+"use client";
 
-import { formatContactLines, getContactInfo, hasContactInfo } from '@/lib/constants/contact-info';
-import { UI } from '@/lib/constants/ui-strings';
+import {
+  formatContactLines,
+  getContactInfo,
+  hasContactInfo,
+} from "@/lib/constants/contact-info";
+import { UI } from "@/lib/constants/ui-strings";
 
 export default function ContactInfoPanel() {
   const info = getContactInfo();

@@ -26,7 +26,10 @@ export class PersonController {
   @UseGuards(FeatureMutateGuard)
   @RequireFeature('editTree')
   @Post()
-  create(@Body() createPersonDto: CreatePersonDto, @Request() req: { user: User }) {
+  create(
+    @Body() createPersonDto: CreatePersonDto,
+    @Request() req: { user: User },
+  ) {
     return this.personService.create(createPersonDto, req.user);
   }
 
@@ -46,7 +49,9 @@ export class PersonController {
     @Request() req: { user?: User | null },
     @Query('organizationId') organizationId?: string,
   ) {
-    const orgId = organizationId ? Number.parseInt(organizationId, 10) : undefined;
+    const orgId = organizationId
+      ? Number.parseInt(organizationId, 10)
+      : undefined;
     return this.personService.getDefaultFamilyGraphForUser(req.user, orgId);
   }
 
@@ -73,7 +78,11 @@ export class PersonController {
     @Body() updatePersonDetailDto: UpdatePersonDetailDto,
     @Request() req: { user: User },
   ) {
-    return this.personService.updatePersonDetail(+id, updatePersonDetailDto, req.user);
+    return this.personService.updatePersonDetail(
+      +id,
+      updatePersonDetailDto,
+      req.user,
+    );
   }
 
   @UseGuards(FeatureMutateGuard)

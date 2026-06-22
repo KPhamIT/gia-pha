@@ -1,6 +1,6 @@
-export type EventType = 'INFO' | 'CONTRIBUTION';
+export type EventType = "INFO" | "CONTRIBUTION";
 
-export type DonationKind = 'MONEY' | 'IN_KIND';
+export type DonationKind = "MONEY" | "IN_KIND";
 
 /** An event row as returned by the list endpoint (with derived stats). */
 export type FamilyEvent = {

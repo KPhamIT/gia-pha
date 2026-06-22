@@ -78,7 +78,9 @@ export class AuthController {
       return redirectError('Thiếu mã xác thực từ Zalo');
     }
 
-    const session = this.zaloOAuthService.parseOAuthCookie(req.cookies?.[ZALO_OAUTH_COOKIE]);
+    const session = this.zaloOAuthService.parseOAuthCookie(
+      req.cookies?.[ZALO_OAUTH_COOKIE],
+    );
     res.clearCookie(ZALO_OAUTH_COOKIE);
 
     if (!session || session.state !== state) {
@@ -92,7 +94,9 @@ export class AuthController {
       );
       const profile = await this.zaloOAuthService.fetchProfile(zaloAccessToken);
       const login = await this.authService.loginWithZaloProfile(profile);
-      return res.redirect(`${frontendUrl}/auth/callback#token=${login.accessToken}`);
+      return res.redirect(
+        `${frontendUrl}/auth/callback#token=${login.accessToken}`,
+      );
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Đăng nhập Zalo thất bại';
@@ -127,7 +131,10 @@ export class AuthController {
 
   @Patch('me/person')
   @UseGuards(JwtRequiredGuard)
-  linkPerson(@Request() req: { user: RequestUser }, @Body() body: LinkPersonDto) {
+  linkPerson(
+    @Request() req: { user: RequestUser },
+    @Body() body: LinkPersonDto,
+  ) {
     return this.authService.linkPerson(req.user, body.personId ?? null);
   }
 }

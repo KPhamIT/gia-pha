@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import type { PersonDetailPerson, PersonRelationships } from '@/components/types/family-tree-types';
-import { UI } from '@/lib/constants/ui-strings';
-import { formatDate } from '@/utils/person-relationships';
-import { InfoRow, RelationRow } from './PersonDetailRows';
+import type {
+  PersonDetailPerson,
+  PersonRelationships,
+} from "@/components/types/family-tree-types";
+import { UI } from "@/lib/constants/ui-strings";
+import { formatDate } from "@/utils/person-relationships";
+import { InfoRow, RelationRow } from "./PersonDetailRows";
 
-export type DetailTab = 'info' | 'relationships' | 'biography' | 'grave';
+export type DetailTab = "info" | "relationships" | "biography" | "grave";
 
 export const DETAIL_TABS: { id: DetailTab; label: string }[] = [
-  { id: 'info', label: UI.PERSON_INFO },
-  { id: 'relationships', label: UI.RELATIONSHIPS },
-  { id: 'biography', label: UI.BIOGRAPHY },
-  { id: 'grave', label: UI.GRAVE_INFO },
+  { id: "info", label: UI.PERSON_INFO },
+  { id: "relationships", label: UI.RELATIONSHIPS },
+  { id: "biography", label: UI.BIOGRAPHY },
+  { id: "grave", label: UI.GRAVE_INFO },
 ];
 
 type PersonDetailTabBodyProps = {
@@ -21,15 +24,27 @@ type PersonDetailTabBodyProps = {
   onSelectPerson: (personId: number) => void;
 };
 
-export default function PersonDetailTabBody({ tab, person, relations, onSelectPerson }: PersonDetailTabBodyProps) {
-  if (tab === 'info') {
+export default function PersonDetailTabBody({
+  tab,
+  person,
+  relations,
+  onSelectPerson,
+}: PersonDetailTabBodyProps) {
+  if (tab === "info") {
     return (
       <div className="divide-y divide-slate-100">
         <InfoRow label={UI.GENDER} value={person.gender} />
-        <InfoRow label={UI.BIRTH_DATE} value={formatDate(person.birthDate) || UI.BIRTH_DATE_UNKNOWN} />
+        <InfoRow
+          label={UI.BIRTH_DATE}
+          value={formatDate(person.birthDate) || UI.BIRTH_DATE_UNKNOWN}
+        />
         <InfoRow
           label={UI.DECEASED_STATUS}
-          value={person.deceased || person.deathDate ? UI.STATUS_DECEASED : UI.STATUS_ALIVE}
+          value={
+            person.deceased || person.deathDate
+              ? UI.STATUS_DECEASED
+              : UI.STATUS_ALIVE
+          }
         />
         <InfoRow label={UI.DEATH_DATE} value={formatDate(person.deathDate)} />
         <InfoRow label={UI.BIRTH_PLACE} value={person.birthPlace} />
@@ -43,18 +58,34 @@ export default function PersonDetailTabBody({ tab, person, relations, onSelectPe
     );
   }
 
-  if (tab === 'relationships' && relations) {
+  if (tab === "relationships" && relations) {
     return (
       <div className="divide-y divide-slate-100">
-        <RelationRow label={UI.FATHER} persons={relations.father ? [relations.father] : []} onSelectPerson={onSelectPerson} />
-        <RelationRow label={UI.MOTHER} persons={relations.mother ? [relations.mother] : []} onSelectPerson={onSelectPerson} />
-        <RelationRow label={UI.SPOUSE} persons={relations.spouses} onSelectPerson={onSelectPerson} />
-        <RelationRow label={UI.CHILDREN} persons={relations.children} onSelectPerson={onSelectPerson} />
+        <RelationRow
+          label={UI.FATHER}
+          persons={relations.father ? [relations.father] : []}
+          onSelectPerson={onSelectPerson}
+        />
+        <RelationRow
+          label={UI.MOTHER}
+          persons={relations.mother ? [relations.mother] : []}
+          onSelectPerson={onSelectPerson}
+        />
+        <RelationRow
+          label={UI.SPOUSE}
+          persons={relations.spouses}
+          onSelectPerson={onSelectPerson}
+        />
+        <RelationRow
+          label={UI.CHILDREN}
+          persons={relations.children}
+          onSelectPerson={onSelectPerson}
+        />
       </div>
     );
   }
 
-  if (tab === 'biography') {
+  if (tab === "biography") {
     return (
       <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
         {person.biography?.content || UI.NO_BIOGRAPHY}
@@ -62,7 +93,7 @@ export default function PersonDetailTabBody({ tab, person, relations, onSelectPe
     );
   }
 
-  if (tab === 'grave') {
+  if (tab === "grave") {
     return person.graveInfo ? (
       <div className="divide-y divide-slate-100">
         <InfoRow label={UI.CEMETERY} value={person.graveInfo.cemetery} />

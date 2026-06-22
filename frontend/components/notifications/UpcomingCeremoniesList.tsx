@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import ShareCeremonyActions from '@/components/ceremonies/ShareCeremonyActions';
-import { api } from '@/lib/api';
-import type { UpcomingCeremonyItem } from '@/lib/api/modules/notifications';
-import { UI } from '@/lib/constants/ui-strings';
-import { BT } from '@/lib/constants/ui-theme';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
+import { api } from "@/lib/api";
+import type { UpcomingCeremonyItem } from "@/lib/api/modules/notifications";
+import { UI } from "@/lib/constants/ui-strings";
+import { BT } from "@/lib/constants/ui-theme";
 
 const viewCeremonyBtnClass = `${BT.btnBase} ${BT.btnCompact} ${BT.btnGold} w-full justify-center sm:w-auto`;
 
@@ -14,7 +14,9 @@ type UpcomingCeremoniesListProps = {
   highlightPersonId?: number | null;
 };
 
-export default function UpcomingCeremoniesList({ highlightPersonId }: UpcomingCeremoniesListProps) {
+export default function UpcomingCeremoniesList({
+  highlightPersonId,
+}: UpcomingCeremoniesListProps) {
   const [items, setItems] = useState<UpcomingCeremonyItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,13 +42,17 @@ export default function UpcomingCeremoniesList({ highlightPersonId }: UpcomingCe
         return (
           <li
             key={item.personId}
-            className={`${BT.card} p-4 ${highlighted ? 'ring-2 ring-amber-400' : ''}`}
+            className={`${BT.card} p-4 ${highlighted ? "ring-2 ring-amber-400" : ""}`}
           >
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-semibold">{item.fullName}</p>
-                <p className={`text-sm ${BT.mutedOnLight}`}>{item.lunarDateLabel}</p>
-                <p className={`text-sm ${BT.gold}`}>{UI.CEREMONIES_DAYS_UNTIL(item.daysUntil)}</p>
+                <p className={`text-sm ${BT.mutedOnLight}`}>
+                  {item.lunarDateLabel}
+                </p>
+                <p className={`text-sm ${BT.gold}`}>
+                  {UI.CEREMONIES_DAYS_UNTIL(item.daysUntil)}
+                </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Link
@@ -55,7 +61,11 @@ export default function UpcomingCeremoniesList({ highlightPersonId }: UpcomingCe
                 >
                   {UI.CEREMONIES_VIEW}
                 </Link>
-                <ShareCeremonyActions personId={item.personId} fullName={item.fullName} compact />
+                <ShareCeremonyActions
+                  personId={item.personId}
+                  fullName={item.fullName}
+                  compact
+                />
               </div>
             </div>
           </li>

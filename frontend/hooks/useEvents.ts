@@ -1,10 +1,14 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
-import type { CreateEventInput, FamilyEvent, UpdateEventInput } from '@/components/types/event-types';
+import { useCallback, useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
+import type {
+  CreateEventInput,
+  FamilyEvent,
+  UpdateEventInput,
+} from "@/components/types/event-types";
 
 /** Loads the event list and exposes create / update / delete mutations. */
 export function useEvents() {
@@ -45,20 +49,23 @@ export function useEvents() {
     }
   }, []);
 
-  const updateEvent = useCallback(async (id: number, input: UpdateEventInput) => {
-    setSaving(true);
-    try {
-      const updated = await api.event.update(id, input);
-      setEvents((prev) => prev.map((e) => (e.id === id ? updated : e)));
-      notify.success(UI.TOAST_EVENT_UPDATED);
-      return updated;
-    } catch (err) {
-      notify.error(err, UI.ERR_SAVE);
-      throw err;
-    } finally {
-      setSaving(false);
-    }
-  }, []);
+  const updateEvent = useCallback(
+    async (id: number, input: UpdateEventInput) => {
+      setSaving(true);
+      try {
+        const updated = await api.event.update(id, input);
+        setEvents((prev) => prev.map((e) => (e.id === id ? updated : e)));
+        notify.success(UI.TOAST_EVENT_UPDATED);
+        return updated;
+      } catch (err) {
+        notify.error(err, UI.ERR_SAVE);
+        throw err;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [],
+  );
 
   const deleteEvent = useCallback(async (id: number) => {
     try {
@@ -73,8 +80,20 @@ export function useEvents() {
 
   /** Merge fresh derived stats into one list event after a detail mutation. */
   const patchEvent = useCallback((id: number, patch: Partial<FamilyEvent>) => {
-    setEvents((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
+    setEvents((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+    );
   }, []);
 
-  return { events, loading, error, saving, reload, createEvent, updateEvent, deleteEvent, patchEvent };
+  return {
+    events,
+    loading,
+    error,
+    saving,
+    reload,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    patchEvent,
+  };
 }

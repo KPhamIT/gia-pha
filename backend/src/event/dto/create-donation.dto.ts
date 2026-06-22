@@ -1,4 +1,12 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, ValidateIf } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateIf,
+} from 'class-validator';
 
 export enum DonationKindDto {
   MONEY = 'MONEY',
@@ -19,7 +27,10 @@ export class CreateDonationDto {
   @IsEnum(DonationKindDto)
   kind?: DonationKindDto;
 
-  @ValidateIf((dto: CreateDonationDto) => (dto.kind ?? DonationKindDto.MONEY) === DonationKindDto.MONEY)
+  @ValidateIf(
+    (dto: CreateDonationDto) =>
+      (dto.kind ?? DonationKindDto.MONEY) === DonationKindDto.MONEY,
+  )
   @IsOptional()
   @IsInt()
   @Min(0)

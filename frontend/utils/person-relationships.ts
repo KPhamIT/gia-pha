@@ -1,4 +1,8 @@
-import type { Person, PersonRelationships, Relationship } from '@/components/types/family-tree-types';
+import type {
+  Person,
+  PersonRelationships,
+  Relationship,
+} from "@/components/types/family-tree-types";
 
 function uniquePersons(persons: Person[]): Person[] {
   const seen = new Set<number>();
@@ -19,15 +23,18 @@ export function extractPersonRelationships(
   const children: Person[] = [];
 
   for (const rel of relationships) {
-    if (rel.toId === personId && rel.type === 'FATHER') {
+    if (rel.toId === personId && rel.type === "FATHER") {
       father = rel.from;
-    } else if (rel.toId === personId && rel.type === 'MOTHER') {
+    } else if (rel.toId === personId && rel.type === "MOTHER") {
       mother = rel.from;
-    } else if (rel.fromId === personId && (rel.type === 'FATHER' || rel.type === 'MOTHER')) {
+    } else if (
+      rel.fromId === personId &&
+      (rel.type === "FATHER" || rel.type === "MOTHER")
+    ) {
       children.push(rel.to);
-    } else if (rel.toId === personId && rel.type === 'CHILD') {
+    } else if (rel.toId === personId && rel.type === "CHILD") {
       children.push(rel.from);
-    } else if (rel.type === 'SPOUSE') {
+    } else if (rel.type === "SPOUSE") {
       if (rel.fromId === personId) {
         spouses.push(rel.to);
       } else if (rel.toId === personId) {
@@ -45,15 +52,15 @@ export function extractPersonRelationships(
 }
 
 export function formatDate(date?: string | null): string {
-  if (!date) return '';
+  if (!date) return "";
   const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return '';
-  return parsed.toLocaleDateString('vi-VN');
+  if (Number.isNaN(parsed.getTime())) return "";
+  return parsed.toLocaleDateString("vi-VN");
 }
 
 export function toDateInputValue(date?: string | null): string {
-  if (!date) return '';
+  if (!date) return "";
   const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return '';
+  if (Number.isNaN(parsed.getTime())) return "";
   return parsed.toISOString().slice(0, 10);
 }

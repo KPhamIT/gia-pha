@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 
 /** Mobile-first toast host — bottom-center, safe-area aware. */
 export default function AppToaster() {
@@ -13,12 +13,12 @@ export default function AppToaster() {
       visibleToasts={3}
       toastOptions={{
         classNames: {
-          toast: 'rounded-2xl border shadow-lg text-sm',
-          title: 'font-medium',
+          toast: "rounded-2xl border shadow-lg text-sm",
+          title: "font-medium",
         },
       }}
       style={{
-        bottom: 'max(1rem, env(safe-area-inset-bottom))',
+        bottom: "max(1rem, env(safe-area-inset-bottom))",
       }}
     />
   );

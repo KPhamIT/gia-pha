@@ -1,9 +1,9 @@
-import type { ExportModel } from '@/lib/family-tree/export-tree-svg';
-import type { NodeCardStyle } from '@/lib/family-tree/svg-border';
-import { SERIF, formatBirthDate } from './tree-export-svg-utils';
+import type { ExportModel } from "@/lib/family-tree/export-tree-svg";
+import type { NodeCardStyle } from "@/lib/family-tree/svg-border";
+import { SERIF, formatBirthDate } from "./tree-export-svg-utils";
 
 type Props = {
-  node: ExportModel['nodes'][number];
+  node: ExportModel["nodes"][number];
   nodeWidth: number;
   nodeHeight: number;
   nodeCard: NodeCardStyle;
@@ -30,12 +30,28 @@ export default function ExportPersonNode({
   const birthFont = nodeFontSize * 0.73;
   const birth = formatBirthDate(node.birthDate);
   const blockH = words.length * lineH + (birth ? birthFont + 5 : 0);
-  const firstBaseline = Math.max(nodeFontSize + 6, (nodeHeight - blockH) / 2 + nodeFontSize);
+  const firstBaseline = Math.max(
+    nodeFontSize + 6,
+    (nodeHeight - blockH) / 2 + nodeFontSize,
+  );
 
   return (
     <g transform={`translate(${node.x} ${node.y})`}>
-      {nodeCard.render(nodeWidth, nodeHeight, nodeBgColor, nodeBorderColor, node.isRoot ? 2.5 : 1.5)}
-      <text x={cx} textAnchor="middle" fontFamily={SERIF} fontWeight={600} fontSize={nodeFontSize} fill={nodeTextColor}>
+      {nodeCard.render(
+        nodeWidth,
+        nodeHeight,
+        nodeBgColor,
+        nodeBorderColor,
+        node.isRoot ? 2.5 : 1.5,
+      )}
+      <text
+        x={cx}
+        textAnchor="middle"
+        fontFamily={SERIF}
+        fontWeight={600}
+        fontSize={nodeFontSize}
+        fill={nodeTextColor}
+      >
         {words.map((word, i) => (
           <tspan key={i} x={cx} y={firstBaseline + i * lineH}>
             {word}

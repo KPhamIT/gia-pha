@@ -48,7 +48,10 @@ export class CeremoniesController {
 
   @Post('templates')
   @UseGuards(JwtRequiredGuard, MutateGuard)
-  createTemplate(@Request() req: { user: User }, @Body() dto: CreateCeremonyTemplateDto) {
+  createTemplate(
+    @Request() req: { user: User },
+    @Body() dto: CreateCeremonyTemplateDto,
+  ) {
     return this.ceremonyTemplatesService.create(req.user, dto);
   }
 
@@ -81,7 +84,10 @@ export class CeremoniesController {
 
   @Get(':personId/share-token')
   @UseGuards(JwtRequiredGuard)
-  getShareToken(@Request() req: { user: User }, @Param('personId') personId: string) {
+  getShareToken(
+    @Request() req: { user: User },
+    @Param('personId') personId: string,
+  ) {
     return this.ceremoniesService.createShareToken(req.user, +personId);
   }
 

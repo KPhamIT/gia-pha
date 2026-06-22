@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { UI } from '@/lib/constants/ui-strings';
-import styles from './GenealogyBook.module.css';
+import { UI } from "@/lib/constants/ui-strings";
+import styles from "./GenealogyBook.module.css";
 
 export function displayValue(value: string): string {
   return value.trim() || UI.BOOK_EMPTY_FIELD;
@@ -32,12 +32,12 @@ export default function BookField({
   const empty = !value.trim();
   const lineCount = printLines ?? (multiline ? 3 : undefined);
   const className = `w-full border-0 bg-transparent p-0 outline-none ${
-    empty ? 'text-slate-400 italic' : 'text-slate-800'
+    empty ? "text-slate-400 italic" : "text-slate-800"
   }`;
   const multilineClass =
     multiline && lineCount != null
       ? `${styles.bookFieldMultiline} whitespace-pre-wrap break-words`
-      : '';
+      : "";
 
   const handleFocus = () => {
     if (!readOnly) onStartEdit?.();
@@ -48,7 +48,7 @@ export default function BookField({
       <p className={styles.bookFieldLabel}>{label}</p>
       {readOnly ? (
         <p
-          className={`${styles.bookFieldValue} ${empty ? 'italic text-slate-400' : 'text-slate-800'} ${multilineClass} ${onStartEdit ? 'cursor-text' : ''}`}
+          className={`${styles.bookFieldValue} ${empty ? "italic text-slate-400" : "text-slate-800"} ${multilineClass} ${onStartEdit ? "cursor-text" : ""}`}
           data-print-lines={lineCount}
           onClick={onStartEdit}
         >

@@ -1,5 +1,5 @@
-import type { Relationship } from '@/components/types/family-tree-types';
-import type { ParentChildEdge } from './types';
+import type { Relationship } from "@/components/types/family-tree-types";
+import type { ParentChildEdge } from "./types";
 
 /** Drop self edges and CHILD edges that duplicate an existing FATHER/MOTHER link. */
 export function getEffectiveRelationships(relationships: Relationship[]) {
@@ -7,7 +7,8 @@ export function getEffectiveRelationships(relationships: Relationship[]) {
     relationships
       .filter(
         (relationship) =>
-          (relationship.type === 'FATHER' || relationship.type === 'MOTHER') && relationship.fromId !== relationship.toId,
+          (relationship.type === "FATHER" || relationship.type === "MOTHER") &&
+          relationship.fromId !== relationship.toId,
       )
       .map((relationship) => `${relationship.fromId}-${relationship.toId}`),
   );
@@ -16,8 +17,10 @@ export function getEffectiveRelationships(relationships: Relationship[]) {
     if (relationship.fromId === relationship.toId) {
       return false;
     }
-    if (relationship.type === 'CHILD') {
-      return !parentRelations.has(`${relationship.toId}-${relationship.fromId}`);
+    if (relationship.type === "CHILD") {
+      return !parentRelations.has(
+        `${relationship.toId}-${relationship.fromId}`,
+      );
     }
     return true;
   });
@@ -25,13 +28,18 @@ export function getEffectiveRelationships(relationships: Relationship[]) {
 
 export function getTreeEdges(relationships: Relationship[]) {
   return relationships.filter(
-    (relationship) => relationship.type === 'FATHER' || relationship.type === 'MOTHER' || relationship.type === 'CHILD',
+    (relationship) =>
+      relationship.type === "FATHER" ||
+      relationship.type === "MOTHER" ||
+      relationship.type === "CHILD",
   );
 }
 
-export function normalizeParentChildEdges(treeEdges: Relationship[]): ParentChildEdge[] {
+export function normalizeParentChildEdges(
+  treeEdges: Relationship[],
+): ParentChildEdge[] {
   return treeEdges.map((relationship) => {
-    if (relationship.type === 'CHILD') {
+    if (relationship.type === "CHILD") {
       return {
         parentId: relationship.toId,
         childId: relationship.fromId,
@@ -50,8 +58,14 @@ export function buildRelationMaps(normalizedEdges: ParentChildEdge[]) {
   const parentMap = new Map<number, number[]>();
 
   normalizedEdges.forEach((edge) => {
-    childMap.set(edge.parentId, [...(childMap.get(edge.parentId) ?? []), edge.childId]);
-    parentMap.set(edge.childId, [...(parentMap.get(edge.childId) ?? []), edge.parentId]);
+    childMap.set(edge.parentId, [
+      ...(childMap.get(edge.parentId) ?? []),
+      edge.childId,
+    ]);
+    parentMap.set(edge.childId, [
+      ...(parentMap.get(edge.childId) ?? []),
+      edge.parentId,
+    ]);
   });
 
   return { childMap, parentMap };

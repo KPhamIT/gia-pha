@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import TreeFab from '@/components/family-tree/graph/TreeFab';
-import { useAppNavigation } from '@/hooks/useAppNavigation';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import { resolveFabPageContext } from '@/lib/navigation/fab-actions';
+import { usePathname } from "next/navigation";
+import TreeFab from "@/components/family-tree/graph/TreeFab";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { resolveFabPageContext } from "@/lib/navigation/fab-actions";
 
 export type TreeLocalActions = {
   onAddPerson: () => void;

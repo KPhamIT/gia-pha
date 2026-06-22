@@ -1,12 +1,16 @@
-import axiosClient from '@/lib/axiosClient';
-import type { AuthResponse, AuthUser, Person } from '@/components/types/family-tree-types';
-import { API_ROUTES } from '@/lib/constants/api-routes';
-import { getZaloLoginUrl } from '@/lib/auth/session';
+import axiosClient from "@/lib/axiosClient";
+import type {
+  AuthResponse,
+  AuthUser,
+  Person,
+} from "@/components/types/family-tree-types";
+import { API_ROUTES } from "@/lib/constants/api-routes";
+import { getZaloLoginUrl } from "@/lib/auth/session";
 
 type MeResponse = {
   user?: AuthUser | null;
   person?: Person | null;
-  features?: import('@/lib/auth/standard-features').StandardFeatures;
+  features?: import("@/lib/auth/standard-features").StandardFeatures;
 };
 
 export const auth = {

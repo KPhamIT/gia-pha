@@ -1,8 +1,8 @@
-import type { CSSProperties } from 'react';
-import styles from './LoadingSpinner.module.css';
+import type { CSSProperties } from "react";
+import styles from "./LoadingSpinner.module.css";
 
 const TRACK_PATH =
-  'M29.760000000000005 18.72 c0 7.28 -3.9200000000000004 13.600000000000001 -9.840000000000002 16.96 c -2.8800000000000003 1.6800000000000002 -6.24 2.64 -9.840000000000002 2.64 c -3.6 0 -6.88 -0.96 -9.76 -2.64 c0 -7.28 3.9200000000000004 -13.52 9.840000000000002 -16.96 c2.8800000000000003 -1.6800000000000002 6.24 -2.64 9.76 -2.64 S26.880000000000003 17.040000000000003 29.760000000000005 18.72 c5.84 3.3600000000000003 9.76 9.68 9.840000000000002 16.96 c -2.8800000000000003 1.6800000000000002 -6.24 2.64 -9.76 2.64 c -3.6 0 -6.88 -0.96 -9.840000000000002 -2.64 c -5.84 -3.3600000000000003 -9.76 -9.68 -9.76 -16.96 c0 -7.28 3.9200000000000004 -13.600000000000001 9.76 -16.96 C25.84 5.120000000000001 29.760000000000005 11.440000000000001 29.760000000000005 18.72z';
+  "M29.760000000000005 18.72 c0 7.28 -3.9200000000000004 13.600000000000001 -9.840000000000002 16.96 c -2.8800000000000003 1.6800000000000002 -6.24 2.64 -9.840000000000002 2.64 c -3.6 0 -6.88 -0.96 -9.76 -2.64 c0 -7.28 3.9200000000000004 -13.52 9.840000000000002 -16.96 c2.8800000000000003 -1.6800000000000002 6.24 -2.64 9.76 -2.64 S26.880000000000003 17.040000000000003 29.760000000000005 18.72 c5.84 3.3600000000000003 9.76 9.68 9.840000000000002 16.96 c -2.8800000000000003 1.6800000000000002 -6.24 2.64 -9.76 2.64 c -3.6 0 -6.88 -0.96 -9.840000000000002 -2.64 c -5.84 -3.3600000000000003 -9.76 -9.68 -9.76 -16.96 c0 -7.28 3.9200000000000004 -13.600000000000001 9.76 -16.96 C25.84 5.120000000000001 29.760000000000005 11.440000000000001 29.760000000000005 18.72z";
 
 type LoadingSpinnerProps = {
   size?: number;
@@ -13,15 +13,15 @@ type LoadingSpinnerProps = {
 export default function LoadingSpinner({
   size = 40,
   className,
-  label = 'Đang tải',
+  label = "Đang tải",
 }: LoadingSpinnerProps) {
   const style = {
-    '--uib-size': `${size}px`,
+    "--uib-size": `${size}px`,
   } as CSSProperties;
 
   return (
     <svg
-      className={[styles.spinner, className].filter(Boolean).join(' ')}
+      className={[styles.spinner, className].filter(Boolean).join(" ")}
       x="0px"
       y="0px"
       viewBox="0 0 40 40"
@@ -32,8 +32,18 @@ export default function LoadingSpinner({
       aria-label={label}
       style={style}
     >
-      <path className={styles.track} strokeWidth={4} pathLength={100} d={TRACK_PATH} />
-      <path className={styles.car} strokeWidth={4} pathLength={100} d={TRACK_PATH} />
+      <path
+        className={styles.track}
+        strokeWidth={4}
+        pathLength={100}
+        d={TRACK_PATH}
+      />
+      <path
+        className={styles.car}
+        strokeWidth={4}
+        pathLength={100}
+        d={TRACK_PATH}
+      />
     </svg>
   );
 }

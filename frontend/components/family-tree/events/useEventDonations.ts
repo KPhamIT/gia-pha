@@ -1,19 +1,24 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { api } from '@/lib/api';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import type { CreateDonationInput, DonationDraftItem, EventDonation, FamilyEvent } from '@/components/types/event-types';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { api } from "@/lib/api";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import type {
+  CreateDonationInput,
+  DonationDraftItem,
+  EventDonation,
+  FamilyEvent,
+} from "@/components/types/event-types";
 import {
   buildSaveDonationsPayload,
   donationsToDraft,
   draftFromInput,
   isDonationsDraftDirty,
   newDonationDraftKey,
-} from './event-donation-draft';
-import { summaryPatch } from './event-contribution-utils';
+} from "./event-donation-draft";
+import { summaryPatch } from "./event-contribution-utils";
 
 type Args = {
   event: FamilyEvent;
@@ -51,34 +56,42 @@ export function useEventDonations({ event, onEventPatched }: Args) {
     [savedDonations, draftDonations],
   );
   const donationTotal = useMemo(
-    () => draftDonations.filter((d) => d.kind === 'MONEY').reduce((sum, d) => sum + d.amount, 0),
+    () =>
+      draftDonations
+        .filter((d) => d.kind === "MONEY")
+        .reduce((sum, d) => sum + d.amount, 0),
     [draftDonations],
   );
   const inKindCount = useMemo(
-    () => draftDonations.filter((d) => d.kind === 'IN_KIND').length,
+    () => draftDonations.filter((d) => d.kind === "IN_KIND").length,
     [draftDonations],
   );
 
-  const upsertDraft = useCallback((input: CreateDonationInput, editingKey: string | null) => {
-    setDraftDonations((prev) => {
-      if (editingKey && prev.some((item) => item.draftKey === editingKey)) {
-        return prev.map((item) =>
-          item.draftKey === editingKey
-            ? { ...item, ...draftFromInput(input, editingKey) }
-            : item,
-        );
-      }
-      return [...prev, draftFromInput(input, newDonationDraftKey())];
-    });
-  }, []);
+  const upsertDraft = useCallback(
+    (input: CreateDonationInput, editingKey: string | null) => {
+      setDraftDonations((prev) => {
+        if (editingKey && prev.some((item) => item.draftKey === editingKey)) {
+          return prev.map((item) =>
+            item.draftKey === editingKey
+              ? { ...item, ...draftFromInput(input, editingKey) }
+              : item,
+          );
+        }
+        return [...prev, draftFromInput(input, newDonationDraftKey())];
+      });
+    },
+    [],
+  );
 
   const removeDraft = useCallback((draftKey: string) => {
     if (!window.confirm(UI.EVENT_DONATION_DELETE_CONFIRM)) return;
-    setDraftDonations((prev) => prev.filter((item) => item.draftKey !== draftKey));
+    setDraftDonations((prev) =>
+      prev.filter((item) => item.draftKey !== draftKey),
+    );
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!requireFeature('editEvents')) return;
+    if (!requireFeature("editEvents")) return;
     if (!isDirty || saving) return;
 
     const payload = buildSaveDonationsPayload(savedDonations, draftDonations);
@@ -96,7 +109,15 @@ export function useEventDonations({ event, onEventPatched }: Args) {
     } finally {
       setSaving(false);
     }
-  }, [requireFeature, isDirty, saving, savedDonations, draftDonations, event.id, onEventPatched]);
+  }, [
+    requireFeature,
+    isDirty,
+    saving,
+    savedDonations,
+    draftDonations,
+    event.id,
+    onEventPatched,
+  ]);
 
   return {
     draftDonations,

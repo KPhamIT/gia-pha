@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { UI } from '@/lib/constants/ui-strings';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { UI } from "@/lib/constants/ui-strings";
+import { useAuthStore } from "@/store/authStore";
 
 export function useSystemAccess() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export function useSystemAccess() {
   useEffect(() => {
     if (!loaded) return;
     if (!isSystem) {
-      router.replace('/book');
+      router.replace("/book");
     }
   }, [isSystem, loaded, router]);
 
@@ -26,7 +26,7 @@ export function useSystemAccess() {
 }
 
 export function systemRoleLabel(role: string): string {
-  if (role === 'SYSTEM') return UI.SYSTEM_ROLE_SYSTEM;
-  if (role === 'ADMIN') return UI.SYSTEM_ROLE_ADMIN;
+  if (role === "SYSTEM") return UI.SYSTEM_ROLE_SYSTEM;
+  if (role === "ADMIN") return UI.SYSTEM_ROLE_ADMIN;
   return UI.SYSTEM_ROLE_STANDARD;
 }

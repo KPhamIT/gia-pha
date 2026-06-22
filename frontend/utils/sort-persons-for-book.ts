@@ -1,4 +1,4 @@
-import type { Person } from '@/components/types/family-tree-types';
+import type { Person } from "@/components/types/family-tree-types";
 
 export function sortPersonsForBook(persons: Person[]): Person[] {
   return [...persons].sort((a, b) => {
@@ -10,6 +10,6 @@ export function sortPersonsForBook(persons: Person[]): Person[] {
     const genB = b.generation ?? Number.MAX_SAFE_INTEGER;
     if (genA !== genB) return genA - genB;
 
-    return a.fullName.localeCompare(b.fullName, 'vi');
+    return a.fullName.localeCompare(b.fullName, "vi");
   });
 }

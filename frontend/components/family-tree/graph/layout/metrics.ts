@@ -1,4 +1,4 @@
-import type { Coordinates } from './types';
+import type { Coordinates } from "./types";
 
 /** Move a person and all descendants horizontally by `dx`. */
 export function shiftSubtree(
@@ -10,13 +10,21 @@ export function shiftSubtree(
 ) {
   const pos = coordinates.get(personId);
   if (pos) coordinates.set(personId, { x: pos.x + dx, y: pos.y });
-  const children = (childMap.get(personId) ?? []).filter((id) => relevantPersonIds.has(id));
-  for (const child of children) shiftSubtree(coordinates, childMap, relevantPersonIds, child, dx);
+  const children = (childMap.get(personId) ?? []).filter((id) =>
+    relevantPersonIds.has(id),
+  );
+  for (const child of children)
+    shiftSubtree(coordinates, childMap, relevantPersonIds, child, dx);
 }
 
 /** Vertical position per person: generation index times the row step. */
-export function buildYMap(generationMap: Map<number, number>, verticalStep: number) {
-  const sortedGenerations = Array.from(generationMap.values()).sort((a, b) => a - b);
+export function buildYMap(
+  generationMap: Map<number, number>,
+  verticalStep: number,
+) {
+  const sortedGenerations = Array.from(generationMap.values()).sort(
+    (a, b) => a - b,
+  );
   const minGeneration = sortedGenerations[0] ?? 0;
   const yMap = new Map<number, number>();
 
@@ -39,8 +47,18 @@ export type SubtreeWidthCtx = {
 };
 
 /** Horizontal space a person's subtree needs, memoised and cycle-safe. */
-export function computeSubtreeWidth(personId: number, ctx: SubtreeWidthCtx): number {
-  const { childMap, relevantPersonIds, nodeWidth, horizontalGap, widthMemo, computing } = ctx;
+export function computeSubtreeWidth(
+  personId: number,
+  ctx: SubtreeWidthCtx,
+): number {
+  const {
+    childMap,
+    relevantPersonIds,
+    nodeWidth,
+    horizontalGap,
+    widthMemo,
+    computing,
+  } = ctx;
   if (widthMemo.has(personId)) return widthMemo.get(personId)!;
 
   if (computing.has(personId)) {

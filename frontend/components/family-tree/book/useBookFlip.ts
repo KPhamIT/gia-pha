@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from "react";
 
 export const FLIP_MS = 950;
 
-type FlipState = { dir: 'next' | 'prev'; from: number; to: number };
+type FlipState = { dir: "next" | "prev"; from: number; to: number };
 
 /**
  * Drives page navigation with the 3D page-flip animation and swipe gestures.
@@ -20,10 +20,10 @@ export function useBookFlip(totalLeaves: number, onBeforeFlip: () => void) {
   const pageIndex = Math.min(storedIndex, Math.max(0, totalLeaves - 1));
 
   const goToPage = useCallback(
-    (direction: 'next' | 'prev') => {
+    (direction: "next" | "prev") => {
       if (flip) return;
       const current = Math.min(storedIndex, Math.max(0, totalLeaves - 1));
-      const nextIndex = direction === 'next' ? current + 1 : current - 1;
+      const nextIndex = direction === "next" ? current + 1 : current - 1;
       if (nextIndex < 0 || nextIndex >= totalLeaves) return;
 
       onBeforeFlip();
@@ -47,11 +47,19 @@ export function useBookFlip(totalLeaves: number, onBeforeFlip: () => void) {
     if (startX == null || endX == null) return;
     const delta = endX - startX;
     if (Math.abs(delta) < 48) return;
-    goToPage(delta < 0 ? 'next' : 'prev');
+    goToPage(delta < 0 ? "next" : "prev");
   };
 
-  const baseIndex = flip ? (flip.dir === 'next' ? flip.to : flip.from) : pageIndex;
-  const frontIndex = flip ? (flip.dir === 'next' ? flip.from : flip.to) : pageIndex;
+  const baseIndex = flip
+    ? flip.dir === "next"
+      ? flip.to
+      : flip.from
+    : pageIndex;
+  const frontIndex = flip
+    ? flip.dir === "next"
+      ? flip.from
+      : flip.to
+    : pageIndex;
 
   const jumpToIndex = useCallback(
     (index: number) => {
@@ -65,5 +73,14 @@ export function useBookFlip(totalLeaves: number, onBeforeFlip: () => void) {
     [flip, storedIndex, totalLeaves, onBeforeFlip],
   );
 
-  return { pageIndex, flip, goToPage, jumpToIndex, handleTouchStart, handleTouchEnd, baseIndex, frontIndex };
+  return {
+    pageIndex,
+    flip,
+    goToPage,
+    jumpToIndex,
+    handleTouchStart,
+    handleTouchEnd,
+    baseIndex,
+    frontIndex,
+  };
 }

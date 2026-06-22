@@ -80,7 +80,7 @@ export type UpdatePersonDetailInput = {
   };
 };
 
-export type RelationshipType = 'FATHER' | 'MOTHER' | 'SPOUSE' | 'CHILD';
+export type RelationshipType = "FATHER" | "MOTHER" | "SPOUSE" | "CHILD";
 
 export type Relationship = {
   id: number;
@@ -97,7 +97,7 @@ export type FamilyTreeData = {
   relationships: Relationship[];
 };
 
-export type UserRole = 'SYSTEM' | 'ADMIN' | 'STANDARD';
+export type UserRole = "SYSTEM" | "ADMIN" | "STANDARD";
 
 export type Organization = {
   id: number;
@@ -122,7 +122,7 @@ export type AuthResponse = {
   person: Person | null;
 };
 
-export type ThemeMode = 'light' | 'dark';
+export type ThemeMode = "light" | "dark";
 
 export type LayoutConfig = {
   horizontalGap: number;

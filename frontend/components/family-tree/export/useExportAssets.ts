@@ -1,18 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { EXPORT_IMAGE_SOURCES, fetchImageAsDataUri, type ExportImageKey } from '@/lib/family-tree/export-tree-svg';
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import {
+  EXPORT_IMAGE_SOURCES,
+  fetchImageAsDataUri,
+  type ExportImageKey,
+} from "@/lib/family-tree/export-tree-svg";
 import {
   getTreeExportPresets,
   normalizeTreeExportPresets,
   type TreeExportPreset,
-} from '@/lib/family-tree/tree-export-settings';
+} from "@/lib/family-tree/tree-export-settings";
 
 /** Loads the user's saved presets and inlines the decorative PNGs as data URIs. */
 export function useExportAssets() {
-  const [presets, setPresets] = useState<TreeExportPreset[]>(() => getTreeExportPresets());
-  const [dataUris, setDataUris] = useState<Record<ExportImageKey, string> | null>(null);
+  const [presets, setPresets] = useState<TreeExportPreset[]>(() =>
+    getTreeExportPresets(),
+  );
+  const [dataUris, setDataUris] = useState<Record<
+    ExportImageKey,
+    string
+  > | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,7 +35,8 @@ export function useExportAssets() {
         if (mine.length > 0) return;
         try {
           const seeded = await api.exportPreset.replaceMine(defaults);
-          if (!cancelled) setPresets(normalizeTreeExportPresets(seeded, defaults));
+          if (!cancelled)
+            setPresets(normalizeTreeExportPresets(seeded, defaults));
         } catch {
           /* keep local defaults if preset API is unavailable */
         }
@@ -43,7 +53,9 @@ export function useExportAssets() {
   useEffect(() => {
     let cancelled = false;
     const keys = Object.keys(EXPORT_IMAGE_SOURCES) as ExportImageKey[];
-    Promise.all(keys.map((key) => fetchImageAsDataUri(EXPORT_IMAGE_SOURCES[key])))
+    Promise.all(
+      keys.map((key) => fetchImageAsDataUri(EXPORT_IMAGE_SOURCES[key])),
+    )
       .then((uris) => {
         if (cancelled) return;
         const map = {} as Record<ExportImageKey, string>;

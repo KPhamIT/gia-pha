@@ -10,7 +10,9 @@ export class SettingsService {
   async resolveUserId(userId?: number): Promise<number> {
     if (userId != null && userId > 0) return userId;
 
-    const existing = await this.prisma.user.findFirst({ orderBy: { id: 'asc' } });
+    const existing = await this.prisma.user.findFirst({
+      orderBy: { id: 'asc' },
+    });
     if (existing) return existing.id;
 
     const created = await this.prisma.user.create({
@@ -19,7 +21,9 @@ export class SettingsService {
     return created.id;
   }
 
-  async findForRequest(userId?: number): Promise<Record<string, unknown> | null> {
+  async findForRequest(
+    userId?: number,
+  ): Promise<Record<string, unknown> | null> {
     return this.findByUserId(await this.resolveUserId(userId));
   }
 

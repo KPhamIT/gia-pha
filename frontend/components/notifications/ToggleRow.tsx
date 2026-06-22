@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 type Props = {
   label: string;
@@ -7,7 +7,12 @@ type Props = {
   onChange: (value: boolean) => void;
 };
 
-export default function ToggleRow({ label, checked, disabled, onChange }: Props) {
+export default function ToggleRow({
+  label,
+  checked,
+  disabled,
+  onChange,
+}: Props) {
   return (
     <label className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm text-neutral-900">
       <span className="min-w-0 flex-1">{label}</span>
@@ -19,12 +24,12 @@ export default function ToggleRow({ label, checked, disabled, onChange }: Props)
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
-          checked ? 'bg-amber-600' : 'bg-neutral-300'
+          checked ? "bg-amber-600" : "bg-neutral-300"
         }`}
       >
         <span
           className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-            checked ? 'translate-x-5' : ''
+            checked ? "translate-x-5" : ""
           }`}
         />
       </button>

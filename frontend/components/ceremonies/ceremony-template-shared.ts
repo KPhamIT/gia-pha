@@ -1,11 +1,14 @@
-import type { CeremonyTemplate } from '@/lib/api/modules/ceremonies';
-import { UI } from '@/lib/constants/ui-strings';
+import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
+import { UI } from "@/lib/constants/ui-strings";
 
-export const EMPTY_FORM = { name: '', content: '', isDefault: false };
+export const EMPTY_FORM = { name: "", content: "", isDefault: false };
 export type FormState = typeof EMPTY_FORM;
 
 /** Either edit an existing template or create one from a prefilled draft. */
-export type EditTarget = { template: CeremonyTemplate | null; initial: FormState };
+export type EditTarget = {
+  template: CeremonyTemplate | null;
+  initial: FormState;
+};
 
 /** Matches {{key}} or {key} variable tokens. */
 export const TOKEN_RE = /\{\{\s*([\w.]+)\s*\}\}|\{\s*([\w.]+)\s*\}/g;
@@ -20,4 +23,4 @@ const NS_LABELS: Record<string, string> = {
 };
 
 export const nsLabel = (ns: string) =>
-  NS_LABELS[ns] ?? (ns === '•' ? UI.CEREMONY_TEMPLATE_NS_OTHER : ns);
+  NS_LABELS[ns] ?? (ns === "•" ? UI.CEREMONY_TEMPLATE_NS_OTHER : ns);

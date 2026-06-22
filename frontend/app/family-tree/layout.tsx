@@ -1,7 +1,12 @@
 const API_ORIGIN =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? 'http://localhost:4000';
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
+  "http://localhost:4000";
 
-export default function FamilyTreeLayout({ children }: { children: React.ReactNode }) {
+export default function FamilyTreeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <link rel="preconnect" href={API_ORIGIN} crossOrigin="anonymous" />

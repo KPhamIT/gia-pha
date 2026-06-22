@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, type ReactNode } from 'react';
-import Icon from '@/components/icons/Icon';
-import { BT } from '@/lib/constants/ui-theme';
+import { useState, type ReactNode } from "react";
+import Icon from "@/components/icons/Icon";
+import { BT } from "@/lib/constants/ui-theme";
 
 type CollapsibleSectionProps = {
   title: string;
@@ -10,7 +10,11 @@ type CollapsibleSectionProps = {
   defaultOpen?: boolean;
 };
 
-export default function CollapsibleSection({ title, children, defaultOpen = false }: CollapsibleSectionProps) {
+export default function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = false,
+}: CollapsibleSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -22,7 +26,7 @@ export default function CollapsibleSection({ title, children, defaultOpen = fals
       >
         <span className="text-sm font-semibold text-slate-900">{title}</span>
         <Icon
-          path={open ? 'chevronUp' : 'chevronDown'}
+          path={open ? "chevronUp" : "chevronDown"}
           size={18}
           fill="none"
           stroke="currentColor"
@@ -43,7 +47,9 @@ type FormFieldProps = {
 export function FormField({ label, children }: FormFieldProps) {
   return (
     <div>
-      <label className={`mb-1 block text-sm font-medium ${BT.mutedOnLight}`}>{label}</label>
+      <label className={`mb-1 block text-sm font-medium ${BT.mutedOnLight}`}>
+        {label}
+      </label>
       {children}
     </div>
   );

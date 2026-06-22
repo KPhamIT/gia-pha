@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   type BookSettings,
   defaultBookSettings,
@@ -8,9 +8,9 @@ import {
   loadBookSettings,
   persistRemoteBookSettings,
   saveBookSettings,
-} from './book-settings';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
+} from "./book-settings";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
 
 /**
  * Book settings live in the user's backend settings (cross-device) with

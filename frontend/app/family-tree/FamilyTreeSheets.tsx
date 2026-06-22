@@ -1,22 +1,29 @@
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
-import { type Dispatch, type SetStateAction } from 'react';
-import AuthRequiredSheet from '@/components/auth/AuthRequiredSheet';
-import WelcomeBranchSheet from '@/components/family-tree/graph/WelcomeBranchSheet';
-import PersonDetailSheet from '@/components/family-tree/person/PersonDetailSheet';
-import EditPersonSheet from '@/components/family-tree/person/EditPersonSheet';
-import AddChildSheet from '@/components/family-tree/person/AddChildSheet';
-import AddPersonSheet from '@/components/family-tree/person/AddPersonSheet';
-import DeletePersonSheet from '@/components/family-tree/person/DeletePersonSheet';
-import SearchSheet from '@/components/family-tree/person/SearchSheet';
-import FamilyTreeSettings from '@/components/family-tree/settings/FamilyTreeSettings';
-import type { FamilyTreeData, LayoutConfig, ThemeMode } from '@/components/types/family-tree-types';
-import type { NodePositionOverrides } from '@/lib/family-tree/node-position-overrides';
-import type { BranchValue } from '@/lib/constants/branches';
-import type { usePersonSheets } from './usePersonSheets';
+import dynamic from "next/dynamic";
+import { type Dispatch, type SetStateAction } from "react";
+import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
+import WelcomeBranchSheet from "@/components/family-tree/graph/WelcomeBranchSheet";
+import PersonDetailSheet from "@/components/family-tree/person/PersonDetailSheet";
+import EditPersonSheet from "@/components/family-tree/person/EditPersonSheet";
+import AddChildSheet from "@/components/family-tree/person/AddChildSheet";
+import AddPersonSheet from "@/components/family-tree/person/AddPersonSheet";
+import DeletePersonSheet from "@/components/family-tree/person/DeletePersonSheet";
+import SearchSheet from "@/components/family-tree/person/SearchSheet";
+import FamilyTreeSettings from "@/components/family-tree/settings/FamilyTreeSettings";
+import type {
+  FamilyTreeData,
+  LayoutConfig,
+  ThemeMode,
+} from "@/components/types/family-tree-types";
+import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import type { BranchValue } from "@/lib/constants/branches";
+import type { usePersonSheets } from "./usePersonSheets";
 
-const TreeExportView = dynamic(() => import('@/components/family-tree/export/TreeExportView'), { ssr: false });
+const TreeExportView = dynamic(
+  () => import("@/components/family-tree/export/TreeExportView"),
+  { ssr: false },
+);
 
 type Props = {
   sheets: ReturnType<typeof usePersonSheets>;
@@ -43,7 +50,12 @@ type Props = {
   onSelectBranch: (branch: BranchValue) => void;
 };
 
-export default function FamilyTreeSheets({ sheets, canEdit, treeData, ...p }: Props) {
+export default function FamilyTreeSheets({
+  sheets,
+  canEdit,
+  treeData,
+  ...p
+}: Props) {
   return (
     <>
       {p.showSettings ? (
@@ -69,7 +81,9 @@ export default function FamilyTreeSheets({ sheets, canEdit, treeData, ...p }: Pr
         />
       ) : null}
 
-      {p.showWelcome ? <WelcomeBranchSheet onSelect={p.onSelectBranch} /> : null}
+      {p.showWelcome ? (
+        <WelcomeBranchSheet onSelect={p.onSelectBranch} />
+      ) : null}
 
       {sheets.showSearch ? (
         <SearchSheet
@@ -80,7 +94,7 @@ export default function FamilyTreeSheets({ sheets, canEdit, treeData, ...p }: Pr
         />
       ) : null}
 
-      {sheets.viewMode === 'detail' && sheets.selectedPersonId != null ? (
+      {sheets.viewMode === "detail" && sheets.selectedPersonId != null ? (
         <PersonDetailSheet
           detail={sheets.detail}
           loading={sheets.detailLoading}
@@ -94,7 +108,7 @@ export default function FamilyTreeSheets({ sheets, canEdit, treeData, ...p }: Pr
         />
       ) : null}
 
-      {sheets.viewMode === 'edit' && sheets.selectedPersonId != null ? (
+      {sheets.viewMode === "edit" && sheets.selectedPersonId != null ? (
         <EditPersonSheet
           detail={sheets.detail}
           loading={sheets.detailLoading}
@@ -104,7 +118,7 @@ export default function FamilyTreeSheets({ sheets, canEdit, treeData, ...p }: Pr
         />
       ) : null}
 
-      {sheets.viewMode === 'addChild' && sheets.selectedNode ? (
+      {sheets.viewMode === "addChild" && sheets.selectedNode ? (
         <AddChildSheet
           parent={sheets.selectedNode}
           onClose={sheets.backToDetail}
@@ -113,11 +127,15 @@ export default function FamilyTreeSheets({ sheets, canEdit, treeData, ...p }: Pr
         />
       ) : null}
 
-      {sheets.viewMode === 'addPerson' ? (
-        <AddPersonSheet onClose={sheets.closeAddPerson} onSubmit={sheets.handleAddStandalonePerson} loading={sheets.actionLoading} />
+      {sheets.viewMode === "addPerson" ? (
+        <AddPersonSheet
+          onClose={sheets.closeAddPerson}
+          onSubmit={sheets.handleAddStandalonePerson}
+          loading={sheets.actionLoading}
+        />
       ) : null}
 
-      {sheets.viewMode === 'deleteConfirm' && sheets.selectedNode ? (
+      {sheets.viewMode === "deleteConfirm" && sheets.selectedNode ? (
         <DeletePersonSheet
           person={sheets.selectedNode}
           loading={sheets.modalLoading}

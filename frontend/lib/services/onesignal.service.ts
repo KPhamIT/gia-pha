@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-const APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID ?? '';
+const APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID ?? "";
 
 let initPromise: Promise<void> | null = null;
 
-const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 export function isOneSignalConfigured(): boolean {
   return Boolean(APP_ID);
@@ -13,19 +14,19 @@ export function isOneSignalConfigured(): boolean {
 async function loadOneSignal() {
   await initOneSignal();
   if (!APP_ID) return null;
-  const OneSignal = (await import('react-onesignal')).default;
+  const OneSignal = (await import("react-onesignal")).default;
   return OneSignal;
 }
 
 export async function initOneSignal(): Promise<void> {
-  if (!APP_ID || typeof window === 'undefined') return;
+  if (!APP_ID || typeof window === "undefined") return;
   if (initPromise) return initPromise;
 
   initPromise = (async () => {
-    const OneSignal = (await import('react-onesignal')).default;
+    const OneSignal = (await import("react-onesignal")).default;
     await OneSignal.init({
       appId: APP_ID,
-      allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
+      allowLocalhostAsSecureOrigin: process.env.NODE_ENV === "development",
     });
   })();
 
@@ -48,15 +49,19 @@ export async function ensurePushSubscribed(): Promise<{
   subscriptionId: string | null;
 }> {
   const OneSignal = await loadOneSignal();
-  if (!OneSignal || typeof window === 'undefined' || !('Notification' in window)) {
+  if (
+    !OneSignal ||
+    typeof window === "undefined" ||
+    !("Notification" in window)
+  ) {
     return { ok: false, subscriptionId: null };
   }
 
-  if (Notification.permission === 'default') {
+  if (Notification.permission === "default") {
     await OneSignal.Slidedown.promptPush();
   }
 
-  if (Notification.permission !== 'granted') {
+  if (Notification.permission !== "granted") {
     return { ok: false, subscriptionId: null };
   }
 
@@ -80,9 +85,11 @@ export async function getSubscriptionId(): Promise<string | null> {
   return id ?? null;
 }
 
-export async function getBrowserPermission(): Promise<NotificationPermission | 'unsupported'> {
-  if (typeof window === 'undefined' || !('Notification' in window)) {
-    return 'unsupported';
+export async function getBrowserPermission(): Promise<
+  NotificationPermission | "unsupported"
+> {
+  if (typeof window === "undefined" || !("Notification" in window)) {
+    return "unsupported";
   }
   return Notification.permission;
 }

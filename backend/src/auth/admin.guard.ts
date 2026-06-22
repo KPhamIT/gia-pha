@@ -15,7 +15,9 @@ export class AdminGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException();
     }
 
-    const request = context.switchToHttp().getRequest<{ user?: { role?: UserRole } }>();
+    const request = context
+      .switchToHttp()
+      .getRequest<{ user?: { role?: UserRole } }>();
     if (request.user?.role !== UserRole.ADMIN) {
       throw new ForbiddenException('Admin role required');
     }

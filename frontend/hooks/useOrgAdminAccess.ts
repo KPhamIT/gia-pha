@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 export function useOrgAdminAccess() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export function useOrgAdminAccess() {
   useEffect(() => {
     if (!loaded) return;
     if (!isAdmin) {
-      router.replace('/book');
+      router.replace("/book");
     }
   }, [isAdmin, loaded, router]);
 

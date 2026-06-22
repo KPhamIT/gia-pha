@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import type { BranchValue } from '@/lib/constants/branches';
-import { loadUserBranch, saveUserBranch } from '@/utils/branch-storage';
+import { useEffect, useState } from "react";
+import type { BranchValue } from "@/lib/constants/branches";
+import { loadUserBranch, saveUserBranch } from "@/utils/branch-storage";
 
 /**
  * Tracks the branch the user picked on their first visit (persisted locally).

@@ -11,12 +11,16 @@ export function isSystem(user: User | null | undefined): boolean {
 
 export function assertOrgAccess(user: User, organizationId: number): void {
   if (user.role === UserRole.SYSTEM) return;
-  if (user.role === UserRole.ADMIN && user.organizationId === organizationId) return;
+  if (user.role === UserRole.ADMIN && user.organizationId === organizationId)
+    return;
   throw new ForbiddenException('No access to this organization');
 }
 
 /** SYSTEM, org ADMIN, or org member (STANDARD) of the same organization. */
-export function assertOrgMemberAccess(user: User, organizationId: number): void {
+export function assertOrgMemberAccess(
+  user: User,
+  organizationId: number,
+): void {
   if (user.role === UserRole.SYSTEM) return;
   if (user.organizationId === organizationId) return;
   throw new ForbiddenException('No access to this organization');

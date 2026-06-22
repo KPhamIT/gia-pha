@@ -1,16 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import type { NotificationStats } from '@/lib/api/modules/notifications';
-import { UI } from '@/lib/constants/ui-strings';
-import { BT } from '@/lib/constants/ui-theme';
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import type { NotificationStats } from "@/lib/api/modules/notifications";
+import { UI } from "@/lib/constants/ui-strings";
+import { BT } from "@/lib/constants/ui-theme";
 
 export default function NotificationStatsPanel() {
   const [stats, setStats] = useState<NotificationStats | null>(null);
 
   useEffect(() => {
-    api.notifications.stats().then(setStats).catch(() => setStats(null));
+    api.notifications
+      .stats()
+      .then(setStats)
+      .catch(() => setStats(null));
   }, []);
 
   if (!stats) return null;

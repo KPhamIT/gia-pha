@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import BookPageShell from '@/components/ui/BookPageShell';
-import AuthPageLoading from '@/components/ui/AuthPageLoading';
-import NotificationCenterList from '@/components/notifications/NotificationCenterList';
-import { useAuthBootstrap } from '@/hooks/useAuthBootstrap';
-import { UI } from '@/lib/constants/ui-strings';
-import { BT } from '@/lib/constants/ui-theme';
-import Link from 'next/link';
+import BookPageShell from "@/components/ui/BookPageShell";
+import AuthPageLoading from "@/components/ui/AuthPageLoading";
+import NotificationCenterList from "@/components/notifications/NotificationCenterList";
+import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
+import { UI } from "@/lib/constants/ui-strings";
+import { BT } from "@/lib/constants/ui-theme";
+import Link from "next/link";
 
 export default function NotificationsPage() {
   const { loaded, isLoggedIn } = useAuthBootstrap();
@@ -17,9 +17,15 @@ export default function NotificationsPage() {
 
   if (!isLoggedIn) {
     return (
-      <BookPageShell title={UI.NOTIFICATIONS_TITLE} subtitle={UI.NOTIFICATIONS_SUBTITLE}>
+      <BookPageShell
+        title={UI.NOTIFICATIONS_TITLE}
+        subtitle={UI.NOTIFICATIONS_SUBTITLE}
+      >
         <p className={`text-sm ${BT.mutedOnDark}`}>{UI.NOTIF_LOGIN_REQUIRED}</p>
-        <Link href="/login" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mt-4 inline-flex`}>
+        <Link
+          href="/login"
+          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mt-4 inline-flex`}
+        >
           {UI.LOGIN_BUTTON}
         </Link>
       </BookPageShell>
@@ -27,9 +33,15 @@ export default function NotificationsPage() {
   }
 
   return (
-    <BookPageShell title={UI.NOTIFICATIONS_TITLE} subtitle={UI.NOTIFICATIONS_SUBTITLE}>
+    <BookPageShell
+      title={UI.NOTIFICATIONS_TITLE}
+      subtitle={UI.NOTIFICATIONS_SUBTITLE}
+    >
       <div className="mb-4">
-        <Link href="/settings/notifications" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOnDark}`}>
+        <Link
+          href="/settings/notifications"
+          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOnDark}`}
+        >
           {UI.NOTIF_OPEN_SETTINGS}
         </Link>
       </div>

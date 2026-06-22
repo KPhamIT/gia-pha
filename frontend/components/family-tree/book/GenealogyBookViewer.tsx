@@ -1,18 +1,21 @@
-'use client';
+"use client";
 
-import { useCallback, useMemo, useState } from 'react';
-import OverlayPortal from '@/components/ui/OverlayPortal';
-import { useOverlayPageRecovery, useOverlayViewport } from '@/hooks/useOverlayViewport';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import type { Person } from '@/components/types/family-tree-types';
-import BookPersonSearch from './BookPersonSearch';
-import BookStyleControls from './BookStyleControls';
-import BookPagesManager from './BookPagesManager';
-import BookViewerHeader from './BookViewerHeader';
-import BookViewerFallback from './BookViewerFallback';
-import BookStage from './BookStage';
-import { useGenealogyBook } from './useGenealogyBook';
-import styles from './GenealogyBook.module.css';
+import { useCallback, useMemo, useState } from "react";
+import OverlayPortal from "@/components/ui/OverlayPortal";
+import {
+  useOverlayPageRecovery,
+  useOverlayViewport,
+} from "@/hooks/useOverlayViewport";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import type { Person } from "@/components/types/family-tree-types";
+import BookPersonSearch from "./BookPersonSearch";
+import BookStyleControls from "./BookStyleControls";
+import BookPagesManager from "./BookPagesManager";
+import BookViewerHeader from "./BookViewerHeader";
+import BookViewerFallback from "./BookViewerFallback";
+import BookStage from "./BookStage";
+import { useGenealogyBook } from "./useGenealogyBook";
+import styles from "./GenealogyBook.module.css";
 
 type GenealogyBookViewerProps = {
   persons: Person[];
@@ -43,11 +46,18 @@ export default function GenealogyBookViewer({
     }, []),
   );
   const book = useGenealogyBook(persons);
-  const { hydrated, settings, updateSettings, isPrintAllLayout, viewerRootRef, ctx } = book;
+  const {
+    hydrated,
+    settings,
+    updateSettings,
+    isPrintAllLayout,
+    viewerRootRef,
+    ctx,
+  } = book;
 
   const guardedUpdateSettings = useCallback(
     (patch: Parameters<typeof updateSettings>[0]) => {
-      if (!requireFeature('editBook')) return;
+      if (!requireFeature("editBook")) return;
       updateSettings(patch);
     },
     [requireFeature, updateSettings],
@@ -73,7 +83,7 @@ export default function GenealogyBookViewer({
   const viewer = (
     <div
       ref={viewerRootRef}
-      className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ''} ${standalone ? '' : 'overlay-viewport z-50'} flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
+      className={`${styles.viewerRoot} ${isPrintAllLayout ? styles.printAllMode : ""} ${standalone ? "" : "overlay-viewport z-50"} flex h-dvh w-full flex-col bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50`}
     >
       <BookViewerHeader
         pageIndex={book.pageIndex}
@@ -88,7 +98,11 @@ export default function GenealogyBookViewer({
       />
 
       {showStyle ? (
-        <BookStyleControls settings={settings} onChange={guardedUpdateSettings} onClose={() => setShowStyle(false)} />
+        <BookStyleControls
+          settings={settings}
+          onChange={guardedUpdateSettings}
+          onClose={() => setShowStyle(false)}
+        />
       ) : null}
 
       {showSearch ? (

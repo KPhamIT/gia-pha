@@ -1,14 +1,17 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { api } from '@/lib/api';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
-import type { Person, Relationship } from '@/components/types/family-tree-types';
-import type { FamilyEvent } from '@/components/types/event-types';
-import { groupLivingByFamily } from './event-grouping';
-import { parseVndInput } from './event-format';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { api } from "@/lib/api";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import type { FamilyEvent } from "@/components/types/event-types";
+import { groupLivingByFamily } from "./event-grouping";
+import { parseVndInput } from "./event-format";
 import {
   amountsFromContributions,
   changedContributions,
@@ -18,7 +21,7 @@ import {
   summaryPatch,
   withAmount,
   withoutKey,
-} from './event-contribution-utils';
+} from "./event-contribution-utils";
 
 type Args = {
   event: FamilyEvent;
@@ -27,20 +30,38 @@ type Args = {
   onEventPatched: (patch: Partial<FamilyEvent>) => void;
 };
 
-export function useEventContributions({ event, persons, relationships, onEventPatched }: Args) {
+export function useEventContributions({
+  event,
+  persons,
+  relationships,
+  onEventPatched,
+}: Args) {
   const { requireFeature } = useFeatureAccess();
-  const [savedAmounts, setSavedAmounts] = useState<Map<number, number>>(new Map());
-  const [draftAmounts, setDraftAmounts] = useState<Map<number, number>>(new Map());
+  const [savedAmounts, setSavedAmounts] = useState<Map<number, number>>(
+    new Map(),
+  );
+  const [draftAmounts, setDraftAmounts] = useState<Map<number, number>>(
+    new Map(),
+  );
   const [inputTexts, setInputTexts] = useState<Map<number, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const groups = useMemo(
-    () => groupLivingByFamily(persons, relationships, { malesOnly: event.maleOnly }),
+    () =>
+      groupLivingByFamily(persons, relationships, {
+        malesOnly: event.maleOnly,
+      }),
     [persons, relationships, event.maleOnly],
   );
-  const livingCount = useMemo(() => groups.reduce((n, g) => n + g.members.length, 0), [groups]);
-  const livingIds = useMemo(() => groups.flatMap((g) => g.members.map((m) => m.id)), [groups]);
+  const livingCount = useMemo(
+    () => groups.reduce((n, g) => n + g.members.length, 0),
+    [groups],
+  );
+  const livingIds = useMemo(
+    () => groups.flatMap((g) => g.members.map((m) => m.id)),
+    [groups],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -48,7 +69,10 @@ export function useEventContributions({ event, persons, relationships, onEventPa
       try {
         const detail = await api.event.get(event.id);
         if (!cancelled) {
-          const initial = amountsFromContributions(detail.contributions ?? [], event.amountPerPerson);
+          const initial = amountsFromContributions(
+            detail.contributions ?? [],
+            event.amountPerPerson,
+          );
           setSavedAmounts(initial);
           setDraftAmounts(new Map(initial));
           setInputTexts(new Map());
@@ -66,12 +90,17 @@ export function useEventContributions({ event, persons, relationships, onEventPa
     () => resolveDraftAmounts(draftAmounts, inputTexts),
     [draftAmounts, inputTexts],
   );
-  const isDirty = useMemo(() => !mapsEqual(resolvedDraft, savedAmounts), [resolvedDraft, savedAmounts]);
+  const isDirty = useMemo(
+    () => !mapsEqual(resolvedDraft, savedAmounts),
+    [resolvedDraft, savedAmounts],
+  );
 
   const getAmount = useCallback(
     (personId: number) => {
       const raw = inputTexts.get(personId);
-      return raw != null ? parseVndInput(raw) : draftAmounts.get(personId) ?? 0;
+      return raw != null
+        ? parseVndInput(raw)
+        : (draftAmounts.get(personId) ?? 0);
     },
     [draftAmounts, inputTexts],
   );
@@ -91,7 +120,8 @@ export function useEventContributions({ event, persons, relationships, onEventPa
 
   const inputValueFor = useCallback(
     (personId: number) =>
-      inputTexts.get(personId) ?? (draftAmounts.get(personId) ? String(draftAmounts.get(personId)) : ''),
+      inputTexts.get(personId) ??
+      (draftAmounts.get(personId) ? String(draftAmounts.get(personId)) : ""),
     [inputTexts, draftAmounts],
   );
 
@@ -127,11 +157,15 @@ export function useEventContributions({ event, persons, relationships, onEventPa
   );
 
   const handleSave = useCallback(async () => {
-    if (!requireFeature('editEvents')) return;
+    if (!requireFeature("editEvents")) return;
     if (!isDirty || saving) return;
 
     const nextDraft = resolveDraftAmounts(draftAmounts, inputTexts);
-    const contributions = changedContributions(livingIds, nextDraft, savedAmounts);
+    const contributions = changedContributions(
+      livingIds,
+      nextDraft,
+      savedAmounts,
+    );
     if (contributions.length === 0) return;
 
     setSaving(true);
@@ -139,8 +173,13 @@ export function useEventContributions({ event, persons, relationships, onEventPa
     setInputTexts(new Map());
 
     try {
-      const detail = await api.event.saveContributions(event.id, { contributions });
-      const synced = amountsFromContributions(detail.contributions ?? [], event.amountPerPerson);
+      const detail = await api.event.saveContributions(event.id, {
+        contributions,
+      });
+      const synced = amountsFromContributions(
+        detail.contributions ?? [],
+        event.amountPerPerson,
+      );
       setSavedAmounts(synced);
       setDraftAmounts(new Map(synced));
       onEventPatched(summaryPatch(detail));
@@ -151,10 +190,32 @@ export function useEventContributions({ event, persons, relationships, onEventPa
     } finally {
       setSaving(false);
     }
-  }, [requireFeature, isDirty, saving, draftAmounts, inputTexts, livingIds, savedAmounts, event.id, event.amountPerPerson, onEventPatched]);
+  }, [
+    requireFeature,
+    isDirty,
+    saving,
+    draftAmounts,
+    inputTexts,
+    livingIds,
+    savedAmounts,
+    event.id,
+    event.amountPerPerson,
+    onEventPatched,
+  ]);
 
   return {
-    groups, livingCount, livingPaidCount, contributionTotal, loading, saving, isDirty,
-    getAmount, inputValueFor, setInputText, toggleFullPaid, commitInput, handleSave,
+    groups,
+    livingCount,
+    livingPaidCount,
+    contributionTotal,
+    loading,
+    saving,
+    isDirty,
+    getAmount,
+    inputValueFor,
+    setInputText,
+    toggleFullPaid,
+    commitInput,
+    handleSave,
   };
 }

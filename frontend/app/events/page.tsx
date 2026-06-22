@@ -1,20 +1,23 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import BookPageShell from '@/components/ui/BookPageShell';
-import FamilyTreeStatus from '@/components/family-tree/graph/FamilyTreeStatus';
-import AuthRequiredSheet from '@/components/auth/AuthRequiredSheet';
-import NotificationOptInBanner from '@/components/notifications/NotificationOptInBanner';
-import { api } from '@/lib/api';
-import type { Person, Relationship } from '@/components/types/family-tree-types';
-import { useAuthStore } from '@/store/authStore';
-import { useTheme } from '@/hooks/useTheme';
-import { UI } from '@/lib/constants/ui-strings';
-import { getErrorMessage } from '@/utils/errors';
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import BookPageShell from "@/components/ui/BookPageShell";
+import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
+import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
+import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
+import { api } from "@/lib/api";
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import { useAuthStore } from "@/store/authStore";
+import { useTheme } from "@/hooks/useTheme";
+import { UI } from "@/lib/constants/ui-strings";
+import { getErrorMessage } from "@/utils/errors";
 
 const EventsManager = dynamic(
-  () => import('@/components/family-tree/events/EventsManager'),
+  () => import("@/components/family-tree/events/EventsManager"),
   { ssr: false },
 );
 
@@ -65,7 +68,11 @@ export default function EventsPage() {
       <NotificationOptInBanner />
 
       <BookPageShell title={UI.EVENTS_TITLE} subtitle={UI.EVENTS_SUBTITLE}>
-        <EventsManager persons={persons} relationships={relationships} standalone />
+        <EventsManager
+          persons={persons}
+          relationships={relationships}
+          standalone
+        />
       </BookPageShell>
 
       <AuthRequiredSheet />

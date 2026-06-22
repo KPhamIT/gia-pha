@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { create } from 'zustand';
-import type { AuthUser, Person } from '@/components/types/family-tree-types';
+import { create } from "zustand";
+import type { AuthUser, Person } from "@/components/types/family-tree-types";
 import {
   DEFAULT_STANDARD_FEATURES,
   type StandardFeatureKey,
   type StandardFeatures,
   guestCanUseFeature,
-} from '@/lib/auth/standard-features';
-import { api } from '@/lib/api';
-import { clearToken, getToken } from '@/lib/auth/session';
+} from "@/lib/auth/standard-features";
+import { api } from "@/lib/api";
+import { clearToken, getToken } from "@/lib/auth/session";
 
 type AuthStore = {
   user: AuthUser | null;
@@ -26,8 +26,8 @@ type AuthStore = {
 };
 
 function deriveFlags(user: AuthUser | null) {
-  const isSystem = user?.role === 'SYSTEM';
-  const isAdmin = user?.role === 'ADMIN';
+  const isSystem = user?.role === "SYSTEM";
+  const isAdmin = user?.role === "ADMIN";
   return {
     isSystem,
     isAdmin,
@@ -36,7 +36,10 @@ function deriveFlags(user: AuthUser | null) {
   };
 }
 
-function resolveFeatures(user: AuthUser | null, features?: StandardFeatures | null): StandardFeatures {
+function resolveFeatures(
+  user: AuthUser | null,
+  features?: StandardFeatures | null,
+): StandardFeatures {
   if (!user) return { ...DEFAULT_STANDARD_FEATURES };
   return features ?? { ...DEFAULT_STANDARD_FEATURES };
 }

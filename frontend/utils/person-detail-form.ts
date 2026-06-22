@@ -1,5 +1,8 @@
-import type { PersonDetail, UpdatePersonDetailInput } from '@/components/types/family-tree-types';
-import { toDateInputValue } from '@/utils/person-relationships';
+import type {
+  PersonDetail,
+  UpdatePersonDetailInput,
+} from "@/components/types/family-tree-types";
+import { toDateInputValue } from "@/utils/person-relationships";
 
 /** Flat, all-string form of {@link PersonDetail} shared by the edit sheet and the book page. */
 export type PersonDraft = {
@@ -31,41 +34,52 @@ export type PersonDraft = {
  * `branchFallback` lets the edit sheet default an unset branch to "1" while the
  * book page leaves it blank.
  */
-export function buildPersonDraft(detail: PersonDetail | null, branchFallback = ''): PersonDraft {
+export function buildPersonDraft(
+  detail: PersonDetail | null,
+  branchFallback = "",
+): PersonDraft {
   const person = detail?.person;
   return {
-    fullName: person?.fullName ?? '',
-    gender: person?.gender ?? '',
+    fullName: person?.fullName ?? "",
+    gender: person?.gender ?? "",
     birthDate: toDateInputValue(person?.birthDate),
     deathDate: toDateInputValue(person?.deathDate),
-    deathLunarDay: person?.deathLunarDay != null ? String(person.deathLunarDay) : '',
-    deathLunarMonth: person?.deathLunarMonth != null ? String(person.deathLunarMonth) : '',
-    deceased: person?.deceased || person?.deathDate ? '1' : '',
-    generation: person?.generation != null ? String(person.generation) : '',
+    deathLunarDay:
+      person?.deathLunarDay != null ? String(person.deathLunarDay) : "",
+    deathLunarMonth:
+      person?.deathLunarMonth != null ? String(person.deathLunarMonth) : "",
+    deceased: person?.deceased || person?.deathDate ? "1" : "",
+    generation: person?.generation != null ? String(person.generation) : "",
     branch: person?.branch != null ? String(person.branch) : branchFallback,
-    birthPlace: person?.birthPlace ?? '',
-    currentLocation: person?.currentLocation ?? '',
-    education: person?.education ?? '',
-    occupation: person?.occupation ?? '',
-    religion: person?.religion ?? '',
-    ethnicity: person?.ethnicity ?? '',
-    achievements: person?.achievements ?? '',
-    biography: person?.biography?.content ?? '',
-    cemetery: person?.graveInfo?.cemetery ?? '',
-    graveAddress: person?.graveInfo?.address ?? '',
-    graveNotes: person?.graveInfo?.notes ?? '',
+    birthPlace: person?.birthPlace ?? "",
+    currentLocation: person?.currentLocation ?? "",
+    education: person?.education ?? "",
+    occupation: person?.occupation ?? "",
+    religion: person?.religion ?? "",
+    ethnicity: person?.ethnicity ?? "",
+    achievements: person?.achievements ?? "",
+    biography: person?.biography?.content ?? "",
+    cemetery: person?.graveInfo?.cemetery ?? "",
+    graveAddress: person?.graveInfo?.address ?? "",
+    graveNotes: person?.graveInfo?.notes ?? "",
   };
 }
 
-export function draftToUpdateInput(draft: PersonDraft): UpdatePersonDetailInput {
+export function draftToUpdateInput(
+  draft: PersonDraft,
+): UpdatePersonDetailInput {
   return {
     fullName: draft.fullName.trim() || undefined,
     gender: draft.gender || undefined,
     birthDate: draft.birthDate || undefined,
     deathDate: draft.deathDate || undefined,
-    deathLunarDay: draft.deathLunarDay ? Number(draft.deathLunarDay) : undefined,
-    deathLunarMonth: draft.deathLunarMonth ? Number(draft.deathLunarMonth) : undefined,
-    deceased: draft.deceased === '1',
+    deathLunarDay: draft.deathLunarDay
+      ? Number(draft.deathLunarDay)
+      : undefined,
+    deathLunarMonth: draft.deathLunarMonth
+      ? Number(draft.deathLunarMonth)
+      : undefined,
+    deceased: draft.deceased === "1",
     generation: draft.generation ? Number(draft.generation) : undefined,
     branch: draft.branch ? Number(draft.branch) : undefined,
     birthPlace: draft.birthPlace || undefined,

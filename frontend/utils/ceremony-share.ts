@@ -1,5 +1,5 @@
-import { api } from '@/lib/api';
-import { UI } from '@/lib/constants/ui-strings';
+import { api } from "@/lib/api";
+import { UI } from "@/lib/constants/ui-strings";
 
 export function buildCeremonySharePath(token: string): string {
   return `/ceremonies/share/${encodeURIComponent(token)}`;
@@ -8,11 +8,11 @@ export function buildCeremonySharePath(token: string): string {
 export async function buildCeremonyShareUrl(personId: number): Promise<string> {
   const { token } = await api.ceremonies.getShareToken(personId);
   const path = buildCeremonySharePath(token);
-  if (typeof window === 'undefined') return path;
+  if (typeof window === "undefined") return path;
   return `${window.location.origin}${path}`;
 }
 
-export type ShareCeremonyResult = 'shared' | 'copied' | 'cancelled' | 'failed';
+export type ShareCeremonyResult = "shared" | "copied" | "cancelled" | "failed";
 
 /** Native share sheet on mobile; copy chỉ URL trên desktop fallback. */
 export async function shareCeremonyLink(
@@ -25,29 +25,33 @@ export async function shareCeremonyLink(
     try {
       url = await buildCeremonyShareUrl(personId);
     } catch {
-      return 'failed';
+      return "failed";
     }
   }
 
   const text = UI.CEREMONY_SHARE_MESSAGE(fullName);
 
-  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+  if (
+    typeof navigator !== "undefined" &&
+    typeof navigator.share === "function"
+  ) {
     try {
       await navigator.share({ title: UI.CEREMONY_TITLE, text, url });
-      return 'shared';
+      return "shared";
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled';
+      if (err instanceof DOMException && err.name === "AbortError")
+        return "cancelled";
     }
   }
 
-  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(url);
-      return 'copied';
+      return "copied";
     } catch {
-      return 'failed';
+      return "failed";
     }
   }
 
-  return 'failed';
+  return "failed";
 }

@@ -14,6 +14,8 @@ export function assertSameOrganization(
   right: { organizationId: number },
 ): void {
   if (left.organizationId !== right.organizationId) {
-    throw new ForbiddenException('Persons must belong to the same organization');
+    throw new ForbiddenException(
+      'Persons must belong to the same organization',
+    );
   }
 }

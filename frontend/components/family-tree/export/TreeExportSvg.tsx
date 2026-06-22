@@ -7,9 +7,15 @@ import {
   type ExportModel,
   type ResolvedLayout,
 } from "@/lib/family-tree/export-tree-svg";
-import { getNodeCardStyle, getTreeBorderStyle } from "@/lib/family-tree/svg-border";
+import {
+  getNodeCardStyle,
+  getTreeBorderStyle,
+} from "@/lib/family-tree/svg-border";
 import { getCalligraphyFont } from "@/components/family-tree/book/calligraphy-fonts";
-import type { ExportBox, TreeExportSettings } from "@/lib/family-tree/tree-export-settings";
+import type {
+  ExportBox,
+  TreeExportSettings,
+} from "@/lib/family-tree/tree-export-settings";
 import type { DraggableId } from "./tree-export-svg-utils";
 import { useExportSvgDrag } from "./useExportSvgDrag";
 import ExportPersonNode from "./ExportPersonNode";
@@ -42,11 +48,22 @@ export default function TreeExportSvg({
   onSelect,
   onChange,
 }: TreeExportSvgProps) {
-  const { beginDrag, handlePointerMove, endDrag } = useExportSvgDrag(svgRef, { interactive, onSelect, onChange });
-  const { canvasWidth, canvasHeight, borderRect, treeTranslateX, treeTranslateY } = geometry;
+  const { beginDrag, handlePointerMove, endDrag } = useExportSvgDrag(svgRef, {
+    interactive,
+    onSelect,
+    onChange,
+  });
+  const {
+    canvasWidth,
+    canvasHeight,
+    borderRect,
+    treeTranslateX,
+    treeTranslateY,
+  } = geometry;
   const border = getTreeBorderStyle(settings.borderStyleId);
   const coupletFontFamily = getCalligraphyFont(settings.coupletFontId).cssValue;
-  const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } = settings;
+  const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } =
+    settings;
   const nodeCard = getNodeCardStyle(settings.nodeBorderStyleId);
 
   return (
@@ -62,7 +79,13 @@ export default function TreeExportSvg({
       onPointerCancel={endDrag}
       onPointerDown={() => interactive && onSelect?.(null)}
     >
-      <rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill={settings.backgroundColor} />
+      <rect
+        x={0}
+        y={0}
+        width={canvasWidth}
+        height={canvasHeight}
+        fill={settings.backgroundColor}
+      />
 
       {border.render(borderRect, settings.borderColor)}
 

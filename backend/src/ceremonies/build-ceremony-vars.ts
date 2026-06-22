@@ -78,7 +78,10 @@ export function buildCeremonyVars(
       lunar_day: String(todayLunar.getDay()),
       lunar_month: String(todayLunar.getMonth()),
       lunar_year: String(todayLunar.getYear()),
-      lunar_date: formatLunarDeathDate(todayLunar.getMonth(), todayLunar.getDay()),
+      lunar_date: formatLunarDeathDate(
+        todayLunar.getMonth(),
+        todayLunar.getDay(),
+      ),
     },
     worshipper: {
       full_name: worshipper?.fullName?.trim() || '—',
@@ -88,7 +91,9 @@ export function buildCeremonyVars(
   };
 }
 
-export function flattenCeremonyVars(groups: CeremonyVarGroups): Record<string, string> {
+export function flattenCeremonyVars(
+  groups: CeremonyVarGroups,
+): Record<string, string> {
   const flat: Record<string, string> = {};
   for (const [group, fields] of Object.entries(groups)) {
     for (const [key, value] of Object.entries(fields)) {

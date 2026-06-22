@@ -1,11 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { UI } from '@/lib/constants/ui-strings';
-import { BT } from '@/lib/constants/ui-theme';
-import CeremonyViewer from '@/components/notifications/CeremonyViewer';
-import PersonSearchPanel from '@/components/family-tree/person/PersonSearchPanel';
-import type { Person, Relationship } from '@/components/types/family-tree-types';
+import { useState } from "react";
+import { UI } from "@/lib/constants/ui-strings";
+import { BT } from "@/lib/constants/ui-theme";
+import CeremonyViewer from "@/components/notifications/CeremonyViewer";
+import PersonSearchPanel from "@/components/family-tree/person/PersonSearchPanel";
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
 
 type Props = {
   templateId: number;
@@ -14,11 +17,19 @@ type Props = {
 };
 
 /** Chọn người đã mất rồi xem + in bài cúng với dữ liệu thật của họ. */
-export default function CeremonyPrintView({ templateId, persons, relationships }: Props) {
+export default function CeremonyPrintView({
+  templateId,
+  persons,
+  relationships,
+}: Props) {
   const [personId, setPersonId] = useState<number | null>(null);
 
   if (persons.length === 0) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.CEREMONY_PRINT_NO_PERSONS}</p>;
+    return (
+      <p className={`text-sm ${BT.mutedOnDark}`}>
+        {UI.CEREMONY_PRINT_NO_PERSONS}
+      </p>
+    );
   }
 
   return (
@@ -38,7 +49,9 @@ export default function CeremonyPrintView({ templateId, persons, relationships }
       {personId != null ? (
         <CeremonyViewer personId={personId} templateId={templateId} />
       ) : (
-        <p className={`text-sm ${BT.mutedOnDark}`}>{UI.CEREMONY_PRINT_PICK_PERSON}</p>
+        <p className={`text-sm ${BT.mutedOnDark}`}>
+          {UI.CEREMONY_PRINT_PICK_PERSON}
+        </p>
       )}
     </div>
   );

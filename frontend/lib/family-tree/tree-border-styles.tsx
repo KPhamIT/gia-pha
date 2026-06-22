@@ -1,7 +1,12 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /** A rectangle in SVG user-space coordinates. */
-export type BorderRect = { x: number; y: number; width: number; height: number };
+export type BorderRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 export type TreeBorderStyle = {
   id: string;
@@ -12,11 +17,22 @@ export type TreeBorderStyle = {
 };
 
 /** Four L-shaped corner flourishes inset by `pad` from the frame corners. */
-function cornerFlourishes(rect: BorderRect, color: string, pad: number, arm: number): ReactNode {
+function cornerFlourishes(
+  rect: BorderRect,
+  color: string,
+  pad: number,
+  arm: number,
+): ReactNode {
   const { x, y, width, height } = rect;
   const right = x + width;
   const bottom = y + height;
-  const corner = (cx: number, cy: number, sx: number, sy: number, key: string) => (
+  const corner = (
+    cx: number,
+    cy: number,
+    sx: number,
+    sy: number,
+    key: string,
+  ) => (
     <path
       key={key}
       d={`M ${cx + sx * arm} ${cy} Q ${cx} ${cy} ${cx} ${cy + sy * arm}`}
@@ -28,10 +44,10 @@ function cornerFlourishes(rect: BorderRect, color: string, pad: number, arm: num
   );
   return (
     <g opacity={0.9}>
-      {corner(x + pad, y + pad, 1, 1, 'tl')}
-      {corner(right - pad, y + pad, -1, 1, 'tr')}
-      {corner(x + pad, bottom - pad, 1, -1, 'bl')}
-      {corner(right - pad, bottom - pad, -1, -1, 'br')}
+      {corner(x + pad, y + pad, 1, 1, "tl")}
+      {corner(right - pad, y + pad, -1, 1, "tr")}
+      {corner(x + pad, bottom - pad, 1, -1, "bl")}
+      {corner(right - pad, bottom - pad, -1, -1, "br")}
       {[
         [x + pad, y + pad],
         [right - pad, y + pad],
@@ -44,20 +60,41 @@ function cornerFlourishes(rect: BorderRect, color: string, pad: number, arm: num
   );
 }
 
-function frameRect(rect: BorderRect, color: string, strokeWidth: number, rx = 0, fill = 'none'): ReactNode {
+function frameRect(
+  rect: BorderRect,
+  color: string,
+  strokeWidth: number,
+  rx = 0,
+  fill = "none",
+): ReactNode {
   return (
-    <rect x={rect.x} y={rect.y} width={rect.width} height={rect.height} rx={rx} ry={rx} fill={fill} stroke={color} strokeWidth={strokeWidth} />
+    <rect
+      x={rect.x}
+      y={rect.y}
+      width={rect.width}
+      height={rect.height}
+      rx={rx}
+      ry={rx}
+      fill={fill}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
   );
 }
 
 function inset(rect: BorderRect, by: number): BorderRect {
-  return { x: rect.x + by, y: rect.y + by, width: rect.width - by * 2, height: rect.height - by * 2 };
+  return {
+    x: rect.x + by,
+    y: rect.y + by,
+    width: rect.width - by * 2,
+    height: rect.height - by * 2,
+  };
 }
 
 export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
   {
-    id: 'classic',
-    label: 'Cổ điển',
+    id: "classic",
+    label: "Cổ điển",
     render: (rect, color) => (
       <g>
         {frameRect(rect, color, 3)}
@@ -66,8 +103,8 @@ export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
     ),
   },
   {
-    id: 'double',
-    label: 'Khung kép',
+    id: "double",
+    label: "Khung kép",
     render: (rect, color) => (
       <g>
         {frameRect(rect, color, 5)}
@@ -76,8 +113,8 @@ export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
     ),
   },
   {
-    id: 'ornate',
-    label: 'Hoa văn góc',
+    id: "ornate",
+    label: "Hoa văn góc",
     render: (rect, color) => (
       <g>
         {frameRect(rect, color, 3)}
@@ -87,8 +124,8 @@ export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
     ),
   },
   {
-    id: 'cloud',
-    label: 'Mây bo tròn',
+    id: "cloud",
+    label: "Mây bo tròn",
     render: (rect, color) => (
       <g>
         {frameRect(rect, color, 3, 40)}
@@ -97,18 +134,18 @@ export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
     ),
   },
   {
-    id: 'modern',
-    label: 'Tối giản',
+    id: "modern",
+    label: "Tối giản",
     render: (rect, color) => <g>{frameRect(rect, color, 2)}</g>,
   },
   {
-    id: 'plain',
-    label: 'Không viền',
+    id: "plain",
+    label: "Không viền",
     render: () => null,
   },
 ];
 
-export const DEFAULT_TREE_BORDER_ID = 'classic';
+export const DEFAULT_TREE_BORDER_ID = "classic";
 
 export function getTreeBorderStyle(id: string): TreeBorderStyle {
   return TREE_BORDER_STYLES.find((s) => s.id === id) ?? TREE_BORDER_STYLES[0];

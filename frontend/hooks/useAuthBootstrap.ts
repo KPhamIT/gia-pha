@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/authStore";
 
 /** Gọi auth/me một lần khi mount — dùng cho page độc lập ngoài /family-tree. */
 export function useAuthBootstrap() {

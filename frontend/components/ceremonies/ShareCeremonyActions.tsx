@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import IconRoundButton from '@/components/ui/IconRoundButton';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
-import { shareCeremonyLink } from '@/utils/ceremony-share';
+import { useState } from "react";
+import IconRoundButton from "@/components/ui/IconRoundButton";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
+import { shareCeremonyLink } from "@/utils/ceremony-share";
 
 type ShareCeremonyActionsProps = {
   personId?: number;
@@ -29,11 +29,11 @@ export default function ShareCeremonyActions({
     setBusy(true);
     try {
       const result = await shareCeremonyLink(fullName, personId ?? 0, shareUrl);
-      if (result === 'shared') {
+      if (result === "shared") {
         notify.success(UI.CEREMONY_SHARE_SUCCESS);
-      } else if (result === 'copied') {
+      } else if (result === "copied") {
         notify.success(UI.CEREMONY_SHARE_COPIED);
-      } else if (result === 'cancelled') {
+      } else if (result === "cancelled") {
         return;
       } else {
         notify.error(null, UI.CEREMONY_SHARE_FAILED);
@@ -46,7 +46,7 @@ export default function ShareCeremonyActions({
   return (
     <IconRoundButton
       icon="share"
-      variant={compact ? 'outline' : 'gold'}
+      variant={compact ? "outline" : "gold"}
       label={UI.CEREMONY_SHARE}
       iconSize={compact ? 18 : undefined}
       loading={busy}

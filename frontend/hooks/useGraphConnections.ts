@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import type { Connection, FinalConnectionState } from '@xyflow/react';
-import type { Person, Relationship, RelationshipType } from '@/components/types/family-tree-types';
-import { createChildPerson, createRelationship } from '@/lib/family-tree/mutations';
-import { getErrorMessage } from '@/utils/errors';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
+import { useCallback, useState } from "react";
+import type { Connection, FinalConnectionState } from "@xyflow/react";
+import type {
+  Person,
+  Relationship,
+  RelationshipType,
+} from "@/components/types/family-tree-types";
+import {
+  createChildPerson,
+  createRelationship,
+} from "@/lib/family-tree/mutations";
+import { getErrorMessage } from "@/utils/errors";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
 
 type Args = {
   onPersonAdded?: (person: Person, relationship: Relationship) => void;
@@ -15,16 +22,22 @@ type Args = {
 };
 
 /** Drag-to-connect interactions: pending relationship modal + child-on-drop. */
-export function useGraphConnections({ onPersonAdded, onRelationshipAdded, assertCanMutate }: Args) {
-  const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
-  const [pendingType, setPendingType] = useState<RelationshipType>('CHILD');
+export function useGraphConnections({
+  onPersonAdded,
+  onRelationshipAdded,
+  assertCanMutate,
+}: Args) {
+  const [pendingConnection, setPendingConnection] = useState<Connection | null>(
+    null,
+  );
+  const [pendingType, setPendingType] = useState<RelationshipType>("CHILD");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const onConnect = useCallback((connection: Connection) => {
     setSaveError(null);
     setPendingConnection(connection);
-    setPendingType('CHILD');
+    setPendingType("CHILD");
   }, []);
 
   const cancelConnection = useCallback(() => {
@@ -55,14 +68,19 @@ export function useGraphConnections({ onPersonAdded, onRelationshipAdded, assert
   }, [assertCanMutate, onRelationshipAdded, pendingConnection, pendingType]);
 
   const onConnectEnd = useCallback(
-    (_event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+    (
+      _event: MouseEvent | TouchEvent,
+      connectionState: FinalConnectionState,
+    ) => {
       if (connectionState.isValid || !connectionState.fromNode) return;
       const parentPerson = connectionState.fromNode.data.person as Person;
 
       void (async () => {
         if (assertCanMutate && !assertCanMutate()) return;
         try {
-          const result = await createChildPerson(parentPerson, { fullName: UI.DEFAULT_NEW_PERSON });
+          const result = await createChildPerson(parentPerson, {
+            fullName: UI.DEFAULT_NEW_PERSON,
+          });
           onPersonAdded?.(result.person, result.relationship);
           notify.success(UI.TOAST_CHILD_CREATED);
         } catch (error) {

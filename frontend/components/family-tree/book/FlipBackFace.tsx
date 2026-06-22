@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { UI } from '@/lib/constants/ui-strings';
-import { getCalligraphyFont } from './calligraphy-fonts';
-import type { BookSettings } from './book-settings';
-import styles from './GenealogyBook.module.css';
+import { UI } from "@/lib/constants/ui-strings";
+import { getCalligraphyFont } from "./calligraphy-fonts";
+import type { BookSettings } from "./book-settings";
+import styles from "./GenealogyBook.module.css";
 
 /**
  * The cream reverse side seen mid-flip. A faint calligraphy seal + book title

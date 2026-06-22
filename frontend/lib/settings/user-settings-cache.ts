@@ -1,5 +1,5 @@
-import { api } from '@/lib/api';
-import type { UserSettings } from '@/lib/api/modules/settings';
+import { api } from "@/lib/api";
+import type { UserSettings } from "@/lib/api/modules/settings";
 
 /** undefined = chưa load; null = đã load, không có dữ liệu. */
 let cache: UserSettings | null | undefined;

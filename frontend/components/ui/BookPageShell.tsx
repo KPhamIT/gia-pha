@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
-import Link from 'next/link';
-import Icon from '@/components/icons/Icon';
-import AppNavFab from '@/components/navigation/AppNavFab';
-import { LAYOUT } from '@/lib/constants/ui-layout';
-import { BT } from '@/lib/constants/ui-theme';
-import { UI } from '@/lib/constants/ui-strings';
+import type { ReactNode } from "react";
+import Link from "next/link";
+import Icon from "@/components/icons/Icon";
+import AppNavFab from "@/components/navigation/AppNavFab";
+import { LAYOUT } from "@/lib/constants/ui-layout";
+import { BT } from "@/lib/constants/ui-theme";
+import { UI } from "@/lib/constants/ui-strings";
 
 type BookPageShellProps = {
   title: string;
@@ -22,29 +22,46 @@ type BookPageShellProps = {
 export default function BookPageShell({
   title,
   subtitle,
-  backHref = '/book',
+  backHref = "/book",
   children,
   tabs,
   hideNavFab = false,
 }: BookPageShellProps) {
   return (
-    <div className={`flex h-dvh min-h-0 flex-col overflow-hidden ${BT.shell} ${BT.shellText}`}>
-      <header className={`shrink-0 ${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}>
+    <div
+      className={`flex h-dvh min-h-0 flex-col overflow-hidden ${BT.shell} ${BT.shellText}`}
+    >
+      <header
+        className={`shrink-0 ${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}
+      >
         <Link
           href={backHref}
           className={BT.iconGhost}
           aria-label={UI.LOGIN_GO_HOME}
         >
-          <Icon path="arrowLeft" size={22} fill="none" stroke="currentColor" strokeWidth={2} pointer={false} />
+          <Icon
+            path="arrowLeft"
+            size={22}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
         </Link>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-lg font-semibold md:text-xl">{title}</h1>
-          {subtitle ? <p className={`truncate text-xs ${BT.mutedOnDark}`}>{subtitle}</p> : null}
+          {subtitle ? (
+            <p className={`truncate text-xs ${BT.mutedOnDark}`}>{subtitle}</p>
+          ) : null}
         </div>
       </header>
 
-      <main className={`${LAYOUT.sheetBody} mx-auto min-h-0 w-full max-w-5xl flex-1`}>
-        {tabs ? <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div> : null}
+      <main
+        className={`${LAYOUT.sheetBody} mx-auto min-h-0 w-full max-w-5xl flex-1`}
+      >
+        {tabs ? (
+          <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div>
+        ) : null}
         <div className={BT.pagePad}>{children}</div>
       </main>
 

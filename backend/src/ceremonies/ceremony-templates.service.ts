@@ -36,7 +36,9 @@ export class CeremonyTemplatesService {
 
   async create(user: User, dto: CreateCeremonyTemplateDto) {
     const organizationId = this.resolveOrganizationId(user);
-    const count = await this.prisma.ceremonyTemplate.count({ where: { organizationId } });
+    const count = await this.prisma.ceremonyTemplate.count({
+      where: { organizationId },
+    });
     const isDefault = dto.isDefault ?? count === 0;
 
     return this.prisma.$transaction(async (tx) => {
@@ -141,7 +143,9 @@ export class CeremonyTemplatesService {
 
   private resolveOrganizationId(user: User): number {
     if (isSystem(user)) {
-      throw new BadRequestException('System user must use org context via admin account');
+      throw new BadRequestException(
+        'System user must use org context via admin account',
+      );
     }
     if (user.organizationId == null) {
       throw new ForbiddenException('User is not assigned to an organization');
@@ -160,7 +164,9 @@ export class CeremonyTemplatesService {
   }
 
   private async getTemplateOrThrow(id: number) {
-    const template = await this.prisma.ceremonyTemplate.findUnique({ where: { id } });
+    const template = await this.prisma.ceremonyTemplate.findUnique({
+      where: { id },
+    });
     if (!template) {
       throw new NotFoundException('Ceremony template not found');
     }

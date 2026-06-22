@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { useCallback, useEffect, useState } from "react";
+import { api } from "@/lib/api";
 import {
   ensurePushSubscribed,
   getBrowserPermission,
@@ -10,11 +10,11 @@ import {
   isOneSignalConfigured,
   isPushSubscribed,
   optOutPush,
-} from '@/lib/services/onesignal.service';
+} from "@/lib/services/onesignal.service";
 
 type UseOneSignalState = {
   configured: boolean;
-  permission: NotificationPermission | 'unsupported' | 'loading';
+  permission: NotificationPermission | "unsupported" | "loading";
   subscribed: boolean;
   subscriptionId: string | null;
   loading: boolean;
@@ -37,7 +37,7 @@ export function useOneSignal({ lazy = false }: UseOneSignalOptions = {}) {
       configured,
       // Khi không cấu hình OneSignal, trạng thái cuối cùng đã biết ngay từ
       // đầu — khởi tạo luôn để effect không phải setState đồng bộ.
-      permission: configured ? 'loading' : 'unsupported',
+      permission: configured ? "loading" : "unsupported",
       subscribed: false,
       subscriptionId: null,
       loading: configured,
@@ -49,13 +49,22 @@ export function useOneSignal({ lazy = false }: UseOneSignalOptions = {}) {
 
     if (lazy) {
       return getBrowserPermission().then((permission) => {
-        setState((prev) => ({ ...prev, configured: true, permission, loading: false }));
+        setState((prev) => ({
+          ...prev,
+          configured: true,
+          permission,
+          loading: false,
+        }));
       });
     }
 
     return initOneSignal()
       .then(() =>
-        Promise.all([getBrowserPermission(), isPushSubscribed(), getSubscriptionId()]),
+        Promise.all([
+          getBrowserPermission(),
+          isPushSubscribed(),
+          getSubscriptionId(),
+        ]),
       )
       .then(([permission, subscribed, subscriptionId]) => {
         setState({
@@ -103,12 +112,17 @@ export function useOneSignal({ lazy = false }: UseOneSignalOptions = {}) {
   }, [refresh]);
 
   const syncSubscription = useCallback(async () => {
-    if (typeof window === 'undefined' || Notification.permission !== 'granted') {
+    if (
+      typeof window === "undefined" ||
+      Notification.permission !== "granted"
+    ) {
       return null;
     }
     const subscriptionId = await getSubscriptionId();
     if (!subscriptionId) return null;
-    await api.notifications.updateSettings({ onesignalSubscriptionId: subscriptionId });
+    await api.notifications.updateSettings({
+      onesignalSubscriptionId: subscriptionId,
+    });
     await refresh();
     return subscriptionId;
   }, [refresh]);
@@ -119,6 +133,6 @@ export function useOneSignal({ lazy = false }: UseOneSignalOptions = {}) {
     enableNotifications,
     disableNotifications,
     syncSubscription,
-    hasPermission: state.permission === 'granted',
+    hasPermission: state.permission === "granted",
   };
 }

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { getBranchLabel } from '@/lib/constants/branches';
-import { UI } from '@/lib/constants/ui-strings';
-import type { Person } from '@/components/types/family-tree-types';
+import { getBranchLabel } from "@/lib/constants/branches";
+import { UI } from "@/lib/constants/ui-strings";
+import type { Person } from "@/components/types/family-tree-types";
 
 type Props = {
   person: Person;
@@ -13,38 +13,59 @@ type Props = {
   onSetOrder: (id: number, raw: string) => void;
 };
 
-export default function BookPageRow({ person, naturalIndex, hidden, orderValue, onToggleHidden, onSetOrder }: Props) {
+export default function BookPageRow({
+  person,
+  naturalIndex,
+  hidden,
+  orderValue,
+  onToggleHidden,
+  onSetOrder,
+}: Props) {
   const meta = [
     person.branch != null ? getBranchLabel(person.branch) : null,
-    person.generation != null ? `${UI.BOOK_GENERATION} ${person.generation}` : null,
+    person.generation != null
+      ? `${UI.BOOK_GENERATION} ${person.generation}`
+      : null,
   ]
     .filter(Boolean)
-    .join(' · ');
+    .join(" · ");
 
   return (
     <tr
       onClick={() => onToggleHidden(person.id)}
       className={`cursor-pointer border-t border-amber-100 transition-colors ${
-        hidden ? 'bg-slate-100 text-slate-400' : 'active:bg-amber-50 md:hover:bg-amber-50/80'
+        hidden
+          ? "bg-slate-100 text-slate-400"
+          : "active:bg-amber-50 md:hover:bg-amber-50/80"
       }`}
     >
-      <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
+      <td
+        className="px-3 py-2 text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <input
           type="text"
           inputMode="numeric"
-          value={orderValue ?? ''}
+          value={orderValue ?? ""}
           placeholder={String(naturalIndex + 1)}
           onChange={(e) => onSetOrder(person.id, e.target.value)}
           className="w-12 rounded-md border border-amber-300/70 bg-amber-50/60 px-1 py-1 text-center text-sm outline-none focus:border-amber-500"
         />
       </td>
       <td className="px-3 py-2">
-        <span className={`block truncate font-medium ${hidden ? 'line-through' : ''}`}>
+        <span
+          className={`block truncate font-medium ${hidden ? "line-through" : ""}`}
+        >
           {person.fullName?.trim() || UI.BOOK_EMPTY_FIELD}
         </span>
-        {meta ? <span className="block truncate text-xs text-slate-400">{meta}</span> : null}
+        {meta ? (
+          <span className="block truncate text-xs text-slate-400">{meta}</span>
+        ) : null}
       </td>
-      <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
+      <td
+        className="px-3 py-2 text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <input
           type="checkbox"
           checked={!hidden}

@@ -1,6 +1,9 @@
-import { Edge, Node } from '@xyflow/react';
-import type { Person, Relationship } from '@/components/types/family-tree-types';
-import type { Coordinates } from './types';
+import { Edge, Node } from "@xyflow/react";
+import type {
+  Person,
+  Relationship,
+} from "@/components/types/family-tree-types";
+import type { Coordinates } from "./types";
 
 export function buildFlowNodes(
   persons: Person[],
@@ -15,7 +18,7 @@ export function buildFlowNodes(
     const pos = coordinates.get(person.id) || { x: 0, y: 0 };
     return {
       id: person.id.toString(),
-      type: 'default',
+      type: "default",
       data: {
         fullName: person.fullName,
         avatar: person.avatar,
@@ -42,7 +45,7 @@ export function buildFlowEdges(relationships: Relationship[]) {
     let sourceId = relationship.fromId;
     let targetId = relationship.toId;
 
-    if (relationship.type === 'CHILD') {
+    if (relationship.type === "CHILD") {
       sourceId = relationship.fromId;
       targetId = relationship.toId;
     }
@@ -57,7 +60,7 @@ export function buildFlowEdges(relationships: Relationship[]) {
       id: edgeKey,
       source: sourceId.toString(),
       target: targetId.toString(),
-      type: 'step',
+      type: "step",
       animated: false,
       data: { relationshipId: relationship.id },
     });

@@ -1,5 +1,5 @@
-import type { Coordinates } from './types';
-import { buildYMap, computeSubtreeWidth, shiftSubtree } from './metrics';
+import type { Coordinates } from "./types";
+import { buildYMap, computeSubtreeWidth, shiftSubtree } from "./metrics";
 
 /**
  * Tidy-tree placement: each subtree is laid out left-to-right and centred over
@@ -33,7 +33,13 @@ export function computeCoordinates(
       const width = subtreeWidthMap.get(personId) ?? nodeWidth;
       const oldX = coordinates.get(personId)?.x ?? 0;
       if (oldX !== left) {
-        shiftSubtree(coordinates, childMap, relevantPersonIds, personId, left - oldX);
+        shiftSubtree(
+          coordinates,
+          childMap,
+          relevantPersonIds,
+          personId,
+          left - oldX,
+        );
       }
       return width;
     }
@@ -57,7 +63,9 @@ export function computeCoordinates(
     let currentLeft = left;
     const childXPositions: number[] = [];
     let subtreeWidth = 0;
-    const childWidths = children.map((childId) => computeSubtreeWidth(childId, widthCtx));
+    const childWidths = children.map((childId) =>
+      computeSubtreeWidth(childId, widthCtx),
+    );
 
     for (let i = 0; i < children.length; i++) {
       const childId = children[i];

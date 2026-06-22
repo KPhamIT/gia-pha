@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import type { ThemeMode } from '@/components/types/family-tree-types';
-import { applyTheme, loadStoredTheme } from '@/utils/theme';
+import { useEffect, useState } from "react";
+import type { ThemeMode } from "@/components/types/family-tree-types";
+import { applyTheme, loadStoredTheme } from "@/utils/theme";
 
 /** SSR-safe default; real preference loads in useEffect after hydration. */
-const INITIAL_THEME: ThemeMode = 'light';
+const INITIAL_THEME: ThemeMode = "light";
 
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeMode>(INITIAL_THEME);
@@ -22,7 +22,7 @@ export function useTheme() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
   };
 
   return { theme, setTheme, toggleTheme };

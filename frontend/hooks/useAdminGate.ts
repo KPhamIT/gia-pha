@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useFeatureAccess } from '@/hooks/useFeatureAccess';
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 
 /** @deprecated Use useFeatureAccess for feature-aware gates. */
 export function useAdminGate() {

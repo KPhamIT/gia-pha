@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import type { NotificationSettings } from '@/lib/api/modules/notifications';
-import { useOneSignal } from '@/hooks/useOneSignal';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
+import { useCallback, useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import type { NotificationSettings } from "@/lib/api/modules/notifications";
+import { useOneSignal } from "@/hooks/useOneSignal";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
 
 export function useNotificationSettings(onSaved?: () => void) {
   const os = useOneSignal();
-  const { configured, hasPermission, permission, subscriptionId, loading: osLoading } = os;
+  const {
+    configured,
+    hasPermission,
+    permission,
+    subscriptionId,
+    loading: osLoading,
+  } = os;
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -54,11 +60,15 @@ export function useNotificationSettings(onSaved?: () => void) {
       setSaving(true);
       try {
         if (enabled) {
-          const { granted, subscriptionId: newId } = await os.enableNotifications();
+          const { granted, subscriptionId: newId } =
+            await os.enableNotifications();
           setSettings(await api.notifications.getSettings());
           await os.refresh();
           if (granted && newId) notify.success(UI.NOTIF_SAVED);
-          else if (typeof window !== 'undefined' && Notification.permission === 'denied')
+          else if (
+            typeof window !== "undefined" &&
+            Notification.permission === "denied"
+          )
             notify.error(null, UI.NOTIF_PERMISSION_BLOCKED);
           else notify.error(null, UI.NOTIF_PERMISSION_DENIED);
         } else {
@@ -75,20 +85,30 @@ export function useNotificationSettings(onSaved?: () => void) {
     [configured, os],
   );
 
-  const isDeviceRegistered = Boolean(subscriptionId) && (settings?.pushSubscriptionIds.includes(subscriptionId!) ?? false);
+  const isDeviceRegistered =
+    Boolean(subscriptionId) &&
+    (settings?.pushSubscriptionIds.includes(subscriptionId!) ?? false);
   const pushOn = hasPermission && isDeviceRegistered;
   const statusHint = !configured
     ? UI.NOTIF_NOT_CONFIGURED
-    : permission === 'unsupported'
+    : permission === "unsupported"
       ? UI.NOTIF_UNSUPPORTED
-      : permission === 'denied'
+      : permission === "denied"
         ? UI.NOTIF_PERMISSION_BLOCKED
         : hasPermission
           ? UI.NOTIF_PERMISSION_GRANTED
           : UI.NOTIF_PERMISSION_DENIED;
 
   return {
-    settings, saving, loading, configured, osLoading, permission, pushOn, statusHint,
-    handleToggle, handlePushMasterToggle,
+    settings,
+    saving,
+    loading,
+    configured,
+    osLoading,
+    permission,
+    pushOn,
+    statusHint,
+    handleToggle,
+    handlePushMasterToggle,
   };
 }

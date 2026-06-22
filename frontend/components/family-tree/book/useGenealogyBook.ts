@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo } from 'react';
-import type { Person } from '@/components/types/family-tree-types';
-import { sortPersonsForBook } from '@/utils/sort-persons-for-book';
-import { usePersonDetailStore } from '@/store/personDetailStore';
-import { type BookLeafCtx } from './BookLeaf';
-import { buildBookPageDraft } from './GenealogyBookPage';
-import { buildLeaves, leafIndexForPerson } from './book-leaves';
-import { applyPageConfig } from './book-page-config';
-import { useBookSettings } from './useBookSettings';
-import { useBookFlip } from './useBookFlip';
-import { useGenealogyPrint } from './useGenealogyPrint';
-import { loadCalligraphyFont } from './calligraphy-font-loader';
+import { useCallback, useEffect, useMemo } from "react";
+import type { Person } from "@/components/types/family-tree-types";
+import { sortPersonsForBook } from "@/utils/sort-persons-for-book";
+import { usePersonDetailStore } from "@/store/personDetailStore";
+import { type BookLeafCtx } from "./BookLeaf";
+import { buildBookPageDraft } from "./GenealogyBookPage";
+import { buildLeaves, leafIndexForPerson } from "./book-leaves";
+import { applyPageConfig } from "./book-page-config";
+import { useBookSettings } from "./useBookSettings";
+import { useBookFlip } from "./useBookFlip";
+import { useGenealogyPrint } from "./useGenealogyPrint";
+import { loadCalligraphyFont } from "./calligraphy-font-loader";
 
 function deferPersonDetailsLoad(loadAll: () => Promise<void>): void {
-  if (typeof requestIdleCallback === 'function') {
+  if (typeof requestIdleCallback === "function") {
     requestIdleCallback(() => void loadAll(), { timeout: 4000 });
     return;
   }
@@ -41,7 +41,11 @@ export function useGenealogyBook(persons: Person[]) {
   const personCount = visiblePersons.length;
 
   const flipApi = useBookFlip(totalLeaves, () => {});
-  const printApi = useGenealogyPrint(() => {}, totalLeaves, settings.coverFontId);
+  const printApi = useGenealogyPrint(
+    () => {},
+    totalLeaves,
+    settings.coverFontId,
+  );
 
   const getPersonDraft = useCallback(
     (person: Person) => buildBookPageDraft(details[person.id] ?? null),
@@ -76,5 +80,17 @@ export function useGenealogyBook(persons: Person[]) {
     [leaves, settings, updateSettings, details, personCount, getPersonDraft],
   );
 
-  return { hydrated, leaves, totalLeaves, visiblePersons, sortedPersons, settings, updateSettings, ctx, jumpToPerson, ...flipApi, ...printApi };
+  return {
+    hydrated,
+    leaves,
+    totalLeaves,
+    visiblePersons,
+    sortedPersons,
+    settings,
+    updateSettings,
+    ctx,
+    jumpToPerson,
+    ...flipApi,
+    ...printApi,
+  };
 }

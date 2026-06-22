@@ -1,5 +1,5 @@
-import type { TreeExportSettings } from './tree-export-settings';
-import type { Rect } from './export-tree-model';
+import type { TreeExportSettings } from "./tree-export-settings";
+import type { Rect } from "./export-tree-model";
 
 /** Natural aspect ratios (width / height) of the decorative PNGs. */
 export const SCROLL_ASPECT = 1000 / 381;
@@ -7,9 +7,9 @@ export const DRAGON_ASPECT = 1;
 
 /** Paths to the decorative images under /public. */
 export const EXPORT_IMAGE_SOURCES = {
-  scroll: '/images/cuonthu.png',
-  dragonLeft: '/images/longleft.png',
-  dragonRight: '/images/longright.png',
+  scroll: "/images/cuonthu.png",
+  dragonLeft: "/images/longleft.png",
+  dragonRight: "/images/longright.png",
 } as const;
 
 export type ExportImageKey = keyof typeof EXPORT_IMAGE_SOURCES;
@@ -23,7 +23,8 @@ export const COUPLET_LINE_FACTOR = 1.1;
 /** Default couplet column height: 18rem (≈ 288 SVG user units at 16px/rem). */
 export const COUPLET_DEFAULT_COLUMN_HEIGHT = 18 * 16;
 
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
 
 /** Split a couplet into vertical cells — one syllable (space-separated word) per row. */
 export function coupletSyllables(text: string): string[] {
@@ -53,11 +54,20 @@ export type ExportGeometry = {
  * midline of the tree extent, so left/right reach are equal and the sheet does
  * not drift sideways on wide trees.
  */
-export function computeExportGeometry(bounds: Rect, headerHeight: number, rootCenterX: number): ExportGeometry {
+export function computeExportGeometry(
+  bounds: Rect,
+  headerHeight: number,
+  rootCenterX: number,
+): ExportGeometry {
   const inner0 = EXPORT_OUTER_MARGIN + EXPORT_PADDING;
   const leftReach = rootCenterX - bounds.x;
   const rightReach = bounds.x + bounds.width - rootCenterX;
-  const halfSpan = Math.max(leftReach, rightReach, bounds.width / 2, MIN_CONTENT_WIDTH / 2);
+  const halfSpan = Math.max(
+    leftReach,
+    rightReach,
+    bounds.width / 2,
+    MIN_CONTENT_WIDTH / 2,
+  );
   const contentWidth = halfSpan * 2;
   const contentHeight = headerHeight + bounds.height;
   const canvasWidth = contentWidth + inner0 * 2;
@@ -73,7 +83,12 @@ export function computeExportGeometry(bounds: Rect, headerHeight: number, rootCe
       width: canvasWidth - EXPORT_OUTER_MARGIN * 2,
       height: canvasHeight - EXPORT_OUTER_MARGIN * 2,
     },
-    headerRect: { x: inner0, y: inner0, width: contentWidth, height: headerHeight },
+    headerRect: {
+      x: inner0,
+      y: inner0,
+      width: contentWidth,
+      height: headerHeight,
+    },
     treeTranslateX: canvasCenterX - rootCenterX,
     treeTranslateY: inner0 + headerHeight - bounds.y,
   };
@@ -101,7 +116,10 @@ export type ResolvedLayout = {
  * Fill any "auto" (null) geometry on the header items with sensible defaults
  * derived from the header band, returning concrete positions for rendering.
  */
-export function resolveExportLayout(settings: TreeExportSettings, header: Rect): ResolvedLayout {
+export function resolveExportLayout(
+  settings: TreeExportSettings,
+  header: Rect,
+): ResolvedLayout {
   const centerX = header.x + header.width / 2;
 
   const scrollW = settings.scroll.width ?? clamp(header.width * 0.26, 380, 720);
@@ -127,13 +145,34 @@ export function resolveExportLayout(settings: TreeExportSettings, header: Rect):
   const coupletColor = settings.coupletColor;
   const coupletFont =
     settings.coupletFontSize ??
-    Math.min(defaultCoupletFontSize(settings.coupletLeft.text), defaultCoupletFontSize(settings.coupletRight.text));
+    Math.min(
+      defaultCoupletFontSize(settings.coupletLeft.text),
+      defaultCoupletFontSize(settings.coupletRight.text),
+    );
   const coupletTopY = header.y + coupletFont * 0.5;
 
   return {
-    scroll: { x: scrollX, y: scrollY, width: scrollW, height: scrollH, visible: settings.scroll.visible },
-    dragonLeft: { x: dlX, y: dlY, width: dlW, height: dlH, visible: settings.dragonLeft.visible },
-    dragonRight: { x: drX, y: drY, width: drW, height: drH, visible: settings.dragonRight.visible },
+    scroll: {
+      x: scrollX,
+      y: scrollY,
+      width: scrollW,
+      height: scrollH,
+      visible: settings.scroll.visible,
+    },
+    dragonLeft: {
+      x: dlX,
+      y: dlY,
+      width: dlW,
+      height: dlH,
+      visible: settings.dragonLeft.visible,
+    },
+    dragonRight: {
+      x: drX,
+      y: drY,
+      width: drW,
+      height: drH,
+      visible: settings.dragonRight.visible,
+    },
     coupletLeft: {
       x: settings.coupletLeft.x ?? header.x + coupletFont * 0.9,
       y: settings.coupletLeft.y ?? coupletTopY,

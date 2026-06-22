@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Icon from '@/components/icons/Icon';
-import { UI } from '@/lib/constants/ui-strings';
-import { formatVnd } from './event-format';
-import { isFullyPaid, personMeta } from './event-contribution-utils';
-import type { Person } from '@/components/types/family-tree-types';
+import Icon from "@/components/icons/Icon";
+import { UI } from "@/lib/constants/ui-strings";
+import { formatVnd } from "./event-format";
+import { isFullyPaid, personMeta } from "./event-contribution-utils";
+import type { Person } from "@/components/types/family-tree-types";
 
 type Props = {
   member: Person;
@@ -42,18 +42,37 @@ export default function ContributionMemberRow({
         >
           <span
             className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${
-              paid ? 'border-amber-600 bg-amber-600 text-white' : 'border-slate-300 text-transparent'
+              paid
+                ? "border-amber-600 bg-amber-600 text-white"
+                : "border-slate-300 text-transparent"
             }`}
           >
-            <Icon path="check" size={14} fill="none" stroke="currentColor" strokeWidth={3} pointer={false} />
+            <Icon
+              path="check"
+              size={14}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={3}
+              pointer={false}
+            />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium text-slate-800">{member.fullName}</span>
-            {meta ? <span className="block truncate text-xs text-slate-400">{meta}</span> : null}
+            <span className="block truncate text-sm font-medium text-slate-800">
+              {member.fullName}
+            </span>
+            {meta ? (
+              <span className="block truncate text-xs text-slate-400">
+                {meta}
+              </span>
+            ) : null}
           </span>
           <span
             className={`shrink-0 text-xs font-semibold ${
-              paid ? 'text-amber-700' : partial ? 'text-amber-700' : 'text-slate-400'
+              paid
+                ? "text-amber-700"
+                : partial
+                  ? "text-amber-700"
+                  : "text-slate-400"
             }`}
           >
             {paid
@@ -75,7 +94,7 @@ export default function ContributionMemberRow({
             onChange={(e) => onInputChange(e.target.value)}
             onBlur={onCommit}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') e.currentTarget.blur();
+              if (e.key === "Enter") e.currentTarget.blur();
             }}
             onClick={(e) => e.stopPropagation()}
             className="w-24 shrink-0 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-xs text-slate-800 outline-none focus:border-amber-400 disabled:opacity-60"

@@ -9,17 +9,27 @@ function signPersonId(personId: number, secret: string): string {
     .slice(0, TOKEN_SIG_LENGTH);
 }
 
-export function createCeremonyShareToken(personId: number, secret: string): string {
+export function createCeremonyShareToken(
+  personId: number,
+  secret: string,
+): string {
   return `${personId}.${signPersonId(personId, secret)}`;
 }
 
-export function verifyCeremonyShareToken(token: string, secret: string): number | null {
+export function verifyCeremonyShareToken(
+  token: string,
+  secret: string,
+): number | null {
   const dot = token.lastIndexOf('.');
   if (dot <= 0) return null;
 
   const personId = Number(token.slice(0, dot));
   const sig = token.slice(dot + 1);
-  if (!Number.isInteger(personId) || personId <= 0 || sig.length !== TOKEN_SIG_LENGTH) {
+  if (
+    !Number.isInteger(personId) ||
+    personId <= 0 ||
+    sig.length !== TOKEN_SIG_LENGTH
+  ) {
     return null;
   }
 

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { UI } from '@/lib/constants/ui-strings';
-import { getCalligraphyFont } from './calligraphy-fonts';
-import { loadCalligraphyFont } from './calligraphy-font-loader';
-import type { BookSettings } from './book-settings';
-import styles from './Book.module.scss';
+import { useEffect } from "react";
+import { UI } from "@/lib/constants/ui-strings";
+import { getCalligraphyFont } from "./calligraphy-fonts";
+import { loadCalligraphyFont } from "./calligraphy-font-loader";
+import type { BookSettings } from "./book-settings";
+import styles from "./Book.module.scss";
 
 type BookPrefacePageProps = {
   settings: BookSettings;
@@ -14,7 +14,11 @@ type BookPrefacePageProps = {
 };
 
 /** Editable preface (lời mở đầu). Lives inside the shared paper + border. */
-export default function BookPrefacePage({ settings, readOnly = false, onChange }: BookPrefacePageProps) {
+export default function BookPrefacePage({
+  settings,
+  readOnly = false,
+  onChange,
+}: BookPrefacePageProps) {
   const font = getCalligraphyFont(settings.coverFontId).cssValue;
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export default function BookPrefacePage({ settings, readOnly = false, onChange }
       <div className={styles.prefaceOrnament}>❧</div>
 
       {readOnly ? (
-        <p className={styles.prefaceBody} style={{ whiteSpace: 'pre-wrap' }}>
+        <p className={styles.prefaceBody} style={{ whiteSpace: "pre-wrap" }}>
           {settings.prefaceBody || UI.BOOK_PREFACE_BODY_PLACEHOLDER}
         </p>
       ) : (

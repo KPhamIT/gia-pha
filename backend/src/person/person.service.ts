@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRole, type User } from '../../generated/prisma/client.js';
 import { adminOrganizationId, isSystem } from '../auth/org-access.js';
 import { assertPersonOrgAccess } from '../auth/person-org-access.js';
@@ -189,16 +193,21 @@ export class PersonService {
     return this.prisma.person.delete({ where: { id } });
   }
 
-  async getDefaultFamilyGraphForUser(user?: User | null, requestedOrgId?: number) {
-    const organizationId = await this.organizationService.resolveDefaultOrganizationId(
-      user,
-      requestedOrgId,
-    );
+  async getDefaultFamilyGraphForUser(
+    user?: User | null,
+    requestedOrgId?: number,
+  ) {
+    const organizationId =
+      await this.organizationService.resolveDefaultOrganizationId(
+        user,
+        requestedOrgId,
+      );
     const persons = await this.prisma.person.findMany({
       where: { organizationId },
       orderBy: { fullName: 'asc' },
     });
-    const root = persons.find((person) => person.generation === 0) ?? persons[0];
+    const root =
+      persons.find((person) => person.generation === 0) ?? persons[0];
     if (!root) {
       throw new NotFoundException('No persons found for organization');
     }
@@ -242,6 +251,9 @@ export class PersonService {
     if (!isSystem(user)) {
       throw new ForbiddenException('Cannot create person');
     }
-    return this.organizationService.resolveDefaultOrganizationId(user, requestedOrgId);
+    return this.organizationService.resolveDefaultOrganizationId(
+      user,
+      requestedOrgId,
+    );
   }
 }

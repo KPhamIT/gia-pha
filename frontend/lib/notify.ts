@@ -1,5 +1,5 @@
-import { toast } from 'sonner';
-import { getErrorMessage } from '@/utils/errors';
+import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/errors";
 
 export const notify = {
   success(message: string) {

@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react';
-import type { PersonRelationships } from '@/components/types/family-tree-types';
-import type { BookPageDraft } from '../book-page-draft';
+import type { ReactElement } from "react";
+import type { PersonRelationships } from "@/components/types/family-tree-types";
+import type { BookPageDraft } from "../book-page-draft";
 
 export type PageFormProps = {
   draft: BookPageDraft;

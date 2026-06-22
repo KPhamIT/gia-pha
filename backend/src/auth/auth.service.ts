@@ -81,14 +81,20 @@ export class AuthService {
     return this.buildAuthResponse(user);
   }
 
-  async linkPerson(user: { id: number; role: UserRole; organizationId: number | null }, personId: number | null | undefined) {
-    const dbUser = await this.prisma.user.findUnique({ where: { id: user.id } });
+  async linkPerson(
+    user: { id: number; role: UserRole; organizationId: number | null },
+    personId: number | null | undefined,
+  ) {
+    const dbUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+    });
     if (!dbUser) {
       throw new NotFoundException('User not found');
     }
 
     if (!canMutate(dbUser)) {
-      const features = await this.standardFeaturesService.resolveForUser(dbUser);
+      const features =
+        await this.standardFeaturesService.resolveForUser(dbUser);
       if (!features.linkAccount) {
         throw new ForbiddenException('Feature not permitted');
       }
@@ -102,7 +108,9 @@ export class AuthService {
       return this.buildMeResponse(dbUser);
     }
 
-    const person = await this.prisma.person.findUnique({ where: { id: personId } });
+    const person = await this.prisma.person.findUnique({
+      where: { id: personId },
+    });
     if (!person) {
       throw new NotFoundException('Person not found');
     }
@@ -122,11 +130,18 @@ export class AuthService {
       }),
     ]);
 
-    const refreshed = await this.prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+    const refreshed = await this.prisma.user.findUniqueOrThrow({
+      where: { id: user.id },
+    });
     return this.buildMeResponse(refreshed);
   }
 
-  signAccessToken(user: { id: number; providerId: string; email: string | null; role: UserRole }) {
+  signAccessToken(user: {
+    id: number;
+    providerId: string;
+    email: string | null;
+    role: UserRole;
+  }) {
     return this.jwtService.sign({
       sub: user.id,
       providerId: user.providerId,
@@ -144,7 +159,9 @@ export class AuthService {
     role: UserRole;
     organizationId: number | null;
   }) {
-    const person = await this.prisma.person.findUnique({ where: { userId: user.id } });
+    const person = await this.prisma.person.findUnique({
+      where: { userId: user.id },
+    });
     const features = await this.standardFeaturesService.resolveForUser(user);
     return {
       user: this.serializeUser(user),
@@ -206,7 +223,9 @@ export class AuthService {
     };
   }
 
-  private async fetchFacebookProfile(accessToken: string): Promise<FacebookProfile> {
+  private async fetchFacebookProfile(
+    accessToken: string,
+  ): Promise<FacebookProfile> {
     const response = await fetch(
       `https://graph.facebook.com/me?fields=id,email&access_token=${accessToken}`,
     );

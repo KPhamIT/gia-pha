@@ -1,5 +1,5 @@
-import axiosClient from '@/lib/axiosClient';
-import { API_ROUTES } from '@/lib/constants/api-routes';
+import axiosClient from "@/lib/axiosClient";
+import { API_ROUTES } from "@/lib/constants/api-routes";
 
 export type CeremonyHtmlResponse = {
   personId: number;
@@ -41,7 +41,10 @@ export const ceremonies = {
 
   getShareToken: (personId: number) =>
     axiosClient
-      .get<{ token: string; personId: number }>(API_ROUTES.CEREMONY_SHARE_TOKEN(personId))
+      .get<{
+        token: string;
+        personId: number;
+      }>(API_ROUTES.CEREMONY_SHARE_TOKEN(personId))
       .then((r) => r.data),
 
   getPublicHtml: (token: string) =>
@@ -50,10 +53,14 @@ export const ceremonies = {
       .then((r) => r.data),
 
   listTemplates: () =>
-    axiosClient.get<CeremonyTemplate[]>(API_ROUTES.CEREMONY_TEMPLATES).then((r) => r.data),
+    axiosClient
+      .get<CeremonyTemplate[]>(API_ROUTES.CEREMONY_TEMPLATES)
+      .then((r) => r.data),
 
   getTemplate: (id: number) =>
-    axiosClient.get<CeremonyTemplate>(API_ROUTES.CEREMONY_TEMPLATE(id)).then((r) => r.data),
+    axiosClient
+      .get<CeremonyTemplate>(API_ROUTES.CEREMONY_TEMPLATE(id))
+      .then((r) => r.data),
 
   listVariables: () =>
     axiosClient
@@ -76,5 +83,7 @@ export const ceremonies = {
       .then((r) => r.data),
 
   deleteTemplate: (id: number) =>
-    axiosClient.delete<{ id: number }>(API_ROUTES.CEREMONY_TEMPLATE(id)).then((r) => r.data),
+    axiosClient
+      .delete<{ id: number }>(API_ROUTES.CEREMONY_TEMPLATE(id))
+      .then((r) => r.data),
 };

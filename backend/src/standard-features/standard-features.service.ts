@@ -17,7 +17,9 @@ export type StandardFeaturesConfig = {
   effective: StandardFeatures;
 };
 
-export type FeatureUser = Pick<User, 'role' | 'organizationId'> & { id?: number };
+export type FeatureUser = Pick<User, 'role' | 'organizationId'> & {
+  id?: number;
+};
 
 @Injectable()
 export class StandardFeaturesService {
@@ -41,7 +43,10 @@ export class StandardFeaturesService {
     return next;
   }
 
-  async getOrgConfig(organizationId: number, user: User): Promise<StandardFeaturesConfig> {
+  async getOrgConfig(
+    organizationId: number,
+    user: User,
+  ): Promise<StandardFeaturesConfig> {
     await this.assertOrgReadable(organizationId, user);
     return this.buildOrgConfig(organizationId);
   }
@@ -52,7 +57,9 @@ export class StandardFeaturesService {
     patch: unknown,
   ): Promise<StandardFeaturesConfig> {
     await this.assertOrgReadable(organizationId, user);
-    const org = await this.prisma.organization.findUnique({ where: { id: organizationId } });
+    const org = await this.prisma.organization.findUnique({
+      where: { id: organizationId },
+    });
     if (!org) {
       throw new NotFoundException('Organization not found');
     }
@@ -73,7 +80,9 @@ export class StandardFeaturesService {
     };
   }
 
-  async resolveForUser(user: FeatureUser | null | undefined): Promise<StandardFeatures> {
+  async resolveForUser(
+    user: FeatureUser | null | undefined,
+  ): Promise<StandardFeatures> {
     if (!user) {
       return { ...DEFAULT_STANDARD_FEATURES };
     }
@@ -90,11 +99,18 @@ export class StandardFeaturesService {
       where: { id: user.organizationId },
       select: { standardFeatures: true },
     });
-    return mergeStandardFeatures(defaults, parseFeaturePatch(org?.standardFeatures));
+    return mergeStandardFeatures(
+      defaults,
+      parseFeaturePatch(org?.standardFeatures),
+    );
   }
 
-  private async buildOrgConfig(organizationId: number): Promise<StandardFeaturesConfig> {
-    const org = await this.prisma.organization.findUnique({ where: { id: organizationId } });
+  private async buildOrgConfig(
+    organizationId: number,
+  ): Promise<StandardFeaturesConfig> {
+    const org = await this.prisma.organization.findUnique({
+      where: { id: organizationId },
+    });
     if (!org) {
       throw new NotFoundException('Organization not found');
     }
@@ -108,7 +124,10 @@ export class StandardFeaturesService {
     };
   }
 
-  private async assertOrgReadable(organizationId: number, user: User): Promise<void> {
+  private async assertOrgReadable(
+    organizationId: number,
+    user: User,
+  ): Promise<void> {
     if (isSystem(user)) return;
     if (user.role === UserRole.ADMIN) {
       assertOrgAccess(user, organizationId);

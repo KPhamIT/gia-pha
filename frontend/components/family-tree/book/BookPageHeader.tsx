@@ -1,14 +1,18 @@
-'use client';
+"use client";
 
-import { BRANCH_OPTIONS, getBranchLabel } from '@/lib/constants/branches';
-import { UI } from '@/lib/constants/ui-strings';
-import type { BookPageDraft } from './book-page-draft';
-import { displayValue } from './BookField';
-import styles from './GenealogyBook.module.css';
+import { BRANCH_OPTIONS, getBranchLabel } from "@/lib/constants/branches";
+import { UI } from "@/lib/constants/ui-strings";
+import type { BookPageDraft } from "./book-page-draft";
+import { displayValue } from "./BookField";
+import styles from "./GenealogyBook.module.css";
 
 type Update = (field: keyof BookPageDraft, value: string) => void;
 
-function InlineBranchField({ value, readOnly, onChange }: {
+function InlineBranchField({
+  value,
+  readOnly,
+  onChange,
+}: {
   value: string;
   readOnly: boolean;
   onChange: Update;
@@ -17,11 +21,13 @@ function InlineBranchField({ value, readOnly, onChange }: {
     <span className="inline-flex items-center gap-1">
       {UI.BOOK_BRANCH}
       {readOnly ? (
-        <span>{value ? getBranchLabel(Number(value)) : displayValue(value)}</span>
+        <span>
+          {value ? getBranchLabel(Number(value)) : displayValue(value)}
+        </span>
       ) : (
         <select
           value={value}
-          onChange={(e) => onChange('branch', e.target.value)}
+          onChange={(e) => onChange("branch", e.target.value)}
           className="border-0 border-b border-dashed border-amber-300/80 bg-transparent text-center outline-none"
         >
           <option value="">{UI.BOOK_EMPTY_FIELD}</option>
@@ -37,7 +43,13 @@ function InlineBranchField({ value, readOnly, onChange }: {
 }
 
 /** A short numeric inline field (generation) shown next to its label. */
-function InlineNumberField({ label, field, value, readOnly, onChange }: {
+function InlineNumberField({
+  label,
+  field,
+  value,
+  readOnly,
+  onChange,
+}: {
   label: string;
   field: keyof BookPageDraft;
   value: string;
@@ -63,20 +75,27 @@ function InlineNumberField({ label, field, value, readOnly, onChange }: {
   );
 }
 
-export default function BookPageHeader({ draft, readOnly, onChange, onStartEdit }: {
+export default function BookPageHeader({
+  draft,
+  readOnly,
+  onChange,
+  onStartEdit,
+}: {
   draft: BookPageDraft;
   readOnly: boolean;
   onChange: Update;
   onStartEdit?: () => void;
 }) {
-  const nameClass = draft.fullName.trim() ? 'text-amber-950' : 'italic text-slate-400';
+  const nameClass = draft.fullName.trim()
+    ? "text-amber-950"
+    : "italic text-slate-400";
 
   return (
     <div className={styles.paperHeader}>
       <p className={styles.paperHeaderBadge}>{UI.PAGE_TITLE}</p>
       {readOnly ? (
         <h2
-          className={`${styles.paperHeaderName} ${nameClass} ${onStartEdit ? 'cursor-text' : ''}`}
+          className={`${styles.paperHeaderName} ${nameClass} ${onStartEdit ? "cursor-text" : ""}`}
           onClick={onStartEdit}
         >
           {displayValue(draft.fullName)}
@@ -85,14 +104,24 @@ export default function BookPageHeader({ draft, readOnly, onChange, onStartEdit 
         <input
           type="text"
           value={draft.fullName}
-          onChange={(e) => onChange('fullName', e.target.value)}
+          onChange={(e) => onChange("fullName", e.target.value)}
           placeholder={UI.BOOK_EMPTY_FIELD}
           className={`${styles.paperHeaderName} w-full border-0 bg-transparent text-center outline-none ${nameClass}`}
         />
       )}
       <div className={styles.paperHeaderMeta}>
-        <InlineBranchField value={draft.branch} readOnly={readOnly} onChange={onChange} />
-        <InlineNumberField label={UI.BOOK_GENERATION} field="generation" value={draft.generation} readOnly={readOnly} onChange={onChange} />
+        <InlineBranchField
+          value={draft.branch}
+          readOnly={readOnly}
+          onChange={onChange}
+        />
+        <InlineNumberField
+          label={UI.BOOK_GENERATION}
+          field="generation"
+          value={draft.generation}
+          readOnly={readOnly}
+          onChange={onChange}
+        />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import styles from '../Book.module.scss';
-import type { PageBorderComponent } from './types';
+import styles from "../Book.module.scss";
+import type { PageBorderComponent } from "./types";
 
 /** Two stacked rules with a gap between them. */
 const DoubleBorder: PageBorderComponent = ({ children }) => (

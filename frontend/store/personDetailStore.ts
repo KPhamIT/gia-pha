@@ -1,8 +1,8 @@
-import { create } from 'zustand';
-import type { PersonDetail } from '@/components/types/family-tree-types';
-import { api } from '@/lib/api';
+import { create } from "zustand";
+import type { PersonDetail } from "@/components/types/family-tree-types";
+import { api } from "@/lib/api";
 
-type Status = 'idle' | 'loading' | 'loaded' | 'error';
+type Status = "idle" | "loading" | "loaded" | "error";
 
 type PersonDetailStore = {
   details: Record<number, PersonDetail>;
@@ -17,24 +17,24 @@ const reloadInflight = new Map<number, Promise<void>>();
 
 export const usePersonDetailStore = create<PersonDetailStore>((set, get) => ({
   details: {},
-  status: 'idle',
+  status: "idle",
 
   loadAll: async () => {
     const { status } = get();
-    if (status === 'loaded') return;
+    if (status === "loaded") return;
     if (loadAllInflight) return loadAllInflight;
 
     loadAllInflight = (async () => {
-      set({ status: 'loading' });
+      set({ status: "loading" });
       try {
         const all = await api.person.getAllDetails();
         const details: Record<number, PersonDetail> = {};
         for (const d of all) {
           details[d.person.id] = d;
         }
-        set({ details, status: 'loaded' });
+        set({ details, status: "loaded" });
       } catch {
-        set({ status: 'error' });
+        set({ status: "error" });
       } finally {
         loadAllInflight = null;
       }

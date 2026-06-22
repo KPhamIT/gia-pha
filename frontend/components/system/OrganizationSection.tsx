@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import IconRoundButton from '@/components/ui/IconRoundButton';
-import { inputClassName } from '@/components/ui/CollapsibleSection';
-import { BT } from '@/lib/constants/ui-theme';
-import { UI } from '@/lib/constants/ui-strings';
-import { useOrganizations } from '@/hooks/useOrganizations';
+import { useState } from "react";
+import IconRoundButton from "@/components/ui/IconRoundButton";
+import { inputClassName } from "@/components/ui/CollapsibleSection";
+import { BT } from "@/lib/constants/ui-theme";
+import { UI } from "@/lib/constants/ui-strings";
+import { useOrganizations } from "@/hooks/useOrganizations";
 
 export default function OrganizationSection() {
   const { items, loading, error, create, update, remove } = useOrganizations();
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleCreate = async () => {
@@ -17,7 +17,7 @@ export default function OrganizationSection() {
     setSaving(true);
     try {
       await create(name.trim());
-      setName('');
+      setName("");
     } catch {
       /* toast shown in useOrganizations */
     } finally {
@@ -25,7 +25,8 @@ export default function OrganizationSection() {
     }
   };
 
-  if (loading) return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+  if (loading)
+    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
   if (error) return <p className={BT.errorBg}>{error}</p>;
 
   return (

@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRole, type User } from '../../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { adminOrganizationId, assertOrgAccess, isSystem } from '../auth/org-access.js';
+import {
+  adminOrganizationId,
+  assertOrgAccess,
+  isSystem,
+} from '../auth/org-access.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
 import { UpdateOrganizationDto } from './dto/update-organization.dto.js';
 
@@ -35,9 +43,13 @@ export class OrganizationService {
   }
 
   async remove(id: number) {
-    const personCount = await this.prisma.person.count({ where: { organizationId: id } });
+    const personCount = await this.prisma.person.count({
+      where: { organizationId: id },
+    });
     if (personCount > 0) {
-      throw new BadRequestException('Cannot delete organization that still has members');
+      throw new BadRequestException(
+        'Cannot delete organization that still has members',
+      );
     }
     return this.prisma.organization.delete({ where: { id } });
   }
@@ -51,10 +63,15 @@ export class OrganizationService {
     return org;
   }
 
-  async resolveDefaultOrganizationId(user?: User | null, requestedOrgId?: number): Promise<number> {
+  async resolveDefaultOrganizationId(
+    user?: User | null,
+    requestedOrgId?: number,
+  ): Promise<number> {
     if (user?.role === UserRole.SYSTEM) {
       if (requestedOrgId != null) {
-        await this.prisma.organization.findUniqueOrThrow({ where: { id: requestedOrgId } });
+        await this.prisma.organization.findUniqueOrThrow({
+          where: { id: requestedOrgId },
+        });
         return requestedOrgId;
       }
       return (await this.getOrCreateDefaultOrganization()).id;
@@ -69,7 +86,9 @@ export class OrganizationService {
     }
 
     if (requestedOrgId != null) {
-      await this.prisma.organization.findUniqueOrThrow({ where: { id: requestedOrgId } });
+      await this.prisma.organization.findUniqueOrThrow({
+        where: { id: requestedOrgId },
+      });
       return requestedOrgId;
     }
 
@@ -86,7 +105,9 @@ export class OrganizationService {
     }
 
     const defaultName = 'Family Tree';
-    const existing = await this.prisma.organization.findFirst({ where: { name: defaultName } });
+    const existing = await this.prisma.organization.findFirst({
+      where: { name: defaultName },
+    });
     if (existing) return existing;
     return this.prisma.organization.create({ data: { name: defaultName } });
   }

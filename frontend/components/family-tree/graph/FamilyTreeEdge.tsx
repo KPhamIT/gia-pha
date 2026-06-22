@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
-import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from '@xyflow/react';
-import type { EdgeProps } from '@xyflow/react';
-import type { FamilyTreeEdgeData } from '@/components/types/family-tree-types';
-import { deleteRelationshipById } from '@/lib/family-tree/mutations';
-import { notify } from '@/lib/notify';
-import { UI } from '@/lib/constants/ui-strings';
+import { memo } from "react";
+import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
+import type { EdgeProps } from "@xyflow/react";
+import type { FamilyTreeEdgeData } from "@/components/types/family-tree-types";
+import { deleteRelationshipById } from "@/lib/family-tree/mutations";
+import { notify } from "@/lib/notify";
+import { UI } from "@/lib/constants/ui-strings";
 
 function FamilyTreeEdge({
   sourceX,
@@ -44,18 +44,24 @@ function FamilyTreeEdge({
 
   return (
     <>
-      <BaseEdge path={edgePath} style={{ stroke: selected ? '#3b82f6' : '#94a3b8', strokeWidth: selected ? 2 : 1.5 }} />
+      <BaseEdge
+        path={edgePath}
+        style={{
+          stroke: selected ? "#3b82f6" : "#94a3b8",
+          strokeWidth: selected ? 2 : 1.5,
+        }}
+      />
       <EdgeLabelRenderer>
         <button
           style={{
-            position: 'absolute',
+            position: "absolute",
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: 'all',
+            pointerEvents: "all",
           }}
           className={`nodrag nopan flex h-5 w-5 items-center justify-center rounded-full border bg-white text-xs shadow-sm transition-opacity ${
             selected
-              ? 'border-red-400 text-red-500 opacity-100'
-              : 'border-slate-300 text-slate-400 opacity-0 group-hover:opacity-100'
+              ? "border-red-400 text-red-500 opacity-100"
+              : "border-slate-300 text-slate-400 opacity-0 group-hover:opacity-100"
           }`}
           onClick={handleDelete}
           title={UI.DELETE_LINK}

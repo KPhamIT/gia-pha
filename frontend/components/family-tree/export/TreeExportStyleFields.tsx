@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { UI } from '@/lib/constants/ui-strings';
-import { NODE_CARD_STYLES } from '@/lib/family-tree/svg-border';
-import { CALLIGRAPHY_FONTS } from '@/components/family-tree/book/calligraphy-fonts';
+import { UI } from "@/lib/constants/ui-strings";
+import { NODE_CARD_STYLES } from "@/lib/family-tree/svg-border";
+import { CALLIGRAPHY_FONTS } from "@/components/family-tree/book/calligraphy-fonts";
 import type {
   ExportCoupletCfg,
   TreeExportSettings,
-} from '@/lib/family-tree/tree-export-settings';
+} from "@/lib/family-tree/tree-export-settings";
 import {
   ColorRow,
   Toggle,
@@ -14,7 +14,7 @@ import {
   selectClass,
   sectionTitle,
   type CoupletKey,
-} from './tree-export-control-bits';
+} from "./tree-export-control-bits";
 
 type Props = {
   settings: TreeExportSettings;
@@ -22,13 +22,21 @@ type Props = {
   onPatchCouplet: (key: CoupletKey, patch: Partial<ExportCoupletCfg>) => void;
 };
 
-export default function TreeExportStyleFields({ settings, onPatch, onPatchCouplet }: Props) {
+export default function TreeExportStyleFields({
+  settings,
+  onPatch,
+  onPatchCouplet,
+}: Props) {
   return (
     <>
       <div className={sectionTitle}>{UI.EXPORT_SECTION_COUPLETS}</div>
       <label className="mb-2 block">
         <span className={fieldLabel}>{UI.EXPORT_COUPLET_FONT}</span>
-        <select className={selectClass} value={settings.coupletFontId} onChange={(e) => onPatch({ coupletFontId: e.target.value })}>
+        <select
+          className={selectClass}
+          value={settings.coupletFontId}
+          onChange={(e) => onPatch({ coupletFontId: e.target.value })}
+        >
           {CALLIGRAPHY_FONTS.map((f) => (
             <option key={f.id} value={f.id}>
               {f.label}
@@ -38,7 +46,7 @@ export default function TreeExportStyleFields({ settings, onPatch, onPatchCouple
       </label>
       <label className="mb-2 block">
         <span className={fieldLabel}>
-          {UI.EXPORT_COUPLET_FONT_SIZE}: {settings.coupletFontSize ?? '—'}
+          {UI.EXPORT_COUPLET_FONT_SIZE}: {settings.coupletFontSize ?? "—"}
         </span>
         <input
           type="range"
@@ -50,13 +58,27 @@ export default function TreeExportStyleFields({ settings, onPatch, onPatchCouple
           className="w-full accent-amber-600"
         />
       </label>
-      <ColorRow label={UI.EXPORT_COUPLET_COLOR} value={settings.coupletColor} onChange={(v) => onPatch({ coupletColor: v })} />
-      {(['coupletLeft', 'coupletRight'] as const).map((key) => {
+      <ColorRow
+        label={UI.EXPORT_COUPLET_COLOR}
+        value={settings.coupletColor}
+        onChange={(v) => onPatch({ coupletColor: v })}
+      />
+      {(["coupletLeft", "coupletRight"] as const).map((key) => {
         const couplet = settings[key];
-        const label = key === 'coupletLeft' ? UI.EXPORT_COUPLET_LEFT : UI.EXPORT_COUPLET_RIGHT;
+        const label =
+          key === "coupletLeft"
+            ? UI.EXPORT_COUPLET_LEFT
+            : UI.EXPORT_COUPLET_RIGHT;
         return (
-          <div key={key} className="mb-3 mt-2 rounded-lg border border-slate-200 p-2">
-            <Toggle label={label} checked={couplet.visible} onChange={(v) => onPatchCouplet(key, { visible: v })} />
+          <div
+            key={key}
+            className="mb-3 mt-2 rounded-lg border border-slate-200 p-2"
+          >
+            <Toggle
+              label={label}
+              checked={couplet.visible}
+              onChange={(v) => onPatchCouplet(key, { visible: v })}
+            />
             <textarea
               rows={2}
               value={couplet.text}
@@ -71,7 +93,11 @@ export default function TreeExportStyleFields({ settings, onPatch, onPatchCouple
       <div className={sectionTitle}>{UI.EXPORT_SECTION_NODE}</div>
       <label className="mb-2 block">
         <span className={fieldLabel}>{UI.EXPORT_NODE_BORDER_STYLE}</span>
-        <select className={selectClass} value={settings.nodeBorderStyleId} onChange={(e) => onPatch({ nodeBorderStyleId: e.target.value })}>
+        <select
+          className={selectClass}
+          value={settings.nodeBorderStyleId}
+          onChange={(e) => onPatch({ nodeBorderStyleId: e.target.value })}
+        >
           {NODE_CARD_STYLES.map((s) => (
             <option key={s.id} value={s.id}>
               {s.label}
@@ -79,9 +105,21 @@ export default function TreeExportStyleFields({ settings, onPatch, onPatchCouple
           ))}
         </select>
       </label>
-      <ColorRow label={UI.EXPORT_NODE_BG} value={settings.nodeBgColor} onChange={(v) => onPatch({ nodeBgColor: v })} />
-      <ColorRow label={UI.EXPORT_NODE_TEXT_COLOR} value={settings.nodeTextColor} onChange={(v) => onPatch({ nodeTextColor: v })} />
-      <ColorRow label={UI.EXPORT_NODE_BORDER_COLOR} value={settings.nodeBorderColor} onChange={(v) => onPatch({ nodeBorderColor: v })} />
+      <ColorRow
+        label={UI.EXPORT_NODE_BG}
+        value={settings.nodeBgColor}
+        onChange={(v) => onPatch({ nodeBgColor: v })}
+      />
+      <ColorRow
+        label={UI.EXPORT_NODE_TEXT_COLOR}
+        value={settings.nodeTextColor}
+        onChange={(v) => onPatch({ nodeTextColor: v })}
+      />
+      <ColorRow
+        label={UI.EXPORT_NODE_BORDER_COLOR}
+        value={settings.nodeBorderColor}
+        onChange={(v) => onPatch({ nodeBorderColor: v })}
+      />
       <label className="mb-2 block">
         <span className={fieldLabel}>
           {UI.EXPORT_NODE_FONT_SIZE}: {settings.nodeFontSize}

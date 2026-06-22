@@ -103,7 +103,7 @@
 
 /* Soft binding shadow near the spine on the cream back side */
 .flipBack::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0 auto 0 0;
   width: 16%;
@@ -249,7 +249,7 @@
 }
 
 .paper::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0 auto 0 0;
   width: 10px;
@@ -352,19 +352,19 @@
   word-break: break-word;
 }
 
-.bookFieldMultiline[data-print-lines='2'] {
+.bookFieldMultiline[data-print-lines="2"] {
   min-height: 10mm;
 }
 
-.bookFieldMultiline[data-print-lines='3'] {
+.bookFieldMultiline[data-print-lines="3"] {
   min-height: 15mm;
 }
 
-.bookFieldMultiline[data-print-lines='4'] {
+.bookFieldMultiline[data-print-lines="4"] {
   min-height: 20mm;
 }
 
-.bookFieldMultiline[data-print-lines='5'] {
+.bookFieldMultiline[data-print-lines="5"] {
   min-height: 26mm;
 }
 
@@ -540,23 +540,31 @@
   word-break: break-word;
 }
 
-.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='2'],
-.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='2'] {
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines="2"],
+.viewerRoot.printAllMode
+  .printAllStack
+  .bookFieldMultiline[data-print-lines="2"] {
   min-height: 10mm;
 }
 
-.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='3'],
-.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='3'] {
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines="3"],
+.viewerRoot.printAllMode
+  .printAllStack
+  .bookFieldMultiline[data-print-lines="3"] {
   min-height: 15mm;
 }
 
-.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='4'],
-.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='4'] {
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines="4"],
+.viewerRoot.printAllMode
+  .printAllStack
+  .bookFieldMultiline[data-print-lines="4"] {
   min-height: 20mm;
 }
 
-.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines='5'],
-.viewerRoot.printAllMode .printAllStack .bookFieldMultiline[data-print-lines='5'] {
+.viewerRoot.printPreparing .bookFieldMultiline[data-print-lines="5"],
+.viewerRoot.printAllMode
+  .printAllStack
+  .bookFieldMultiline[data-print-lines="5"] {
   min-height: 26mm;
 }
 
@@ -600,7 +608,7 @@
     margin: 8mm;
   }
 
-  :global(body > *:not([data-print-root='true'])) {
+  :global(body > *:not([data-print-root="true"])) {
     display: none !important;
   }
 
@@ -848,19 +856,19 @@
     word-break: break-word !important;
   }
 
-  .bookFieldMultiline[data-print-lines='2'] {
+  .bookFieldMultiline[data-print-lines="2"] {
     min-height: 10mm !important;
   }
 
-  .bookFieldMultiline[data-print-lines='3'] {
+  .bookFieldMultiline[data-print-lines="3"] {
     min-height: 15mm !important;
   }
 
-  .bookFieldMultiline[data-print-lines='4'] {
+  .bookFieldMultiline[data-print-lines="4"] {
     min-height: 20mm !important;
   }
 
-  .bookFieldMultiline[data-print-lines='5'] {
+  .bookFieldMultiline[data-print-lines="5"] {
     min-height: 26mm !important;
   }
 
