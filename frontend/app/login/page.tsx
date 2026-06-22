@@ -11,6 +11,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import ContactInfoPanel from "@/components/auth/ContactInfoPanel";
+import PublicFooterLinks from "@/components/public/PublicFooterLinks";
 import FacebookLoginButton from "@/components/auth/FacebookLoginButton";
 import { inputClassName } from "@/components/ui/CollapsibleSection";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
@@ -132,6 +133,7 @@ function LoginContent() {
         </div>
 
         <ContactInfoPanel />
+        <PublicFooterLinks />
       </div>
 
       <AppNavFab />

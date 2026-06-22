@@ -16,7 +16,16 @@ const notoSerif = Noto_Serif({
 
 export const metadata: Metadata = {
   title: UI.PAGE_TITLE,
-  description: UI.PAGE_DESCRIPTION,
+  description: UI.LANDING_HERO_SUBTITLE,
+  metadataBase: process.env.NEXT_PUBLIC_SITE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+    : undefined,
+  openGraph: {
+    title: UI.LANDING_HERO_TITLE,
+    description: UI.LANDING_HERO_SUBTITLE,
+    locale: "vi_VN",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

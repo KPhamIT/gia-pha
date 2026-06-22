@@ -5,6 +5,8 @@ import { BOOK_STRINGS } from "./ui-strings/book";
 import { EVENT_STRINGS } from "./ui-strings/events";
 import { EXPORT_STRINGS } from "./ui-strings/export";
 import { NOTIFICATION_STRINGS } from "./ui-strings/notifications";
+import { GUIDE_STRINGS } from "./ui-strings/guide";
+import { PUBLIC_STRINGS } from "./ui-strings/public";
 
 /**
  * App-wide Vietnamese UI strings, merged from per-domain modules under
@@ -17,6 +19,8 @@ export const UI = {
   ...EVENT_STRINGS,
   ...EXPORT_STRINGS,
   ...NOTIFICATION_STRINGS,
+  ...GUIDE_STRINGS,
+  ...PUBLIC_STRINGS,
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

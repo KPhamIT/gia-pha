@@ -10,6 +10,7 @@ import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache"
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import Link from "next/link";
+import PublicFooterLinks from "@/components/public/PublicFooterLinks";
 import { getErrorMessage } from "@/utils/errors";
 
 export default function JoinOrgPage() {
@@ -45,20 +46,29 @@ export default function JoinOrgPage() {
 
   if (error) {
     return (
-      <BookPageShell title={UI.ORG_JOIN_TITLE} hideNavFab>
+      <BookPageShell title={UI.ORG_JOIN_TITLE} backHref="/" hideNavFab>
         <p className={`text-sm ${BT.mutedOnDark}`}>{error}</p>
-        <Link
-          href="/login"
-          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mt-4 inline-flex`}
-        >
-          {UI.LOGIN_BUTTON}
-        </Link>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href="/login"
+            className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} inline-flex`}
+          >
+            {UI.LOGIN_BUTTON}
+          </Link>
+          <Link
+            href="/lien-he"
+            className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline} border-amber-200/40 text-amber-50`}
+          >
+            {UI.PUBLIC_FOOTER_CONTACT}
+          </Link>
+        </div>
+        <PublicFooterLinks />
       </BookPageShell>
     );
   }
 
   return (
-    <BookPageShell title={UI.ORG_JOIN_TITLE} hideNavFab>
+    <BookPageShell title={UI.ORG_JOIN_TITLE} backHref="/" hideNavFab>
       <AuthPageLoading />
     </BookPageShell>
   );
