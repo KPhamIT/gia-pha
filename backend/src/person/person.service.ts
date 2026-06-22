@@ -196,11 +196,13 @@ export class PersonService {
   async getDefaultFamilyGraphForUser(
     user?: User | null,
     requestedOrgId?: number,
+    orgAccessToken?: string,
   ) {
     const organizationId =
       await this.organizationService.resolveDefaultOrganizationId(
         user,
         requestedOrgId,
+        orgAccessToken,
       );
     const persons = await this.prisma.person.findMany({
       where: { organizationId },

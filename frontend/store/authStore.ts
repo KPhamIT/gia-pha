@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth/standard-features";
 import { api } from "@/lib/api";
 import { clearToken, getToken } from "@/lib/auth/session";
+import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache";
 
 type AuthStore = {
   user: AuthUser | null;
@@ -66,8 +67,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (refreshInflight) return refreshInflight;
 
     refreshInflight = (async () => {
+      const previousUserId = get().user?.id ?? null;
       const token = getToken();
       if (!token) {
+        invalidateUserSettingsCache();
         set({
           user: null,
           person: null,
@@ -81,6 +84,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       try {
         const me = await api.auth.me();
         const user = me.user ?? null;
+        const nextUserId = user?.id ?? null;
+        if (previousUserId !== nextUserId) {
+          invalidateUserSettingsCache();
+        }
         set({
           user,
           person: me.person ?? null,
@@ -90,6 +97,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         });
       } catch {
         clearToken();
+        invalidateUserSettingsCache();
         set({
           user: null,
           person: null,
@@ -105,6 +113,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     return refreshInflight;
   },
   clear: () => {
+    invalidateUserSettingsCache();
     set({
       user: null,
       person: null,

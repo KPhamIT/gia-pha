@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import { getStoredOrgAccessToken } from "@/lib/org/org-access";
 import {
   fetchUserSettings,
   patchUserSettingsCache,
@@ -61,10 +62,26 @@ export function normalizeBookSettings(
 
 // ---------- Local (per-device cache / offline fallback) ----------
 
-export function loadBookSettings(): BookSettings {
+/** localStorage key scoped per user — tránh lẫn settings khi đổi tài khoản trên cùng trình duyệt. */
+export function bookSettingsStorageKey(
+  userId: number | null | undefined,
+  orgAccessToken?: string | null,
+): string {
+  if (userId != null) return `${STORAGE_KEYS.BOOK_SETTINGS}:${userId}`;
+  const token = orgAccessToken ?? getStoredOrgAccessToken();
+  if (token) return `${STORAGE_KEYS.BOOK_SETTINGS}:guest:${token}`;
+  return `${STORAGE_KEYS.BOOK_SETTINGS}:guest`;
+}
+
+export function loadBookSettings(
+  userId: number | null | undefined,
+  orgAccessToken?: string | null,
+): BookSettings {
   if (typeof window === "undefined") return defaultBookSettings();
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEYS.BOOK_SETTINGS);
+    const raw = window.localStorage.getItem(
+      bookSettingsStorageKey(userId, orgAccessToken),
+    );
     return normalizeBookSettings(
       raw ? (JSON.parse(raw) as Partial<BookSettings>) : null,
     );
@@ -73,11 +90,15 @@ export function loadBookSettings(): BookSettings {
   }
 }
 
-export function saveBookSettings(settings: BookSettings): void {
+export function saveBookSettings(
+  settings: BookSettings,
+  userId: number | null | undefined,
+  orgAccessToken?: string | null,
+): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(
-      STORAGE_KEYS.BOOK_SETTINGS,
+      bookSettingsStorageKey(userId, orgAccessToken),
       JSON.stringify(settings),
     );
   } catch {

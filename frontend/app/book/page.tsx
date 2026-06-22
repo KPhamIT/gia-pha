@@ -11,6 +11,7 @@ import {
   useAppNavigation,
 } from "@/hooks/useAppNavigation";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
+import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuthStore } from "@/store/authStore";
 import {
@@ -27,7 +28,8 @@ export default function BookPage() {
   const { theme } = useTheme();
   const nav = useAppNavigation();
   const refreshAuth = useAuthStore((state) => state.refresh);
-  const { treeData, loading, error, reload } = useFamilyTree();
+  const { ready: orgReady } = useRequireOrgAccess();
+  const { treeData, loading, error, reload } = useFamilyTree({ enabled: orgReady });
 
   const resetBookOverlays = useCallback(() => {
     syncOverlayViewport();
@@ -44,7 +46,7 @@ export default function BookPage() {
     resetBookOverlays();
   }, [resetBookOverlays]);
 
-  if (loading && !treeData) {
+  if (!orgReady || (loading && !treeData)) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
 

@@ -48,11 +48,16 @@ export class PersonController {
   getDefaultFamilyGraph(
     @Request() req: { user?: User | null },
     @Query('organizationId') organizationId?: string,
+    @Query('orgToken') orgToken?: string,
   ) {
     const orgId = organizationId
       ? Number.parseInt(organizationId, 10)
       : undefined;
-    return this.personService.getDefaultFamilyGraphForUser(req.user, orgId);
+    return this.personService.getDefaultFamilyGraphForUser(
+      req.user,
+      orgId,
+      orgToken,
+    );
   }
 
   @Get(':id/tree')

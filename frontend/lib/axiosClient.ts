@@ -1,5 +1,6 @@
 import axios from "axios";
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
+import { getStoredOrgAccessToken } from "@/lib/org/org-access";
 
 const axiosClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
@@ -11,6 +12,11 @@ axiosClient.interceptors.request.use((config) => {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      const orgToken = getStoredOrgAccessToken();
+      if (orgToken) {
+        config.params = { ...config.params, orgToken };
+      }
     }
   }
   return config;

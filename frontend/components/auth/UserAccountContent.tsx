@@ -19,6 +19,7 @@ import ContactInfoPanel from "@/components/auth/ContactInfoPanel";
 import NotificationStatsPanel from "@/components/notifications/NotificationStatsPanel";
 import AccountLinkSection from "./AccountLinkSection";
 import AccountQuickActions from "./AccountQuickActions";
+import OrgShareLinkSection from "./OrgShareLinkSection";
 import { InfoRow } from "./AccountRows";
 
 type UserAccountContentProps = {
@@ -162,7 +163,9 @@ export default function UserAccountContent({
         />
       ) : null}
 
-      <AccountQuickActions isAdmin={isAdmin} />
+      <AccountQuickActions isAdmin={isAdmin} isSystem={isSystem} />
+
+      {isAdmin ? <OrgShareLinkSection /> : null}
 
       {isAdmin ? <NotificationStatsPanel /> : null}
 

@@ -1,5 +1,6 @@
 export const STORAGE_KEYS = {
   TOKEN: "family-tree-token",
+  ORG_ACCESS_TOKEN: "family-tree-org-access-token",
   THEME: "family-tree-theme",
   BOOK_SETTINGS: "family-tree-book-settings",
   USER_BRANCH: "family-tree-user-branch",

@@ -17,6 +17,7 @@ type TreeFabProps = {
   canUseFeature: (key: StandardFeatureKey) => boolean;
   canManageCeremonyTemplates?: boolean;
   isAdmin?: boolean;
+  isSystem?: boolean;
   onAddPerson: () => void;
   onSearch: () => void;
   onCenterTree: () => void;
@@ -36,6 +37,7 @@ export default function TreeFab({
   canUseFeature,
   canManageCeremonyTemplates = false,
   isAdmin = false,
+  isSystem = false,
   onAddPerson,
   onSearch,
   onCenterTree,
@@ -72,8 +74,9 @@ export default function TreeFab({
         canUseFeature,
         canManageCeremonyTemplates,
         isAdmin,
+        isSystem,
       }),
-    [canManageCeremonyTemplates, canUseFeature, context, isAdmin, pathname],
+    [canManageCeremonyTemplates, canUseFeature, context, isAdmin, isSystem, pathname],
   );
 
   if (actions.length === 0) return null;

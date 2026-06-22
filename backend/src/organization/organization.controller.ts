@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,10 +8,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
+import { JwtOptionalGuard } from '../auth/jwt-optional.guard.js';
 import { MutateGuard } from '../auth/mutate.guard.js';
 import { SystemGuard } from '../auth/system.guard.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
@@ -25,6 +28,27 @@ export class OrganizationController {
   @UseGuards(MutateGuard)
   list(@Request() req: { user: User }) {
     return this.organizationService.listForUser(req.user);
+  }
+
+  @Get('access-link')
+  @UseGuards(MutateGuard)
+  accessLink(
+    @Request() req: { user: User },
+    @Query('organizationId') organizationId?: string,
+  ) {
+    const orgId = organizationId
+      ? Number.parseInt(organizationId, 10)
+      : undefined;
+    if (orgId != null && Number.isNaN(orgId)) {
+      throw new BadRequestException('Invalid organizationId');
+    }
+    return this.organizationService.getAccessLinkForUser(req.user, orgId);
+  }
+
+  @Get('public/:token')
+  @UseGuards(JwtOptionalGuard)
+  resolvePublic(@Param('token') token: string) {
+    return this.organizationService.resolvePublicByToken(token);
   }
 
   @Post()

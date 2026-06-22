@@ -24,6 +24,7 @@ type Props = {
   mode: "system" | "org";
   user: AuthUser;
   currentUserId?: number;
+  deletableRoles?: UserRole[];
   orgName?: string | null;
   organizations: Organization[];
   onUpdate: ReturnType<typeof useUsersAdmin>["update"];
@@ -34,6 +35,7 @@ export default function UserCard({
   mode,
   user,
   currentUserId,
+  deletableRoles,
   orgName,
   organizations,
   onUpdate,
@@ -44,7 +46,12 @@ export default function UserCard({
   const canEdit =
     !isOrgMode || user.role === "STANDARD" || user.id === currentUserId;
   const canDelete =
-    isOrgMode && user.role === "STANDARD" && user.id !== currentUserId;
+    user.id !== currentUserId &&
+    (isOrgMode
+      ? user.role === "STANDARD"
+      : deletableRoles
+        ? deletableRoles.includes(user.role)
+        : user.role !== "SYSTEM");
 
   if (editing) {
     return (
@@ -55,6 +62,7 @@ export default function UserCard({
         <UserForm
           mode={mode}
           initial={user}
+          fixedRole={deletableRoles?.[0]}
           organizations={organizations}
           onCancel={() => setEditing(false)}
           onSubmit={async (data) => {

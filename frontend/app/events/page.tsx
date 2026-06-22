@@ -12,6 +12,7 @@ import type {
   Relationship,
 } from "@/components/types/family-tree-types";
 import { useAuthStore } from "@/store/authStore";
+import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useTheme } from "@/hooks/useTheme";
 import { UI } from "@/lib/constants/ui-strings";
 import { getErrorMessage } from "@/utils/errors";
@@ -24,6 +25,7 @@ const EventsManager = dynamic(
 export default function EventsPage() {
   const { theme } = useTheme();
   const refreshAuth = useAuthStore((state) => state.refresh);
+  const { ready: orgReady } = useRequireOrgAccess();
   const [persons, setPersons] = useState<Person[]>([]);
   const [relationships, setRelationships] = useState<Relationship[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,10 @@ export default function EventsPage() {
   }, [refreshAuth]);
 
   useEffect(() => {
+    if (!orgReady) return;
+
     let cancelled = false;
+    setLoading(true);
 
     Promise.all([api.person.list(), api.relationship.list()])
       .then(([nextPersons, nextRelationships]) => {
@@ -53,9 +58,9 @@ export default function EventsPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [orgReady]);
 
-  if (loading) {
+  if (!orgReady || loading) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
 

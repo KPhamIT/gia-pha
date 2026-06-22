@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { useAuthStore } from "@/store/authStore";
 
 const BOOK_TOUCH_RECOVERY_KEY = "gia-pha:book-touch-recover";
 
@@ -33,7 +34,13 @@ export function useAppNavigation() {
     () => router.push("/notifications"),
     [router],
   );
-  const openUsers = useCallback(() => router.push("/org-users"), [router]);
+  const openUsers = useCallback(() => {
+    if (useAuthStore.getState().isSystem) {
+      router.push("/system/admins");
+      return;
+    }
+    router.push("/org-users");
+  }, [router]);
   const openCeremonyTemplates = useCallback(() => {
     if (!requireAdmin()) return;
     router.push("/ceremonies/templates");

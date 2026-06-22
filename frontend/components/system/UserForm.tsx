@@ -21,6 +21,7 @@ import {
 type Props = {
   mode: "system" | "org";
   initial?: AuthUser;
+  fixedRole?: UserRole;
   organizations: Organization[];
   onCancel: () => void;
   onSubmit: (data: CreateUserInput | UpdateUserInput) => Promise<void>;
@@ -29,6 +30,7 @@ type Props = {
 export default function UserForm({
   mode,
   initial,
+  fixedRole,
   organizations,
   onCancel,
   onSubmit,
@@ -37,16 +39,19 @@ export default function UserForm({
   const [username, setUsername] = useState(initial?.username ?? "");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState(initial?.email ?? "");
-  const [role, setRole] = useState<UserRole>(initial?.role ?? "STANDARD");
+  const [role, setRole] = useState<UserRole>(
+    initial?.role ?? fixedRole ?? "STANDARD",
+  );
   const [organizationId, setOrganizationId] = useState<string>(
     initial?.organizationId != null ? String(initial.organizationId) : "",
   );
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const effectiveRole = isOrgMode && !initial ? "STANDARD" : role;
+  const effectiveRole =
+    fixedRole ?? (isOrgMode && !initial ? "STANDARD" : role);
   const needsOrg = !isOrgMode && effectiveRole === "ADMIN";
-  const showRoleField = !isOrgMode;
+  const showRoleField = !isOrgMode && !fixedRole;
 
   const handleSubmit = async () => {
     const fields = {
@@ -55,7 +60,7 @@ export default function UserForm({
       username,
       password,
       email,
-      role,
+      role: fixedRole ?? role,
       organizationId,
     };
     const error = validateUserForm(fields);

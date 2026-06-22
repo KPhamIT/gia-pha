@@ -59,6 +59,15 @@ export const ACCOUNT_STRINGS = {
   SYSTEM_USER_SAVE: "Lưu thay đổi",
   SYSTEM_USER_NEW_PASSWORD: "Mật khẩu mới (để trống nếu không đổi)",
   SYSTEM_OPEN: "Quản trị hệ thống",
+  SYSTEM_ADMINS_TITLE: "Quản lý admin tổ chức",
+  SYSTEM_ADMINS_SUBTITLE:
+    "Tạo và quản lý tài khoản admin cho từng dòng họ (mỗi tổ chức một admin).",
+  SYSTEM_ADMINS_OPEN: "Quản lý admin",
+  SYSTEM_ADMINS_EMPTY: "Chưa có admin nào. Bấm Tạo để thêm admin cho tổ chức.",
+  SYSTEM_ADMINS_ORG_SECTION: "Tổ chức",
+  SYSTEM_ADMINS_ORG_HINT:
+    "Tạo dòng họ mới trước, sau đó thêm tài khoản admin cho tổ chức đó.",
+  SYSTEM_ADMINS_LIST_SECTION: "Admin tổ chức",
   SYSTEM_FORBIDDEN: "Chỉ tài khoản hệ thống mới truy cập được trang này.",
   SYSTEM_NO_ORG: "— Không thuộc tổ chức —",
   SYSTEM_ROLE_SYSTEM: "Hệ thống",
@@ -141,4 +150,18 @@ export const ACCOUNT_STRINGS = {
   ORG_TAB_USERS: "User",
   ORG_TAB_FEATURES: "Quyền",
   BTN_FEATURES: "Quyền",
+
+  // Org public access link
+  ORG_JOIN_TITLE: "Tham gia dòng họ",
+  ORG_JOIN_SUBTITLE: "Cần liên kết truy cập",
+  ORG_JOIN_HINT:
+    "Hãy mở liên kết do quản trị viên dòng họ gửi. Sau lần đầu, thiết bị sẽ nhớ dòng họ của bạn khi vào lại trang.",
+  ORG_JOIN_INVALID: "Liên kết truy cập không hợp lệ hoặc đã hết hạn.",
+  ORG_SHARE_TITLE: "Liên kết xem gia phả",
+  ORG_SHARE_HINT:
+    "Gửi liên kết này cho người trong dòng họ để họ xem sổ gia phả mà không cần đăng nhập.",
+  ORG_SHARE_COPY: "Sao chép liên kết",
+  ORG_SHARE_COPIED: "Đã sao chép liên kết",
+  ORG_SHARE_COPY_FAILED: "Không sao chép được liên kết",
+  ORG_SHARE_LINK_FOR: (name: string) => `Liên kết truy cập: ${name}`,
 } as const;

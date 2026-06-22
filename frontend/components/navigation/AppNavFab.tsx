@@ -21,7 +21,7 @@ type AppNavFabProps = {
 export default function AppNavFab({ treeActions }: AppNavFabProps) {
   const pathname = usePathname();
   const nav = useAppNavigation();
-  const { canUseFeature, canMutate, isAdmin } = useFeatureAccess();
+  const { canUseFeature, canMutate, isAdmin, isSystem } = useFeatureAccess();
   const context = resolveFabPageContext(pathname, treeActions != null);
   const noop = () => {};
 
@@ -32,6 +32,7 @@ export default function AppNavFab({ treeActions }: AppNavFabProps) {
       canUseFeature={canUseFeature}
       canManageCeremonyTemplates={canMutate}
       isAdmin={isAdmin}
+      isSystem={isSystem}
       onAddPerson={treeActions?.onAddPerson ?? noop}
       onSearch={treeActions?.onSearch ?? noop}
       onCenterTree={treeActions?.onCenterTree ?? noop}

@@ -8,6 +8,7 @@ import TreeFilters from "@/components/family-tree/graph/TreeFilters";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
+import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useUserBranch } from "@/hooks/useUserBranch";
 import { useLayoutConfig } from "@/hooks/useLayoutConfig";
 import { filterTreeData } from "@/utils/filter-tree-data";
@@ -38,6 +39,7 @@ const FamilyTreeGraph = dynamic(
 export default function FamilyTreePage() {
   const { requireFeature, canUseFeature, isSystem } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
+  const { ready: orgReady } = useRequireOrgAccess();
   const {
     treeData,
     loading,
@@ -48,7 +50,7 @@ export default function FamilyTreePage() {
     addRelationship,
     removeRelationship,
     updatePerson,
-  } = useFamilyTree();
+  } = useFamilyTree({ enabled: orgReady });
   const { theme, setTheme } = useTheme();
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
   const {
@@ -120,7 +122,7 @@ export default function FamilyTreePage() {
     [treeData, effectiveBranch, maxGeneration],
   );
 
-  if (loading && !treeData) {
+  if (!orgReady || (loading && !treeData)) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
   if (error && !treeData) {

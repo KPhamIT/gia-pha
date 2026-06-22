@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import BookPageShell from "@/components/ui/BookPageShell";
 import OrganizationSection from "@/components/system/OrganizationSection";
 import UserSection from "@/components/system/UserSection";
@@ -50,7 +51,15 @@ export default function SystemPage() {
       {tab === "orgs" ? (
         <OrganizationSection />
       ) : tab === "users" ? (
-        <UserSection mode="system" />
+        <div className="space-y-3">
+          <Link
+            href="/system/admins"
+            className="inline-flex text-sm font-medium text-amber-800 underline-offset-2 hover:underline"
+          >
+            {UI.SYSTEM_ADMINS_OPEN} →
+          </Link>
+          <UserSection mode="system" />
+        </div>
       ) : (
         <SystemFeaturesSection />
       )}

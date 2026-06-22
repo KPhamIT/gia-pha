@@ -20,7 +20,12 @@ import { clearToken, getToken } from "@/lib/auth/session";
 import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
 
-export function useFamilyTree() {
+type UseFamilyTreeOptions = {
+  enabled?: boolean;
+};
+
+export function useFamilyTree(options: UseFamilyTreeOptions = {}) {
+  const enabled = options.enabled ?? true;
   const refreshAuth = useAuthStore((state) => state.refresh);
   const [treeData, setTreeData] = useState<FamilyTreeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,9 +61,10 @@ export function useFamilyTree() {
   }, [refreshAuth]);
 
   useEffect(() => {
+    if (!enabled) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadFamilyTree();
-  }, [loadFamilyTree]);
+  }, [enabled, loadFamilyTree]);
 
   const addPerson = useCallback(
     (person: Person, relationship?: Relationship) => {

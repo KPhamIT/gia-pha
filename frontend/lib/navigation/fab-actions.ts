@@ -95,7 +95,7 @@ const FAB_ITEM_DEFS: FabItemDef[] = [
     label: UI.BTN_USERS,
     icon: "userPlus",
     contexts: ["tree", "book", "events", "general"],
-    hideWhenPath: "/org-users",
+    hideWhenPath: ["/org-users", "/system/admins"],
   },
   {
     id: "notifications",
@@ -137,6 +137,7 @@ type BuildFabMenuOptions = {
   canUseFeature: (key: StandardFeatureKey) => boolean;
   canManageCeremonyTemplates: boolean;
   isAdmin: boolean;
+  isSystem: boolean;
 };
 
 export function buildFabMenuItems(options: BuildFabMenuOptions): FabMenuItem[] {
@@ -146,6 +147,7 @@ export function buildFabMenuItems(options: BuildFabMenuOptions): FabMenuItem[] {
     canUseFeature,
     canManageCeremonyTemplates,
     isAdmin,
+    isSystem,
   } = options;
 
   return FAB_ITEM_DEFS.filter((def) => {
@@ -154,7 +156,7 @@ export function buildFabMenuItems(options: BuildFabMenuOptions): FabMenuItem[] {
     if (def.feature && !canUseFeature(def.feature)) return false;
     if (def.id === "ceremonyTemplates" && !canManageCeremonyTemplates)
       return false;
-    if (def.id === "users" && !isAdmin) return false;
+    if (def.id === "users" && !isAdmin && !isSystem) return false;
     return true;
   }).map(({ id, label, icon }) => ({ id, label, icon }));
 }

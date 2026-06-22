@@ -6,24 +6,12 @@ import { inputClassName } from "@/components/ui/CollapsibleSection";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { useOrganizations } from "@/hooks/useOrganizations";
+import OrgPublicLinkRow from "./OrgPublicLinkRow";
+import OrganizationCreateForm from "./OrganizationCreateForm";
+import type { OrganizationWithAccess } from "@/lib/api/modules/organizations";
 
 export default function OrganizationSection() {
-  const { items, loading, error, create, update, remove } = useOrganizations();
-  const [name, setName] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const handleCreate = async () => {
-    if (!name.trim()) return;
-    setSaving(true);
-    try {
-      await create(name.trim());
-      setName("");
-    } catch {
-      /* toast shown in useOrganizations */
-    } finally {
-      setSaving(false);
-    }
-  };
+  const { items, loading, error, create, update } = useOrganizations();
 
   if (loading)
     return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
@@ -31,25 +19,11 @@ export default function OrganizationSection() {
 
   return (
     <div className="space-y-4">
-      <div className={`flex gap-2 ${BT.card} p-3`}>
-        <input
-          className={`min-w-0 flex-1 ${inputClassName}`}
-          placeholder={UI.SYSTEM_ORG_NAME}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <IconRoundButton
-          icon="plus"
-          variant="gold"
-          loading={saving}
-          label={UI.BTN_CREATE}
-          onClick={() => void handleCreate()}
-        />
-      </div>
+      <OrganizationCreateForm onCreate={create} />
 
       <ul className={`divide-y divide-amber-100 ${BT.panel}`}>
         {items.map((org) => (
-          <OrgRow key={org.id} org={org} onSave={update} onDelete={remove} />
+          <OrgRow key={org.id} org={org} onSave={update} />
         ))}
       </ul>
     </div>
@@ -59,11 +33,9 @@ export default function OrganizationSection() {
 function OrgRow({
   org,
   onSave,
-  onDelete,
 }: {
-  org: { id: number; name: string };
+  org: OrganizationWithAccess;
   onSave: (id: number, name: string) => Promise<void>;
-  onDelete: (id: number) => Promise<void>;
 }) {
   const [name, setName] = useState(org.name);
   const [saving, setSaving] = useState(false);
@@ -77,15 +49,6 @@ function OrgRow({
       /* toast shown in useOrganizations */
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!window.confirm(UI.SYSTEM_ORG_DELETE_CONFIRM)) return;
-    try {
-      await onDelete(org.id);
-    } catch {
-      /* toast shown in useOrganizations */
     }
   };
 
@@ -105,14 +68,8 @@ function OrgRow({
           label={UI.SAVE}
           onClick={() => void handleSave()}
         />
-        <IconRoundButton
-          icon="trash"
-          variant="danger"
-          iconSize={16}
-          label={UI.DELETE_PERSON}
-          onClick={() => void handleDelete()}
-        />
       </div>
+      <OrgPublicLinkRow name={org.name} publicAccessUrl={org.publicAccessUrl} />
     </li>
   );
 }

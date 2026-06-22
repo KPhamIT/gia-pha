@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import type { Organization } from "@/components/types/family-tree-types";
+import type { OrganizationWithAccess } from "@/lib/api/modules/organizations";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
 import { getErrorMessage } from "@/utils/errors";
 
 export function useOrganizations() {
-  const [items, setItems] = useState<Organization[]>([]);
+  const [items, setItems] = useState<OrganizationWithAccess[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
