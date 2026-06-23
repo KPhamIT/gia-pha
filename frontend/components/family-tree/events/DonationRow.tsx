@@ -8,11 +8,18 @@ import { ET } from "./event-theme";
 
 type Props = {
   donation: DonationDraftItem;
+  /** Hiện nút sửa / xóa (quyền `editEvents`). */
+  canEdit?: boolean;
   onEdit: () => void;
   onRemove: () => void;
 };
 
-export default function DonationRow({ donation, onEdit, onRemove }: Props) {
+export default function DonationRow({
+  donation,
+  canEdit = false,
+  onEdit,
+  onRemove,
+}: Props) {
   const isMoney = donation.kind === "MONEY";
 
   return (
@@ -59,38 +66,40 @@ export default function DonationRow({ donation, onEdit, onRemove }: Props) {
           ) : null}
         </div>
       </div>
-      <div className="flex shrink-0 gap-1">
-        <button
-          type="button"
-          onClick={onEdit}
-          className="grid h-8 w-8 place-items-center rounded-full text-neutral-500 active:bg-neutral-100"
-          aria-label={UI.EVENT_DONATION_EDIT}
-        >
-          <Icon
-            path="edit"
-            size={15}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            pointer={false}
-          />
-        </button>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="grid h-8 w-8 place-items-center rounded-full text-rose-500 active:bg-rose-50"
-          aria-label={UI.DELETE_PERSON}
-        >
-          <Icon
-            path="trash"
-            size={15}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            pointer={false}
-          />
-        </button>
-      </div>
+      {canEdit ? (
+        <div className="flex shrink-0 gap-1">
+          <button
+            type="button"
+            onClick={onEdit}
+            className="grid h-9 w-9 place-items-center rounded-full text-neutral-500 active:bg-neutral-100"
+            aria-label={UI.EVENT_DONATION_EDIT}
+          >
+            <Icon
+              path="edit"
+              size={16}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              pointer={false}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="grid h-9 w-9 place-items-center rounded-full text-rose-500 active:bg-rose-50"
+            aria-label={UI.EVENT_DONATION_DELETE}
+          >
+            <Icon
+              path="trash"
+              size={16}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              pointer={false}
+            />
+          </button>
+        </div>
+      ) : null}
     </li>
   );
 }

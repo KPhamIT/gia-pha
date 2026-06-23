@@ -39,6 +39,7 @@ type UseFamilyTreeGraphOptions = {
   onRelationshipAdded?: (relationship: Relationship) => void;
   onRelationshipRemoved?: (relationshipId: number) => void;
   assertCanMutate?: () => boolean;
+  canEdit?: boolean;
 };
 
 export function useFamilyTreeGraph({
@@ -50,6 +51,7 @@ export function useFamilyTreeGraph({
   onRelationshipAdded,
   onRelationshipRemoved,
   assertCanMutate,
+  canEdit,
 }: UseFamilyTreeGraphOptions) {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -98,11 +100,12 @@ export function useFamilyTreeGraph({
         ...edge,
         data: {
           ...edge.data,
+          canEdit,
           onRelationshipRemoved: (relationshipId: number) =>
             onRelationshipRemovedRef.current?.(relationshipId),
         },
       })),
-    [edges],
+    [edges, canEdit],
   );
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {

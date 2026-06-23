@@ -109,8 +109,8 @@ export default function BookPagesManager({
         <button
           type="button"
           onClick={handleClose}
-          className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10 md:hover:bg-white/10"
-          aria-label={UI.CANCEL}
+          className="grid h-11 w-11 place-items-center rounded-full active:bg-white/10 md:h-10 md:w-10 md:hover:bg-white/10"
+          aria-label={UI.BACK}
         >
           <Icon
             path="arrowLeft"

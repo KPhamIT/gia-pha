@@ -5,12 +5,14 @@ import { UI } from "@/lib/constants/ui-strings";
 import styles from "./GenealogyBook.module.css";
 
 const iconBtn =
-  "grid h-10 w-10 shrink-0 place-items-center rounded-full active:bg-white/10 disabled:opacity-40";
+  "grid h-11 w-11 shrink-0 place-items-center rounded-full active:bg-white/10 disabled:opacity-40 md:h-10 md:w-10";
 
 type Props = {
   pageIndex: number;
   totalLeaves: number;
   standalone?: boolean;
+  /** Hiện nút quản lý trang & đổi kiểu (chỉ khi có quyền sửa sổ). */
+  canEdit?: boolean;
   onClose?: () => void;
   onToggleStyle: () => void;
   onOpenSearch: () => void;
@@ -22,6 +24,7 @@ type Props = {
 export default function BookViewerHeader({
   totalLeaves,
   standalone = false,
+  canEdit = false,
   onClose,
   onToggleStyle,
   onOpenSearch,
@@ -37,8 +40,8 @@ export default function BookViewerHeader({
         <button
           type="button"
           onClick={onClose}
-          className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10"
-          aria-label={standalone ? UI.OPEN_FAMILY_TREE : UI.CANCEL}
+          className="grid h-11 w-11 place-items-center rounded-full active:bg-white/10 md:h-10 md:w-10"
+          aria-label={standalone ? UI.OPEN_FAMILY_TREE : UI.BACK}
         >
           <Icon
             path={standalone ? "center" : "arrowLeft"}
@@ -72,36 +75,40 @@ export default function BookViewerHeader({
             pointer={false}
           />
         </button>
-        <button
-          type="button"
-          onClick={onOpenPages}
-          className={iconBtn}
-          aria-label={UI.BOOK_OPEN_PAGES}
-        >
-          <Icon
-            path="list"
-            size={20}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            pointer={false}
-          />
-        </button>
-        <button
-          type="button"
-          onClick={onToggleStyle}
-          className={iconBtn}
-          aria-label={UI.BOOK_OPEN_STYLE}
-        >
-          <Icon
-            path="settings"
-            size={20}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            pointer={false}
-          />
-        </button>
+        {canEdit ? (
+          <>
+            <button
+              type="button"
+              onClick={onOpenPages}
+              className={iconBtn}
+              aria-label={UI.BOOK_OPEN_PAGES}
+            >
+              <Icon
+                path="list"
+                size={20}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                pointer={false}
+              />
+            </button>
+            <button
+              type="button"
+              onClick={onToggleStyle}
+              className={iconBtn}
+              aria-label={UI.BOOK_OPEN_STYLE}
+            >
+              <Icon
+                path="settings"
+                size={20}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                pointer={false}
+              />
+            </button>
+          </>
+        ) : null}
         <button
           type="button"
           onClick={onPrint}

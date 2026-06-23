@@ -16,6 +16,8 @@ import EventDonationFormSheet from "./EventDonationFormSheet";
 type Props = {
   event: FamilyEvent;
   persons: Person[];
+  /** Cho phép thêm / sửa / xóa & lưu công đức (quyền `editEvents`). */
+  canEdit?: boolean;
   onClose: () => void;
   onEventPatched: (patch: Partial<FamilyEvent>) => void;
 };
@@ -24,6 +26,7 @@ type Props = {
 export default function EventDonationsView({
   event,
   persons,
+  canEdit = false,
   onClose,
   onEventPatched,
 }: Props) {
@@ -56,7 +59,7 @@ export default function EventDonationsView({
     onClose();
   };
 
-  const headerActions = (
+  const headerActions = canEdit ? (
     <div className="flex shrink-0 items-center gap-2">
       <IconRoundButton
         icon="plus"
@@ -76,7 +79,7 @@ export default function EventDonationsView({
         onClick={() => void handleSave()}
       />
     </div>
-  );
+  ) : null;
 
   return (
     <>
@@ -122,6 +125,7 @@ export default function EventDonationsView({
                 <DonationRow
                   key={donation.draftKey}
                   donation={donation}
+                  canEdit={canEdit}
                   onEdit={() => {
                     setEditingKey(donation.draftKey);
                     setFormOpen(true);

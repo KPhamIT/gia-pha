@@ -19,11 +19,11 @@ export default function PersonSearchResultRow({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-slate-100 md:hover:bg-slate-50 ${
-        selected ? "bg-blue-50 ring-1 ring-blue-200" : ""
+      className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left active:bg-amber-100 md:hover:bg-amber-50 ${
+        selected ? "bg-amber-50 ring-1 ring-amber-200" : ""
       }`}
     >
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-sm font-semibold text-blue-700">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-100 text-sm font-semibold text-amber-700">
         {person.fullName.charAt(0)}
       </span>
       <div className="min-w-0">

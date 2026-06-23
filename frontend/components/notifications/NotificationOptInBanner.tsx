@@ -50,26 +50,28 @@ export default function NotificationOptInBanner() {
   };
 
   return (
-    <div
-      className={`${BT.card} mx-3 mb-3 flex flex-col gap-3 p-4 sm:mx-4 sm:flex-row sm:items-center sm:justify-between`}
-    >
-      <p className="text-sm text-neutral-800">{UI.NOTIF_BANNER_TEXT}</p>
-      <div className="flex shrink-0 gap-2">
-        <button
-          type="button"
-          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary}`}
-          disabled={loading}
-          onClick={() => void handleEnable()}
-        >
-          {UI.NOTIF_ENABLE}
-        </button>
-        <button
-          type="button"
-          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}
-          onClick={dismiss}
-        >
-          {UI.NOTIF_LATER}
-        </button>
+    <div className="fixed inset-x-0 bottom-0 z-30 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[5.5rem] pr-3 md:pl-[6.5rem] md:pr-6">
+      <div
+        className={`${BT.card} flex flex-col gap-3 p-4 shadow-xl sm:flex-row sm:items-center sm:justify-between`}
+      >
+        <p className="text-sm text-neutral-800">{UI.NOTIF_BANNER_TEXT}</p>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary}`}
+            disabled={loading}
+            onClick={() => void handleEnable()}
+          >
+            {UI.NOTIF_ENABLE}
+          </button>
+          <button
+            type="button"
+            className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}
+            onClick={dismiss}
+          >
+            {UI.NOTIF_LATER}
+          </button>
+        </div>
       </div>
     </div>
   );

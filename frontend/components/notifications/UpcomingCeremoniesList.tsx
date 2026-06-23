@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import type { UpcomingCeremonyItem } from "@/lib/api/modules/notifications";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
 
 const viewCeremonyBtnClass = `${BT.btnBase} ${BT.btnCompact} ${BT.btnGold} w-full justify-center sm:w-auto`;
 
@@ -19,16 +20,26 @@ export default function UpcomingCeremoniesList({
 }: UpcomingCeremoniesListProps) {
   const [items, setItems] = useState<UpcomingCeremonyItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api.notifications
       .upcoming()
       .then(setItems)
+      .catch(() => setError(UI.ERR_FETCH_DATA))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+    return (
+      <div className="flex justify-center py-10">
+        <LoadingSpinner size={32} label={UI.LOADING} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className={`text-sm ${BT.error}`}>{error}</p>;
   }
 
   if (items.length === 0) {

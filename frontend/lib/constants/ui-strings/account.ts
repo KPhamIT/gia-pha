@@ -29,6 +29,8 @@ export const ACCOUNT_STRINGS = {
   ACCOUNT_ROLE_SYSTEM: "Hệ thống",
   ACCOUNT_ROLE_STANDARD: "Người dùng",
   ACCOUNT_PROVIDER: "Đăng nhập qua",
+  ACCOUNT_PROVIDER_LOCAL: "Tài khoản nội bộ",
+  ACCOUNT_EMAIL: "Email",
   ACCOUNT_ORG: "Dòng họ",
   ACCOUNT_LINKED_MEMBER: "Thành viên liên kết",
   ACCOUNT_NOT_LINKED: "Chưa liên kết",

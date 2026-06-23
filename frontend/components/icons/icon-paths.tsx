@@ -29,7 +29,8 @@ export type IconName =
   | "image"
   | "download"
   | "lock"
-  | "share";
+  | "share"
+  | "refresh";
 
 export interface IconDefinition {
   viewBox: string;

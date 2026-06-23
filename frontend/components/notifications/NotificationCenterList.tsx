@@ -6,22 +6,33 @@ import { api } from "@/lib/api";
 import type { NotificationLogItem } from "@/lib/api/modules/notifications";
 import { UI } from "@/lib/constants/ui-strings";
 import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
+import LoadingSpinner from "@/components/icons/LoadingSpinner";
 import { BT } from "@/lib/constants/ui-theme";
 
 export default function NotificationCenterList() {
   const [items, setItems] = useState<NotificationLogItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     api.notifications
       .list()
       .then(setItems)
+      .catch(() => setError(UI.ERR_FETCH_DATA))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+    return (
+      <div className="flex justify-center py-10">
+        <LoadingSpinner size={32} label={UI.LOADING} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className={`text-sm ${BT.error}`}>{error}</p>;
   }
 
   if (items.length === 0) {
@@ -53,7 +64,7 @@ export default function NotificationCenterList() {
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="font-medium">🔔 {item.title}</p>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
                       item.status === "SENT"
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"

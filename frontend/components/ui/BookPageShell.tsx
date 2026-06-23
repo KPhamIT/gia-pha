@@ -34,11 +34,7 @@ export default function BookPageShell({
       <header
         className={`shrink-0 ${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}
       >
-        <Link
-          href={backHref}
-          className={BT.iconGhost}
-          aria-label={UI.LOGIN_GO_HOME}
-        >
+        <Link href={backHref} className={BT.iconGhost} aria-label={UI.BACK}>
           <Icon
             path="arrowLeft"
             size={22}

@@ -42,8 +42,8 @@ export default function BookStyleControls({
           <button
             type="button"
             onClick={onClose}
-            className="grid h-7 w-7 place-items-center rounded-full text-slate-500 active:bg-slate-100 md:hover:bg-slate-100"
-            aria-label={UI.CANCEL}
+            className="grid h-11 w-11 place-items-center rounded-full text-slate-500 active:bg-slate-100 md:h-9 md:w-9 md:hover:bg-slate-100"
+            aria-label={UI.CLOSE}
           >
             <Icon
               path="close"

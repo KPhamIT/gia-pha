@@ -28,7 +28,7 @@ export default function ConnectRelationshipModal({
       </p>
       <div className="flex items-center gap-3">
         <select
-          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500"
+          className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500"
           value={pendingType}
           onChange={(e) => onTypeChange(e.target.value as RelationshipType)}
         >
@@ -43,7 +43,7 @@ export default function ConnectRelationshipModal({
         <button
           onClick={onConfirm}
           disabled={saving}
-          className="inline-flex min-w-[88px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="inline-flex min-w-[88px] items-center justify-center gap-2 rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800 disabled:opacity-50"
         >
           {saving ? (
             <>

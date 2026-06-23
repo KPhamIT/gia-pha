@@ -14,7 +14,7 @@ export default function PublicFooterLinks() {
   return (
     <nav
       className="mt-8 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-amber-100/80"
-      aria-label="Liên kết trang công khai"
+      aria-label={UI.PUBLIC_FOOTER_NAV_LABEL}
     >
       {LINKS.map((link) => (
         <Link

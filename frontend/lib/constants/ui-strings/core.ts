@@ -72,6 +72,11 @@ export const CORE_STRINGS = {
   SAVING: "Đang lưu...",
   SAVE: "Lưu",
   CANCEL: "Hủy",
+  CLOSE: "Đóng",
+  BACK: "Quay lại",
+
+  // Person generation (đời thứ N)
+  GENERATION_ORDINAL: (n: number) => `Đời thứ ${n}`,
 
   /** Nhãn nút ngắn (icon + text, ≤ ~10 ký tự) */
   BTN_CREATE: "Thêm",

@@ -76,7 +76,7 @@ export default function PersonSearchPanel({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-2xl border border-slate-300 bg-white py-3 pl-10 pr-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
+        className="w-full rounded-2xl border border-amber-300/70 bg-white py-3 pl-10 pr-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none"
       />
     </div>
   );
@@ -84,8 +84,8 @@ export default function PersonSearchPanel({
   return (
     <div className={`flex min-h-0 flex-col ${onCancel ? "flex-1" : ""}`}>
       {selectedPerson && onClear ? (
-        <div className="mb-3 flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-600 text-sm font-semibold text-white">
+        <div className="mb-3 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white">
             {selectedPerson.fullName.charAt(0)}
           </span>
           <div className="min-w-0 flex-1">

@@ -154,5 +154,7 @@ export type CreateChildFormInput = {
 
 export type FamilyTreeEdgeData = {
   relationshipId?: number;
+  /** Cho phép xóa quan hệ (quyền `editTree`). */
+  canEdit?: boolean;
   onRelationshipRemoved?: (relationshipId: number) => void;
 };

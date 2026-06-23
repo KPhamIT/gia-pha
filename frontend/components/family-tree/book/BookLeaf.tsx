@@ -19,6 +19,8 @@ export type BookLeafCtx = {
   details: Record<number, PersonDetail>;
   personCount: number;
   getPersonDraft: (person: Person) => BookPageDraft;
+  /** Cho phép chỉnh sửa bìa / lời nói đầu (quyền `editBook`). */
+  canEdit?: boolean;
 };
 
 /** Renders any leaf by index. `live` enables editing on cover and preface only. */
@@ -34,11 +36,13 @@ export default function BookLeaf({
   const leaf = ctx.leaves[index];
   if (!leaf) return null;
 
+  const editable = Boolean(live) && ctx.canEdit !== false;
+
   if (leaf.kind === "cover") {
     return (
       <BookCoverPage
         settings={ctx.settings}
-        readOnly={!live}
+        readOnly={!editable}
         onChange={ctx.updateSettings}
       />
     );
@@ -51,7 +55,7 @@ export default function BookLeaf({
         <Border>
           <BookPrefacePage
             settings={ctx.settings}
-            readOnly={!live}
+            readOnly={!editable}
             onChange={ctx.updateSettings}
           />
         </Border>

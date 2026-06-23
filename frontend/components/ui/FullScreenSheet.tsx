@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Icon from "@/components/icons/Icon";
 import { LAYOUT } from "@/lib/constants/ui-layout";
+import { UI } from "@/lib/constants/ui-strings";
 import { dismissOverlayFocus } from "@/hooks/useOverlayViewport";
 import OverlayPortal from "./OverlayPortal";
 
@@ -48,8 +49,8 @@ export default function FullScreenSheet({
             <button
               type="button"
               onClick={handleClose}
-              className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors ${backBtnClass}`}
-              aria-label="Đóng"
+              className={`grid h-11 w-11 shrink-0 place-items-center rounded-full transition-colors md:h-10 md:w-10 ${backBtnClass}`}
+              aria-label={UI.CLOSE}
             >
               <Icon
                 path="arrowLeft"

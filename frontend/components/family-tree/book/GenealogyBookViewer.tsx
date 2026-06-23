@@ -33,7 +33,8 @@ export default function GenealogyBookViewer({
   onClose,
   onOpenTree,
 }: GenealogyBookViewerProps) {
-  const { requireFeature } = useFeatureAccess();
+  const { requireFeature, canUseFeature } = useFeatureAccess();
+  const canEdit = canUseFeature("editBook");
   const [showStyle, setShowStyle] = useState(false);
   const [showPages, setShowPages] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -64,8 +65,8 @@ export default function GenealogyBookViewer({
   );
 
   const guardedCtx = useMemo(
-    () => ({ ...ctx, updateSettings: guardedUpdateSettings }),
-    [ctx, guardedUpdateSettings],
+    () => ({ ...ctx, canEdit, updateSettings: guardedUpdateSettings }),
+    [ctx, canEdit, guardedUpdateSettings],
   );
 
   const handleHeaderBack = standalone ? onOpenTree : onClose;
@@ -89,6 +90,7 @@ export default function GenealogyBookViewer({
         pageIndex={book.pageIndex}
         totalLeaves={book.totalLeaves}
         standalone={standalone}
+        canEdit={canEdit}
         onClose={handleHeaderBack}
         onToggleStyle={() => setShowStyle((v) => !v)}
         onOpenSearch={() => setShowSearch(true)}

@@ -45,6 +45,7 @@ export const EVENT_STRINGS = {
   EVENT_DONATION_SECTION: "Danh sách công đức",
   EVENT_DONATION_ADD: "Thêm công đức",
   EVENT_DONATION_EDIT: "Sửa công đức",
+  EVENT_DONATION_DELETE: "Xóa công đức",
   EVENT_DONATION_EMPTY: "Chưa có khoản công đức nào.",
   EVENT_DONATION_NAME_LABEL: "Tên người công đức",
   EVENT_DONATION_NAME_PLACEHOLDER: "VD: Nguyễn Văn A (con cháu phương xa)",

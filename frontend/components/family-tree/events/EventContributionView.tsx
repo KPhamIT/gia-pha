@@ -19,6 +19,8 @@ type Props = {
   event: FamilyEvent;
   persons: Person[];
   relationships: Relationship[];
+  /** Cho phép sửa & lưu danh sách đóng góp (quyền `editEvents`). */
+  canEdit?: boolean;
   onClose: () => void;
   onEventPatched: (patch: Partial<FamilyEvent>) => void;
 };
@@ -27,6 +29,7 @@ export default function EventContributionView({
   event,
   persons,
   relationships,
+  canEdit = false,
   onClose,
   onEventPatched,
 }: Props) {
@@ -51,7 +54,7 @@ export default function EventContributionView({
     onClose();
   };
 
-  const saveButton = (
+  const saveButton = canEdit ? (
     <IconRoundButton
       icon="save"
       variant="gold"
@@ -60,7 +63,7 @@ export default function EventContributionView({
       disabled={!isDirty || saving}
       onClick={() => void handleSave()}
     />
-  );
+  ) : null;
 
   return (
     <FullScreenSheet
@@ -148,6 +151,7 @@ export default function EventContributionView({
                       amountPerPerson={event.amountPerPerson}
                       inputValue={inputValueFor(member.id)}
                       saving={saving}
+                      readOnly={!canEdit}
                       onToggle={() => toggleFullPaid(member.id)}
                       onInputChange={(value) => setInputText(member.id, value)}
                       onCommit={() => commitInput(member.id)}

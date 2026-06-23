@@ -13,6 +13,7 @@ export type PublicProseDocument = {
 
 export const PUBLIC_STRINGS = {
   // Footer
+  PUBLIC_FOOTER_NAV_LABEL: "Liên kết trang công khai",
   PUBLIC_FOOTER_TAGLINE: "Gìn giữ cội nguồn — kết nối con cháu",
   PUBLIC_FOOTER_HOME: "Trang chủ",
   PUBLIC_FOOTER_GUIDE: "Hướng dẫn",

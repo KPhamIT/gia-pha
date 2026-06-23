@@ -52,7 +52,9 @@ export default function FamilyTreeSettings({
         >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-amber-50 md:text-lg"></h2>
+              <h2 className="text-base font-semibold text-amber-50 md:text-lg">
+                {UI.SETTINGS_TITLE}
+              </h2>
               <p className={`mt-1 text-xs ${BT.mutedOnDark}`}>
                 {UI.SETTINGS_XY_HINT}
               </p>

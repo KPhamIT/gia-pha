@@ -24,13 +24,16 @@ export function ModalHeader({
         <p className="text-lg font-semibold text-slate-900">{title}</p>
         <p className="text-base font-semibold text-slate-900">{subtitle}</p>
         {generation != null ? (
-          <p className="text-sm text-slate-500">Đời thứ {generation}</p>
+          <p className="text-sm text-slate-500">
+            {UI.GENERATION_ORDINAL(generation)}
+          </p>
         ) : null}
       </div>
       <button
         type="button"
         onClick={onClose}
-        className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+        aria-label={UI.CLOSE}
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 md:h-10 md:w-10"
       >
         <Icon
           path="close"
@@ -71,6 +74,7 @@ export function ActionOptions({
           type="button"
           onClick={onAddChild}
           disabled={loading}
+          aria-label={UI.ADD_CHILD}
           className={`${iconBtn} bg-green-600 text-white hover:bg-green-700`}
         >
           <Icon
@@ -86,6 +90,7 @@ export function ActionOptions({
           type="button"
           onClick={onDelete}
           disabled={loading}
+          aria-label={UI.DELETE_PERSON}
           className={`${iconBtn} bg-red-50 text-red-600 hover:bg-red-100`}
         >
           <Icon
@@ -128,7 +133,7 @@ export function ConfirmDelete({
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-900">
-            Xóa {node.fullName}?
+            {UI.DELETE_PERSON_CONFIRM(node.fullName)}
           </p>
           <p className="text-xs text-slate-500">{UI.DELETE_IRREVERSIBLE}</p>
         </div>
@@ -138,6 +143,7 @@ export function ConfirmDelete({
           type="button"
           onClick={onBack}
           disabled={loading}
+          aria-label={UI.BACK}
           className={`${iconBtn} border border-slate-300 text-slate-700 hover:bg-slate-50`}
         >
           <Icon
@@ -153,6 +159,7 @@ export function ConfirmDelete({
           type="button"
           onClick={onConfirm}
           disabled={loading}
+          aria-label={UI.DELETE_PERSON}
           className={`${iconBtn} bg-red-600 text-white hover:bg-red-700`}
         >
           <Icon

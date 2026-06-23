@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { LAYOUT } from "@/lib/constants/ui-layout";
+import { UI } from "@/lib/constants/ui-strings";
 import { dismissOverlayFocus } from "@/hooks/useOverlayViewport";
 import OverlayPortal from "./OverlayPortal";
 
@@ -53,7 +54,7 @@ export default function BottomSheet({
             type="button"
             className="absolute inset-0 cursor-default"
             onClick={handleClose}
-            aria-label="Đóng"
+            aria-label={UI.CLOSE}
           />
         ) : null}
         <div className={panelClass}>

@@ -31,8 +31,8 @@ type UserAccountContentProps = {
 const PROVIDER_LABELS: Record<string, string> = {
   google: "Google",
   facebook: "Facebook",
-  local: "Tài khoản nội bộ",
-  credentials: "Tài khoản nội bộ",
+  local: UI.ACCOUNT_PROVIDER_LOCAL,
+  credentials: UI.ACCOUNT_PROVIDER_LOCAL,
 };
 
 export default function UserAccountContent({
@@ -138,7 +138,9 @@ export default function UserAccountContent({
         </div>
 
         <dl className="mt-4 divide-y divide-amber-200/60 text-sm">
-          {user.email ? <InfoRow label="Email" value={user.email} /> : null}
+          {user.email ? (
+            <InfoRow label={UI.ACCOUNT_EMAIL} value={user.email} />
+          ) : null}
           <InfoRow label={UI.ACCOUNT_PROVIDER} value={providerLabel} />
           {orgName ? <InfoRow label={UI.ACCOUNT_ORG} value={orgName} /> : null}
           <InfoRow

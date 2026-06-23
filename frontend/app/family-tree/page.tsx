@@ -37,7 +37,7 @@ const FamilyTreeGraph = dynamic(
 );
 
 export default function FamilyTreePage() {
-  const { requireFeature, canUseFeature, isSystem } = useFeatureAccess();
+  const { requireFeature, canUseFeature } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const { ready: orgReady } = useRequireOrgAccess();
   const {
@@ -144,7 +144,7 @@ export default function FamilyTreePage() {
       className={`min-h-screen overflow-x-hidden ${getPageShellClass(theme)}`}
     >
       <TreeTopBar
-        isSystem={isSystem}
+        canEditSettings={canUseFeature("settings")}
         onOpenSettings={() => setShowSettings(true)}
       />
 
@@ -171,6 +171,7 @@ export default function FamilyTreePage() {
             onRelationshipAdded={addRelationship}
             onRelationshipRemoved={removeRelationship}
             assertCanMutate={() => requireFeature("editTree")}
+            canEdit={canUseFeature("editTree")}
             theme={theme}
           />
         </div>

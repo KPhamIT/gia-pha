@@ -41,7 +41,7 @@ export default function WelcomeBranchSheet({
                 key={option.value}
                 type="button"
                 onClick={() => onSelect(option.value)}
-                className="flex flex-col items-center gap-1 rounded-2xl border-2 border-slate-200 bg-slate-50 px-3 py-4 text-center transition hover:border-blue-400 hover:bg-blue-50 active:scale-95"
+                className="flex flex-col items-center gap-1 rounded-2xl border-2 border-amber-200 bg-amber-50/60 px-3 py-4 text-center transition hover:border-amber-400 hover:bg-amber-50 active:scale-95"
               >
                 <span className="text-sm font-semibold text-slate-900">
                   {option.label}

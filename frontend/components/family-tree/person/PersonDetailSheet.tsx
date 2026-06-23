@@ -78,7 +78,7 @@ export default function PersonDetailSheet({
             >
               {person.generation != null ? (
                 <p className={`text-sm ${BT.mutedOnLight}`}>
-                  Đời thứ {person.generation}
+                  {UI.GENERATION_ORDINAL(person.generation)}
                 </p>
               ) : null}
             </div>

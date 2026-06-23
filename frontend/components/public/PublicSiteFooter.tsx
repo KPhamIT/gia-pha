@@ -18,7 +18,7 @@ export default function PublicSiteFooter() {
   return (
     <footer
       className={`mt-10 border-t border-amber-200/20 pt-6 ${BT.mutedOnDark}`}
-      aria-label="Liên kết trang công khai"
+      aria-label={UI.PUBLIC_FOOTER_NAV_LABEL}
     >
       <p className="text-center text-sm font-medium text-amber-100/90">
         {UI.PUBLIC_FOOTER_TAGLINE}

@@ -66,7 +66,7 @@ export default function FamilyTreeStatus({
           {onLogin ? (
             <button
               onClick={onLogin}
-              className="rounded-lg bg-[#0068ff] px-4 py-2 text-white hover:bg-[#0056d6]"
+              className="rounded-lg bg-amber-700 px-4 py-2 font-medium text-amber-50 hover:bg-amber-800"
             >
               {UI.LOGIN_BUTTON}
             </button>
@@ -74,7 +74,7 @@ export default function FamilyTreeStatus({
           {onRetry ? (
             <button
               onClick={onRetry}
-              className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+              className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
             >
               {UI.RETRY}
             </button>

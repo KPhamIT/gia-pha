@@ -40,8 +40,8 @@ function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
       }}
       className={`px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 ${
         selected
-          ? "border-blue-500 shadow-lg ring-2 ring-blue-200"
-          : "border-slate-200 shadow-sm hover:border-blue-300"
+          ? "border-amber-600 shadow-lg ring-2 ring-amber-300"
+          : "border-slate-200 shadow-sm hover:border-amber-400"
       }`}
     >
       <Handle type="source" position={Position.Top} />

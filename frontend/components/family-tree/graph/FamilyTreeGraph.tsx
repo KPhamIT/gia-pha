@@ -42,6 +42,8 @@ export type FamilyTreeGraphProps = {
   onRelationshipAdded?: (relationship: Relationship) => void;
   onRelationshipRemoved?: (relationshipId: number) => void;
   assertCanMutate?: () => boolean;
+  /** Cho phép kéo nối quan hệ & xóa cạnh (quyền `editTree`). */
+  canEdit?: boolean;
   theme?: ThemeMode;
 };
 
@@ -71,6 +73,7 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         fitView
         fitViewOptions={GRAPH_FIT_VIEW_OPTIONS}
         onlyRenderVisibleElements
+        nodesConnectable={props.canEdit ?? false}
         deleteKeyCode={null}
         onNodeClick={handleNodeClick}
         onNodesChange={graph.onNodesChange}

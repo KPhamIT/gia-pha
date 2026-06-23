@@ -41,6 +41,7 @@ export default function EventsManager({
     loading,
     error,
     saving,
+    reload,
     createEvent,
     updateEvent,
     deleteEvent,
@@ -95,10 +96,20 @@ export default function EventsManager({
 
   const body = loading ? (
     <div className="flex justify-center py-12">
-      <LoadingSpinner size={36} />
+      <LoadingSpinner size={36} label={UI.LOADING} />
     </div>
   ) : error ? (
-    <p className="px-4 py-12 text-center text-sm text-rose-300">{error}</p>
+    <div
+      className={`flex flex-col items-center gap-3 py-12 text-center ${standalone ? "" : ET.pagePad}`}
+    >
+      <p className="text-sm text-amber-100/80">{error}</p>
+      <IconRoundButton
+        icon="refresh"
+        variant="onDark"
+        label={UI.RETRY}
+        onClick={() => void reload()}
+      />
+    </div>
   ) : events.length === 0 ? (
     <p
       className={`py-12 text-center text-sm text-amber-100/70 ${standalone ? "" : ET.pagePad}`}
@@ -158,6 +169,7 @@ export default function EventsManager({
           event={contributionEvent}
           persons={persons}
           relationships={relationships}
+          canEdit={canUseFeature("editEvents")}
           onClose={() => setContributionEvent(null)}
           onEventPatched={(patch) => patchEvent(contributionEvent.id, patch)}
         />
@@ -167,6 +179,7 @@ export default function EventsManager({
         <EventDonationsView
           event={donationEvent}
           persons={persons}
+          canEdit={canUseFeature("editEvents")}
           onClose={() => setDonationEvent(null)}
           onEventPatched={(patch) => patchEvent(donationEvent.id, patch)}
         />
