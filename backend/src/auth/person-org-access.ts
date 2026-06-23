@@ -1,12 +1,13 @@
 import { ForbiddenException } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
-import { assertOrgAccess } from './org-access.js';
+import { assertOrgMemberAccess } from './org-access.js';
 
+/** STANDARD (cùng org + feature) hoặc ADMIN/SYSTEM được sửa person. */
 export function assertPersonOrgAccess(
   user: User,
   person: { organizationId: number },
 ): void {
-  assertOrgAccess(user, person.organizationId);
+  assertOrgMemberAccess(user, person.organizationId);
 }
 
 export function assertSameOrganization(

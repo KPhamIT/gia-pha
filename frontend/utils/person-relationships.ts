@@ -58,6 +58,16 @@ export function formatDate(date?: string | null): string {
   return parsed.toLocaleDateString("vi-VN");
 }
 
+export function formatDateTime(date?: string | null): string {
+  if (!date) return "";
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return "";
+  return parsed.toLocaleString("vi-VN", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
 export function toDateInputValue(date?: string | null): string {
   if (!date) return "";
   const parsed = new Date(date);

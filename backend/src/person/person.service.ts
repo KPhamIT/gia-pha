@@ -11,6 +11,23 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { CreatePersonDto } from './dto/create-person.dto.js';
 import { UpdatePersonDto } from './dto/update-person.dto.js';
 import { UpdatePersonDetailDto } from './dto/update-person-detail.dto.js';
+import {
+  formatPersonEditorName,
+  recordPersonEdit,
+} from './person-edit-audit.js';
+
+const editorSelect = { id: true, username: true, email: true } as const;
+
+const personDetailInclude = {
+  biography: true,
+  graveInfo: true,
+  lastEditedBy: { select: editorSelect },
+  editLogs: {
+    take: 20,
+    orderBy: { editedAt: 'desc' as const },
+    include: { user: { select: editorSelect } },
+  },
+};
 
 @Injectable()
 export class PersonService {
@@ -56,7 +73,11 @@ export class PersonService {
       userId: createPersonDto.userId,
     };
 
-    return this.prisma.person.create({ data });
+    return this.prisma.$transaction(async (tx) => {
+      const person = await tx.person.create({ data });
+      await recordPersonEdit(tx, person.id, user.id);
+      return person;
+    });
   }
 
   async findAll() {
@@ -104,26 +125,30 @@ export class PersonService {
         ? Number(updatePersonDto.generation)
         : undefined;
 
-    return this.prisma.person.update({
-      where: { id },
-      data: {
-        ...updatePersonDto,
-        birthDate: updatePersonDto.birthDate
-          ? new Date(updatePersonDto.birthDate)
-          : updatePersonDto.birthDate,
-        deathDate: updatePersonDto.deathDate
-          ? new Date(updatePersonDto.deathDate)
-          : updatePersonDto.deathDate,
-        generation: Number.isNaN(generation) ? undefined : generation,
-        branch: updatePersonDto.branch,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.person.update({
+        where: { id },
+        data: {
+          ...updatePersonDto,
+          birthDate: updatePersonDto.birthDate
+            ? new Date(updatePersonDto.birthDate)
+            : updatePersonDto.birthDate,
+          deathDate: updatePersonDto.deathDate
+            ? new Date(updatePersonDto.deathDate)
+            : updatePersonDto.deathDate,
+          generation: Number.isNaN(generation) ? undefined : generation,
+          branch: updatePersonDto.branch,
+        },
+      });
+      await recordPersonEdit(tx, id, user.id);
+      return updated;
     });
   }
 
   async getPersonDetail(id: number) {
     const person = await this.prisma.person.findUnique({
       where: { id },
-      include: { biography: true, graveInfo: true },
+      include: personDetailInclude,
     });
     if (!person) {
       throw new NotFoundException('Person not found');
@@ -134,7 +159,25 @@ export class PersonService {
       include: { from: true, to: true },
     });
 
-    return { person, relationships };
+    const { editLogs, lastEditedBy, ...personData } = person;
+
+    return {
+      person: {
+        ...personData,
+        lastEditedBy: lastEditedBy
+          ? {
+              id: lastEditedBy.id,
+              displayName: formatPersonEditorName(lastEditedBy),
+            }
+          : null,
+      },
+      relationships,
+      editHistory: editLogs.map((log) => ({
+        userId: log.userId,
+        displayName: formatPersonEditorName(log.user),
+        editedAt: log.editedAt,
+      })),
+    };
   }
 
   async updatePersonDetail(id: number, dto: UpdatePersonDetailDto, user: User) {
@@ -178,6 +221,8 @@ export class PersonService {
           update: graveInfo,
         });
       }
+
+      await recordPersonEdit(tx, id, user.id);
     });
 
     return this.getPersonDetail(id);

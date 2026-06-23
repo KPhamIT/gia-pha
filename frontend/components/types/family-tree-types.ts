@@ -19,6 +19,8 @@ export type Person = {
   achievements?: string | null;
   userId?: number | null;
   organizationId?: number | null;
+  updatedAt?: string | null;
+  lastEditedBy?: { id: number; displayName: string } | null;
 };
 
 export type Biography = {
@@ -49,9 +51,16 @@ export type PersonRelationships = {
   children: Person[];
 };
 
+export type PersonEditHistoryEntry = {
+  userId: number;
+  displayName: string;
+  editedAt: string;
+};
+
 export type PersonDetail = {
   person: PersonDetailPerson;
   relationships: Relationship[];
+  editHistory?: PersonEditHistoryEntry[];
 };
 
 export type UpdatePersonDetailInput = {

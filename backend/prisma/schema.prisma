@@ -60,6 +60,8 @@ model User {
   settings UserSettings?
   exportPresets ExportPreset[]
   notificationLogs NotificationLog[]
+  personEditLogs    PersonEditLog[]
+  lastEditedPersons Person[]        @relation("PersonLastEditor")
 
   createdAt DateTime @default(now())
 
@@ -292,8 +294,27 @@ model Person {
   notificationLogs NotificationLog[]
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastEditedByUserId Int?
+  lastEditedBy       User? @relation("PersonLastEditor", fields: [lastEditedByUserId], references: [id], onDelete: SetNull)
+
+  editLogs PersonEditLog[]
 
   @@index([organizationId, deceased, deathLunarMonth, deathLunarDay])
+  @@index([lastEditedByUserId])
+}
+
+model PersonEditLog {
+  id       Int      @id @default(autoincrement())
+  personId Int
+  userId   Int
+  editedAt DateTime @default(now())
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([personId, editedAt(sort: Desc)])
 }
 
 enum NotificationStatus {

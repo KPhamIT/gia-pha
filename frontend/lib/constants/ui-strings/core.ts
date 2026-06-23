@@ -77,6 +77,9 @@ export const CORE_STRINGS = {
 
   // Person generation (đời thứ N)
   GENERATION_ORDINAL: (n: number) => `Đời thứ ${n}`,
+  PERSON_LAST_EDITED_BY: (name: string, when: string) =>
+    `Cập nhật lần cuối: ${name} · ${when}`,
+  PERSON_EDIT_HISTORY: "Lịch sử chỉnh sửa",
 
   /** Nhãn nút ngắn (icon + text, ≤ ~10 ký tự) */
   BTN_CREATE: "Thêm",

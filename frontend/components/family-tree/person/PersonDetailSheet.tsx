@@ -14,6 +14,7 @@ import PersonDetailTabBody, {
   type DetailTab,
 } from "./PersonDetailTabs";
 import { PersonDetailFooter } from "./PersonDetailRows";
+import PersonEditAudit from "./PersonEditAudit";
 
 type PersonDetailSheetProps = {
   detail: PersonDetail | null;
@@ -81,6 +82,13 @@ export default function PersonDetailSheet({
                   {UI.GENERATION_ORDINAL(person.generation)}
                 </p>
               ) : null}
+              <div className="mt-2">
+                <PersonEditAudit
+                  updatedAt={person.updatedAt}
+                  lastEditedBy={person.lastEditedBy}
+                  editHistory={detail.editHistory}
+                />
+              </div>
             </div>
 
             <nav

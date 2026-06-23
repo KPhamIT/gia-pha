@@ -17,9 +17,18 @@ const notoSerif = Noto_Serif({
 export const metadata: Metadata = {
   title: UI.PAGE_TITLE,
   description: UI.LANDING_HERO_SUBTITLE,
+  applicationName: UI.PAGE_TITLE,
   metadataBase: process.env.NEXT_PUBLIC_SITE_URL
     ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
     : undefined,
+  appleWebApp: {
+    capable: true,
+    title: UI.PAGE_TITLE,
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: UI.LANDING_HERO_TITLE,
     description: UI.LANDING_HERO_SUBTITLE,
