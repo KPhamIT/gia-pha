@@ -5,6 +5,7 @@ import IconRoundButton from "@/components/ui/IconRoundButton";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import type { StandardFeatureKey } from "@/lib/auth/standard-features";
+import { useAuthStore } from "@/store/authStore";
 import {
   buildFabMenuItems,
   type FabAction,
@@ -51,6 +52,7 @@ export default function TreeFab({
   onOpenAccount,
 }: TreeFabProps) {
   const [open, setOpen] = useState(false);
+  const features = useAuthStore((state) => state.features);
 
   const handlers: Record<FabAction, () => void> = {
     add: onAddPerson,
@@ -76,7 +78,15 @@ export default function TreeFab({
         isAdmin,
         isSystem,
       }),
-    [canManageCeremonyTemplates, canUseFeature, context, isAdmin, isSystem, pathname],
+    [
+      canManageCeremonyTemplates,
+      canUseFeature,
+      context,
+      features,
+      isAdmin,
+      isSystem,
+      pathname,
+    ],
   );
 
   if (actions.length === 0) return null;
@@ -90,15 +100,15 @@ export default function TreeFab({
     <>
       {open ? (
         <div
-          className="fixed inset-0 z-[44]"
+          className="fixed inset-0 z-[90]"
           aria-hidden
           onClick={() => setOpen(false)}
         />
       ) : null}
 
-      <div className="fixed bottom-6 left-4 z-[45] flex flex-col-reverse items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
+      <div className="fixed bottom-6 left-4 z-[100] flex flex-col items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
         {open ? (
-          <div className="flex min-w-[9.25rem] flex-col gap-1">
+          <div className="flex min-w-[9.25rem] flex-col gap-1 rounded-2xl border border-amber-200/70 bg-white/95 p-1.5 shadow-2xl backdrop-blur-sm">
             {actions.map((action) => (
               <IconRoundButton
                 key={action.id}
@@ -108,7 +118,7 @@ export default function TreeFab({
                 size="dense"
                 iconSize={18}
                 labeledAlign="start"
-                className={`w-full shadow-lg ${BT.card}`}
+                className={`w-full shadow-sm ${BT.card}`}
                 onClick={() => handleAction(action)}
               />
             ))}

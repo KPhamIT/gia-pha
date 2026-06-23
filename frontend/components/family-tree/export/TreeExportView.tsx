@@ -12,6 +12,7 @@ type TreeExportViewProps = {
   layoutConfig?: FamilyTreeLayoutConfig;
   nodePositionOverrides?: NodePositionOverrides;
   onClose: () => void;
+  canDownloadExport: boolean;
 };
 
 export default function TreeExportView({
@@ -19,6 +20,7 @@ export default function TreeExportView({
   layoutConfig = {},
   nodePositionOverrides,
   onClose,
+  canDownloadExport,
 }: TreeExportViewProps) {
   const {
     svgRef,
@@ -42,7 +44,12 @@ export default function TreeExportView({
     handleReset,
     handleApplyPreset,
     handleExport,
-  } = useTreeExport({ treeData, layoutConfig, nodePositionOverrides });
+  } = useTreeExport({
+    treeData,
+    layoutConfig,
+    nodePositionOverrides,
+    canDownloadExport,
+  });
 
   return (
     <div className="overlay-viewport z-40 bg-slate-300">
@@ -80,6 +87,7 @@ export default function TreeExportView({
         onReset={handleReset}
         onClose={onClose}
         onExport={handleExport}
+        canDownloadExport={canDownloadExport}
       />
     </div>
   );

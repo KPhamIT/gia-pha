@@ -45,6 +45,7 @@ type Props = {
   exportTreeData: FamilyTreeData | null;
   exportPositionOverrides?: NodePositionOverrides;
   onCloseExport: () => void;
+  canDownloadExport: boolean;
   // Branch welcome
   showWelcome: boolean;
   onSelectBranch: (branch: BranchValue) => void;
@@ -78,6 +79,7 @@ export default function FamilyTreeSheets({
           layoutConfig={p.layoutConfig}
           nodePositionOverrides={p.exportPositionOverrides}
           onClose={p.onCloseExport}
+          canDownloadExport={p.canDownloadExport}
         />
       ) : null}
 

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { UI } from "@/lib/constants/ui-strings";
 import {
   buildEmbeddedFontFace,
@@ -33,13 +34,16 @@ type Args = {
   treeData: FamilyTreeData;
   layoutConfig?: FamilyTreeLayoutConfig;
   nodePositionOverrides?: NodePositionOverrides;
+  canDownloadExport: boolean;
 };
 
 export function useTreeExport({
   treeData,
   layoutConfig = {},
   nodePositionOverrides,
+  canDownloadExport,
 }: Args) {
+  const { requireAdmin } = useFeatureAccess();
   const svgRef = useRef<SVGSVGElement | null>(null);
   const { presets, dataUris, imageSources } = useExportAssets();
   const [settings, setSettings] = useState<TreeExportSettings>(
@@ -143,6 +147,10 @@ export function useTreeExport({
   );
 
   const handleExport = useCallback(async () => {
+    if (!canDownloadExport) {
+      requireAdmin();
+      return;
+    }
     const svg = svgRef.current;
     if (!svg) return;
     setExporting(true);
@@ -171,7 +179,13 @@ export function useTreeExport({
         }
       });
     });
-  }, [geometry.canvasWidth, geometry.canvasHeight, settings.coupletFontId]);
+  }, [
+    canDownloadExport,
+    geometry.canvasWidth,
+    geometry.canvasHeight,
+    requireAdmin,
+    settings.coupletFontId,
+  ]);
 
   return {
     svgRef,

@@ -6,6 +6,8 @@ export const EXPORT_STRINGS = {
     "Kéo các hình trên bản xem trước để di chuyển; kéo góc để phóng to / thu nhỏ.",
   EXPORT_CLOSE: "Đóng",
   EXPORT_DOWNLOAD: "Tải ảnh SVG",
+  EXPORT_DOWNLOAD_ADMIN_ONLY:
+    "Chỉ quản trị viên mới có thể tải ảnh. Bạn vẫn có thể xem và chỉnh bố cục trên màn hình.",
   EXPORT_PREPARING: "Đang chuẩn bị ảnh...",
   EXPORT_LOADING_ASSETS: "Đang tải hình trang trí...",
   EXPORT_SECTION_GENERAL: "Chung",

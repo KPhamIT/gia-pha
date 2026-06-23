@@ -27,6 +27,7 @@ type TreeExportControlsProps = {
   onReset: () => void;
   onClose: () => void;
   onExport: () => void;
+  canDownloadExport: boolean;
 };
 
 export default function TreeExportControls({
@@ -44,6 +45,7 @@ export default function TreeExportControls({
   onReset,
   onClose,
   onExport,
+  canDownloadExport,
 }: TreeExportControlsProps) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:inset-y-0 md:right-4 md:left-auto md:items-center md:px-0 md:py-4">
@@ -87,7 +89,7 @@ export default function TreeExportControls({
         </div>
 
         {collapsed ? null : (
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+          <div className="scroll-list min-h-0 flex-1 overscroll-contain px-4 py-3">
             <p className="mb-2 text-[11px] leading-snug text-slate-400">
               {UI.EXPORT_HINT}
             </p>
@@ -117,26 +119,32 @@ export default function TreeExportControls({
         )}
 
         <div className="shrink-0 border-t border-amber-100 p-3">
-          <button
-            type="button"
-            onClick={onExport}
-            disabled={exporting || !assetsReady}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition active:bg-amber-800 disabled:opacity-50"
-          >
-            <Icon
-              path="download"
-              size={18}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              pointer={false}
-            />
-            {exporting
-              ? UI.EXPORT_PREPARING
-              : !assetsReady
-                ? UI.EXPORT_LOADING_ASSETS
-                : UI.EXPORT_DOWNLOAD}
-          </button>
+          {canDownloadExport ? (
+            <button
+              type="button"
+              onClick={onExport}
+              disabled={exporting || !assetsReady}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition active:bg-amber-800 disabled:opacity-50"
+            >
+              <Icon
+                path="download"
+                size={18}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                pointer={false}
+              />
+              {exporting
+                ? UI.EXPORT_PREPARING
+                : !assetsReady
+                  ? UI.EXPORT_LOADING_ASSETS
+                  : UI.EXPORT_DOWNLOAD}
+            </button>
+          ) : (
+            <p className="text-center text-xs leading-relaxed text-slate-500">
+              {UI.EXPORT_DOWNLOAD_ADMIN_ONLY}
+            </p>
+          )}
         </div>
       </div>
     </div>

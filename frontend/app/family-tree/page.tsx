@@ -37,7 +37,7 @@ const FamilyTreeGraph = dynamic(
 );
 
 export default function FamilyTreePage() {
-  const { requireFeature, canUseFeature } = useFeatureAccess();
+  const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const { ready: orgReady } = useRequireOrgAccess();
   const {
@@ -209,6 +209,7 @@ export default function FamilyTreePage() {
           exportTreeData={filteredTreeData ?? treeData}
           exportPositionOverrides={exportPositionOverrides}
           onCloseExport={handleCloseExport}
+          canDownloadExport={canMutate}
           showWelcome={branchHydrated && userBranch == null}
           onSelectBranch={handleSelectBranch}
         />

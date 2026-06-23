@@ -73,7 +73,7 @@ const FAB_ITEM_DEFS: FabItemDef[] = [
     id: "export",
     label: UI.BTN_EXPORT,
     icon: "image",
-    feature: "export",
+    feature: "tree",
     contexts: ["tree"],
   },
   {

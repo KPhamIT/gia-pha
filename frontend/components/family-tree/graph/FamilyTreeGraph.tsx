@@ -25,6 +25,7 @@ import GraphViewportController, {
 import type { FamilyTreeLayoutConfig } from "./layout";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import { useFamilyTreeGraph } from "@/hooks/useFamilyTreeGraph";
+import { FAMILY_TREE_FLOW_PRO_OPTIONS } from "@/lib/family-tree/react-flow-config";
 import "@xyflow/react/dist/base.css";
 
 const NODE_TYPES = { custom: FamilyTreeNode };
@@ -69,6 +70,7 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         nodeTypes={NODE_TYPES}
         edgeTypes={EDGE_TYPES}
         colorMode={props.theme ?? "light"}
+        proOptions={FAMILY_TREE_FLOW_PRO_OPTIONS}
         minZoom={GRAPH_MIN_ZOOM}
         fitView
         fitViewOptions={GRAPH_FIT_VIEW_OPTIONS}
