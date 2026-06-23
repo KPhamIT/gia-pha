@@ -30,6 +30,16 @@ export default function NotificationSettingsForm({
     return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
   }
 
+  console.log("saving", saving);
+  console.log("osLoading", osLoading);
+  console.log("configured", configured);
+  console.log("permission", permission);
+  console.log("pushOn", pushOn);
+  console.log("statusHint", statusHint);
+  console.log("settings", settings);
+  console.log("onSaved", onSaved);
+  console.log("handleToggle", handleToggle);
+
   return (
     <div className="space-y-6">
       <section className={`overflow-hidden ${BT.card}`}>

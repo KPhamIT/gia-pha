@@ -37,6 +37,19 @@ export const PUBLIC_STRINGS = {
     "Nhận liên kết từ ban quản trị / thư ký dòng họ qua Zalo, Facebook hoặc tin nhắn.",
     "Mở liên kết một lần — thiết bị sẽ nhớ dòng họ; lần sau chỉ cần vào website.",
   ],
+  LANDING_START_TITLE: "Hai cách bắt đầu",
+  LANDING_START_HAS_LINK_TITLE: "Đã có liên kết dòng họ",
+  LANDING_START_HAS_LINK_STEPS: [
+    "Nhận liên kết từ ban quản trị / thư ký qua Zalo, Facebook hoặc tin nhắn.",
+    "Mở liên kết một lần — thiết bị sẽ nhớ dòng họ; lần sau chỉ cần vào website.",
+  ],
+  LANDING_START_HAS_LINK_CTA: "Tham gia dòng họ",
+  LANDING_START_NEW_ORG_TITLE: "Trưởng họ / chưa có liên kết",
+  LANDING_START_NEW_ORG_STEPS: [
+    "Đăng nhập bằng Facebook hoặc tài khoản đã được cấp.",
+    "Đăng ký tên dòng họ — bạn trở thành quản trị viên và chia sẻ liên kết cho con cháu.",
+  ],
+  LANDING_START_NEW_ORG_CTA: "Đăng ký dòng họ mới",
   LANDING_FEATURES_TITLE: "Chức năng chính",
   LANDING_FEATURE_BOOK_TITLE: "Sổ gia phả",
   LANDING_FEATURE_BOOK_DESC:

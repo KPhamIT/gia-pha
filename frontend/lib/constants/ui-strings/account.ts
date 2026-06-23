@@ -159,6 +159,26 @@ export const ACCOUNT_STRINGS = {
   ORG_JOIN_HINT:
     "Hãy mở liên kết do quản trị viên dòng họ gửi. Sau lần đầu, thiết bị sẽ nhớ dòng họ của bạn khi vào lại trang.",
   ORG_JOIN_INVALID: "Liên kết truy cập không hợp lệ hoặc đã hết hạn.",
+  ORG_REGISTER_TITLE: "Đăng ký dòng họ mới",
+  ORG_REGISTER_SUBTITLE: "Dành cho trưởng họ khi chưa có liên kết truy cập",
+  ORG_REGISTER_HINT:
+    "Điền thông tin dòng họ và tài khoản quản trị. Sau khi tạo, bạn sẽ được đăng nhập tự động.",
+  ORG_REGISTER_LOGGED_IN_HINT:
+    "Bạn đã đăng nhập. Chỉ cần đặt tên dòng họ để gắn tài khoản hiện tại làm quản trị viên.",
+  ORG_REGISTER_ADMIN_USERNAME: "Tên đăng nhập quản trị",
+  ORG_REGISTER_ADMIN_USERNAME_PLACEHOLDER: "Ví dụ: truongho.pham",
+  ORG_REGISTER_ADMIN_PASSWORD: "Mật khẩu",
+  ORG_REGISTER_ADMIN_PASSWORD_CONFIRM: "Nhập lại mật khẩu",
+  ORG_REGISTER_ADMIN_EMAIL: "Email (tuỳ chọn)",
+  ORG_REGISTER_PASSWORD_MISMATCH: "Mật khẩu nhập lại không khớp",
+  ORG_REGISTER_NAME_LABEL: "Tên dòng họ / họ tộc",
+  ORG_REGISTER_NAME_PLACEHOLDER: "Ví dụ: Họ Phạm — Chi Tây",
+  ORG_REGISTER_SUBMIT: "Tạo dòng họ",
+  ORG_REGISTER_SUCCESS: "Đã tạo dòng họ. Bạn là quản trị viên.",
+  ORG_REGISTER_LOGIN_REQUIRED: "Vui lòng đăng nhập để đăng ký dòng họ.",
+  ORG_REGISTER_ALREADY_ADMIN: "Bạn đã quản lý một dòng họ.",
+  ORG_REGISTER_GO_MANAGE: "Quản lý dòng họ",
+  ORG_REGISTER_GO_SHARE: "Lấy liên kết chia sẻ",
   ORG_SHARE_TITLE: "Liên kết xem gia phả",
   ORG_SHARE_HINT:
     "Gửi liên kết này cho người trong dòng họ để họ xem sổ gia phả mà không cần đăng nhập.",

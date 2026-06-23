@@ -53,8 +53,6 @@ export class RelationshipService {
       },
     });
 
-    console.log('Created relationship', relationship);
-
     // const reverseType = this.getReverseType(dto.type, fromPerson, toPerson);
 
     // if (reverseType) {

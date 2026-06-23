@@ -16,12 +16,14 @@ import FacebookLoginButton from "@/components/auth/FacebookLoginButton";
 import { inputClassName } from "@/components/ui/CollapsibleSection";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
 import { getErrorMessage } from "@/utils/errors";
+import { getSafeNextPath } from "@/lib/auth/safe-redirect";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const urlError = searchParams.get("error");
+  const nextPath = getSafeNextPath(searchParams.get("next"));
   const showZaloLogin = isZaloLoginEnabled();
 
   const [username, setUsername] = useState("");
@@ -38,14 +40,14 @@ function LoginContent() {
         const result = await api.auth.login(username.trim(), password);
         setToken(result.accessToken);
         await refreshAuth();
-        router.replace("/book");
+        router.replace(nextPath);
       } catch (err) {
         setError(getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT));
       } finally {
         setLoading(false);
       }
     },
-    [password, refreshAuth, router, username],
+    [nextPath, password, refreshAuth, router, username],
   );
 
   return (
@@ -119,7 +121,7 @@ function LoginContent() {
         </p>
 
         <div className="flex flex-col items-center gap-3">
-          <FacebookLoginButton />
+          <FacebookLoginButton redirectTo={nextPath} />
           {showZaloLogin ? (
             <IconRoundButton
               icon="userPlus"

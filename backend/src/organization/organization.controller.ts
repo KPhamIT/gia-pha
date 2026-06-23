@@ -14,9 +14,11 @@ import {
 } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
 import { JwtOptionalGuard } from '../auth/jwt-optional.guard.js';
+import { JwtRequiredGuard } from '../auth/jwt-required.guard.js';
 import { MutateGuard } from '../auth/mutate.guard.js';
 import { SystemGuard } from '../auth/system.guard.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
+import { RegisterOrganizationWithAdminDto } from './dto/register-organization-with-admin.dto.js';
 import { UpdateOrganizationDto } from './dto/update-organization.dto.js';
 import { OrganizationService } from './organization.service.js';
 
@@ -49,6 +51,20 @@ export class OrganizationController {
   @UseGuards(JwtOptionalGuard)
   resolvePublic(@Param('token') token: string) {
     return this.organizationService.resolvePublicByToken(token);
+  }
+
+  @Post('register-with-admin')
+  registerWithAdmin(@Body() body: RegisterOrganizationWithAdminDto) {
+    return this.organizationService.registerWithAdmin(body);
+  }
+
+  @Post('register')
+  @UseGuards(JwtRequiredGuard)
+  register(
+    @Request() req: { user: User },
+    @Body() body: CreateOrganizationDto,
+  ) {
+    return this.organizationService.registerAsAdmin(req.user, body);
   }
 
   @Post()

@@ -13,11 +13,14 @@ import {
   isSystem,
 } from '../auth/org-access.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
+import { RegisterOrganizationWithAdminDto } from './dto/register-organization-with-admin.dto.js';
 import { UpdateOrganizationDto } from './dto/update-organization.dto.js';
 import {
   createOrgAccessToken,
   verifyOrgAccessToken,
 } from './org-access-token.js';
+import { createRootPersonForOrg } from './create-root-person.js';
+import { AuthService } from '../auth/auth.service.js';
 
 export type OrganizationPublicAccess = {
   accessToken: string;
@@ -29,6 +32,7 @@ export class OrganizationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    private readonly authService: AuthService,
   ) {}
 
   async listForUser(user: User) {
@@ -48,10 +52,74 @@ export class OrganizationService {
   }
 
   async create(dto: CreateOrganizationDto) {
-    const org = await this.prisma.organization.create({
-      data: { name: dto.name.trim() },
+    const org = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.organization.create({
+        data: { name: dto.name.trim() },
+      });
+      await createRootPersonForOrg(tx, created.id);
+      return created;
     });
     return this.withPublicAccess(org);
+  }
+
+  /** Logged-in user without an org admin role creates a clan and becomes its admin. */
+  async registerAsAdmin(user: User, dto: CreateOrganizationDto) {
+    if (user.role === UserRole.SYSTEM) {
+      throw new ForbiddenException(
+        'Tài khoản hệ thống dùng bảng quản trị để tạo dòng họ',
+      );
+    }
+    if (user.role === UserRole.ADMIN && user.organizationId != null) {
+      throw new BadRequestException('Bạn đã là quản trị viên của một dòng họ');
+    }
+
+    const name = dto.name.trim();
+    const result = await this.prisma.$transaction(async (tx) => {
+      const org = await tx.organization.create({ data: { name } });
+      await createRootPersonForOrg(tx, org.id);
+      const updatedUser = await tx.user.update({
+        where: { id: user.id },
+        data: { role: UserRole.ADMIN, organizationId: org.id },
+      });
+      return { org, updatedUser };
+    });
+
+    return {
+      ...this.withPublicAccess(result.org),
+      user: {
+        id: result.updatedUser.id,
+        role: result.updatedUser.role,
+        organizationId: result.updatedUser.organizationId,
+      },
+    };
+  }
+
+  /** Public signup: new org + local admin account, returns JWT to sign in immediately. */
+  async registerWithAdmin(dto: RegisterOrganizationWithAdminDto) {
+    const name = dto.name.trim();
+    const username = dto.username.trim();
+    await this.assertUsernameAvailable(username);
+
+    const passwordHash = await AuthService.hashPassword(dto.password);
+    const email = dto.email?.trim() || null;
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const org = await tx.organization.create({ data: { name } });
+      await createRootPersonForOrg(tx, org.id);
+      return tx.user.create({
+        data: {
+          username,
+          email,
+          passwordHash,
+          provider: 'local',
+          providerId: `local:${username}`,
+          role: UserRole.ADMIN,
+          organizationId: org.id,
+        },
+      });
+    });
+
+    return this.authService.buildAuthResponse(user);
   }
 
   async update(id: number, user: User, dto: UpdateOrganizationDto) {
@@ -201,6 +269,17 @@ export class OrganizationService {
     return this.config.get<string>('JWT_SECRET', 'change-me');
   }
 
+  private async assertUsernameAvailable(username: string): Promise<void> {
+    const existing = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ username }, { providerId: `local:${username}` }],
+      },
+    });
+    if (existing) {
+      throw new BadRequestException('Tên đăng nhập đã được sử dụng');
+    }
+  }
+
   private async getOrCreateDefaultOrganization() {
     const richest = await this.prisma.organization.findFirst({
       orderBy: { persons: { _count: 'desc' } },
@@ -215,6 +294,10 @@ export class OrganizationService {
       where: { name: defaultName },
     });
     if (existing) return existing;
-    return this.prisma.organization.create({ data: { name: defaultName } });
+    return this.prisma.$transaction(async (tx) => {
+      const created = await tx.organization.create({ data: { name: defaultName } });
+      await createRootPersonForOrg(tx, created.id);
+      return created;
+    });
   }
 }

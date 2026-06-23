@@ -16,7 +16,13 @@ import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { getErrorMessage } from "@/utils/errors";
 
-export default function FacebookLoginButton() {
+type FacebookLoginButtonProps = {
+  redirectTo?: string;
+};
+
+export default function FacebookLoginButton({
+  redirectTo = "/book",
+}: FacebookLoginButtonProps) {
   const router = useRouter();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const appId = getFacebookAppId();
@@ -39,7 +45,7 @@ export default function FacebookLoginButton() {
       const result = await api.auth.loginWithFacebook(accessToken);
       setToken(result.accessToken);
       await refreshAuth();
-      router.replace("/book");
+      router.replace(redirectTo);
     } catch (err) {
       const message = getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT);
       setError(
@@ -50,7 +56,7 @@ export default function FacebookLoginButton() {
     } finally {
       setLoading(false);
     }
-  }, [router, sdkReady, refreshAuth]);
+  }, [redirectTo, router, sdkReady, refreshAuth]);
 
   if (!appId) {
     return (

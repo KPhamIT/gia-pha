@@ -255,7 +255,7 @@ Nam mô A Di Đà Phật.
         organizationId: organization.id,
         fullName: 'Thủy Tổ',
         gender: 'male',
-        generation: 1,
+        generation: 0,
         branch: 1,
       },
     });

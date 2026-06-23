@@ -1,5 +1,8 @@
 import axiosClient from "@/lib/axiosClient";
-import type { Organization } from "@/components/types/family-tree-types";
+import type {
+  AuthResponse,
+  Organization,
+} from "@/components/types/family-tree-types";
 import { API_ROUTES } from "@/lib/constants/api-routes";
 
 export type OrganizationAccessLink = {
@@ -22,6 +25,23 @@ export const organizations = {
   create: (name: string) =>
     axiosClient
       .post<OrganizationWithAccess>(API_ROUTES.ORGANIZATIONS, { name })
+      .then((r) => r.data),
+  register: (name: string) =>
+    axiosClient
+      .post<
+        OrganizationWithAccess & {
+          user: { id: number; role: string; organizationId: number };
+        }
+      >(API_ROUTES.ORGANIZATION_REGISTER, { name })
+      .then((r) => r.data),
+  registerWithAdmin: (input: {
+    name: string;
+    username: string;
+    password: string;
+    email?: string;
+  }) =>
+    axiosClient
+      .post<AuthResponse>(API_ROUTES.ORGANIZATION_REGISTER_WITH_ADMIN, input)
       .then((r) => r.data),
   update: (id: number, name: string) =>
     axiosClient

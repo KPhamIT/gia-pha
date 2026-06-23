@@ -195,7 +195,7 @@ export class AuthService {
     return this.buildAuthResponse(user);
   }
 
-  private async buildAuthResponse(user: {
+  async buildAuthResponse(user: {
     id: number;
     email: string | null;
     username: string | null;

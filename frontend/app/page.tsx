@@ -29,6 +29,21 @@ const FEATURES = [
   },
 ] as const;
 
+const START_PATHS = [
+  {
+    title: UI.LANDING_START_HAS_LINK_TITLE,
+    steps: UI.LANDING_START_HAS_LINK_STEPS,
+    href: "/join",
+    cta: UI.LANDING_START_HAS_LINK_CTA,
+  },
+  {
+    title: UI.LANDING_START_NEW_ORG_TITLE,
+    steps: UI.LANDING_START_NEW_ORG_STEPS,
+    href: "/tao-dong-ho",
+    cta: UI.LANDING_START_NEW_ORG_CTA,
+  },
+] as const;
+
 export default function LandingPage() {
   return (
     <div className={`flex min-h-dvh flex-col ${BT.shell} ${BT.shellText}`}>
@@ -69,21 +84,26 @@ export default function LandingPage() {
       </header>
 
       <main className={`${LAYOUT.sheetBody} mx-auto w-full max-w-5xl flex-1 ${LAYOUT.pagePad}`}>
-        <section className={`${BT.card} space-y-3 p-4 md:p-6`}>
-          <h2 className="text-lg font-semibold text-neutral-900">
-            {UI.LANDING_HOW_TITLE}
-          </h2>
-          <ol className={`list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}>
-            {UI.LANDING_HOW_STEPS.map((step, index) => (
-              <li key={index}>{step}</li>
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold text-amber-50">{UI.LANDING_START_TITLE}</h2>
+          <div className={LAYOUT.cardGrid}>
+            {START_PATHS.map((path) => (
+              <div key={path.href} className={`${BT.card} flex flex-col p-4 md:p-5`}>
+                <h3 className="text-base font-semibold text-neutral-900">{path.title}</h3>
+                <ol className={`mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}>
+                  {path.steps.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+                <Link
+                  href={path.href}
+                  className="mt-4 inline-flex text-sm font-semibold text-amber-800 underline-offset-2 hover:underline"
+                >
+                  {path.cta} →
+                </Link>
+              </div>
             ))}
-          </ol>
-          <Link
-            href="/join"
-            className={`inline-flex text-sm font-medium text-amber-800 underline-offset-2 hover:underline`}
-          >
-            {UI.ORG_JOIN_TITLE} →
-          </Link>
+          </div>
         </section>
 
         <section className="mt-6 space-y-4">

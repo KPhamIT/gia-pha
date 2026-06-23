@@ -5,6 +5,8 @@ export const API_ROUTES = {
   AUTH_LINK_PERSON: "/auth/me/person",
   AUTH_ZALO: "/auth/zalo",
   ORGANIZATIONS: "/organizations",
+  ORGANIZATION_REGISTER: "/organizations/register",
+  ORGANIZATION_REGISTER_WITH_ADMIN: "/organizations/register-with-admin",
   ORGANIZATION_ACCESS_LINK: "/organizations/access-link",
   ORGANIZATION_PUBLIC: (token: string) =>
     `/organizations/public/${encodeURIComponent(token)}`,
