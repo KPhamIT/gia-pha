@@ -135,7 +135,7 @@ type BuildFabMenuOptions = {
   context: FabPageContext;
   pathname: string;
   canUseFeature: (key: StandardFeatureKey) => boolean;
-  canManageCeremonyTemplates: boolean;
+  canViewCeremonyTemplates: boolean;
   isAdmin: boolean;
   isSystem: boolean;
 };
@@ -145,7 +145,7 @@ export function buildFabMenuItems(options: BuildFabMenuOptions): FabMenuItem[] {
     context,
     pathname,
     canUseFeature,
-    canManageCeremonyTemplates,
+    canViewCeremonyTemplates,
     isAdmin,
     isSystem,
   } = options;
@@ -154,7 +154,7 @@ export function buildFabMenuItems(options: BuildFabMenuOptions): FabMenuItem[] {
     if (!def.contexts.includes(context)) return false;
     if (isHiddenOnPath(def, pathname)) return false;
     if (def.feature && !canUseFeature(def.feature)) return false;
-    if (def.id === "ceremonyTemplates" && !canManageCeremonyTemplates)
+    if (def.id === "ceremonyTemplates" && !canViewCeremonyTemplates)
       return false;
     if (def.id === "users" && !isAdmin && !isSystem) return false;
     return true;

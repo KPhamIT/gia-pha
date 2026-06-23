@@ -8,7 +8,7 @@ import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
 
 type Props = {
   template: CeremonyTemplate;
-  isAdmin: boolean;
+  canEdit: boolean;
   onPrint: () => void;
   onSetDefault: () => void;
   onDuplicate: () => void;
@@ -18,7 +18,7 @@ type Props = {
 
 export default function CeremonyTemplateCard({
   template,
-  isAdmin,
+  canEdit,
   onPrint,
   onSetDefault,
   onDuplicate,
@@ -69,7 +69,7 @@ export default function CeremonyTemplateCard({
           />
           {UI.CEREMONY_PRINT_OPEN}
         </button>
-        {isAdmin ? (
+        {canEdit ? (
           <>
             {!template.isDefault ? (
               <IconRoundButton

@@ -29,13 +29,11 @@ export default function AccountQuickActions({
         {isAdmin ? (
           <MenuRow href="/org-users" icon="userPlus" label={UI.BTN_USERS} />
         ) : null}
-        {isAdmin ? (
-          <MenuRow
-            href="/ceremonies/templates"
-            icon="book"
-            label={UI.CEREMONY_TEMPLATES_OPEN}
-          />
-        ) : null}
+        <MenuRow
+          href="/ceremonies/templates"
+          icon="book"
+          label={UI.CEREMONY_TEMPLATES_OPEN}
+        />
         <MenuRow
           href="/settings/notifications"
           icon="settings"

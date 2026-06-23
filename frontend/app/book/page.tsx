@@ -29,7 +29,9 @@ export default function BookPage() {
   const nav = useAppNavigation();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const { ready: orgReady } = useRequireOrgAccess();
-  const { treeData, loading, error, reload } = useFamilyTree({ enabled: orgReady });
+  const { treeData, loading, error, reload } = useFamilyTree({
+    enabled: orgReady,
+  });
 
   const resetBookOverlays = useCallback(() => {
     syncOverlayViewport();

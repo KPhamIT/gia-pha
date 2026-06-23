@@ -48,10 +48,10 @@ export default function RootLayout({
       className={`${notoSerif.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <Script id="theme-init" strategy="beforeInteractive">
-        {themeInitScript()}
-      </Script>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript()}
+        </Script>
         {children}
         <AppToaster />
       </body>

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client.js';
+import { Prisma, UserRole, type User } from '../../generated/prisma/client.js';
 import { OrganizationService } from '../organization/organization.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+
+const EMPTY_SETTINGS: Record<string, unknown> = {};
 
 @Injectable()
 export class SettingsService {
@@ -9,6 +11,23 @@ export class SettingsService {
     private readonly prisma: PrismaService,
     private readonly organizationService: OrganizationService,
   ) {}
+
+  async findForUser(
+    user: Pick<User, 'id' | 'organizationId' | 'role'>,
+  ): Promise<Record<string, unknown>> {
+    const own = await this.findByUserId(user.id);
+    if (this.hasStoredSettings(own)) return own;
+
+    if (user.organizationId != null) {
+      const admin = await this.findOrgAdminSettings(
+        user.organizationId,
+        user.id,
+      );
+      if (admin !== null) return admin;
+    }
+
+    return EMPTY_SETTINGS;
+  }
 
   async findByUserId(userId: number): Promise<Record<string, unknown> | null> {
     const record = await this.prisma.userSettings.findUnique({
@@ -18,9 +37,34 @@ export class SettingsService {
     return record.data as Record<string, unknown>;
   }
 
+  private async findOrgAdminSettings(
+    organizationId: number,
+    excludeUserId?: number,
+  ): Promise<Record<string, unknown> | null> {
+    const where: Prisma.UserWhereInput = {
+      organizationId,
+      role: UserRole.ADMIN,
+      settings: { isNot: null },
+    };
+    if (excludeUserId != null) {
+      where.id = { not: excludeUserId };
+    }
+
+    const admin = await this.prisma.user.findFirst({
+      where,
+      include: { settings: true },
+      orderBy: { id: 'asc' },
+    });
+
+    if (!admin?.settings) return null;
+    const data = admin.settings.data as Record<string, unknown>;
+    if (!this.hasStoredSettings(data)) return null;
+    return data;
+  }
+
   async findForGuest(
     orgAccessToken?: string,
-  ): Promise<Record<string, unknown> | null> {
+  ): Promise<Record<string, unknown>> {
     const organizationId =
       await this.organizationService.resolveDefaultOrganizationId(
         null,
@@ -28,14 +72,16 @@ export class SettingsService {
         orgAccessToken,
       );
 
-    const user = await this.prisma.user.findFirst({
-      where: { organizationId },
-      orderBy: { id: 'asc' },
-      include: { settings: true },
-    });
+    const admin = await this.findOrgAdminSettings(organizationId);
+    if (admin !== null) return admin;
 
-    if (!user?.settings) return null;
-    return user.settings.data as Record<string, unknown>;
+    return EMPTY_SETTINGS;
+  }
+
+  private hasStoredSettings(
+    data: Record<string, unknown> | null,
+  ): data is Record<string, unknown> {
+    return data !== null && Object.keys(data).length > 0;
   }
 
   async upsert(

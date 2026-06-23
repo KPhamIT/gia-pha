@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { useAuthStore } from "@/store/authStore";
 
 const BOOK_TOUCH_RECOVERY_KEY = "gia-pha:book-touch-recover";
@@ -25,7 +24,6 @@ export function consumeBookTouchRecovery(): boolean {
 export function useAppNavigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { requireAdmin } = useFeatureAccess();
 
   const openBook = useCallback(() => router.push("/book"), [router]);
   const openTree = useCallback(() => router.push("/family-tree"), [router]);
@@ -42,9 +40,8 @@ export function useAppNavigation() {
     router.push("/org-users");
   }, [router]);
   const openCeremonyTemplates = useCallback(() => {
-    if (!requireAdmin()) return;
     router.push("/ceremonies/templates");
-  }, [requireAdmin, router]);
+  }, [router]);
 
   const openAccount = useCallback(() => {
     if (pathname === "/book") markBookTouchRecovery();

@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth/standard-features";
 import { api } from "@/lib/api";
 import { clearToken, getToken } from "@/lib/auth/session";
+import { syncOrgAccessTokenFromAuth } from "@/lib/org/org-access";
 import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache";
 
 type AuthStore = {
@@ -85,6 +86,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         const me = await api.auth.me();
         const user = me.user ?? null;
         const nextUserId = user?.id ?? null;
+        syncOrgAccessTokenFromAuth(me.orgAccessToken);
         if (previousUserId !== nextUserId) {
           invalidateUserSettingsCache();
         }

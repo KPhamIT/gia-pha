@@ -5,10 +5,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '../../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { createOrgAccessToken } from '../organization/org-access-token.js';
 import { assertPersonOrgAccess } from './person-org-access.js';
 import { canMutate } from './org-access.js';
 import { StandardFeaturesService } from '../standard-features/standard-features.service.js';
@@ -41,6 +43,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly standardFeaturesService: StandardFeaturesService,
+    private readonly config: ConfigService,
   ) {}
 
   async loginWithFacebook(accessToken: string) {
@@ -167,7 +170,14 @@ export class AuthService {
       user: this.serializeUser(user),
       person,
       features,
+      orgAccessToken: this.orgAccessTokenForUser(user),
     };
+  }
+
+  orgAccessTokenForUser(user: { organizationId: number | null }): string | null {
+    if (user.organizationId == null) return null;
+    const secret = this.config.get<string>('JWT_SECRET', 'change-me');
+    return createOrgAccessToken(user.organizationId, secret);
   }
 
   private async completeProviderLogin(profile: ProviderProfile) {

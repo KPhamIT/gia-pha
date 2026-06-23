@@ -10,6 +10,14 @@ export function setStoredOrgAccessToken(token: string): void {
   localStorage.setItem(STORAGE_KEYS.ORG_ACCESS_TOKEN, token);
 }
 
+/** Gắn org token khi user đăng nhập (theo `organizationId` từ auth). */
+export function syncOrgAccessTokenFromAuth(
+  orgAccessToken?: string | null,
+): void {
+  if (!orgAccessToken) return;
+  setStoredOrgAccessToken(orgAccessToken);
+}
+
 export function clearStoredOrgAccessToken(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEYS.ORG_ACCESS_TOKEN);

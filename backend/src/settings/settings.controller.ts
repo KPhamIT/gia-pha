@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Put, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Put,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
 import { JwtOptionalGuard } from '../auth/jwt-optional.guard.js';
 import { FeatureMutateGuard } from '../standard-features/feature-mutate.guard.js';
@@ -20,7 +28,7 @@ export class SettingsController {
     @Query('orgToken') orgToken?: string,
   ) {
     if (req.user?.id) {
-      return this.settingsService.findByUserId(req.user.id);
+      return this.settingsService.findForUser(req.user);
     }
 
     if (!orgToken) return null;

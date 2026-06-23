@@ -301,6 +301,18 @@ Nam mô A Di Đà Phật.
   });
   console.log(`Seeded admin user (username: admin) → org ${primaryOrg.name}`);
 
+  const adminUser = await prisma.user.findUnique({
+    where: { providerId: 'local:admin' },
+  });
+  if (adminUser) {
+    await prisma.userSettings.upsert({
+      where: { userId: adminUser.id },
+      create: { userId: adminUser.id, data: {} },
+      update: {},
+    });
+    console.log('Seeded default user settings for admin');
+  }
+
   const systemPassword = process.env.SYSTEM_PASSWORD ?? 'system123';
   const systemHash = await bcrypt.hash(systemPassword, 10);
   await prisma.user.upsert({

@@ -11,6 +11,7 @@ type MeResponse = {
   user?: AuthUser | null;
   person?: Person | null;
   features?: import("@/lib/auth/standard-features").StandardFeatures;
+  orgAccessToken?: string | null;
 };
 
 export const auth = {

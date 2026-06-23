@@ -14,7 +14,6 @@ import { AuthService } from './auth.service.js';
 import { FacebookLoginDto } from './dto/facebook-login.dto.js';
 import { PasswordLoginDto } from './dto/password-login.dto.js';
 import { LinkPersonDto } from './dto/link-person.dto.js';
-import { PersonService } from '../person/person.service.js';
 import {
   ZALO_OAUTH_COOKIE,
   ZALO_OAUTH_COOKIE_MAX_AGE_MS,
@@ -23,7 +22,6 @@ import {
 import { JwtRequiredGuard } from './jwt-required.guard.js';
 import { JwtOptionalGuard } from './jwt-optional.guard.js';
 import type { User } from '../../generated/prisma/client.js';
-import { StandardFeaturesService } from '../standard-features/standard-features.service.js';
 
 type RequestUser = User;
 
@@ -31,9 +29,7 @@ type RequestUser = User;
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly personService: PersonService,
     private readonly zaloOAuthService: ZaloOAuthService,
-    private readonly standardFeaturesService: StandardFeaturesService,
   ) {}
 
   @Post('login')
@@ -107,26 +103,10 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtOptionalGuard)
   async me(@Request() req: { user?: RequestUser | null }) {
-    const user = req.user;
-    if (!user) {
+    if (!req.user) {
       return { user: null, person: null };
     }
-
-    const person = await this.personService.findByUserId(user.id);
-    const features = await this.standardFeaturesService.resolveForUser(user);
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        provider: user.provider,
-        providerId: user.providerId,
-        role: user.role,
-        organizationId: user.organizationId,
-      },
-      person,
-      features,
-    };
+    return this.authService.buildMeResponse(req.user);
   }
 
   @Patch('me/person')

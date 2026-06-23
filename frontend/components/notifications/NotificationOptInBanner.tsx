@@ -5,6 +5,7 @@ import { useOneSignal } from "@/hooks/useOneSignal";
 import { api } from "@/lib/api";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
+import { useAuthStore } from "@/store/authStore";
 
 const DISMISS_KEY = "gia-pha:notif-banner-dismissed";
 
@@ -12,11 +13,13 @@ export default function NotificationOptInBanner() {
   const { configured, hasPermission, enableNotifications } = useOneSignal({
     lazy: true,
   });
+  const authLoaded = useAuthStore((s) => s.loaded);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!configured) return;
+    if (!configured || !authLoaded || !isLoggedIn) return;
     if (typeof window === "undefined") return;
     if (window.localStorage.getItem(DISMISS_KEY) === "1") return;
 
@@ -30,7 +33,7 @@ export default function NotificationOptInBanner() {
       .catch(() => {
         // ignore — user may not be logged in
       });
-  }, [configured]);
+  }, [authLoaded, configured, isLoggedIn]);
 
   if (!visible || hasPermission) return null;
 

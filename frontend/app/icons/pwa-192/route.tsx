@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
+const CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 function PwaIcon({ fontSize }: { fontSize: number }) {
   return (
@@ -26,5 +27,8 @@ export async function GET() {
   return new ImageResponse(<PwaIcon fontSize={104} />, {
     width: 192,
     height: 192,
+    headers: {
+      "Cache-Control": CACHE_CONTROL,
+    },
   });
 }

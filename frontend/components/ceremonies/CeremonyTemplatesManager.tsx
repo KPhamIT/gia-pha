@@ -23,7 +23,7 @@ import TemplateEditorSheet from "./TemplateEditorSheet";
 import CeremonyPrintView from "./CeremonyPrintView";
 
 export default function CeremonyTemplatesManager() {
-  const isAdmin = useAuthStore((state) => state.isAdmin);
+  const canMutate = useAuthStore((state) => state.canMutate);
   const [templates, setTemplates] = useState<CeremonyTemplate[]>([]);
   const [variables, setVariables] = useState<CeremonyTemplateVariable[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
@@ -119,14 +119,14 @@ export default function CeremonyTemplatesManager() {
 
   return (
     <div className="space-y-4 pb-4">
-      <TemplatesToolbar isAdmin={isAdmin} onCreate={openCreate} />
+      <TemplatesToolbar canEdit={canMutate} onCreate={openCreate} />
 
       {sorted.length === 0 ? (
         <div className={`${BT.card} p-6 text-center`}>
           <p className={`text-sm ${BT.mutedOnLight}`}>
             {UI.CEREMONY_TEMPLATE_EMPTY}
           </p>
-          {isAdmin ? (
+          {canMutate ? (
             <button
               type="button"
               className={`mt-4 ${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mx-auto`}
@@ -150,7 +150,7 @@ export default function CeremonyTemplatesManager() {
             <CeremonyTemplateCard
               key={template.id}
               template={template}
-              isAdmin={isAdmin}
+              canEdit={canMutate}
               onPrint={() => setPrintTemplate(template)}
               onSetDefault={() => void handleSetDefault(template.id)}
               onDuplicate={() => openDuplicate(template)}

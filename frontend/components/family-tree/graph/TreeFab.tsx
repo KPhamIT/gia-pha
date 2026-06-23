@@ -16,7 +16,7 @@ type TreeFabProps = {
   context: FabPageContext;
   pathname: string;
   canUseFeature: (key: StandardFeatureKey) => boolean;
-  canManageCeremonyTemplates?: boolean;
+  canViewCeremonyTemplates?: boolean;
   isAdmin?: boolean;
   isSystem?: boolean;
   onAddPerson: () => void;
@@ -36,7 +36,7 @@ export default function TreeFab({
   context,
   pathname,
   canUseFeature,
-  canManageCeremonyTemplates = false,
+  canViewCeremonyTemplates = false,
   isAdmin = false,
   isSystem = false,
   onAddPerson,
@@ -74,12 +74,12 @@ export default function TreeFab({
         context,
         pathname,
         canUseFeature,
-        canManageCeremonyTemplates,
+        canViewCeremonyTemplates,
         isAdmin,
         isSystem,
       }),
     [
-      canManageCeremonyTemplates,
+      canViewCeremonyTemplates,
       canUseFeature,
       context,
       features,

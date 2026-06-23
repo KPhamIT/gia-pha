@@ -4,11 +4,18 @@ import {
   fetchUserSettings,
   patchUserSettingsCache,
 } from "@/lib/settings/user-settings-cache";
+import type { UserSettings } from "@/lib/api/modules/settings";
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
-import { UI } from "@/lib/constants/ui-strings";
-import { DEFAULT_BORDER_STYLE_ID, isBorderStyleId } from "./page-border-styles";
-import { DEFAULT_FORM_STYLE_ID, isFormStyleId } from "./page-form-styles";
+import { DEFAULT_USER_SETTINGS } from "@/lib/settings/default-user-settings";
 import { DEFAULT_CALLIGRAPHY_FONT_ID } from "./calligraphy-fonts";
+import {
+  DEFAULT_BORDER_STYLE_ID,
+  isBorderStyleId,
+} from "./page-border-styles";
+import {
+  DEFAULT_FORM_STYLE_ID,
+  isFormStyleId,
+} from "./page-form-styles";
 import { type BookPageConfig, normalizePageConfig } from "./book-page-config";
 
 /** Key under which book settings live inside the user's settings JSON blob. */
@@ -32,30 +39,53 @@ export type BookSettings = {
   pageConfig: BookPageConfig;
 };
 
-export function defaultBookSettings(): BookSettings {
+function buildDefaultBookSettings(): BookSettings {
+  const raw = DEFAULT_USER_SETTINGS.book as Partial<BookSettings>;
+  const borderStyleId =
+    raw.borderStyleId && isBorderStyleId(raw.borderStyleId)
+      ? raw.borderStyleId
+      : DEFAULT_BORDER_STYLE_ID;
+  const formStyleId =
+    raw.formStyleId && isFormStyleId(raw.formStyleId)
+      ? raw.formStyleId
+      : DEFAULT_FORM_STYLE_ID;
+
   return {
-    coverTitle: UI.BOOK_COVER_DEFAULT_TITLE,
-    coverSubtitle: UI.BOOK_COVER_DEFAULT_SUBTITLE,
-    coverLineage: UI.BOOK_COVER_DEFAULT_LINEAGE,
-    coverFontId: DEFAULT_CALLIGRAPHY_FONT_ID,
-    prefaceTitle: UI.BOOK_PREFACE_TITLE_DEFAULT,
-    prefaceBody: "",
-    prefaceSignature: "",
-    borderStyleId: DEFAULT_BORDER_STYLE_ID,
-    formStyleId: DEFAULT_FORM_STYLE_ID,
-    pageConfig: {},
+    coverTitle: raw.coverTitle ?? "",
+    coverSubtitle: raw.coverSubtitle ?? "",
+    coverLineage: raw.coverLineage ?? "",
+    coverFontId: raw.coverFontId ?? DEFAULT_CALLIGRAPHY_FONT_ID,
+    prefaceTitle: raw.prefaceTitle ?? "",
+    prefaceBody: raw.prefaceBody ?? "",
+    prefaceSignature: raw.prefaceSignature ?? "",
+    borderStyleId,
+    formStyleId,
+    pageConfig: normalizePageConfig(raw.pageConfig),
   };
+}
+
+export function defaultBookSettings(): BookSettings {
+  return buildDefaultBookSettings();
+}
+
+export function bookSettingsFromUserSettings(
+  all: UserSettings | null | undefined,
+): BookSettings | null {
+  const book = all?.[BOOK_SETTINGS_KEY];
+  if (!book || typeof book !== "object") return null;
+  return normalizeBookSettings(book as Partial<BookSettings>);
 }
 
 /** Merge an untrusted partial onto defaults and drop stale style ids. */
 export function normalizeBookSettings(
   partial: Partial<BookSettings> | null | undefined,
+  base?: BookSettings,
 ): BookSettings {
-  const base = defaultBookSettings();
-  const merged: BookSettings = { ...base, ...(partial ?? {}) };
+  const defaults = base ?? buildDefaultBookSettings();
+  const merged: BookSettings = { ...defaults, ...(partial ?? {}) };
   if (!isBorderStyleId(merged.borderStyleId))
-    merged.borderStyleId = base.borderStyleId;
-  if (!isFormStyleId(merged.formStyleId)) merged.formStyleId = base.formStyleId;
+    merged.borderStyleId = defaults.borderStyleId;
+  if (!isFormStyleId(merged.formStyleId)) merged.formStyleId = defaults.formStyleId;
   merged.pageConfig = normalizePageConfig(merged.pageConfig);
   return merged;
 }
@@ -111,9 +141,7 @@ export function saveBookSettings(
 /** Reads book settings stored under the `book` key of the user settings blob. */
 export async function fetchRemoteBookSettings(): Promise<BookSettings | null> {
   const all = await fetchUserSettings();
-  const book = all?.[BOOK_SETTINGS_KEY];
-  if (!book || typeof book !== "object") return null;
-  return normalizeBookSettings(book as Partial<BookSettings>);
+  return bookSettingsFromUserSettings(all);
 }
 
 /** Persists book settings to the backend without touching other settings keys. */

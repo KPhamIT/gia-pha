@@ -129,6 +129,7 @@ export type AuthResponse = {
   accessToken: string;
   user: AuthUser;
   person: Person | null;
+  orgAccessToken?: string | null;
 };
 
 export type ThemeMode = "light" | "dark";
