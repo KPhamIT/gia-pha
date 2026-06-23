@@ -94,24 +94,30 @@ export default function PersonDetailFields({
   saving,
   onChange,
 }: PersonDetailFieldsProps) {
+  const isDeceased = draft.deceased === "1";
+
   return (
     <>
-      {PERSON_FORM_SECTIONS.map((section) => (
+      {PERSON_FORM_SECTIONS.filter(
+        (section) => !section.deceasedOnly || isDeceased,
+      ).map((section) => (
         <CollapsibleSection
           key={section.title}
           title={section.title}
           defaultOpen={section.defaultOpen}
         >
-          {section.fields.map((field) => (
-            <FormField key={field.key} label={field.label}>
-              <FieldControl
-                field={field}
-                value={draft[field.key]}
-                disabled={saving}
-                onChange={(value) => onChange(field.key, value)}
-              />
-            </FormField>
-          ))}
+          {section.fields
+            .filter((field) => !field.deceasedOnly || isDeceased)
+            .map((field) => (
+              <FormField key={field.key} label={field.label}>
+                <FieldControl
+                  field={field}
+                  value={draft[field.key]}
+                  disabled={saving}
+                  onChange={(value) => onChange(field.key, value)}
+                />
+              </FormField>
+            ))}
         </CollapsibleSection>
       ))}
     </>

@@ -191,6 +191,8 @@ export class PersonService {
         ? Number(personFields.generation)
         : undefined;
 
+    const clearingDeceased = dto.deceased === false;
+
     await this.prisma.$transaction(async (tx) => {
       await tx.person.update({
         where: { id },
@@ -199,9 +201,13 @@ export class PersonService {
           birthDate: personFields.birthDate
             ? new Date(personFields.birthDate)
             : personFields.birthDate,
-          deathDate: personFields.deathDate
-            ? new Date(personFields.deathDate)
-            : personFields.deathDate,
+          deathDate: clearingDeceased
+            ? null
+            : personFields.deathDate
+              ? new Date(personFields.deathDate)
+              : personFields.deathDate,
+          deathLunarDay: clearingDeceased ? null : personFields.deathLunarDay,
+          deathLunarMonth: clearingDeceased ? null : personFields.deathLunarMonth,
           generation: Number.isNaN(generation) ? undefined : generation,
         },
       });
@@ -214,7 +220,9 @@ export class PersonService {
         });
       }
 
-      if (graveInfo !== undefined) {
+      if (clearingDeceased) {
+        await tx.graveInfo.deleteMany({ where: { personId: id } });
+      } else if (graveInfo !== undefined) {
         await tx.graveInfo.upsert({
           where: { personId: id },
           create: { personId: id, ...graveInfo },

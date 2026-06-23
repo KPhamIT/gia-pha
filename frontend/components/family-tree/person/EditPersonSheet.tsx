@@ -13,6 +13,7 @@ import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import {
   buildPersonDraft,
+  clearDeceasedDraftFields,
   draftToUpdateInput,
   type PersonDraft,
 } from "@/utils/person-detail-form";
@@ -43,7 +44,12 @@ export default function EditPersonSheet({
   }, [detail]);
 
   const update = (field: keyof PersonDraft, value: string) => {
-    setDraft((prev) => ({ ...prev, [field]: value }));
+    setDraft((prev) => {
+      if (field === "deceased" && value !== "1") {
+        return clearDeceasedDraftFields(prev);
+      }
+      return { ...prev, [field]: value };
+    });
   };
 
   const handleSave = () => {

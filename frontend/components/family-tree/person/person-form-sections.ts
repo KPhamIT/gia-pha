@@ -16,9 +16,17 @@ export type Field = {
   options?: string[];
   min?: number;
   max?: number;
+  /** Chỉ hiện khi đã tích "Đã mất". */
+  deceasedOnly?: boolean;
 };
 
-export type Section = { title: string; defaultOpen?: boolean; fields: Field[] };
+export type Section = {
+  title: string;
+  defaultOpen?: boolean;
+  fields: Field[];
+  /** Ẩn cả section khi chưa tích "Đã mất". */
+  deceasedOnly?: boolean;
+};
 
 const GENDER_OPTIONS = [UI.GENDER_MALE, UI.GENDER_FEMALE];
 
@@ -36,13 +44,14 @@ export const PERSON_FORM_SECTIONS: Section[] = [
       },
       { key: "birthDate", label: UI.BIRTH_DATE, type: "date" },
       { key: "deceased", label: UI.DECEASED_STATUS, type: "checkbox" },
-      { key: "deathDate", label: UI.DEATH_DATE, type: "date" },
+      { key: "deathDate", label: UI.DEATH_DATE, type: "date", deceasedOnly: true },
       {
         key: "deathLunarDay",
         label: UI.DEATH_LUNAR_DAY,
         type: "number",
         min: 1,
         max: 30,
+        deceasedOnly: true,
       },
       {
         key: "deathLunarMonth",
@@ -50,6 +59,7 @@ export const PERSON_FORM_SECTIONS: Section[] = [
         type: "number",
         min: 1,
         max: 12,
+        deceasedOnly: true,
       },
     ],
   },
@@ -94,6 +104,7 @@ export const PERSON_FORM_SECTIONS: Section[] = [
   },
   {
     title: UI.SECTION_GRAVE,
+    deceasedOnly: true,
     fields: [
       { key: "cemetery", label: UI.CEMETERY },
       { key: "graveAddress", label: UI.GRAVE_ADDRESS },

@@ -29,6 +29,20 @@ export type PersonDraft = {
   graveNotes: string;
 };
 
+/** Các field chỉ dùng khi `deceased === "1"`. */
+export function clearDeceasedDraftFields(draft: PersonDraft): PersonDraft {
+  return {
+    ...draft,
+    deceased: "",
+    deathDate: "",
+    deathLunarDay: "",
+    deathLunarMonth: "",
+    cemetery: "",
+    graveAddress: "",
+    graveNotes: "",
+  };
+}
+
 /**
  * Build the editable draft from a person detail.
  * `branchFallback` lets the edit sheet default an unset branch to "1" while the
@@ -48,7 +62,7 @@ export function buildPersonDraft(
       person?.deathLunarDay != null ? String(person.deathLunarDay) : "",
     deathLunarMonth:
       person?.deathLunarMonth != null ? String(person.deathLunarMonth) : "",
-    deceased: person?.deceased || person?.deathDate ? "1" : "",
+    deceased: person?.deceased ? "1" : "",
     generation: person?.generation != null ? String(person.generation) : "",
     branch: person?.branch != null ? String(person.branch) : branchFallback,
     birthPlace: person?.birthPlace ?? "",
@@ -68,18 +82,13 @@ export function buildPersonDraft(
 export function draftToUpdateInput(
   draft: PersonDraft,
 ): UpdatePersonDetailInput {
-  return {
+  const isDeceased = draft.deceased === "1";
+
+  const base: UpdatePersonDetailInput = {
     fullName: draft.fullName.trim() || undefined,
     gender: draft.gender || undefined,
     birthDate: draft.birthDate || undefined,
-    deathDate: draft.deathDate || undefined,
-    deathLunarDay: draft.deathLunarDay
-      ? Number(draft.deathLunarDay)
-      : undefined,
-    deathLunarMonth: draft.deathLunarMonth
-      ? Number(draft.deathLunarMonth)
-      : undefined,
-    deceased: draft.deceased === "1",
+    deceased: isDeceased,
     generation: draft.generation ? Number(draft.generation) : undefined,
     branch: draft.branch ? Number(draft.branch) : undefined,
     birthPlace: draft.birthPlace || undefined,
@@ -90,6 +99,19 @@ export function draftToUpdateInput(
     ethnicity: draft.ethnicity || undefined,
     achievements: draft.achievements || undefined,
     biography: draft.biography,
+  };
+
+  if (!isDeceased) return base;
+
+  return {
+    ...base,
+    deathDate: draft.deathDate || undefined,
+    deathLunarDay: draft.deathLunarDay
+      ? Number(draft.deathLunarDay)
+      : undefined,
+    deathLunarMonth: draft.deathLunarMonth
+      ? Number(draft.deathLunarMonth)
+      : undefined,
     graveInfo: {
       cemetery: draft.cemetery || undefined,
       address: draft.graveAddress || undefined,
