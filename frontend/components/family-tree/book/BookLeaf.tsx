@@ -21,6 +21,10 @@ export type BookLeafCtx = {
   getPersonDraft: (person: Person) => BookPageDraft;
   /** Cho phép chỉnh sửa bìa / lời nói đầu (quyền `editBook`). */
   canEdit?: boolean;
+  showCoverSavePrompt?: boolean;
+  isCoverDirty?: boolean;
+  isSavingCover?: boolean;
+  saveCoverSettings?: () => void | Promise<void>;
 };
 
 /** Renders any leaf by index. `live` enables editing on cover and preface only. */
@@ -44,6 +48,9 @@ export default function BookLeaf({
         settings={ctx.settings}
         readOnly={!editable}
         onChange={ctx.updateSettings}
+        showSavePrompt={Boolean(ctx.showCoverSavePrompt && ctx.isCoverDirty)}
+        saving={ctx.isSavingCover}
+        onSave={() => void ctx.saveCoverSettings?.()}
       />
     );
   }

@@ -46,7 +46,6 @@ export const PUBLIC_STRINGS = {
   LANDING_START_HAS_LINK_CTA: "Tham gia dòng họ",
   LANDING_START_NEW_ORG_TITLE: "Trưởng họ / chưa có liên kết",
   LANDING_START_NEW_ORG_STEPS: [
-    "Đăng nhập bằng Facebook hoặc tài khoản đã được cấp.",
     "Đăng ký tên dòng họ — bạn trở thành quản trị viên và chia sẻ liên kết cho con cháu.",
   ],
   LANDING_START_NEW_ORG_CTA: "Đăng ký dòng họ mới",
@@ -60,9 +59,18 @@ export const PUBLIC_STRINGS = {
   LANDING_FEATURE_EVENTS_TITLE: "Sự kiện & công đức",
   LANDING_FEATURE_EVENTS_DESC:
     "Theo dõi họp họ, đóng góp, sổ công đức minh bạch cho cả dòng họ.",
-  LANDING_FEATURE_CEREMONY_TITLE: "Ngày giỗ & bài cúng",
+  LANDING_FEATURE_CEREMONY_TITLE: "Bài cúng và mẫu bài cúng",
   LANDING_FEATURE_CEREMONY_DESC:
-    "Nhắc ngày giỗ, mở bài cúng in hoặc chia sẻ link cho người thân.",
+    "Dòng họ trả phí được kho ~20 mẫu bài cúng soạn sẵn để dùng ngay; tài khoản miễn phí tự tạo và chỉnh sửa mẫu riêng.",
+  LANDING_FEATURE_NOTIF_TITLE: "Thông báo ngày giỗ",
+  LANDING_FEATURE_NOTIF_DESC:
+    "Nhắc ngày giỗ âm lịch trên điện thoại — bật một lần, không bỏ lỡ giỗ tổ và người thân.",
+  LANDING_FEATURE_CEREMONY_PRINT_TITLE: "In bài cúng",
+  LANDING_FEATURE_CEREMONY_PRINT_DESC:
+    "Chọn người trong dòng họ, mở bài cúng ngày giỗ và in hoặc chia sẻ cho gia đình.",
+  LANDING_FEATURE_EXPORT_TITLE: "In gia phả nhiều kiểu",
+  LANDING_FEATURE_EXPORT_DESC:
+    "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều preset phong cách để in hoặc tải về.",
   LANDING_AUDIENCE_TITLE: "Dành cho ai?",
   LANDING_AUDIENCE_ITEMS: [
     "Con cháu muốn tra cứu nguồn gốc, họ hàng.",

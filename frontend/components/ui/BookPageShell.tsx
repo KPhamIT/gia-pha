@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Icon from "@/components/icons/Icon";
+import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import { LAYOUT } from "@/lib/constants/ui-layout";
 import { BT } from "@/lib/constants/ui-theme";
@@ -50,15 +51,16 @@ export default function BookPageShell({
             <p className={`truncate text-xs ${BT.mutedOnDark}`}>{subtitle}</p>
           ) : null}
         </div>
+        <AccountHeaderButton />
       </header>
 
-      <main
-        className={`${LAYOUT.sheetBody} mx-auto min-h-0 w-full max-w-5xl flex-1`}
-      >
-        {tabs ? (
-          <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div>
-        ) : null}
-        <div className={BT.pagePad}>{children}</div>
+      <main className={`${LAYOUT.sheetBody} min-h-0 w-full flex-1`}>
+        <div className="mx-auto w-full max-w-5xl">
+          {tabs ? (
+            <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div>
+          ) : null}
+          <div className={BT.pagePad}>{children}</div>
+        </div>
       </main>
 
       {hideNavFab ? null : <AppNavFab />}

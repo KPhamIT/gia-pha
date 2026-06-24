@@ -26,7 +26,7 @@ export default function BookPrefacePage({
   }, [settings.coverFontId]);
 
   return (
-    <div className="flex h-full flex-col px-5 py-6 sm:px-7 sm:py-8">
+    <div className={styles.prefacePage}>
       {readOnly ? (
         <h2 className={styles.prefaceTitle} style={{ fontFamily: font }}>
           {settings.prefaceTitle || UI.BOOK_PREFACE_TITLE_DEFAULT}
@@ -55,6 +55,8 @@ export default function BookPrefacePage({
           placeholder={UI.BOOK_PREFACE_BODY_PLACEHOLDER}
           onChange={(e) => onChange?.({ prefaceBody: e.target.value })}
           aria-label={UI.BOOK_PREFACE_BODY_PLACEHOLDER}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         />
       )}
 

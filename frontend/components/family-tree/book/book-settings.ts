@@ -6,7 +6,14 @@ import {
 } from "@/lib/settings/user-settings-cache";
 import type { UserSettings } from "@/lib/api/modules/settings";
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
-import { DEFAULT_USER_SETTINGS } from "@/lib/settings/default-user-settings";
+import {
+  DEFAULT_USER_SETTINGS,
+  type OrgBookContext,
+} from "@/lib/settings/default-user-settings";
+import {
+  parseCoverSubtitleClanName,
+  resolveCoverSubtitleClanName,
+} from "./book-cover-subtitle";
 import { DEFAULT_CALLIGRAPHY_FONT_ID } from "./calligraphy-fonts";
 import {
   DEFAULT_BORDER_STYLE_ID,
@@ -29,6 +36,10 @@ export type BookSettings = {
   coverTitle: string;
   coverSubtitle: string;
   coverLineage: string;
+  /** Năm lập gia phả — hiển thị dọc góc trên trái. */
+  coverEstablishedYear: string;
+  /** Địa chỉ dòng họ — hiển thị dọc góc dưới phải. */
+  coverClanAddress: string;
   coverFontId: string;
   prefaceTitle: string;
   prefaceBody: string;
@@ -38,6 +49,73 @@ export type BookSettings = {
   /** Per-person visibility / ordering overrides for the book pages. */
   pageConfig: BookPageConfig;
 };
+
+/** Cover text fields — chỉ lưu khi user bấm nút Lưu trên trang bìa (không gồm năm/địa chỉ org). */
+export const COVER_CONTENT_KEYS = [
+  "coverTitle",
+  "coverSubtitle",
+  "coverLineage",
+] as const satisfies readonly (keyof BookSettings)[];
+
+export function isCoverContentPatch(patch: Partial<BookSettings>): boolean {
+  return COVER_CONTENT_KEYS.some((key) => key in patch);
+}
+
+export function isCoverContentDirty(
+  current: BookSettings,
+  persisted: BookSettings,
+): boolean {
+  return COVER_CONTENT_KEYS.some((key) => current[key] !== persisted[key]);
+}
+
+export function bookSettingsAutoSaveSnapshot(settings: BookSettings): string {
+  const {
+    coverTitle,
+    coverSubtitle,
+    coverLineage,
+    coverEstablishedYear,
+    coverClanAddress,
+    ...auto
+  } = settings;
+  void coverTitle;
+  void coverSubtitle;
+  void coverLineage;
+  void coverEstablishedYear;
+  void coverClanAddress;
+  return JSON.stringify(auto);
+}
+
+export function mergeBookSettingsForAutoPersist(
+  current: BookSettings,
+  persisted: BookSettings,
+): BookSettings {
+  return {
+    ...current,
+    coverTitle: persisted.coverTitle,
+    coverSubtitle: persisted.coverSubtitle,
+    coverLineage: persisted.coverLineage,
+    coverEstablishedYear: persisted.coverEstablishedYear,
+    coverClanAddress: persisted.coverClanAddress,
+  };
+}
+
+/** Điền mặc định bìa khi trường còn trống. coverSubtitle chỉ lưu tên dòng họ (không gồm "Dòng họ"). */
+export function resolveBookSettings(
+  settings: BookSettings,
+  org?: OrgBookContext | null,
+): BookSettings {
+  const next = { ...settings };
+  next.coverSubtitle = resolveCoverSubtitleClanName(next.coverSubtitle, org);
+  return next;
+}
+
+/** Chuẩn hóa giá trị đã lưu trước khi persist (bỏ prefix "Dòng họ" nếu có). */
+export function normalizeCoverSubtitleForPersist(
+  stored: string,
+  org?: OrgBookContext | null,
+): string {
+  return parseCoverSubtitleClanName(stored, org?.name).trim();
+}
 
 function buildDefaultBookSettings(): BookSettings {
   const raw = DEFAULT_USER_SETTINGS.book as Partial<BookSettings>;
@@ -54,6 +132,8 @@ function buildDefaultBookSettings(): BookSettings {
     coverTitle: raw.coverTitle ?? "",
     coverSubtitle: raw.coverSubtitle ?? "",
     coverLineage: raw.coverLineage ?? "",
+    coverEstablishedYear: raw.coverEstablishedYear ?? "",
+    coverClanAddress: raw.coverClanAddress ?? "",
     coverFontId: raw.coverFontId ?? DEFAULT_CALLIGRAPHY_FONT_ID,
     prefaceTitle: raw.prefaceTitle ?? "",
     prefaceBody: raw.prefaceBody ?? "",

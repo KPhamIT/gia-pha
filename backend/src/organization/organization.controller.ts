@@ -47,6 +47,15 @@ export class OrganizationController {
     return this.organizationService.getAccessLinkForUser(req.user, orgId);
   }
 
+  @Get('book-context')
+  @UseGuards(JwtOptionalGuard)
+  bookContext(
+    @Request() req: { user?: User | null },
+    @Query('orgToken') orgToken?: string,
+  ) {
+    return this.organizationService.resolveBookContext(req.user, orgToken);
+  }
+
   @Get('public/:token')
   @UseGuards(JwtOptionalGuard)
   resolvePublic(@Param('token') token: string) {

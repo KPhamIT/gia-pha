@@ -30,7 +30,15 @@ export function useGenealogyBook(persons: Person[]) {
 
   const details = usePersonDetailStore((s) => s.details);
   const loadAll = usePersonDetailStore((s) => s.loadAll);
-  const { settings, updateSettings, hydrated } = useBookSettings();
+  const {
+    settings,
+    updateSettings,
+    hydrated,
+    showCoverSavePrompt,
+    isCoverDirty,
+    isSavingCover,
+    saveCoverSettings,
+  } = useBookSettings();
 
   const visiblePersons = useMemo(
     () => applyPageConfig(sortedPersons, settings.pageConfig),
@@ -76,8 +84,23 @@ export function useGenealogyBook(persons: Person[]) {
       details,
       personCount,
       getPersonDraft,
+      showCoverSavePrompt,
+      isCoverDirty,
+      isSavingCover,
+      saveCoverSettings,
     }),
-    [leaves, settings, updateSettings, details, personCount, getPersonDraft],
+    [
+      leaves,
+      settings,
+      updateSettings,
+      details,
+      personCount,
+      getPersonDraft,
+      showCoverSavePrompt,
+      isCoverDirty,
+      isSavingCover,
+      saveCoverSettings,
+    ],
   );
 
   return {
@@ -88,6 +111,7 @@ export function useGenealogyBook(persons: Person[]) {
     sortedPersons,
     settings,
     updateSettings,
+    saveCoverSettings,
     ctx,
     jumpToPerson,
     ...flipApi,

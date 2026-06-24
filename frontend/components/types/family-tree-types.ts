@@ -111,6 +111,9 @@ export type UserRole = "SYSTEM" | "ADMIN" | "STANDARD";
 export type Organization = {
   id: number;
   name: string;
+  establishedYear?: string | null;
+  clanAddress?: string | null;
+  createdAt?: string;
 };
 
 export type AuthUser = {

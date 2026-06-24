@@ -151,6 +151,14 @@ export const ACCOUNT_STRINGS = {
   SYSTEM_TAB_FEATURES: "Quyền",
   ORG_TAB_USERS: "User",
   ORG_TAB_FEATURES: "Quyền",
+  ORG_TAB_BOOK: "Sổ gia phả",
+  ORG_BOOK_INFO_TITLE: "Thông tin bìa sổ gia phả",
+  ORG_BOOK_INFO_HINT:
+    "Năm lập và địa chỉ dòng họ hiển thị mặc định trên trang bìa. Thành viên vẫn có thể chỉnh trên sổ và lưu riêng.",
+  ORG_BOOK_ESTABLISHED_YEAR_LABEL: "Năm lập gia phả",
+  ORG_BOOK_ESTABLISHED_YEAR_PLACEHOLDER: "Ví dụ: 2026",
+  ORG_BOOK_CLAN_ADDRESS_LABEL: "Địa chỉ dòng họ",
+  ORG_BOOK_CLAN_ADDRESS_PLACEHOLDER: "Ví dụ: Việt Nam",
   BTN_FEATURES: "Quyền",
 
   // Org public access link

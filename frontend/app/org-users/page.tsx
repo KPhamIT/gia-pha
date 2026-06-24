@@ -4,13 +4,14 @@ import { useState } from "react";
 import BookPageShell from "@/components/ui/BookPageShell";
 import UserSection from "@/components/system/UserSection";
 import StandardFeaturesSection from "@/components/system/StandardFeaturesSection";
+import OrgBookInfoSection from "@/components/org/OrgBookInfoSection";
 import NotificationStatsPanel from "@/components/notifications/NotificationStatsPanel";
 import { useOrgAdminAccess } from "@/hooks/useOrgAdminAccess";
 import { useAuthStore } from "@/store/authStore";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 
-type Tab = "users" | "features";
+type Tab = "users" | "features" | "book";
 
 export default function OrgUsersPage() {
   const { ready } = useOrgAdminAccess();
@@ -42,18 +43,27 @@ export default function OrgUsersPage() {
           onClick={() => setTab("features")}
           label={UI.ORG_TAB_FEATURES}
         />
+        <TabButton
+          active={tab === "book"}
+          onClick={() => setTab("book")}
+          label={UI.ORG_TAB_BOOK}
+        />
       </div>
       {tab === "users" ? (
         <div className="space-y-6">
           <NotificationStatsPanel />
           <UserSection mode="org" />
         </div>
-      ) : organizationId != null ? (
-        <StandardFeaturesSection mode="org" organizationId={organizationId} />
+      ) : tab === "features" ? (
+        organizationId != null ? (
+          <StandardFeaturesSection mode="org" organizationId={organizationId} />
+        ) : (
+          <p className={`text-sm ${BT.mutedOnDark}`}>
+            {UI.SYSTEM_USER_ORG_REQUIRED}
+          </p>
+        )
       ) : (
-        <p className={`text-sm ${BT.mutedOnDark}`}>
-          {UI.SYSTEM_USER_ORG_REQUIRED}
-        </p>
+        <OrgBookInfoSection />
       )}
     </BookPageShell>
   );

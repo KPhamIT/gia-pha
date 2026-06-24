@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import IconRoundButton from "@/components/ui/IconRoundButton";
-import { inputClassName } from "@/components/ui/CollapsibleSection";
+import { FormField, inputClassName } from "@/components/ui/CollapsibleSection";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { useOrganizations } from "@/hooks/useOrganizations";
 import OrgPublicLinkRow from "./OrgPublicLinkRow";
 import OrganizationCreateForm from "./OrganizationCreateForm";
-import type { OrganizationWithAccess } from "@/lib/api/modules/organizations";
+import type {
+  OrganizationWithAccess,
+  UpdateOrganizationInput,
+} from "@/lib/api/modules/organizations";
+import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache";
+import { invalidateOrgBookContext } from "@/lib/org/org-book-context";
+
+function normalizeYearInput(raw: string): string {
+  return raw.replace(/\D/g, "").slice(0, 4);
+}
 
 export default function OrganizationSection() {
   const { items, loading, error, create, update } = useOrganizations();
@@ -35,16 +44,41 @@ function OrgRow({
   onSave,
 }: {
   org: OrganizationWithAccess;
-  onSave: (id: number, name: string) => Promise<void>;
+  onSave: (id: number, body: UpdateOrganizationInput) => Promise<void>;
 }) {
   const [name, setName] = useState(org.name);
+  const [establishedYear, setEstablishedYear] = useState(
+    org.establishedYear ?? "",
+  );
+  const [clanAddress, setClanAddress] = useState(org.clanAddress ?? "");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    setName(org.name);
+    setEstablishedYear(org.establishedYear ?? "");
+    setClanAddress(org.clanAddress ?? "");
+  }, [org]);
+
+  const isDirty = useMemo(
+    () =>
+      name.trim() !== org.name ||
+      normalizeYearInput(establishedYear) !==
+        normalizeYearInput(org.establishedYear ?? "") ||
+      clanAddress.trim() !== (org.clanAddress ?? "").trim(),
+    [org, name, establishedYear, clanAddress],
+  );
+
   const handleSave = async () => {
-    if (name.trim() === org.name) return;
+    if (!isDirty) return;
     setSaving(true);
     try {
-      await onSave(org.id, name.trim());
+      await onSave(org.id, {
+        name: name.trim(),
+        establishedYear: normalizeYearInput(establishedYear),
+        clanAddress: clanAddress.trim(),
+      });
+      invalidateUserSettingsCache();
+      invalidateOrgBookContext();
     } catch {
       /* toast shown in useOrganizations */
     } finally {
@@ -53,22 +87,48 @@ function OrgRow({
   };
 
   return (
-    <li className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center">
-      <input
-        className={`min-w-0 flex-1 ${inputClassName}`}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <div className="flex shrink-0 gap-1">
-        <IconRoundButton
-          icon="save"
-          variant="gold"
-          iconSize={16}
-          loading={saving}
-          label={UI.SAVE}
-          onClick={() => void handleSave()}
+    <li className="flex flex-col gap-3 p-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <input
+          className={`min-w-0 flex-1 ${inputClassName}`}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          aria-label={UI.SYSTEM_ORG_NAME}
         />
+        <div className="flex shrink-0 gap-1">
+          <IconRoundButton
+            icon="save"
+            variant="gold"
+            iconSize={16}
+            loading={saving}
+            disabled={!isDirty}
+            label={UI.SAVE}
+            onClick={() => void handleSave()}
+          />
+        </div>
       </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <FormField label={UI.ORG_BOOK_ESTABLISHED_YEAR_LABEL}>
+          <input
+            className={inputClassName}
+            inputMode="numeric"
+            maxLength={4}
+            value={establishedYear}
+            onChange={(e) =>
+              setEstablishedYear(normalizeYearInput(e.target.value))
+            }
+          />
+        </FormField>
+        <FormField label={UI.ORG_BOOK_CLAN_ADDRESS_LABEL}>
+          <input
+            className={inputClassName}
+            value={clanAddress}
+            onChange={(e) => setClanAddress(e.target.value)}
+          />
+        </FormField>
+      </div>
+
       <OrgPublicLinkRow name={org.name} publicAccessUrl={org.publicAccessUrl} />
     </li>
   );

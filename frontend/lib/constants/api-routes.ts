@@ -8,6 +8,7 @@ export const API_ROUTES = {
   ORGANIZATION_REGISTER: "/organizations/register",
   ORGANIZATION_REGISTER_WITH_ADMIN: "/organizations/register-with-admin",
   ORGANIZATION_ACCESS_LINK: "/organizations/access-link",
+  ORGANIZATION_BOOK_CONTEXT: "/organizations/book-context",
   ORGANIZATION_PUBLIC: (token: string) =>
     `/organizations/public/${encodeURIComponent(token)}`,
   ORGANIZATION: (id: number) => `/organizations/${id}`,

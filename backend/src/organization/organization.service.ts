@@ -27,6 +27,19 @@ export type OrganizationPublicAccess = {
   publicAccessUrl: string;
 };
 
+function defaultOrgBookFields() {
+  return {
+    clanAddress: 'Việt Nam',
+    establishedYear: String(new Date().getFullYear()),
+  };
+}
+
+function trimOptional(value: string | undefined): string | null | undefined {
+  if (value === undefined) return undefined;
+  const trimmed = value.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
 @Injectable()
 export class OrganizationService {
   constructor(
@@ -54,7 +67,7 @@ export class OrganizationService {
   async create(dto: CreateOrganizationDto) {
     const org = await this.prisma.$transaction(async (tx) => {
       const created = await tx.organization.create({
-        data: { name: dto.name.trim() },
+        data: { name: dto.name.trim(), ...defaultOrgBookFields() },
       });
       await createRootPersonForOrg(tx, created.id);
       return created;
@@ -75,7 +88,9 @@ export class OrganizationService {
 
     const name = dto.name.trim();
     const result = await this.prisma.$transaction(async (tx) => {
-      const org = await tx.organization.create({ data: { name } });
+      const org = await tx.organization.create({
+        data: { name, ...defaultOrgBookFields() },
+      });
       await createRootPersonForOrg(tx, org.id);
       const updatedUser = await tx.user.update({
         where: { id: user.id },
@@ -104,7 +119,9 @@ export class OrganizationService {
     const email = dto.email?.trim() || null;
 
     const user = await this.prisma.$transaction(async (tx) => {
-      const org = await tx.organization.create({ data: { name } });
+      const org = await tx.organization.create({
+        data: { name, ...defaultOrgBookFields() },
+      });
       await createRootPersonForOrg(tx, org.id);
       return tx.user.create({
         data: {
@@ -126,7 +143,15 @@ export class OrganizationService {
     await this.findAccessible(id, user);
     const org = await this.prisma.organization.update({
       where: { id },
-      data: { name: dto.name.trim() },
+      data: {
+        name: dto.name.trim(),
+        ...(dto.establishedYear !== undefined && {
+          establishedYear: trimOptional(dto.establishedYear),
+        }),
+        ...(dto.clanAddress !== undefined && {
+          clanAddress: trimOptional(dto.clanAddress),
+        }),
+      },
     });
     return this.withPublicAccess(org);
   }
@@ -152,6 +177,20 @@ export class OrganizationService {
     return org;
   }
 
+  async resolveBookContext(
+    user: User | null | undefined,
+    orgAccessToken?: string,
+  ) {
+    const orgId = await this.resolveOrgIdForBookContext(user, orgAccessToken);
+    const org = await this.prisma.organization.findUnique({
+      where: { id: orgId },
+    });
+    if (!org) {
+      throw new NotFoundException('Organization not found');
+    }
+    return this.toBookContext(org);
+  }
+
   async resolvePublicByToken(token: string) {
     const orgId = this.decodeAccessToken(token);
     if (orgId == null) {
@@ -166,9 +205,38 @@ export class OrganizationService {
     return {
       id: org.id,
       name: org.name,
+      createdAt: org.createdAt.toISOString(),
+      establishedYear: org.establishedYear,
+      clanAddress: org.clanAddress,
       accessToken: token,
       publicAccessUrl: this.buildPublicAccessUrl(org.id),
     };
+  }
+
+  private toBookContext(org: {
+    name: string;
+    createdAt: Date;
+    establishedYear: string | null;
+    clanAddress: string | null;
+  }) {
+    return {
+      name: org.name,
+      createdAt: org.createdAt.toISOString(),
+      establishedYear: org.establishedYear,
+      clanAddress: org.clanAddress,
+    };
+  }
+
+  private async resolveOrgIdForBookContext(
+    user: User | null | undefined,
+    orgAccessToken?: string,
+  ): Promise<number> {
+    if (orgAccessToken) {
+      const orgId = this.decodeAccessToken(orgAccessToken);
+      if (orgId != null) return orgId;
+    }
+    if (user?.organizationId != null) return user.organizationId;
+    throw new NotFoundException('Organization not found');
   }
 
   async getAccessLinkForUser(user: User, organizationId?: number) {
@@ -197,6 +265,8 @@ export class OrganizationService {
     return {
       id: org.id,
       name: org.name,
+      establishedYear: org.establishedYear,
+      clanAddress: org.clanAddress,
       ...this.buildAccessFields(org.id),
     };
   }
@@ -295,7 +365,9 @@ export class OrganizationService {
     });
     if (existing) return existing;
     return this.prisma.$transaction(async (tx) => {
-      const created = await tx.organization.create({ data: { name: defaultName } });
+      const created = await tx.organization.create({
+        data: { name: defaultName, ...defaultOrgBookFields() },
+      });
       await createRootPersonForOrg(tx, created.id);
       return created;
     });

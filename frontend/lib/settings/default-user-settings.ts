@@ -9,6 +9,8 @@ export const DEFAULT_USER_SETTINGS = {
     prefaceBody:
       '\'"Cây có cội, nước có nguồn,\nCon người có tổ có tông."\n\nTừ ngàn đời nay, đạo lý "Uống nước nhớ nguồn" luôn là nét đẹp quý báu trong truyền thống dân tộc Việt Nam. Mỗi dòng họ đều có một cội nguồn, một lịch sử hình thành và phát triển được vun đắp bởi công lao của tổ tiên qua nhiều thế hệ.\n\nCuốn gia phả này được biên soạn với mong muốn ghi lại nguồn gốc, quá trình phát triển của dòng họ, lưu giữ những thông tin về tổ tiên, các thế hệ con cháu và những giá trị truyền thống tốt đẹp đã được truyền lại từ đời này sang đời khác.\n\nGia phả không chỉ là bản ghi chép về huyết thống mà còn là cầu nối giữa quá khứ và hiện tại, giúp con cháu hiểu rõ cội nguồn của mình, gìn giữ đạo hiếu, vun đắp tình đoàn kết gia tộc và phát huy những truyền thống tốt đẹp của tổ tiên.\n\nNguyện mong các thế hệ con cháu luôn ghi nhớ công đức tiền nhân, sống nhân nghĩa, hiếu thuận, chăm lo học tập và lao động, cùng nhau xây dựng gia đình hạnh phúc, dòng họ hưng thịnh, góp phần làm rạng danh tổ tiên và quê hương đất nước.\n\nKính cẩn ghi nhớ công đức Tổ tiên.',
     coverLineage: "Phụng lập gia phả – Lưu truyền hậu thế",
+    coverEstablishedYear: "",
+    coverClanAddress: "Việt Nam",
     prefaceTitle: "Lời Mở Đầu",
     borderStyleId: "modern",
     coverSubtitle: "",
@@ -23,29 +25,54 @@ export const DEFAULT_USER_SETTINGS = {
   nodeTextColor: "#d4f005",
 } satisfies UserSettings;
 
-export function defaultCoverSubtitle(organizationName: string): string {
-  return `Dòng họ ${organizationName}`;
+export type OrgBookContext = {
+  name?: string | null;
+  createdAt?: string | null;
+  establishedYear?: string | null;
+  clanAddress?: string | null;
+};
+
+export function resolveOrgClanAddress(org?: OrgBookContext | null): string {
+  if (org?.clanAddress?.trim()) return org.clanAddress.trim();
+  return "Việt Nam";
 }
 
-function withOrgCoverSubtitle(
+export function defaultCoverEstablishedYear(createdAt: string): string {
+  const year = new Date(createdAt).getFullYear();
+  return Number.isFinite(year) ? String(year) : "";
+}
+
+export function resolveOrgEstablishedYear(org?: OrgBookContext | null): string {
+  if (org?.establishedYear?.trim()) return org.establishedYear.trim();
+  if (org?.createdAt) return defaultCoverEstablishedYear(org.createdAt);
+  return "";
+}
+
+function withOrgBookDefaults(
   settings: UserSettings,
-  organizationName?: string | null,
+  org?: OrgBookContext | null,
 ): UserSettings {
-  if (!organizationName) return settings;
-  const book = {
-    ...(settings.book as Record<string, unknown>),
-    coverSubtitle: defaultCoverSubtitle(organizationName),
-  };
+  const book = { ...(settings.book as Record<string, unknown>) };
+  if (!String(book.coverClanAddress ?? "").trim()) {
+    book.coverClanAddress = resolveOrgClanAddress(org);
+  }
+  if (org?.name && !String(book.coverSubtitle ?? "").trim()) {
+    book.coverSubtitle = org.name.trim();
+  }
+  if (!String(book.coverEstablishedYear ?? "").trim()) {
+    const year = resolveOrgEstablishedYear(org);
+    if (year) book.coverEstablishedYear = year;
+  }
   return { ...settings, book };
 }
 
 /** Gộp mặc định FE khi API chưa có dữ liệu (backend chỉ lưu/trả phần user đã lưu). */
 export function resolveUserSettings(
   data: UserSettings | null | undefined,
-  organizationName?: string | null,
+  org?: OrgBookContext | null,
 ): UserSettings {
   if (!data || Object.keys(data).length === 0) {
-    return withOrgCoverSubtitle({ ...DEFAULT_USER_SETTINGS }, organizationName);
+    return withOrgBookDefaults({ ...DEFAULT_USER_SETTINGS }, org);
   }
   return data;
 }

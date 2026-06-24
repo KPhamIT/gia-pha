@@ -8,6 +8,9 @@ import { API_ROUTES } from "@/lib/constants/api-routes";
 export type OrganizationAccessLink = {
   id: number;
   name: string;
+  createdAt: string;
+  establishedYear?: string | null;
+  clanAddress?: string | null;
   accessToken: string;
   publicAccessUrl: string;
 };
@@ -15,6 +18,12 @@ export type OrganizationAccessLink = {
 export type OrganizationWithAccess = Organization & {
   accessToken?: string;
   publicAccessUrl?: string;
+};
+
+export type UpdateOrganizationInput = {
+  name: string;
+  establishedYear?: string;
+  clanAddress?: string;
 };
 
 export const organizations = {
@@ -43,9 +52,9 @@ export const organizations = {
     axiosClient
       .post<AuthResponse>(API_ROUTES.ORGANIZATION_REGISTER_WITH_ADMIN, input)
       .then((r) => r.data),
-  update: (id: number, name: string) =>
+  update: (id: number, body: UpdateOrganizationInput) =>
     axiosClient
-      .patch<OrganizationWithAccess>(API_ROUTES.ORGANIZATION(id), { name })
+      .patch<OrganizationWithAccess>(API_ROUTES.ORGANIZATION(id), body)
       .then((r) => r.data),
   remove: (id: number) =>
     axiosClient.delete(API_ROUTES.ORGANIZATION(id)).then((r) => r.data),
@@ -58,5 +67,14 @@ export const organizations = {
       .get<OrganizationAccessLink>(API_ROUTES.ORGANIZATION_ACCESS_LINK, {
         params: organizationId != null ? { organizationId } : undefined,
       })
+      .then((r) => r.data),
+  getBookContext: () =>
+    axiosClient
+      .get<{
+        name: string;
+        createdAt: string;
+        establishedYear?: string | null;
+        clanAddress?: string | null;
+      }>(API_ROUTES.ORGANIZATION_BOOK_CONTEXT)
       .then((r) => r.data),
 };

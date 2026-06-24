@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import type { OrganizationWithAccess } from "@/lib/api/modules/organizations";
+import type {
+  OrganizationWithAccess,
+  UpdateOrganizationInput,
+} from "@/lib/api/modules/organizations";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
 import { getErrorMessage } from "@/utils/errors";
@@ -48,9 +51,9 @@ export function useOrganizations() {
   );
 
   const update = useCallback(
-    async (id: number, name: string) => {
+    async (id: number, body: UpdateOrganizationInput) => {
       try {
-        await api.organizations.update(id, name);
+        await api.organizations.update(id, body);
         await reload();
         notify.success(UI.TOAST_ORG_UPDATED);
       } catch (err) {

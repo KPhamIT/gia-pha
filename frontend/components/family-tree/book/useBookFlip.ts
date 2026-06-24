@@ -37,10 +37,24 @@ export function useBookFlip(totalLeaves: number, onBeforeFlip: () => void) {
   );
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    const target = e.target;
+    if (
+      target instanceof HTMLElement &&
+      target.closest("textarea, input, select, [contenteditable='true']")
+    ) {
+      return;
+    }
     touchStartX.current = e.touches[0]?.clientX ?? null;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
+    const target = e.target;
+    if (
+      target instanceof HTMLElement &&
+      target.closest("textarea, input, select, [contenteditable='true']")
+    ) {
+      return;
+    }
     const startX = touchStartX.current;
     const endX = e.changedTouches[0]?.clientX;
     touchStartX.current = null;

@@ -1,5 +1,10 @@
 import { api } from "@/lib/api";
 import { getStoredOrgAccessToken } from "@/lib/org/org-access";
+import {
+  fetchOrgBookContext,
+  getCachedOrgBookContext,
+  invalidateOrgBookContext,
+} from "@/lib/org/org-book-context";
 import { resolveUserSettings } from "@/lib/settings/default-user-settings";
 import type { UserSettings } from "@/lib/api/modules/settings";
 
@@ -8,40 +13,11 @@ let cache: UserSettings | null | undefined;
 let cacheScope: string | undefined;
 let inflight: Promise<UserSettings | null> | null = null;
 let inflightScope: string | undefined;
-let orgNameCache: string | null | undefined;
-let orgNameInflight: Promise<string | null> | null;
 
 function scopeKey(): string {
   const orgToken =
     typeof window !== "undefined" ? getStoredOrgAccessToken() : null;
   return orgToken ? `guest:${orgToken}` : "auth";
-}
-
-async function fetchOrgDisplayName(): Promise<string | null> {
-  if (orgNameCache !== undefined) return orgNameCache;
-  if (orgNameInflight) return orgNameInflight;
-
-  const token = getStoredOrgAccessToken();
-  if (!token) {
-    orgNameCache = null;
-    return null;
-  }
-
-  orgNameInflight = api.organizations
-    .resolvePublic(token)
-    .then((org) => {
-      orgNameCache = org.name;
-      return org.name;
-    })
-    .catch(() => {
-      orgNameCache = null;
-      return null;
-    })
-    .finally(() => {
-      orgNameInflight = null;
-    });
-
-  return orgNameInflight;
 }
 
 /** Một request GET /settings dùng chung cho toàn app (dedupe khi mount song song). */
@@ -53,9 +29,9 @@ export function fetchUserSettings(): Promise<UserSettings | null> {
   if (inflight && inflightScope === scope) return inflight;
 
   inflightScope = scope;
-  inflight = Promise.all([api.settings.getMine(), fetchOrgDisplayName()])
-    .then(([data, orgName]) => {
-      const resolved = resolveUserSettings(data, orgName);
+  inflight = Promise.all([api.settings.getMine(), fetchOrgBookContext()])
+    .then(([data, org]) => {
+      const resolved = resolveUserSettings(data, org);
       cache = resolved;
       cacheScope = scope;
       return resolved;
@@ -72,6 +48,12 @@ export function getCachedUserSettings(): UserSettings | null | undefined {
   return cache;
 }
 
+export {
+  fetchOrgBookContext,
+  getCachedOrgBookContext,
+  invalidateOrgBookContext,
+};
+
 export function patchUserSettingsCache(patch: UserSettings): void {
   cache = { ...(cache ?? {}), ...patch };
 }
@@ -79,5 +61,5 @@ export function patchUserSettingsCache(patch: UserSettings): void {
 export function invalidateUserSettingsCache(): void {
   cache = undefined;
   cacheScope = undefined;
-  orgNameCache = undefined;
+  invalidateOrgBookContext();
 }

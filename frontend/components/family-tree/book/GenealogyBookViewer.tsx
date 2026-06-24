@@ -51,6 +51,7 @@ export default function GenealogyBookViewer({
     hydrated,
     settings,
     updateSettings,
+    saveCoverSettings,
     isPrintAllLayout,
     viewerRootRef,
     ctx,
@@ -64,9 +65,19 @@ export default function GenealogyBookViewer({
     [requireFeature, updateSettings],
   );
 
+  const guardedSaveCoverSettings = useCallback(() => {
+    if (!requireFeature("editBook")) return;
+    void saveCoverSettings();
+  }, [requireFeature, saveCoverSettings]);
+
   const guardedCtx = useMemo(
-    () => ({ ...ctx, canEdit, updateSettings: guardedUpdateSettings }),
-    [ctx, canEdit, guardedUpdateSettings],
+    () => ({
+      ...ctx,
+      canEdit,
+      updateSettings: guardedUpdateSettings,
+      saveCoverSettings: guardedSaveCoverSettings,
+    }),
+    [ctx, canEdit, guardedUpdateSettings, guardedSaveCoverSettings],
   );
 
   const handleHeaderBack = standalone ? onOpenTree : onClose;
