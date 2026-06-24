@@ -1,21 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import BookPageShell from "@/components/ui/BookPageShell";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
 import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
-import { api } from "@/lib/api";
-import type {
-  Person,
-  Relationship,
-} from "@/components/types/family-tree-types";
 import { useAuthStore } from "@/store/authStore";
+import { useFamilyTree } from "@/hooks/useFamilyTree";
 import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useTheme } from "@/hooks/useTheme";
 import { UI } from "@/lib/constants/ui-strings";
-import { getErrorMessage } from "@/utils/errors";
+import {
+  filterDemoPersons,
+  filterDemoRelationships,
+} from "@/utils/demo-filter";
 
 const EventsManager = dynamic(
   () => import("@/components/family-tree/events/EventsManager"),
@@ -23,50 +23,37 @@ const EventsManager = dynamic(
 );
 
 export default function EventsPage() {
+  const searchParams = useSearchParams();
+  const demoMode = searchParams.get("demo") === "1";
   const { theme } = useTheme();
   const refreshAuth = useAuthStore((state) => state.refresh);
-  const { ready: orgReady } = useRequireOrgAccess();
-  const [persons, setPersons] = useState<Person[]>([]);
-  const [relationships, setRelationships] = useState<Relationship[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { ready: orgReady } = useRequireOrgAccess({ skip: demoMode });
+  const { treeData, loading, error } = useFamilyTree({
+    enabled: orgReady,
+    demo: demoMode,
+  });
 
   useEffect(() => {
+    if (demoMode) return;
     void refreshAuth();
-  }, [refreshAuth]);
+  }, [demoMode, refreshAuth]);
 
-  useEffect(() => {
-    if (!orgReady) return;
-
-    let cancelled = false;
-    setLoading(true);
-
-    Promise.all([api.person.list(), api.relationship.list()])
-      .then(([nextPersons, nextRelationships]) => {
-        if (cancelled) return;
-        setPersons(nextPersons);
-        setRelationships(nextRelationships);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [orgReady]);
-
-  if (!orgReady || loading) {
+  if (!orgReady || (loading && !treeData)) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
   }
 
-  if (error) {
+  if (error && !treeData) {
     return <FamilyTreeStatus theme={theme} type="error" message={error} />;
   }
+
+  if (!treeData) {
+    return <FamilyTreeStatus theme={theme} type="empty" />;
+  }
+
+  const persons = demoMode ? filterDemoPersons(treeData.persons) : treeData.persons;
+  const relationships = demoMode
+    ? filterDemoRelationships(treeData.relationships, persons)
+    : treeData.relationships;
 
   return (
     <>
@@ -77,6 +64,7 @@ export default function EventsPage() {
           persons={persons}
           relationships={relationships}
           standalone
+          demo={demoMode}
         />
       </BookPageShell>
 

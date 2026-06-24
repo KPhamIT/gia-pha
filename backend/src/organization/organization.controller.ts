@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -19,6 +20,7 @@ import { MutateGuard } from '../auth/mutate.guard.js';
 import { SystemGuard } from '../auth/system.guard.js';
 import { CreateOrganizationDto } from './dto/create-organization.dto.js';
 import { RegisterOrganizationWithAdminDto } from './dto/register-organization-with-admin.dto.js';
+import { SetDemoOrganizationDto } from './dto/set-demo-organization.dto.js';
 import { UpdateOrganizationDto } from './dto/update-organization.dto.js';
 import { OrganizationService } from './organization.service.js';
 
@@ -45,6 +47,19 @@ export class OrganizationController {
       throw new BadRequestException('Invalid organizationId');
     }
     return this.organizationService.getAccessLinkForUser(req.user, orgId);
+  }
+
+  @Get('demo')
+  demo() {
+    return this.organizationService.getDemoContext();
+  }
+
+  @Put('demo')
+  @UseGuards(SystemGuard)
+  setDemo(@Body() body: SetDemoOrganizationDto) {
+    return this.organizationService.setDemoOrganization(
+      body.organizationId ?? null,
+    );
   }
 
   @Get('book-context')

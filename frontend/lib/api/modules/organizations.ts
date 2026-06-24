@@ -26,6 +26,13 @@ export type UpdateOrganizationInput = {
   clanAddress?: string;
 };
 
+export type DemoOrganization = {
+  id: number;
+  name: string;
+  establishedYear?: string | null;
+  clanAddress?: string | null;
+};
+
 export const organizations = {
   list: () =>
     axiosClient
@@ -76,5 +83,15 @@ export const organizations = {
         establishedYear?: string | null;
         clanAddress?: string | null;
       }>(API_ROUTES.ORGANIZATION_BOOK_CONTEXT)
+      .then((r) => r.data),
+  getDemo: () =>
+    axiosClient
+      .get<DemoOrganization | null>(API_ROUTES.ORGANIZATION_DEMO)
+      .then((r) => r.data),
+  setDemo: (organizationId: number | null) =>
+    axiosClient
+      .put<DemoOrganization | null>(API_ROUTES.ORGANIZATION_DEMO, {
+        organizationId,
+      })
       .then((r) => r.data),
 };

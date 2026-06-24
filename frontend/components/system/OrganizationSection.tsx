@@ -8,6 +8,7 @@ import { UI } from "@/lib/constants/ui-strings";
 import { useOrganizations } from "@/hooks/useOrganizations";
 import OrgPublicLinkRow from "./OrgPublicLinkRow";
 import OrganizationCreateForm from "./OrganizationCreateForm";
+import DemoOrganizationSelect from "./DemoOrganizationSelect";
 import type {
   OrganizationWithAccess,
   UpdateOrganizationInput,
@@ -29,6 +30,8 @@ export default function OrganizationSection() {
   return (
     <div className="space-y-4">
       <OrganizationCreateForm onCreate={create} />
+
+      <DemoOrganizationSelect organizations={items} />
 
       <ul className={`divide-y divide-amber-100 ${BT.panel}`}>
         {items.map((org) => (

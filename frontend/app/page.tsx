@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { IconName } from "@/components/icons/icon-paths";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
+import LandingFeaturesSection from "@/components/public/LandingFeaturesSection";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import PublicSiteFooter from "@/components/public/PublicSiteFooter";
@@ -141,21 +142,7 @@ export default function LandingPage() {
           </div>
           </section>
 
-          <section className="mt-6 space-y-4">
-          <h2 className="text-lg font-semibold text-amber-50">
-            {UI.LANDING_FEATURES_TITLE}
-          </h2>
-          <div className={LAYOUT.cardGrid}>
-            {FEATURES.map((feature) => (
-              <div key={feature.title} className={`${BT.card} p-4`}>
-                <LandingCardHeader icon={feature.icon} title={feature.title} />
-                <p className={`mt-3 text-sm leading-relaxed ${BT.mutedOnLight}`}>
-                  {feature.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-          </section>
+          <LandingFeaturesSection features={FEATURES} />
 
           <section className={`mt-6 ${BT.card} p-4 md:p-6`}>
           <h2 className="text-lg font-semibold text-neutral-900">

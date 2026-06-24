@@ -50,6 +50,11 @@ export const ACCOUNT_STRINGS = {
   SYSTEM_TAB_USERS: "User",
   SYSTEM_ORG_NAME: "Tên tổ chức",
   SYSTEM_ORG_CREATE: "Tạo tổ chức",
+  SYSTEM_DEMO_ORG_TITLE: "Dòng họ dùng làm demo",
+  SYSTEM_DEMO_ORG_HINT:
+    "Org được chọn sẽ hiển thị ở trang chủ cho mọi người xem thử (tới đời 4).",
+  SYSTEM_DEMO_ORG_NONE: "Không dùng demo",
+  SYSTEM_DEMO_ORG_SAVED: "Đã cập nhật dòng họ demo",
   SYSTEM_ORG_DELETE_CONFIRM:
     "Xóa tổ chức này? Chỉ xóa được khi chưa có thành viên.",
   SYSTEM_USER_CREATE: "Tạo người dùng",

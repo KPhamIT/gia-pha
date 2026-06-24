@@ -52,6 +52,18 @@ export const ceremonies = {
       .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_PUBLIC_HTML(token))
       .then((r) => r.data),
 
+  getDemoHtml: () =>
+    axiosClient
+      .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_DEMO_HTML)
+      .then((r) => r.data),
+
+  getDemoShareToken: () =>
+    axiosClient
+      .get<{ token: string; personId: number }>(
+        API_ROUTES.CEREMONY_DEMO_SHARE_TOKEN,
+      )
+      .then((r) => r.data),
+
   listTemplates: () =>
     axiosClient
       .get<CeremonyTemplate[]>(API_ROUTES.CEREMONY_TEMPLATES)

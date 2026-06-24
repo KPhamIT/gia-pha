@@ -16,6 +16,8 @@ type TreeFiltersProps = {
   maxGeneration: Generation;
   onBranchChange: (branch: Branch) => void;
   onMaxGenerationChange: (generation: Generation) => void;
+  /** Chừa chỗ góc trái trên cho nút back fixed. */
+  avoidTopLeft?: boolean;
 };
 
 function Tag({
@@ -47,6 +49,7 @@ export default function TreeFilters({
   maxGeneration,
   onBranchChange,
   onMaxGenerationChange,
+  avoidTopLeft = false,
 }: TreeFiltersProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +78,9 @@ export default function TreeFilters({
   return (
     <div
       ref={containerRef}
-      className="fixed left-4 top-4 z-20 pt-[env(safe-area-inset-top)] md:left-6 md:top-6"
+      className={`fixed top-4 z-20 pt-[env(safe-area-inset-top)] md:top-6 ${
+        avoidTopLeft ? "left-16 md:left-20" : "left-4 md:left-6"
+      }`}
     >
       <button
         type="button"

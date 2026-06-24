@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import BookPageShell from "@/components/ui/BookPageShell";
 import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import NotificationCenterList from "@/components/notifications/NotificationCenterList";
@@ -10,6 +11,19 @@ import Link from "next/link";
 
 export default function NotificationsPage() {
   const { loaded, isLoggedIn } = useAuthBootstrap();
+  const demoMode = useSearchParams().get("demo") === "1";
+
+  if (demoMode) {
+    return (
+      <BookPageShell
+        title={UI.NOTIFICATIONS_TITLE}
+        subtitle={UI.LANDING_DEMO_HINT}
+        backHref="/"
+      >
+        <NotificationCenterList demo />
+      </BookPageShell>
+    );
+  }
 
   if (!loaded) {
     return <AuthPageLoading />;

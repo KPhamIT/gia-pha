@@ -71,6 +71,8 @@ export const PUBLIC_STRINGS = {
   LANDING_FEATURE_EXPORT_TITLE: "In gia phả nhiều kiểu",
   LANDING_FEATURE_EXPORT_DESC:
     "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều preset phong cách để in hoặc tải về.",
+  LANDING_DEMO_BUTTON: "Xem thử",
+  LANDING_DEMO_HINT: "Dữ liệu demo hiển thị tới đời 4 (mọi nhánh).",
   LANDING_AUDIENCE_TITLE: "Dành cho ai?",
   LANDING_AUDIENCE_ITEMS: [
     "Con cháu muốn tra cứu nguồn gốc, họ hàng.",

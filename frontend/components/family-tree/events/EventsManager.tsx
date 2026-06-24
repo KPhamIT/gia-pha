@@ -26,6 +26,8 @@ type Props = {
   relationships: Relationship[];
   /** Trang riêng `/events` — không bọc FullScreenSheet. */
   standalone?: boolean;
+  /** Chế độ demo công khai — lấy sự kiện của org demo. */
+  demo?: boolean;
   onClose?: () => void;
 };
 
@@ -33,6 +35,7 @@ export default function EventsManager({
   persons,
   relationships,
   standalone = false,
+  demo = false,
   onClose,
 }: Props) {
   const { requireFeature, canUseFeature } = useFeatureAccess();
@@ -46,7 +49,7 @@ export default function EventsManager({
     updateEvent,
     deleteEvent,
     patchEvent,
-  } = useEvents();
+  } = useEvents({ demo });
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<FamilyEvent | null>(null);
   const [contributionEvent, setContributionEvent] =

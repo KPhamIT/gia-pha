@@ -28,6 +28,11 @@ export class EventController {
     return this.eventService.findAll();
   }
 
+  @Get('demo')
+  findDemo() {
+    return this.eventService.findAllForDemo();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventService.findOne(+id);

@@ -27,6 +27,18 @@ export type OrganizationPublicAccess = {
   publicAccessUrl: string;
 };
 
+const APP_CONFIG_DEMO_ORG_KEY = 'demoOrganizationId';
+
+function parseDemoOrgId(value: unknown): number | null {
+  const id =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string'
+        ? Number(value)
+        : null;
+  return id != null && Number.isInteger(id) && id > 0 ? id : null;
+}
+
 function defaultOrgBookFields() {
   return {
     clanAddress: 'Việt Nam',
@@ -189,6 +201,47 @@ export class OrganizationService {
       throw new NotFoundException('Organization not found');
     }
     return this.toBookContext(org);
+  }
+
+  /** Org được SYSTEM chọn làm dữ liệu demo công khai (hiển thị ở trang chủ). */
+  async getDemoOrganizationId(): Promise<number | null> {
+    const row = await this.prisma.appConfig.findUnique({
+      where: { key: APP_CONFIG_DEMO_ORG_KEY },
+    });
+    return parseDemoOrgId(row?.value);
+  }
+
+  async getDemoContext() {
+    const orgId = await this.getDemoOrganizationId();
+    if (orgId == null) return null;
+    const org = await this.prisma.organization.findUnique({
+      where: { id: orgId },
+    });
+    if (!org) return null;
+    return {
+      id: org.id,
+      name: org.name,
+      establishedYear: org.establishedYear,
+      clanAddress: org.clanAddress,
+    };
+  }
+
+  async setDemoOrganization(organizationId: number | null) {
+    if (organizationId == null) {
+      await this.prisma.appConfig.deleteMany({
+        where: { key: APP_CONFIG_DEMO_ORG_KEY },
+      });
+      return null;
+    }
+    await this.prisma.organization.findUniqueOrThrow({
+      where: { id: organizationId },
+    });
+    await this.prisma.appConfig.upsert({
+      where: { key: APP_CONFIG_DEMO_ORG_KEY },
+      create: { key: APP_CONFIG_DEMO_ORG_KEY, value: organizationId },
+      update: { value: organizationId },
+    });
+    return this.getDemoContext();
   }
 
   async resolvePublicByToken(token: string) {

@@ -59,6 +59,11 @@ export const notifications = {
       .get<NotificationLogItem[]>(API_ROUTES.NOTIFICATIONS)
       .then((r) => r.data),
 
+  listDemo: () =>
+    axiosClient
+      .get<NotificationLogItem[]>(API_ROUTES.NOTIFICATIONS_DEMO)
+      .then((r) => r.data),
+
   upcoming: () =>
     axiosClient
       .get<UpcomingCeremonyItem[]>(API_ROUTES.NOTIFICATIONS_UPCOMING)

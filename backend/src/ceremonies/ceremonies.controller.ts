@@ -77,6 +77,16 @@ export class CeremoniesController {
     return this.ceremonyTemplatesService.remove(req.user, +id);
   }
 
+  @Get('demo/html')
+  renderDemoHtml() {
+    return this.ceremoniesService.renderDemoCeremony();
+  }
+
+  @Get('demo/share-token')
+  getDemoShareToken() {
+    return this.ceremoniesService.createDemoShareToken();
+  }
+
   @Get('public/:token/html')
   renderPublicHtml(@Param('token') token: string) {
     return this.ceremoniesService.renderCeremonyHtmlByShareToken(token);

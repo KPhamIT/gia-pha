@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
 import AppNavFab from "@/components/navigation/AppNavFab";
@@ -10,6 +11,7 @@ import {
   consumeBookTouchRecovery,
   useAppNavigation,
 } from "@/hooks/useAppNavigation";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
 import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useTheme } from "@/hooks/useTheme";
@@ -18,6 +20,7 @@ import {
   useOverlayPageRecovery,
   syncOverlayViewport,
 } from "@/hooks/useOverlayViewport";
+import { filterDemoPersons } from "@/utils/demo-filter";
 
 const GenealogyBookViewer = dynamic(
   () => import("@/components/family-tree/book/GenealogyBookViewer"),
@@ -25,12 +28,16 @@ const GenealogyBookViewer = dynamic(
 );
 
 export default function BookPage() {
+  const searchParams = useSearchParams();
+  const demoMode = searchParams.get("demo") === "1";
   const { theme } = useTheme();
   const nav = useAppNavigation();
+  const goBack = useBackNavigation("/");
   const refreshAuth = useAuthStore((state) => state.refresh);
-  const { ready: orgReady } = useRequireOrgAccess();
+  const { ready: orgReady } = useRequireOrgAccess({ skip: demoMode });
   const { treeData, loading, error, reload } = useFamilyTree({
     enabled: orgReady,
+    demo: demoMode,
   });
 
   const resetBookOverlays = useCallback(() => {
@@ -40,8 +47,9 @@ export default function BookPage() {
   useOverlayPageRecovery(resetBookOverlays);
 
   useEffect(() => {
+    if (demoMode) return;
     void refreshAuth();
-  }, [refreshAuth]);
+  }, [demoMode, refreshAuth]);
 
   useEffect(() => {
     if (!consumeBookTouchRecovery()) return;
@@ -72,9 +80,9 @@ export default function BookPage() {
       <NotificationOptInBanner />
 
       <GenealogyBookViewer
-        persons={treeData.persons}
+        persons={demoMode ? filterDemoPersons(treeData.persons) : treeData.persons}
         standalone
-        onOpenTree={nav.openTree}
+        onOpenTree={demoMode ? goBack : nav.openTree}
       />
 
       <AppNavFab />

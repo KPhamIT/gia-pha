@@ -22,10 +22,13 @@ import axios from "axios";
 
 type UseFamilyTreeOptions = {
   enabled?: boolean;
+  /** Dùng dữ liệu org demo công khai thay cho org của người dùng. */
+  demo?: boolean;
 };
 
 export function useFamilyTree(options: UseFamilyTreeOptions = {}) {
   const enabled = options.enabled ?? true;
+  const demo = options.demo ?? false;
   const refreshAuth = useAuthStore((state) => state.refresh);
   const [treeData, setTreeData] = useState<FamilyTreeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +40,7 @@ export function useFamilyTree(options: UseFamilyTreeOptions = {}) {
       setError(null);
 
       const token = getToken();
-      if (token) {
+      if (token && !demo) {
         try {
           await refreshAuth();
         } catch (err) {
@@ -50,7 +53,11 @@ export function useFamilyTree(options: UseFamilyTreeOptions = {}) {
         }
       }
 
-      setTreeData(await api.person.getDefaultTree());
+      setTreeData(
+        demo
+          ? await api.person.getDemoTree()
+          : await api.person.getDefaultTree(),
+      );
     } catch (err) {
       console.error("Error fetching family tree:", err);
       setError(getErrorMessage(err, UI.ERR_FETCH_DATA));
@@ -58,7 +65,7 @@ export function useFamilyTree(options: UseFamilyTreeOptions = {}) {
     } finally {
       setLoading(false);
     }
-  }, [refreshAuth]);
+  }, [demo, refreshAuth]);
 
   useEffect(() => {
     if (!enabled) return;

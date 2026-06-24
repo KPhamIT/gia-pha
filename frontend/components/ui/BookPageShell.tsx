@@ -1,10 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
 import Icon from "@/components/icons/Icon";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import AppNavFab from "@/components/navigation/AppNavFab";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { LAYOUT } from "@/lib/constants/ui-layout";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
@@ -28,6 +28,7 @@ export default function BookPageShell({
   tabs,
   hideNavFab = false,
 }: BookPageShellProps) {
+  const goBack = useBackNavigation(backHref);
   return (
     <div
       className={`flex h-dvh min-h-0 flex-col overflow-hidden ${BT.shell} ${BT.shellText}`}
@@ -35,7 +36,12 @@ export default function BookPageShell({
       <header
         className={`shrink-0 ${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}
       >
-        <Link href={backHref} className={BT.iconGhost} aria-label={UI.BACK}>
+        <button
+          type="button"
+          onClick={goBack}
+          className={BT.iconGhost}
+          aria-label={UI.BACK}
+        >
           <Icon
             path="arrowLeft"
             size={22}
@@ -44,7 +50,7 @@ export default function BookPageShell({
             strokeWidth={2}
             pointer={false}
           />
-        </Link>
+        </button>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-lg font-semibold md:text-xl">{title}</h1>
           {subtitle ? (

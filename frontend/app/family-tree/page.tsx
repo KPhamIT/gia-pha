@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { useAuthStore } from "@/store/authStore";
 import TreeFilters from "@/components/family-tree/graph/TreeFilters";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
 import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useUserBranch } from "@/hooks/useUserBranch";
@@ -37,9 +39,12 @@ const FamilyTreeGraph = dynamic(
 );
 
 export default function FamilyTreePage() {
+  const searchParams = useSearchParams();
+  const demoMode = searchParams.get("demo") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
-  const { ready: orgReady } = useRequireOrgAccess();
+  const goBack = useBackNavigation("/");
+  const { ready: orgReady } = useRequireOrgAccess({ skip: demoMode });
   const {
     treeData,
     loading,
@@ -50,7 +55,10 @@ export default function FamilyTreePage() {
     addRelationship,
     removeRelationship,
     updatePerson,
-  } = useFamilyTree({ enabled: orgReady });
+  } = useFamilyTree({
+    enabled: orgReady,
+    demo: demoMode,
+  });
   const { theme, setTheme } = useTheme();
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
   const {
@@ -82,12 +90,21 @@ export default function FamilyTreePage() {
   >();
   const graphApiRef = useRef<FamilyTreeGraphApi | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
-  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(null);
+  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(
+    demoMode ? "all" : null,
+  );
   const [maxGeneration, setMaxGeneration] = useState<number | "all">(4);
 
   useEffect(() => {
+    if (!demoMode) return;
+    setFilterBranch("all");
+    setMaxGeneration(4);
+  }, [demoMode]);
+
+  useEffect(() => {
+    if (demoMode) return;
     void refreshAuth();
-  }, [refreshAuth]);
+  }, [demoMode, refreshAuth]);
 
   const handleOpenExport = useCallback(() => {
     const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
@@ -146,6 +163,7 @@ export default function FamilyTreePage() {
       <TreeTopBar
         canEditSettings={canUseFeature("settings")}
         onOpenSettings={() => setShowSettings(true)}
+        onBack={goBack}
       />
 
       <TreeFilters
@@ -153,6 +171,7 @@ export default function FamilyTreePage() {
         maxGeneration={maxGeneration}
         onBranchChange={setFilterBranch}
         onMaxGenerationChange={setMaxGeneration}
+        avoidTopLeft
       />
 
       <NotificationOptInBanner />
