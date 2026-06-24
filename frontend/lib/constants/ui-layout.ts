@@ -37,5 +37,8 @@ export const LAYOUT = {
     "relative ml-auto h-screen w-full max-w-[min(100%,20rem)] bg-white p-5 shadow-2xl ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-slate-700 md:max-w-xs lg:max-w-sm",
   centeredOverlay:
     "overlay-viewport z-50 flex items-center justify-center p-4 md:p-6 lg:p-8",
-  cardGrid: "grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4",
+  cardGrid:
+    "grid grid-cols-1 items-stretch gap-3 md:grid-cols-2 md:gap-4",
+  /** Hai card “bắt đầu” — cao tối thiểu để CTA luôn dính đáy. */
+  landingStartCard: "flex h-full min-h-[18rem] flex-col sm:min-h-[19rem]",
 } as const;

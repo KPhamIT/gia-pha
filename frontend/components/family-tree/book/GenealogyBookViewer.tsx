@@ -23,15 +23,15 @@ type GenealogyBookViewerProps = {
   standalone?: boolean;
   /** Đóng overlay (legacy). */
   onClose?: () => void;
-  /** Mở cây gia phả — dùng khi `standalone`. */
-  onOpenTree?: () => void;
+  /** Quay lại trang trước — dùng khi `standalone`. */
+  onBack?: () => void;
 };
 
 export default function GenealogyBookViewer({
   persons,
   standalone = false,
   onClose,
-  onOpenTree,
+  onBack,
 }: GenealogyBookViewerProps) {
   const { requireFeature, canUseFeature } = useFeatureAccess();
   const canEdit = canUseFeature("editBook");
@@ -80,7 +80,7 @@ export default function GenealogyBookViewer({
     [ctx, canEdit, guardedUpdateSettings, guardedSaveCoverSettings],
   );
 
-  const handleHeaderBack = standalone ? onOpenTree : onClose;
+  const handleHeaderBack = standalone ? onBack : onClose;
 
   if (!hydrated) {
     return (
@@ -100,7 +100,6 @@ export default function GenealogyBookViewer({
       <BookViewerHeader
         pageIndex={book.pageIndex}
         totalLeaves={book.totalLeaves}
-        standalone={standalone}
         canEdit={canEdit}
         onClose={handleHeaderBack}
         onToggleStyle={() => setShowStyle((v) => !v)}

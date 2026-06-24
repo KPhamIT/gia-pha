@@ -126,6 +126,7 @@ export type AuthUser = {
   organizationId: number | null;
   organization?: Organization | null;
   person?: { id: number; fullName: string } | null;
+  isDemo?: boolean;
 };
 
 export type AuthResponse = {

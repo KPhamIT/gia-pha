@@ -11,8 +11,7 @@ import type {
 } from "@/components/types/event-types";
 
 /** Loads the event list and exposes create / update / delete mutations. */
-export function useEvents(options: { demo?: boolean } = {}) {
-  const demo = options.demo ?? false;
+export function useEvents() {
   const [events, setEvents] = useState<FamilyEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,13 +21,13 @@ export function useEvents(options: { demo?: boolean } = {}) {
     setLoading(true);
     setError(null);
     try {
-      setEvents(demo ? await api.event.listDemo() : await api.event.list());
+      setEvents(await api.event.list());
     } catch {
       setError(UI.EVENTS_LOAD_ERROR);
     } finally {
       setLoading(false);
     }
-  }, [demo]);
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

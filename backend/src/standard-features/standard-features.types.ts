@@ -35,6 +35,24 @@ export function allStandardFeaturesEnabled(): StandardFeatures {
   ) as StandardFeatures;
 }
 
+/**
+ * Feature của tài khoản demo: bật phần đọc (tree/book/events/export/search/
+ * settings) để xem & in, tắt mọi phần ghi. Ghi vẫn bị `FeatureMutateGuard`
+ * chặn cứng theo `isDemo` — đây chỉ là để ẩn nút sửa trên UI.
+ */
+export const DEMO_STANDARD_FEATURES: StandardFeatures = {
+  tree: true,
+  book: true,
+  events: true,
+  export: true,
+  search: true,
+  editTree: false,
+  editBook: false,
+  editEvents: false,
+  linkAccount: false,
+  settings: true,
+};
+
 export function mergeStandardFeatures(
   defaults: Partial<StandardFeatures>,
   overrides?: Partial<StandardFeatures> | null,

@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Prisma } from '../../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { OrganizationService } from '../organization/organization.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
 import { UpdateEventDto } from './dto/update-event.dto.js';
 import {
@@ -12,10 +11,7 @@ import { UpdateDonationDto } from './dto/update-donation.dto.js';
 
 @Injectable()
 export class EventService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly organizationService: OrganizationService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   private async getDefaultOrganization() {
     const defaultName = 'Family Tree';
@@ -101,13 +97,6 @@ export class EventService {
 
   async findAll() {
     return this.findEvents();
-  }
-
-  /** Sự kiện của org demo (SYSTEM cấu hình) — công khai. */
-  async findAllForDemo() {
-    const orgId = await this.organizationService.getDemoOrganizationId();
-    if (orgId == null) return [];
-    return this.findEvents(orgId);
   }
 
   private async findEvents(organizationId?: number) {

@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
 import { UserRole, type User } from '../../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import {
@@ -28,6 +29,13 @@ export type OrganizationPublicAccess = {
 };
 
 const APP_CONFIG_DEMO_ORG_KEY = 'demoOrganizationId';
+
+const DEMO_ACCOUNT = {
+  providerId: 'local:demo',
+  username: 'demo',
+  email: 'demo@local.dev',
+  defaultPassword: '123',
+} as const;
 
 function parseDemoOrgId(value: unknown): number | null {
   const id =
@@ -231,6 +239,7 @@ export class OrganizationService {
       await this.prisma.appConfig.deleteMany({
         where: { key: APP_CONFIG_DEMO_ORG_KEY },
       });
+      await this.provisionDemoAccount(null);
       return null;
     }
     await this.prisma.organization.findUniqueOrThrow({
@@ -241,7 +250,49 @@ export class OrganizationService {
       create: { key: APP_CONFIG_DEMO_ORG_KEY, value: organizationId },
       update: { value: organizationId },
     });
+    await this.provisionDemoAccount(organizationId);
     return this.getDemoContext();
+  }
+
+  /**
+   * Đồng bộ tài khoản demo (chỉ xem) với org demo đang chọn.
+   * - Có org: tạo/cập nhật user `demo` (mật khẩu mặc định `123`) thuộc org đó.
+   * - Bỏ chọn (null): vô hiệu hoá tài khoản demo.
+   */
+  private async provisionDemoAccount(organizationId: number | null) {
+    if (organizationId == null) {
+      await this.prisma.user.updateMany({
+        where: { providerId: DEMO_ACCOUNT.providerId },
+        data: { isActive: false },
+      });
+      return;
+    }
+
+    const password =
+      this.config.get<string>('DEMO_PASSWORD') ?? DEMO_ACCOUNT.defaultPassword;
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await this.prisma.user.upsert({
+      where: { providerId: DEMO_ACCOUNT.providerId },
+      create: {
+        provider: 'local',
+        providerId: DEMO_ACCOUNT.providerId,
+        username: DEMO_ACCOUNT.username,
+        email: DEMO_ACCOUNT.email,
+        passwordHash,
+        role: UserRole.STANDARD,
+        isDemo: true,
+        isActive: true,
+        organizationId,
+      },
+      update: {
+        passwordHash,
+        role: UserRole.STANDARD,
+        isDemo: true,
+        isActive: true,
+        organizationId,
+      },
+    });
   }
 
   async resolvePublicByToken(token: string) {

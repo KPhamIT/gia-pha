@@ -13,8 +13,6 @@ type CeremonyViewerProps = {
   shareToken?: string;
   /** Render với một mẫu cụ thể; bỏ trống = mẫu mặc định của dòng họ. */
   templateId?: number;
-  /** Bài cúng mẫu công khai của org demo. */
-  demo?: boolean;
 };
 
 function measureIframeContent(iframe: HTMLIFrameElement | null): number {
@@ -30,13 +28,11 @@ export default function CeremonyViewer({
   personId,
   shareToken,
   templateId,
-  demo = false,
 }: CeremonyViewerProps) {
   const [html, setHtml] = useState<string | null>(null);
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(true);
   const [contentHeight, setContentHeight] = useState(0);
-  const [demoShareUrl, setDemoShareUrl] = useState<string | undefined>();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const syncIframeHeight = useCallback(() => {
@@ -45,9 +41,8 @@ export default function CeremonyViewer({
 
   useEffect(() => {
     let cancelled = false;
-    const request = demo
-      ? api.ceremonies.getDemoHtml(personId, templateId)
-      : shareToken != null
+    const request =
+      shareToken != null
         ? api.ceremonies.getPublicHtml(shareToken)
         : personId != null
           ? api.ceremonies.getHtml(personId, templateId)
@@ -69,26 +64,7 @@ export default function CeremonyViewer({
     return () => {
       cancelled = true;
     };
-  }, [personId, shareToken, templateId, demo]);
-
-  useEffect(() => {
-    if (!demo) return;
-    let cancelled = false;
-    void api.ceremonies
-      .getDemoShareToken()
-      .then(({ token }) => {
-        if (cancelled || typeof window === "undefined") return;
-        setDemoShareUrl(
-          `${window.location.origin}/ceremonies/share/${encodeURIComponent(token)}`,
-        );
-      })
-      .catch(() => {
-        /* không có token thì ẩn nút chia sẻ */
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [demo]);
+  }, [personId, shareToken, templateId]);
 
   useEffect(() => {
     if (!html) return;
@@ -123,17 +99,11 @@ export default function CeremonyViewer({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-end gap-2">
-        {demo ? (
-          demoShareUrl ? (
-            <ShareCeremonyActions fullName={fullName} shareUrl={demoShareUrl} />
-          ) : null
-        ) : (
-          <ShareCeremonyActions
-            personId={personId}
-            fullName={fullName}
-            shareUrl={shareUrl}
-          />
-        )}
+        <ShareCeremonyActions
+          personId={personId}
+          fullName={fullName}
+          shareUrl={shareUrl}
+        />
         <IconRoundButton
           icon="print"
           variant="gold"

@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import type { IconName } from "@/components/icons/icon-paths";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
 import { api } from "@/lib/api";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import { LAYOUT } from "@/lib/constants/ui-layout";
+import { useAuthStore } from "@/store/authStore";
+import { useDemoLogin } from "@/hooks/useDemoLogin";
 
 type FeatureItem = { icon: IconName; title: string; desc: string };
 
@@ -15,25 +16,25 @@ type LandingFeaturesSectionProps = {
   features: readonly FeatureItem[];
 };
 
-/** Trang demo công khai cho từng chức năng (dữ liệu org demo do SYSTEM cấu hình). */
-function demoHrefForFeature(title: string): string {
+/** Trang chức năng thật mà nút "Xem demo" sẽ mở (sau khi đăng nhập tài khoản demo). */
+function demoPathForFeature(title: string): string {
   switch (title) {
     case UI.LANDING_FEATURE_BOOK_TITLE:
-      return "/book?demo=1";
+      return "/book";
     case UI.LANDING_FEATURE_TREE_TITLE:
+      return "/family-tree";
     case UI.LANDING_FEATURE_EXPORT_TITLE:
-      return "/family-tree?demo=1";
+      return "/family-tree?export=1";
     case UI.LANDING_FEATURE_EVENTS_TITLE:
-      return "/events?demo=1";
+      return "/events";
     case UI.LANDING_FEATURE_NOTIF_TITLE:
-      return "/notifications?demo=1";
-    case UI.LANDING_FEATURE_CEREMONY_CUSTOM_TITLE:
-      return "/ceremonies/templates?demo=1";
     case UI.LANDING_FEATURE_CEREMONY_TITLE:
     case UI.LANDING_FEATURE_CEREMONY_PRINT_TITLE:
-      return "/ceremonies/demo";
+      return "/ceremonies/upcoming";
+    case UI.LANDING_FEATURE_CEREMONY_CUSTOM_TITLE:
+      return "/ceremonies/templates";
     default:
-      return "/book?demo=1";
+      return "/book";
   }
 }
 
@@ -41,6 +42,9 @@ export default function LandingFeaturesSection({
   features,
 }: LandingFeaturesSectionProps) {
   const [hasDemo, setHasDemo] = useState(false);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isDemo = useAuthStore((s) => s.isDemo);
+  const { openDemo, loadingPath } = useDemoLogin();
 
   useEffect(() => {
     let cancelled = false;
@@ -57,33 +61,41 @@ export default function LandingFeaturesSection({
     };
   }, []);
 
+  // Ẩn với tài khoản thật; khách và tài khoản demo vẫn thấy nút thử chức năng khác.
+  const showDemo = hasDemo && (!isLoggedIn || isDemo);
+
   return (
     <section className="mt-6 space-y-4">
       <h2 className="text-lg font-semibold text-amber-50">
         {UI.LANDING_FEATURES_TITLE}
       </h2>
-      {hasDemo ? (
+      {showDemo ? (
         <p className="text-sm text-amber-100/80">{UI.LANDING_DEMO_HINT}</p>
       ) : null}
       <div className={LAYOUT.cardGrid}>
-        {features.map((feature) => (
-          <div key={feature.title} className={`${BT.card} flex flex-col p-4`}>
-            <LandingCardHeader icon={feature.icon} title={feature.title} />
-            <p className={`mt-3 text-sm leading-relaxed ${BT.mutedOnLight}`}>
-              {feature.desc}
-            </p>
-            {hasDemo ? (
-              <div className="mt-4">
-                <Link
-                  href={demoHrefForFeature(feature.title)}
-                  className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary}`}
-                >
-                  {UI.LANDING_DEMO_BUTTON}
-                </Link>
-              </div>
-            ) : null}
-          </div>
-        ))}
+        {features.map((feature) => {
+          const path = demoPathForFeature(feature.title);
+          return (
+            <div key={feature.title} className={`${BT.card} flex flex-col p-4`}>
+              <LandingCardHeader icon={feature.icon} title={feature.title} />
+              <p className={`mt-3 text-sm leading-relaxed ${BT.mutedOnLight}`}>
+                {feature.desc}
+              </p>
+              {showDemo ? (
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    disabled={loadingPath !== null}
+                    onClick={() => void openDemo(path)}
+                    className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary}`}
+                  >
+                    {UI.LANDING_DEMO_BUTTON}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

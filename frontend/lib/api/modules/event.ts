@@ -14,8 +14,6 @@ import type {
 export const event = {
   list: () =>
     axiosClient.get<FamilyEvent[]>(API_ROUTES.EVENT_LIST).then((r) => r.data),
-  listDemo: () =>
-    axiosClient.get<FamilyEvent[]>(API_ROUTES.EVENT_DEMO).then((r) => r.data),
   get: (id: number) =>
     axiosClient
       .get<FamilyEventDetail>(API_ROUTES.EVENT(id))

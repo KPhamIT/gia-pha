@@ -273,24 +273,6 @@ export class PersonService {
     return this.getDefaultFamilyGraphForUser();
   }
 
-  /** Cây gia phả của org demo (SYSTEM cấu hình) — công khai cho mọi người. */
-  async getDemoFamilyGraph() {
-    const orgId = await this.organizationService.getDemoOrganizationId();
-    if (orgId == null) {
-      throw new NotFoundException('Demo organization is not configured');
-    }
-    const persons = await this.prisma.person.findMany({
-      where: { organizationId: orgId },
-      orderBy: { fullName: 'asc' },
-    });
-    const root =
-      persons.find((person) => person.generation === 0) ?? persons[0];
-    if (!root) {
-      throw new NotFoundException('No persons found for demo organization');
-    }
-    return this.getFamilyGraph(root.id);
-  }
-
   async getFamilyGraph(rootId: number) {
     const root = await this.findOne(rootId);
     const persons = await this.prisma.person.findMany({

@@ -14,12 +14,10 @@ import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useUserBranch } from "@/hooks/useUserBranch";
 import { useLayoutConfig } from "@/hooks/useLayoutConfig";
 import { filterTreeData } from "@/utils/filter-tree-data";
-import type { BranchValue } from "@/lib/constants/branches";
 import { useTheme } from "@/hooks/useTheme";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
-import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import { getPageShellClass } from "@/utils/theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { useTreeSettingsSync } from "./useTreeSettingsSync";
@@ -39,21 +37,13 @@ const FamilyTreeGraph = dynamic(
   },
 );
 
-export default function FamilyTreePage() {
-  return (
-    <Suspense fallback={<AuthPageLoading />}>
-      <FamilyTreePageContent />
-    </Suspense>
-  );
-}
-
 function FamilyTreePageContent() {
   const searchParams = useSearchParams();
-  const demoMode = searchParams.get("demo") === "1";
+  const shouldOpenExport = searchParams.get("export") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const goBack = useBackNavigation("/");
-  const { ready: orgReady } = useRequireOrgAccess({ skip: demoMode });
+  const { ready: orgReady } = useRequireOrgAccess();
   const {
     treeData,
     loading,
@@ -66,13 +56,13 @@ function FamilyTreePageContent() {
     updatePerson,
   } = useFamilyTree({
     enabled: orgReady,
-    demo: demoMode,
   });
   const { theme, setTheme } = useTheme();
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
   const {
     branch: userBranch,
-    setBranch: setUserBranch,
+    welcomeDone,
+    completeWelcome,
     hydrated: branchHydrated,
   } = useUserBranch();
 
@@ -99,21 +89,17 @@ function FamilyTreePageContent() {
   >();
   const graphApiRef = useRef<FamilyTreeGraphApi | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
-  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(
-    demoMode ? "all" : null,
-  );
+  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(null);
   const [maxGeneration, setMaxGeneration] = useState<number | "all">(4);
 
   useEffect(() => {
-    if (!demoMode) return;
-    setFilterBranch("all");
-    setMaxGeneration(4);
-  }, [demoMode]);
+    void refreshAuth();
+  }, [refreshAuth]);
 
   useEffect(() => {
-    if (demoMode) return;
-    void refreshAuth();
-  }, [demoMode, refreshAuth]);
+    if (!shouldOpenExport || !treeData) return;
+    setShowExport(true);
+  }, [shouldOpenExport, treeData]);
 
   const handleOpenExport = useCallback(() => {
     const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
@@ -126,10 +112,6 @@ function FamilyTreePageContent() {
     setShowExport(false);
     setExportPositionOverrides(undefined);
   }, []);
-  const handleSelectBranch = useCallback(
-    (branch: BranchValue) => setUserBranch(branch),
-    [setUserBranch],
-  );
 
   // The on-page branch filter follows the user's saved branch until they override it.
   const effectiveBranch = filterBranch ?? userBranch ?? "all";
@@ -238,10 +220,20 @@ function FamilyTreePageContent() {
           exportPositionOverrides={exportPositionOverrides}
           onCloseExport={handleCloseExport}
           canDownloadExport={canMutate}
-          showWelcome={branchHydrated && userBranch == null}
-          onSelectBranch={handleSelectBranch}
+          showWelcome={branchHydrated && !welcomeDone}
+          onCompleteWelcome={completeWelcome}
         />
       ) : null}
     </div>
+  );
+}
+
+export default function FamilyTreePage() {
+  return (
+    <Suspense
+      fallback={<FamilyTreeStatus theme="light" type="loading" />}
+    >
+      <FamilyTreePageContent />
+    </Suspense>
   );
 }

@@ -70,7 +70,7 @@ export const BOOK_STRINGS = {
   DELETE_PERSON: "Xóa",
   DELETE_PERSON_CONFIRM: (name: string) => `Xóa ${name}?`,
 
-  // Welcome onboarding + branch selection (first visit)
+  // Welcome onboarding (first visit)
   WELCOME_SHEET_TITLE: "Chào mừng bạn trở về cội nguồn!",
   WELCOME_SHEET_PARAGRAPHS: [
     "Đây là nơi lưu giữ ký ức, truyền thống và lịch sử của dòng họ qua nhiều thế hệ.",
@@ -80,8 +80,7 @@ export const BOOK_STRINGS = {
   ],
   WELCOME_SHEET_CLOSING:
     "Cùng nhau gìn giữ cội nguồn – kết nối hiện tại – trao truyền giá trị cho mai sau.",
-  BRANCH_PROMPT_TITLE: "Bạn thuộc nhánh nào?",
-  BRANCH_PROMPT_SUBTITLE: "Chọn nhánh của bạn để hiển thị cây gia phả phù hợp.",
+  WELCOME_SHEET_CONTINUE: "Bắt đầu xem gia phả",
   FILTER_TITLE: "Bộ lọc hiển thị",
   FILTER_BRANCH_LABEL: "Nhánh",
   FILTER_ALL: "Tất cả",

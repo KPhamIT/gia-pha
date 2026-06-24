@@ -33,6 +33,12 @@ export class FeatureMutateGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException();
     }
 
+    // Tài khoản demo chỉ xem: chặn cứng mọi thao tác ghi (lưu/sửa/xóa) bất kể
+    // feature flag, để dữ liệu DB không bao giờ bị thay đổi.
+    if (user.isDemo) {
+      throw new ForbiddenException('Demo account is read-only');
+    }
+
     if (canMutate(user)) {
       return true;
     }

@@ -76,26 +76,6 @@ export class CeremoniesController {
     return this.ceremonyTemplatesService.remove(req.user, +id);
   }
 
-  @Get('demo/templates')
-  listDemoTemplates() {
-    return this.ceremonyTemplatesService.listForDemo();
-  }
-
-  @Get('demo/html')
-  renderDemoHtml(
-    @Query('personId') personId?: string,
-    @Query('templateId') templateId?: string,
-  ) {
-    const pid = personId ? Number(personId) : undefined;
-    const tid = templateId ? Number(templateId) : undefined;
-    return this.ceremoniesService.renderDemoCeremony(pid, tid);
-  }
-
-  @Get('demo/share-token')
-  getDemoShareToken() {
-    return this.ceremoniesService.createDemoShareToken();
-  }
-
   @Get('public/:token/html')
   renderPublicHtml(@Param('token') token: string) {
     return this.ceremoniesService.renderCeremonyHtmlByShareToken(token);

@@ -20,6 +20,7 @@ type AuthStore = {
   loaded: boolean;
   isSystem: boolean;
   isAdmin: boolean;
+  isDemo: boolean;
   canMutate: boolean;
   isLoggedIn: boolean;
   canUseFeature: (key: StandardFeatureKey) => boolean;
@@ -30,10 +31,13 @@ type AuthStore = {
 function deriveFlags(user: AuthUser | null) {
   const isSystem = user?.role === "SYSTEM";
   const isAdmin = user?.role === "ADMIN";
+  const isDemo = Boolean(user?.isDemo);
   return {
     isSystem,
     isAdmin,
-    canMutate: isSystem || isAdmin,
+    isDemo,
+    // Tài khoản demo chỉ xem — không có quyền ghi dù role STANDARD.
+    canMutate: (isSystem || isAdmin) && !isDemo,
     isLoggedIn: Boolean(user),
   };
 }
@@ -56,6 +60,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   loaded: false,
   isSystem: false,
   isAdmin: false,
+  isDemo: false,
   canMutate: false,
   isLoggedIn: false,
   canUseFeature: (key) => {

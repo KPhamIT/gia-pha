@@ -14,7 +14,6 @@ import {
   isSystem,
 } from '../auth/org-access.js';
 import { createCeremonyShareToken } from '../ceremonies/ceremony-share-token.js';
-import { OrganizationService } from '../organization/organization.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { OneSignalService } from './onesignal.service.js';
 import { UpdateNotificationSettingsDto } from './dto/update-notification-settings.dto.js';
@@ -68,40 +67,7 @@ export class NotificationsService {
     private readonly prisma: PrismaService,
     private readonly oneSignal: OneSignalService,
     private readonly config: ConfigService,
-    private readonly organizationService: OrganizationService,
   ) {}
-
-  /** Danh sách thông báo ngày giỗ mẫu của org demo — công khai cho trang chủ. */
-  async listDemoNotifications() {
-    const orgId = await this.organizationService.getDemoOrganizationId();
-    if (orgId == null) return [];
-    const persons = await this.prisma.person.findMany({
-      where: {
-        organizationId: orgId,
-        deathLunarDay: { not: null },
-        deathLunarMonth: { not: null },
-      },
-      orderBy: [{ generation: 'asc' }, { fullName: 'asc' }],
-      take: 10,
-    });
-    const now = new Date();
-    return persons.map((person) => {
-      const lunarDateLabel = formatLunarDeathDate(
-        person.deathLunarMonth!,
-        person.deathLunarDay!,
-      );
-      return {
-        id: person.id,
-        title: 'Nhắc ngày giỗ',
-        message: `Ngày giỗ của cụ ${person.fullName} — ${lunarDateLabel}.\nNhấn để xem bài cúng.`,
-        status: NotificationStatus.SENT,
-        sentAt: now,
-        createdAt: now,
-        organizationId: orgId,
-        person: { id: person.id, fullName: person.fullName },
-      };
-    });
-  }
 
   async getSettings(user: User) {
     const subs = await this.prisma.userPushSubscription.findMany({

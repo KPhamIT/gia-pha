@@ -4,6 +4,7 @@ import type { IconName } from "@/components/icons/icon-paths";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
 import LandingFeaturesSection from "@/components/public/LandingFeaturesSection";
+import LandingStartCta from "@/components/public/LandingStartCta";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import PublicSiteFooter from "@/components/public/PublicSiteFooter";
@@ -125,23 +126,29 @@ export default function LandingPage() {
           <h2 className="text-lg font-semibold text-amber-50">{UI.LANDING_START_TITLE}</h2>
           <div className={LAYOUT.cardGrid}>
             {START_PATHS.map((path) => (
-              <div key={path.href} className={`${BT.card} flex h-full flex-col p-4 md:p-5`}>
+              <div
+                key={path.href}
+                className={`${BT.card} ${LAYOUT.landingStartCard} p-4 md:p-5`}
+              >
                 <LandingCardHeader
                   icon={path.icon}
                   title={path.title}
                   titleClassName="text-base font-semibold text-neutral-900"
                 />
-                <ol className={`mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}>
+                <ol
+                  className={`mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}
+                >
                   {path.steps.map((step, index) => (
                     <li key={index}>{step}</li>
                   ))}
                 </ol>
-                <Link
-                  href={path.href}
-                  className="mt-auto inline-flex pt-4 text-sm font-semibold text-amber-800 underline-offset-2 hover:underline"
-                >
-                  {path.cta} →
-                </Link>
+                <div className="mt-auto pt-5">
+                  <LandingStartCta
+                    href={path.href}
+                    label={path.cta}
+                    variant={path.href === "/tao-dong-ho" ? "gold" : "primary"}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -149,11 +156,19 @@ export default function LandingPage() {
 
           <section className={`mt-6 ${BT.card} p-4 md:p-6`}>
           <h2 className="text-lg font-semibold text-neutral-900">
+            {UI.LANDING_WHY_TITLE}
+          </h2>
+          <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}>
+            {UI.LANDING_WHY_ITEMS.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+          </section>
+
+          <section className={`mt-6 ${BT.card} p-4 md:p-6`}>
+          <h2 className="text-lg font-semibold text-neutral-900">
             {UI.LANDING_AUDIENCE_TITLE}
           </h2>
-          <p className={`mt-3 text-sm leading-relaxed ${BT.mutedOnLight}`}>
-            {UI.LANDING_AUDIENCE_INTRO}
-          </p>
           <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}>
             {UI.LANDING_AUDIENCE_ITEMS.map((item, index) => (
               <li key={index}>{item}</li>

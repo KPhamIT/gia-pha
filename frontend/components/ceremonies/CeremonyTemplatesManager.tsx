@@ -21,17 +21,11 @@ import TemplatesToolbar from "./TemplatesToolbar";
 import CeremonyTemplateCard from "./CeremonyTemplateCard";
 import TemplateEditorSheet from "./TemplateEditorSheet";
 import CeremonyPrintView from "./CeremonyPrintView";
-import { filterDemoPersons, filterDemoRelationships } from "@/utils/demo-filter";
 
-type Props = {
-  /** Chế độ xem thử công khai — dữ liệu org demo, không lưu mẫu. */
-  demo?: boolean;
-};
-
-export default function CeremonyTemplatesManager({ demo = false }: Props) {
+export default function CeremonyTemplatesManager() {
   const canMutate = useAuthStore((state) => state.canMutate);
-  const canEdit = demo || canMutate;
-  const canPersist = !demo && canMutate;
+  const canEdit = canMutate;
+  const canPersist = canMutate;
   const [templates, setTemplates] = useState<CeremonyTemplate[]>([]);
   const [variables, setVariables] = useState<CeremonyTemplateVariable[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
@@ -44,35 +38,21 @@ export default function CeremonyTemplatesManager({ demo = false }: Props) {
 
   const reload = useCallback(
     () =>
-      (demo
-        ? Promise.all([
-            api.ceremonies.listDemoTemplates(),
-            api.ceremonies.listVariables(),
-            api.person.getDemoTree(),
-          ]).then(([items, vars, tree]) => {
-            const persons = filterDemoPersons(tree.persons);
-            setTemplates(items);
-            setVariables(vars);
-            setPersons(persons);
-            setRelationships(
-              filterDemoRelationships(tree.relationships, persons),
-            );
-          })
-        : Promise.all([
-            api.ceremonies.listTemplates(),
-            api.ceremonies.listVariables(),
-            api.person.list(),
-            api.relationship.list(),
-          ]).then(([items, vars, personList, rels]) => {
-            setTemplates(items);
-            setVariables(vars);
-            setPersons(personList);
-            setRelationships(rels);
-          })
-      )
+      Promise.all([
+        api.ceremonies.listTemplates(),
+        api.ceremonies.listVariables(),
+        api.person.list(),
+        api.relationship.list(),
+      ])
+        .then(([items, vars, personList, rels]) => {
+          setTemplates(items);
+          setVariables(vars);
+          setPersons(personList);
+          setRelationships(rels);
+        })
         .catch((err) => notify.error(err, UI.CEREMONY_TEMPLATE_ERR_LOAD))
         .finally(() => setLoading(false)),
-    [demo],
+    [],
   );
 
   useEffect(() => {
@@ -143,11 +123,7 @@ export default function CeremonyTemplatesManager({ demo = false }: Props) {
 
   return (
     <div className="space-y-4 pb-4">
-      <TemplatesToolbar
-        canEdit={canEdit}
-        onCreate={openCreate}
-        hint={demo ? UI.CEREMONY_TEMPLATE_DEMO_HINT : undefined}
-      />
+      <TemplatesToolbar canEdit={canEdit} onCreate={openCreate} />
 
       {sorted.length === 0 ? (
         <div className={`${BT.card} p-6 text-center`}>
@@ -197,7 +173,6 @@ export default function CeremonyTemplatesManager({ demo = false }: Props) {
           persons={deceasedPersons}
           relationships={relationships}
           onClose={() => setTarget(null)}
-          demo={demo}
           onSaved={async () => {
             setTarget(null);
             await reload();
@@ -219,7 +194,6 @@ export default function CeremonyTemplatesManager({ demo = false }: Props) {
               templateId={printTemplate.id}
               persons={deceasedPersons}
               relationships={relationships}
-              demo={demo}
             />
           </div>
         </FullScreenSheet>

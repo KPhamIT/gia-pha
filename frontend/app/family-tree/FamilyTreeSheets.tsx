@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { type Dispatch, type SetStateAction } from "react";
 import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
-import WelcomeBranchSheet from "@/components/family-tree/graph/WelcomeBranchSheet";
+import WelcomeSheet from "@/components/family-tree/graph/WelcomeSheet";
 import PersonDetailSheet from "@/components/family-tree/person/PersonDetailSheet";
 import EditPersonSheet from "@/components/family-tree/person/EditPersonSheet";
 import AddChildSheet from "@/components/family-tree/person/AddChildSheet";
@@ -17,7 +17,6 @@ import type {
   ThemeMode,
 } from "@/components/types/family-tree-types";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
-import type { BranchValue } from "@/lib/constants/branches";
 import type { usePersonSheets } from "./usePersonSheets";
 
 const TreeExportView = dynamic(
@@ -46,9 +45,9 @@ type Props = {
   exportPositionOverrides?: NodePositionOverrides;
   onCloseExport: () => void;
   canDownloadExport: boolean;
-  // Branch welcome
+  // Welcome (không bắt chọn nhánh)
   showWelcome: boolean;
-  onSelectBranch: (branch: BranchValue) => void;
+  onCompleteWelcome: () => void;
 };
 
 export default function FamilyTreeSheets({
@@ -84,7 +83,7 @@ export default function FamilyTreeSheets({
       ) : null}
 
       {p.showWelcome ? (
-        <WelcomeBranchSheet onSelect={p.onSelectBranch} />
+        <WelcomeSheet onContinue={p.onCompleteWelcome} />
       ) : null}
 
       {sheets.showSearch ? (
