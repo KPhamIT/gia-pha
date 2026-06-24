@@ -74,12 +74,16 @@ export default function NotificationCenterList({
                     className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
                       item.status === "SENT"
                         ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
+                        : item.status === "FAILED"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-amber-100 text-amber-800"
                     }`}
                   >
                     {item.status === "SENT"
                       ? UI.NOTIF_PUSH_SENT
-                      : UI.NOTIF_PUSH_FAILED}
+                      : item.status === "FAILED"
+                        ? UI.NOTIF_PUSH_FAILED
+                        : UI.NOTIF_PUSH_LOGGED}
                   </span>
                 </div>
                 <p

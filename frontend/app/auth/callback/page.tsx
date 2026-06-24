@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
 import { UI } from "@/lib/constants/ui-strings";
 import { setToken } from "@/lib/auth/session";
+import { rebindPushAfterLogin } from "@/lib/notifications/push-binding";
 import { useAuthStore } from "@/store/authStore";
 
 function readTokenFromHash(): string | null {
@@ -25,6 +26,7 @@ export default function AuthCallbackPage() {
         setToken(token);
         window.history.replaceState(null, "", window.location.pathname);
         await refreshAuth();
+        await rebindPushAfterLogin();
         router.replace("/book");
         return;
       }

@@ -33,7 +33,17 @@ export function loginWithZalo(): void {
   window.location.href = getZaloLoginUrl();
 }
 
-export function logout(): void {
+export async function logout(): Promise<void> {
+  // Gỡ subscription khỏi user hiện tại khi token còn hiệu lực. Import động để
+  // tránh phụ thuộc vòng (push-binding → api → axiosClient → session).
+  try {
+    const { unbindPushBeforeLogout } = await import(
+      "@/lib/notifications/push-binding"
+    );
+    await unbindPushBeforeLogout();
+  } catch {
+    // best-effort
+  }
   clearToken();
   useAuthStore.getState().clear();
   window.location.href = "/login";

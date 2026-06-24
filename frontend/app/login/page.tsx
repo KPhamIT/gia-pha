@@ -6,6 +6,7 @@ import IconRoundButton from "@/components/ui/IconRoundButton";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { loginWithZalo, setToken } from "@/lib/auth/session";
+import { rebindPushAfterLogin } from "@/lib/notifications/push-binding";
 import { isZaloLoginEnabled } from "@/lib/auth/facebook-sdk";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
@@ -40,6 +41,7 @@ function LoginContent() {
         const result = await api.auth.login(username.trim(), password);
         setToken(result.accessToken);
         await refreshAuth();
+        await rebindPushAfterLogin();
         router.replace(nextPath);
       } catch (err) {
         setError(getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT));

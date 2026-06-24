@@ -8,6 +8,7 @@ export const NOTIFICATION_STRINGS = {
     "Danh sách dưới là lịch sử trong app (sau khi cron chạy). Popup hệ thống (góc màn hình) là push trình duyệt — cần bật quyền ở Cài đặt thông báo; thử thu nhỏ tab hoặc chuyển sang tab khác khi test.",
   NOTIF_PUSH_SENT: "Đã gửi push",
   NOTIF_PUSH_FAILED: "Push thất bại",
+  NOTIF_PUSH_LOGGED: "Trong ứng dụng",
   NOTIFICATIONS_SETTINGS_TITLE: "Cài đặt thông báo",
   NOTIFICATIONS_SETTINGS_SUBTITLE:
     "Quản lý quyền và loại thông báo bạn muốn nhận",

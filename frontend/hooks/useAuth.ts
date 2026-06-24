@@ -14,6 +14,7 @@ import {
   isZaloLoginEnabled,
   requestFacebookAccessToken,
 } from "@/lib/auth/facebook-sdk";
+import { rebindPushAfterLogin } from "@/lib/notifications/push-binding";
 
 export function useAuth() {
   const loginWithZalo = useCallback(() => {
@@ -24,6 +25,7 @@ export function useAuth() {
     const accessToken = await requestFacebookAccessToken();
     const result = await api.auth.loginWithFacebook(accessToken);
     setToken(result.accessToken);
+    await rebindPushAfterLogin();
     window.location.href = "/book";
   }, []);
 

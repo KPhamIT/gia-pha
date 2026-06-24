@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import { api } from "@/lib/api";
 import { setToken } from "@/lib/auth/session";
+import { rebindPushAfterLogin } from "@/lib/notifications/push-binding";
 import { useAuthStore } from "@/store/authStore";
 import {
   getFacebookAppId,
@@ -45,6 +46,7 @@ export default function FacebookLoginButton({
       const result = await api.auth.loginWithFacebook(accessToken);
       setToken(result.accessToken);
       await refreshAuth();
+      await rebindPushAfterLogin();
       router.replace(redirectTo);
     } catch (err) {
       const message = getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT);

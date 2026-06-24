@@ -338,12 +338,13 @@ export class NotificationsService {
       if (daysUntil == null) continue;
 
       const message = buildDeathAnniversaryMessage(person.fullName, daysUntil);
+      // Lấy mọi user trong org đã bật nhắc giỗ, kể cả người chưa đăng ký push:
+      // họ vẫn cần log in-app dù không nhận được thông báo đẩy.
       const subscribers = await this.prisma.user.findMany({
         where: {
           organizationId: person.organizationId,
           isActive: true,
           notificationDeathAnniversaryEnabled: true,
-          pushSubscriptions: { some: {} },
         },
         include: { pushSubscriptions: true },
       });
@@ -362,7 +363,6 @@ export class NotificationsService {
         const subscriptionIds = subscriber.pushSubscriptions.map(
           (s) => s.onesignalSubscriptionId,
         );
-        if (subscriptionIds.length === 0) continue;
 
         const data = {
           type: 'DEATH_ANNIVERSARY',
@@ -371,13 +371,24 @@ export class NotificationsService {
           daysUntil,
         };
 
-        const result = await this.oneSignal.sendNotification({
-          subscriptionIds,
-          title: message.title,
-          content: message.body,
-          data,
-          url: this.buildCeremonyUrl(person.id),
-        });
+        // Chỉ gửi push khi thiết bị có đăng ký; nếu không vẫn ghi log in-app.
+        const result =
+          subscriptionIds.length > 0
+            ? await this.oneSignal.sendNotification({
+                subscriptionIds,
+                title: message.title,
+                content: message.body,
+                data,
+                url: this.buildCeremonyUrl(person.id),
+              })
+            : null;
+
+        const status =
+          result == null
+            ? NotificationStatus.SKIPPED
+            : result.ok
+              ? NotificationStatus.SENT
+              : NotificationStatus.FAILED;
 
         await this.prisma.notificationLog.create({
           data: {
@@ -386,14 +397,12 @@ export class NotificationsService {
             personId: person.id,
             title: message.title,
             message: message.body,
-            status: result.ok
-              ? NotificationStatus.SENT
-              : NotificationStatus.FAILED,
-            sentAt: result.ok ? new Date() : null,
+            status,
+            sentAt: status === NotificationStatus.SENT ? new Date() : null,
           },
         });
 
-        if (result.ok) sentCount += 1;
+        if (status === NotificationStatus.SENT) sentCount += 1;
       }
     }
 

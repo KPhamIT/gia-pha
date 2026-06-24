@@ -9,6 +9,7 @@ import IconRoundButton from "@/components/ui/IconRoundButton";
 import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
 import { useAuthStore } from "@/store/authStore";
 import { setToken } from "@/lib/auth/session";
+import { rebindPushAfterLogin } from "@/lib/notifications/push-binding";
 import {
   setStoredOrgAccessToken,
   syncOrgAccessTokenFromAuth,
@@ -44,6 +45,7 @@ export default function RegisterOrganizationForm() {
       }
       invalidateUserSettingsCache();
       await refreshAuth();
+      await rebindPushAfterLogin();
       router.replace("/org-users");
     },
     [refreshAuth, router],
