@@ -44,6 +44,9 @@ export const PUBLIC_STRINGS = {
     "Mở liên kết một lần — thiết bị sẽ nhớ dòng họ; lần sau chỉ cần vào website.",
   ],
   LANDING_START_HAS_LINK_CTA: "Tham gia dòng họ",
+  LANDING_START_HAS_LINK_INPUT_LABEL: "Dán liên kết dòng họ",
+  LANDING_START_HAS_LINK_INVALID:
+    "Liên kết không hợp lệ. Dán đường link đầy đủ dạng …/join/… do ban quản trị gửi.",
   LANDING_START_NEW_ORG_TITLE: "Trưởng họ / chưa có liên kết",
   LANDING_START_NEW_ORG_STEPS: [
     "Đăng ký tên dòng họ — bạn trở thành quản trị viên và chia sẻ liên kết cho con cháu.",
@@ -73,7 +76,7 @@ export const PUBLIC_STRINGS = {
     "Tự soạn và chỉnh mẫu bài cúng theo dòng họ, từng người hoặc tập thể — nhúng tên, địa danh, ngày giỗ bằng biến thay thế.",
   LANDING_FEATURE_EXPORT_TITLE: "In gia phả nhiều kiểu",
   LANDING_FEATURE_EXPORT_DESC:
-    "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều preset phong cách để in hoặc tải về.",
+    "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều phong cách để in hoặc tải về.",
   LANDING_DEMO_BUTTON: "Xem thử",
   LANDING_DEMO_HINT:
     "👀 Đăng nhập sẵn tài khoản demo (chỉ xem) để trải nghiệm dữ liệu mẫu.",
@@ -81,18 +84,45 @@ export const PUBLIC_STRINGS = {
   LANDING_WHY_TITLE: "Vì sao cần gia phả điện tử? 💡",
   LANDING_WHY_ITEMS: [
     "😮‍💨 Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình.",
-    "🔔 Nhắc giỗ âm lịch qua thông báo điện thoại — đến ngày không còn quên.",
+    "🔔 Nhắc ngày giỗ âm lịch qua thông báo điện thoại — đến ngày không còn quên.",
     "📅 Liệt kê ngày giỗ sắp tới để chủ động chuẩn bị.",
-    "📝 Soạn sẵn mẫu bài cúng — mở ra in 🖨️, không cần chép lại lung tung.",
-    "✨ Đúng ngày là xong — tuyệt vời phải không?",
+    "📝 Soạn sẵn mẫu bài cúng — mở ra in 🖨️.",
+    "✨ Mọi thứ đã sẵn sàng — tuyệt vời phải không?",
   ],
   LANDING_AUDIENCE_TITLE: "Dành cho ai? 💛",
   LANDING_AUDIENCE_ITEMS: [
     "📱 Con cháu xa quê — tra cứu nguồn gốc, họ hàng mọi lúc trên điện thoại.",
-    "🔔 Người bận rộn — nhận thông báo trước ngày giỗ, có sẵn mẫu bài cúng đúng tên người thân; đến ngày in là xong 🎉",
+    "🔔 Người bận rộn — nhận thông báo trước ngày giỗ, có sẵn mẫu bài cúng đúng tên người mất; đến ngày in là xong 🎉",
     "👥 Ban quản trị dòng họ — lưu trữ và cập nhật thông tin tập trung, chia sẻ cho cả họ.",
-    "📋 Thư ký họ đòi — quản lý sự kiện, đóng góp, in ấn giỗ tổ cho dòng họ.",
+    "📋 Thư ký dòng họ mong muốn — quản lý sự kiện, đóng góp, thu chi, in ấn giỗ tổ cho dòng họ.",
   ],
+  LANDING_SERVICES_TITLE: "Dịch vụ của chúng tôi",
+  LANDING_SERVICES_INTRO:
+    "Bên cạnh phần mềm tự dùng, chúng tôi nhập liệu, in ấn và vận hành gia phả theo nhu cầu gia đình hoặc cả dòng họ — bạn tập trung vào nghi lễ, phần còn lại để chúng tôi lo.",
+  LANDING_SERVICE_PRINT_TITLE: "Nhập liệu & in gia phả",
+  LANDING_SERVICE_PRINT_POINTS: [
+    "Gửi sơ đồ, sổ giấy hoặc danh sách họ hàng — chúng tôi nhập liệu lên hệ thống.",
+    "Chọn mẫu sổ, khung cây hoặc phong cách in phù hợp nhà thờ họ.",
+    "In và gửi trong vòng 1 tuần làm việc — bạn có ngay bản trưng bày trang trọng.",
+    "Liên hệ để xem mẫu thực tế và nhận báo giá.",
+  ],
+  LANDING_SERVICE_PERSONAL_TITLE: "Sử dụng cá nhân / gia đình",
+  LANDING_SERVICE_PERSONAL_POINTS: [
+    "Nhập thông tin những người thân bạn muốn nhớ ngày giỗ.",
+    "Nhắc trước 3 ngày qua điện thoại; bài cúng đã điền đúng tên, ngày và quan hệ.",
+    "Đến ngày, ra tiệm photo — chia sẻ link là in được, không cần chép tay.",
+    "Kho mẫu bài cúng theo phong tục Việt Nam; có thể tạo mẫu riêng cho gia đình.",
+  ],
+  LANDING_SERVICE_CLAN_TITLE: "Sử dụng cho dòng họ",
+  LANDING_SERVICE_CLAN_POINTS: [
+    "Toàn bộ lợi ích gói cá nhân, mở rộng cho cả họ với quy mô lớn.",
+    "Cây phả hệ, sổ gia phả và nguồn gốc dòng họ — con cháu tra cứu mọi lúc trên điện thoại.",
+    "Ban quản trị cập nhật tập trung; thông báo giỗ gửi tới người đăng ký trong họ.",
+    "Một liên kết chia sẻ cho cả dòng — không cần cài app.",
+    "Hỗ trợ họp họ, sự kiện, công đức và in ấn đồng bộ cho nhà thờ họ.",
+    "Phù hợp trưởng họ, thư ký và ban quản lý dòng họ.",
+  ],
+  LANDING_SERVICES_CTA: "Liên hệ tư vấn",
   LANDING_LEGAL_HINT:
     "Bằng việc sử dụng dịch vụ, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",
 

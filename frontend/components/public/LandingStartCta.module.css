@@ -47,6 +47,9 @@
   border-radius: 0.75rem;
   padding: 0.75rem 1.125rem;
   min-height: 3rem;
+  border: none;
+  cursor: pointer;
+  font: inherit;
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -87,6 +90,12 @@
 .cta:active {
   transform: translateY(0) scale(0.98);
   filter: brightness(0.98);
+}
+
+.cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  animation: none;
 }
 
 .primary {

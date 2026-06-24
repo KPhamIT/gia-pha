@@ -2,8 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { IconName } from "@/components/icons/icon-paths";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
-import LandingCardHeader from "@/components/public/LandingCardHeader";
 import LandingFeaturesSection from "@/components/public/LandingFeaturesSection";
+import LandingServicesSection from "@/components/public/LandingServicesSection";
+import LandingHasLinkCard from "@/components/public/LandingHasLinkCard";
+import LandingCardHeader from "@/components/public/LandingCardHeader";
 import LandingStartCta from "@/components/public/LandingStartCta";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
@@ -58,28 +60,13 @@ const FEATURES: { icon: IconName; title: string; desc: string }[] = [
   },
 ];
 
-const START_PATHS: {
-  icon: IconName;
-  title: string;
-  steps: readonly string[];
-  href: string;
-  cta: string;
-}[] = [
-  {
-    icon: "share",
-    title: UI.LANDING_START_HAS_LINK_TITLE,
-    steps: UI.LANDING_START_HAS_LINK_STEPS,
-    href: "/join",
-    cta: UI.LANDING_START_HAS_LINK_CTA,
-  },
-  {
-    icon: "userPlus",
-    title: UI.LANDING_START_NEW_ORG_TITLE,
-    steps: UI.LANDING_START_NEW_ORG_STEPS,
-    href: "/tao-dong-ho",
-    cta: UI.LANDING_START_NEW_ORG_CTA,
-  },
-];
+const REGISTER_START = {
+  icon: "userPlus" as const,
+  title: UI.LANDING_START_NEW_ORG_TITLE,
+  steps: UI.LANDING_START_NEW_ORG_STEPS,
+  href: "/tao-dong-ho",
+  cta: UI.LANDING_START_NEW_ORG_CTA,
+};
 
 export default function LandingPage() {
   return (
@@ -125,32 +112,34 @@ export default function LandingPage() {
           <section className="space-y-4">
           <h2 className="text-lg font-semibold text-amber-50">{UI.LANDING_START_TITLE}</h2>
           <div className={LAYOUT.cardGrid}>
-            {START_PATHS.map((path) => (
-              <div
-                key={path.href}
-                className={`${BT.card} ${LAYOUT.landingStartCard} p-4 md:p-5`}
+            <LandingHasLinkCard
+              icon="share"
+              title={UI.LANDING_START_HAS_LINK_TITLE}
+              steps={UI.LANDING_START_HAS_LINK_STEPS}
+            />
+            <div
+              className={`${BT.card} ${LAYOUT.landingStartCard} p-4 md:p-5`}
+            >
+              <LandingCardHeader
+                icon={REGISTER_START.icon}
+                title={REGISTER_START.title}
+                titleClassName="text-base font-semibold text-neutral-900"
+              />
+              <ol
+                className={`mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}
               >
-                <LandingCardHeader
-                  icon={path.icon}
-                  title={path.title}
-                  titleClassName="text-base font-semibold text-neutral-900"
+                {REGISTER_START.steps.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ol>
+              <div className="mt-auto pt-5">
+                <LandingStartCta
+                  href={REGISTER_START.href}
+                  label={REGISTER_START.cta}
+                  variant="gold"
                 />
-                <ol
-                  className={`mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}
-                >
-                  {path.steps.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ol>
-                <div className="mt-auto pt-5">
-                  <LandingStartCta
-                    href={path.href}
-                    label={path.cta}
-                    variant={path.href === "/tao-dong-ho" ? "gold" : "primary"}
-                  />
-                </div>
               </div>
-            ))}
+            </div>
           </div>
           </section>
 
@@ -177,6 +166,8 @@ export default function LandingPage() {
           </section>
 
           <LandingFeaturesSection features={FEATURES} />
+
+          <LandingServicesSection />
 
           <p className={`mt-6 text-center text-xs leading-relaxed ${BT.mutedOnDark}`}>
           {UI.LANDING_LEGAL_HINT}{" "}
