@@ -40,5 +40,5 @@ export const LAYOUT = {
   cardGrid:
     "grid grid-cols-1 items-stretch gap-3 md:grid-cols-2 md:gap-4",
   /** Hai card “bắt đầu” — cao tối thiểu để CTA luôn dính đáy. */
-  landingStartCard: "flex h-full min-h-[18rem] flex-col sm:min-h-[19rem]",
+  landingStartCard: "flex h-full min-h-[20rem] flex-col sm:min-h-[21rem]",
 } as const;
