@@ -75,7 +75,9 @@ export const PUBLIC_STRINGS = {
   LANDING_FEATURE_EXPORT_DESC:
     "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều preset phong cách để in hoặc tải về.",
   LANDING_DEMO_BUTTON: "Xem thử",
-  LANDING_DEMO_HINT: "👀 Dữ liệu demo hiển thị tới đời 4 (mọi nhánh).",
+  LANDING_DEMO_HINT:
+    "👀 Đăng nhập sẵn tài khoản demo (chỉ xem) để trải nghiệm dữ liệu mẫu.",
+  LANDING_DEMO_UNAVAILABLE: "Bản demo chưa sẵn sàng. Vui lòng thử lại sau.",
   LANDING_AUDIENCE_TITLE: "Dành cho ai? 💛",
   LANDING_AUDIENCE_INTRO:
     "😮‍💨 Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình. Gia phả điện tử 🔔 nhắc giỗ âm lịch qua thông báo điện thoại, 📅 liệt kê ngày giỗ sắp tới, và 📝 soạn sẵn mẫu bài cúng; đến ngày chỉ cần mở ra in 🖨️, không còn loay hoay tìm chỗ này chỗ khác chép lại. ✨ Wow — đúng ngày là xong, tuyệt vời phải không?",

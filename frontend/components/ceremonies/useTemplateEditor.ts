@@ -16,7 +16,6 @@ export function useTemplateEditor(
   variables: CeremonyTemplateVariable[],
   onSaved: () => Promise<void>,
   onClose: () => void,
-  demo = false,
 ) {
   const { template, initial } = target;
   const [form, setForm] = useState<FormState>(initial);
@@ -68,11 +67,6 @@ export function useTemplateEditor(
     }
     setSaving(true);
     try {
-      if (demo) {
-        notify.success(UI.CEREMONY_TEMPLATE_DEMO_SAVED);
-        onClose();
-        return;
-      }
       if (template) {
         await api.ceremonies.updateTemplate(template.id, form);
         notify.success(UI.CEREMONY_TEMPLATE_UPDATED);
@@ -86,7 +80,7 @@ export function useTemplateEditor(
     } finally {
       setSaving(false);
     }
-  }, [demo, form, template, onSaved, onClose]);
+  }, [form, template, onSaved]);
 
   const requestClose = useCallback(() => {
     if (dirty && !window.confirm(UI.CEREMONY_TEMPLATE_UNSAVED_CONFIRM)) return;

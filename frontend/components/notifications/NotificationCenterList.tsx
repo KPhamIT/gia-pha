@@ -9,22 +9,19 @@ import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
 import { BT } from "@/lib/constants/ui-theme";
 
-export default function NotificationCenterList({
-  demo = false,
-}: {
-  demo?: boolean;
-}) {
+export default function NotificationCenterList() {
   const [items, setItems] = useState<NotificationLogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    (demo ? api.notifications.listDemo() : api.notifications.list())
+    api.notifications
+      .list()
       .then(setItems)
       .catch(() => setError(UI.ERR_FETCH_DATA))
       .finally(() => setLoading(false));
-  }, [demo]);
+  }, []);
 
   if (loading) {
     return (
@@ -57,10 +54,6 @@ export default function NotificationCenterList({
                 type="button"
                 className="w-full text-left transition hover:opacity-90"
                 onClick={() => {
-                  if (demo) {
-                    router.push("/ceremonies/demo");
-                    return;
-                  }
                   if (item.person?.id) {
                     router.push(
                       `/ceremonies/upcoming?personId=${item.person.id}&view=ceremony`,
@@ -97,7 +90,7 @@ export default function NotificationCenterList({
                   </p>
                 ) : null}
               </button>
-              {item.person && !demo ? (
+              {item.person ? (
                 <div
                   className="mt-3 flex justify-end border-t border-amber-200/40 pt-3"
                   onClick={(e) => e.stopPropagation()}

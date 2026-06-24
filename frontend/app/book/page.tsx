@@ -1,18 +1,15 @@
 "use client";
 
-import { Suspense, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
 import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
-import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import {
   consumeBookTouchRecovery,
   useAppNavigation,
 } from "@/hooks/useAppNavigation";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
 import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useTheme } from "@/hooks/useTheme";
@@ -21,7 +18,6 @@ import {
   useOverlayPageRecovery,
   syncOverlayViewport,
 } from "@/hooks/useOverlayViewport";
-import { filterDemoPersons } from "@/utils/demo-filter";
 
 const GenealogyBookViewer = dynamic(
   () => import("@/components/family-tree/book/GenealogyBookViewer"),
@@ -29,24 +25,12 @@ const GenealogyBookViewer = dynamic(
 );
 
 export default function BookPage() {
-  return (
-    <Suspense fallback={<AuthPageLoading />}>
-      <BookPageContent />
-    </Suspense>
-  );
-}
-
-function BookPageContent() {
-  const searchParams = useSearchParams();
-  const demoMode = searchParams.get("demo") === "1";
   const { theme } = useTheme();
   const nav = useAppNavigation();
-  const goBack = useBackNavigation("/");
   const refreshAuth = useAuthStore((state) => state.refresh);
-  const { ready: orgReady } = useRequireOrgAccess({ skip: demoMode });
+  const { ready: orgReady } = useRequireOrgAccess();
   const { treeData, loading, error, reload } = useFamilyTree({
     enabled: orgReady,
-    demo: demoMode,
   });
 
   const resetBookOverlays = useCallback(() => {
@@ -56,9 +40,8 @@ function BookPageContent() {
   useOverlayPageRecovery(resetBookOverlays);
 
   useEffect(() => {
-    if (demoMode) return;
     void refreshAuth();
-  }, [demoMode, refreshAuth]);
+  }, [refreshAuth]);
 
   useEffect(() => {
     if (!consumeBookTouchRecovery()) return;
@@ -89,9 +72,9 @@ function BookPageContent() {
       <NotificationOptInBanner />
 
       <GenealogyBookViewer
-        persons={demoMode ? filterDemoPersons(treeData.persons) : treeData.persons}
+        persons={treeData.persons}
         standalone
-        onOpenTree={demoMode ? goBack : nav.openTree}
+        onOpenTree={nav.openTree}
       />
 
       <AppNavFab />

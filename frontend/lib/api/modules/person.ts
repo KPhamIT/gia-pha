@@ -59,8 +59,4 @@ export const person = {
     axiosClient
       .get<FamilyTreeData>(API_ROUTES.PERSON_ROOT_TREE)
       .then((r) => r.data),
-  getDemoTree: () =>
-    axiosClient
-      .get<FamilyTreeData>(API_ROUTES.PERSON_DEMO_TREE)
-      .then((r) => r.data),
 };

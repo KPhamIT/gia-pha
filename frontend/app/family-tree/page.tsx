@@ -1,8 +1,7 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { useAuthStore } from "@/store/authStore";
 import TreeFilters from "@/components/family-tree/graph/TreeFilters";
@@ -19,7 +18,6 @@ import { useTheme } from "@/hooks/useTheme";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
-import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import { getPageShellClass } from "@/utils/theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { useTreeSettingsSync } from "./useTreeSettingsSync";
@@ -40,20 +38,10 @@ const FamilyTreeGraph = dynamic(
 );
 
 export default function FamilyTreePage() {
-  return (
-    <Suspense fallback={<AuthPageLoading />}>
-      <FamilyTreePageContent />
-    </Suspense>
-  );
-}
-
-function FamilyTreePageContent() {
-  const searchParams = useSearchParams();
-  const demoMode = searchParams.get("demo") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const goBack = useBackNavigation("/");
-  const { ready: orgReady } = useRequireOrgAccess({ skip: demoMode });
+  const { ready: orgReady } = useRequireOrgAccess();
   const {
     treeData,
     loading,
@@ -66,7 +54,6 @@ function FamilyTreePageContent() {
     updatePerson,
   } = useFamilyTree({
     enabled: orgReady,
-    demo: demoMode,
   });
   const { theme, setTheme } = useTheme();
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
@@ -99,21 +86,12 @@ function FamilyTreePageContent() {
   >();
   const graphApiRef = useRef<FamilyTreeGraphApi | null>(null);
   const [centerTreeKey, setCenterTreeKey] = useState(0);
-  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(
-    demoMode ? "all" : null,
-  );
+  const [filterBranch, setFilterBranch] = useState<number | "all" | null>(null);
   const [maxGeneration, setMaxGeneration] = useState<number | "all">(4);
 
   useEffect(() => {
-    if (!demoMode) return;
-    setFilterBranch("all");
-    setMaxGeneration(4);
-  }, [demoMode]);
-
-  useEffect(() => {
-    if (demoMode) return;
     void refreshAuth();
-  }, [demoMode, refreshAuth]);
+  }, [refreshAuth]);
 
   const handleOpenExport = useCallback(() => {
     const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
