@@ -1,0 +1,134 @@
+@keyframes landingCtaFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes landingCtaRing {
+  0% {
+    box-shadow:
+      0 4px 16px rgb(180 83 9 / 0.35),
+      0 0 0 0 rgb(251 191 36 / 0.55);
+  }
+  70% {
+    box-shadow:
+      0 8px 22px rgb(180 83 9 / 0.45),
+      0 0 0 10px rgb(251 191 36 / 0);
+  }
+  100% {
+    box-shadow:
+      0 4px 16px rgb(180 83 9 / 0.35),
+      0 0 0 0 rgb(251 191 36 / 0);
+  }
+}
+
+@keyframes landingCtaShine {
+  0% {
+    left: -120%;
+  }
+  35%,
+  100% {
+    left: 140%;
+  }
+}
+
+.cta {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.125rem;
+  min-height: 3rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  isolation: isolate;
+  animation:
+    landingCtaFloat 2.2s ease-in-out infinite,
+    landingCtaRing 2.2s ease-out infinite;
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  z-index: 1;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.55) 45%,
+    transparent 100%
+  );
+  animation: landingCtaShine 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cta:hover {
+  filter: brightness(1.06);
+  transform: translateY(-2px) scale(1.02);
+  animation: none;
+}
+
+.cta:active {
+  transform: translateY(0) scale(0.98);
+  filter: brightness(0.98);
+}
+
+.primary {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 45%, #92400e 100%);
+  color: #fffbeb;
+  border: 1px solid rgb(253 230 138 / 0.45);
+}
+
+.gold {
+  background: linear-gradient(135deg, #fffbeb 0%, #fde68a 40%, #fbbf24 100%);
+  color: #78350f;
+  border: 2px solid #f59e0b;
+}
+
+.label {
+  position: relative;
+  z-index: 2;
+}
+
+.arrow {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.cta:hover .arrow {
+  transform: translateX(0.35rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    animation: none;
+  }
+
+  .cta::before {
+    animation: none;
+    display: none;
+  }
+
+  .cta:hover {
+    transform: none;
+    filter: none;
+  }
+}

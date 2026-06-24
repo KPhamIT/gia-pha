@@ -62,7 +62,7 @@ export default function JoinOrgPage() {
             {UI.PUBLIC_FOOTER_CONTACT}
           </Link>
         </div>
-        <PublicFooterLinks />
+        <PublicFooterLinks tone="dark" />
       </BookPageShell>
     );
   }

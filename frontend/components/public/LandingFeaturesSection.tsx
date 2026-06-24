@@ -22,8 +22,9 @@ function demoPathForFeature(title: string): string {
     case UI.LANDING_FEATURE_BOOK_TITLE:
       return "/book";
     case UI.LANDING_FEATURE_TREE_TITLE:
-    case UI.LANDING_FEATURE_EXPORT_TITLE:
       return "/family-tree";
+    case UI.LANDING_FEATURE_EXPORT_TITLE:
+      return "/family-tree?export=1";
     case UI.LANDING_FEATURE_EVENTS_TITLE:
       return "/events";
     case UI.LANDING_FEATURE_NOTIF_TITLE:
@@ -42,6 +43,7 @@ export default function LandingFeaturesSection({
 }: LandingFeaturesSectionProps) {
   const [hasDemo, setHasDemo] = useState(false);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isDemo = useAuthStore((s) => s.isDemo);
   const { openDemo, loadingPath } = useDemoLogin();
 
   useEffect(() => {
@@ -59,8 +61,8 @@ export default function LandingFeaturesSection({
     };
   }, []);
 
-  // Khách đã đăng nhập có quyền thật, không cần nút demo.
-  const showDemo = hasDemo && !isLoggedIn;
+  // Ẩn với tài khoản thật; khách và tài khoản demo vẫn thấy nút thử chức năng khác.
+  const showDemo = hasDemo && (!isLoggedIn || isDemo);
 
   return (
     <section className="mt-6 space-y-4">

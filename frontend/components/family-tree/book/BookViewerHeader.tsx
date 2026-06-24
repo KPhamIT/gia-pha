@@ -10,7 +10,6 @@ const iconBtn =
 type Props = {
   pageIndex: number;
   totalLeaves: number;
-  standalone?: boolean;
   /** Hiện nút quản lý trang & đổi kiểu (chỉ khi có quyền sửa sổ). */
   canEdit?: boolean;
   onClose?: () => void;
@@ -23,7 +22,6 @@ type Props = {
 
 export default function BookViewerHeader({
   totalLeaves,
-  standalone = false,
   canEdit = false,
   onClose,
   onToggleStyle,
@@ -41,10 +39,10 @@ export default function BookViewerHeader({
           type="button"
           onClick={onClose}
           className="grid h-11 w-11 place-items-center rounded-full active:bg-white/10 md:h-10 md:w-10"
-          aria-label={standalone ? UI.OPEN_FAMILY_TREE : UI.BACK}
+          aria-label={UI.BACK}
         >
           <Icon
-            path={standalone ? "center" : "arrowLeft"}
+            path="arrowLeft"
             size={22}
             fill="none"
             stroke="currentColor"

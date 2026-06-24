@@ -56,10 +56,10 @@ export default function BookViewerFallback({
             type="button"
             onClick={onClose}
             className="grid h-10 w-10 place-items-center rounded-full active:bg-white/10 md:hover:bg-white/10"
-            aria-label={standalone ? UI.OPEN_FAMILY_TREE : UI.CANCEL}
+            aria-label={UI.BACK}
           >
             <Icon
-              path={standalone ? "center" : "arrowLeft"}
+              path="arrowLeft"
               size={22}
               fill="none"
               stroke="currentColor"

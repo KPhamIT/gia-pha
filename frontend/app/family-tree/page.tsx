@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { useAuthStore } from "@/store/authStore";
 import TreeFilters from "@/components/family-tree/graph/TreeFilters";
@@ -13,7 +14,6 @@ import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useUserBranch } from "@/hooks/useUserBranch";
 import { useLayoutConfig } from "@/hooks/useLayoutConfig";
 import { filterTreeData } from "@/utils/filter-tree-data";
-import type { BranchValue } from "@/lib/constants/branches";
 import { useTheme } from "@/hooks/useTheme";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
@@ -38,6 +38,8 @@ const FamilyTreeGraph = dynamic(
 );
 
 export default function FamilyTreePage() {
+  const searchParams = useSearchParams();
+  const shouldOpenExport = searchParams.get("export") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
   const goBack = useBackNavigation("/");
@@ -59,7 +61,8 @@ export default function FamilyTreePage() {
   const { layoutConfig, setLayoutConfig } = useLayoutConfig();
   const {
     branch: userBranch,
-    setBranch: setUserBranch,
+    welcomeDone,
+    completeWelcome,
     hydrated: branchHydrated,
   } = useUserBranch();
 
@@ -93,6 +96,11 @@ export default function FamilyTreePage() {
     void refreshAuth();
   }, [refreshAuth]);
 
+  useEffect(() => {
+    if (!shouldOpenExport || !treeData) return;
+    setShowExport(true);
+  }, [shouldOpenExport, treeData]);
+
   const handleOpenExport = useCallback(() => {
     const moved = graphApiRef.current?.collectMovedNodePositions() ?? {};
     setExportPositionOverrides(
@@ -104,10 +112,6 @@ export default function FamilyTreePage() {
     setShowExport(false);
     setExportPositionOverrides(undefined);
   }, []);
-  const handleSelectBranch = useCallback(
-    (branch: BranchValue) => setUserBranch(branch),
-    [setUserBranch],
-  );
 
   // The on-page branch filter follows the user's saved branch until they override it.
   const effectiveBranch = filterBranch ?? userBranch ?? "all";
@@ -216,8 +220,8 @@ export default function FamilyTreePage() {
           exportPositionOverrides={exportPositionOverrides}
           onCloseExport={handleCloseExport}
           canDownloadExport={canMutate}
-          showWelcome={branchHydrated && userBranch == null}
-          onSelectBranch={handleSelectBranch}
+          showWelcome={branchHydrated && !welcomeDone}
+          onCompleteWelcome={completeWelcome}
         />
       ) : null}
     </div>

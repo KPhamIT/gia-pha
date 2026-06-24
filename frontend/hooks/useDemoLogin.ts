@@ -30,6 +30,7 @@ export function useDemoLogin() {
         router.push(path);
       } catch {
         notify.error(null, UI.LANDING_DEMO_UNAVAILABLE);
+      } finally {
         setLoadingPath(null);
       }
     },

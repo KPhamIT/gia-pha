@@ -8,8 +8,8 @@ import AppNavFab from "@/components/navigation/AppNavFab";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
 import {
   consumeBookTouchRecovery,
-  useAppNavigation,
 } from "@/hooks/useAppNavigation";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
 import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
 import { useTheme } from "@/hooks/useTheme";
@@ -26,7 +26,7 @@ const GenealogyBookViewer = dynamic(
 
 export default function BookPage() {
   const { theme } = useTheme();
-  const nav = useAppNavigation();
+  const goBack = useBackNavigation("/");
   const refreshAuth = useAuthStore((state) => state.refresh);
   const { ready: orgReady } = useRequireOrgAccess();
   const { treeData, loading, error, reload } = useFamilyTree({
@@ -74,7 +74,7 @@ export default function BookPage() {
       <GenealogyBookViewer
         persons={treeData.persons}
         standalone
-        onOpenTree={nav.openTree}
+        onBack={goBack}
       />
 
       <AppNavFab />

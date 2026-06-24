@@ -78,9 +78,15 @@ export const PUBLIC_STRINGS = {
   LANDING_DEMO_HINT:
     "👀 Đăng nhập sẵn tài khoản demo (chỉ xem) để trải nghiệm dữ liệu mẫu.",
   LANDING_DEMO_UNAVAILABLE: "Bản demo chưa sẵn sàng. Vui lòng thử lại sau.",
+  LANDING_WHY_TITLE: "Vì sao cần gia phả điện tử? 💡",
+  LANDING_WHY_ITEMS: [
+    "😮‍💨 Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình.",
+    "🔔 Nhắc giỗ âm lịch qua thông báo điện thoại — đến ngày không còn quên.",
+    "📅 Liệt kê ngày giỗ sắp tới để chủ động chuẩn bị.",
+    "📝 Soạn sẵn mẫu bài cúng — mở ra in 🖨️, không cần chép lại lung tung.",
+    "✨ Đúng ngày là xong — tuyệt vời phải không?",
+  ],
   LANDING_AUDIENCE_TITLE: "Dành cho ai? 💛",
-  LANDING_AUDIENCE_INTRO:
-    "😮‍💨 Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình. Gia phả điện tử 🔔 nhắc giỗ âm lịch qua thông báo điện thoại, 📅 liệt kê ngày giỗ sắp tới, và 📝 soạn sẵn mẫu bài cúng; đến ngày chỉ cần mở ra in 🖨️, không còn loay hoay tìm chỗ này chỗ khác chép lại. ✨ Wow — đúng ngày là xong, tuyệt vời phải không?",
   LANDING_AUDIENCE_ITEMS: [
     "📱 Con cháu xa quê — tra cứu nguồn gốc, họ hàng mọi lúc trên điện thoại.",
     "🔔 Người bận rộn — nhận thông báo trước ngày giỗ, có sẵn mẫu bài cúng đúng tên người thân; đến ngày in là xong 🎉",
