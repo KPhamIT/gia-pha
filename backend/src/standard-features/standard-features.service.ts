@@ -5,6 +5,7 @@ import { assertOrgAccess, isSystem } from '../auth/org-access.js';
 import {
   APP_CONFIG_STANDARD_FEATURES_KEY,
   DEFAULT_STANDARD_FEATURES,
+  DEMO_STANDARD_FEATURES,
   allStandardFeaturesEnabled,
   mergeStandardFeatures,
   parseFeaturePatch,
@@ -19,6 +20,7 @@ export type StandardFeaturesConfig = {
 
 export type FeatureUser = Pick<User, 'role' | 'organizationId'> & {
   id?: number;
+  isDemo?: boolean;
 };
 
 @Injectable()
@@ -85,6 +87,9 @@ export class StandardFeaturesService {
   ): Promise<StandardFeatures> {
     if (!user) {
       return { ...DEFAULT_STANDARD_FEATURES };
+    }
+    if (user.isDemo) {
+      return { ...DEMO_STANDARD_FEATURES };
     }
     if (user.role === UserRole.SYSTEM || user.role === UserRole.ADMIN) {
       return allStandardFeaturesEnabled();

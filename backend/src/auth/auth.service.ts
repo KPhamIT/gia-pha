@@ -35,6 +35,7 @@ type AuthUser = {
   providerId: string;
   role: UserRole;
   organizationId: number | null;
+  isDemo: boolean;
 };
 
 @Injectable()
@@ -69,6 +70,7 @@ export class AuthService {
       where: {
         OR: [{ username: normalized }, { email: normalized }],
         provider: 'local',
+        isActive: true,
       },
     });
 
@@ -161,6 +163,7 @@ export class AuthService {
     providerId: string;
     role: UserRole;
     organizationId: number | null;
+    isDemo?: boolean;
   }) {
     const person = await this.prisma.person.findUnique({
       where: { userId: user.id },
@@ -203,6 +206,7 @@ export class AuthService {
     providerId: string;
     role: UserRole;
     organizationId: number | null;
+    isDemo?: boolean;
   }) {
     const me = await this.buildMeResponse(user);
     return {
@@ -219,6 +223,7 @@ export class AuthService {
     providerId: string;
     role: UserRole;
     organizationId: number | null;
+    isDemo?: boolean;
     person?: { id: number; fullName: string } | null;
   }): AuthUser & { person?: { id: number; fullName: string } | null } {
     return {
@@ -229,6 +234,7 @@ export class AuthService {
       providerId: user.providerId,
       role: user.role,
       organizationId: user.organizationId,
+      isDemo: user.isDemo ?? false,
       person: user.person ?? undefined,
     };
   }

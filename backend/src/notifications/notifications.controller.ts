@@ -47,11 +47,6 @@ export class NotificationsController {
     return this.notificationsService.listForUser(req.user);
   }
 
-  @Get('demo')
-  listDemo() {
-    return this.notificationsService.listDemoNotifications();
-  }
-
   @Get('stats')
   @UseGuards(JwtRequiredGuard, MutateGuard)
   stats(@Request() req: { user: User }) {

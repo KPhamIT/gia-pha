@@ -48,6 +48,9 @@ model User {
 
   isActive Boolean @default(true)
 
+  /// Tài khoản demo công khai (chỉ xem; bị chặn mọi thao tác ghi).
+  isDemo Boolean @default(false)
+
   onesignalSubscriptionId String?
 
   notificationDeathAnniversaryEnabled Boolean @default(false)

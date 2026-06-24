@@ -8,7 +8,6 @@ import { ConfigService } from '@nestjs/config';
 import type { User } from '../../generated/prisma/client.js';
 import { assertOrgMemberAccess } from '../auth/org-access.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { OrganizationService } from '../organization/organization.service.js';
 import {
   DEFAULT_CEREMONY_TEMPLATE,
   buildCeremonyVars,
@@ -33,58 +32,7 @@ export class CeremoniesService {
     private readonly prisma: PrismaService,
     private readonly ceremonyTemplates: CeremonyTemplatesService,
     private readonly config: ConfigService,
-    private readonly organizationService: OrganizationService,
   ) {}
-
-  /** Bài cúng mẫu của org demo: người đã mất đầu tiên + mẫu mặc định. Công khai. */
-  async renderDemoCeremony(personId?: number, templateId?: number) {
-    const orgId = await this.organizationService.getDemoOrganizationId();
-    if (orgId == null) {
-      throw new NotFoundException('Demo organization is not configured');
-    }
-    const resolvedPersonId =
-      personId ?? (await this.resolveDemoCeremonyPersonId());
-    const person = await this.prisma.person.findUnique({
-      where: { id: resolvedPersonId },
-      select: { organizationId: true },
-    });
-    if (!person || person.organizationId !== orgId) {
-      throw new NotFoundException('Person not found in demo organization');
-    }
-    return this.renderCeremonyHtmlForPerson(
-      resolvedPersonId,
-      null,
-      undefined,
-      templateId,
-    );
-  }
-
-  /** Share token công khai cho bài cúng demo (org demo là dữ liệu công khai). */
-  async createDemoShareToken() {
-    const personId = await this.resolveDemoCeremonyPersonId();
-    const token = createCeremonyShareToken(personId, this.shareSecret());
-    return { token, personId };
-  }
-
-  private async resolveDemoCeremonyPersonId(): Promise<number> {
-    const orgId = await this.organizationService.getDemoOrganizationId();
-    if (orgId == null) {
-      throw new NotFoundException('Demo organization is not configured');
-    }
-    const person = await this.prisma.person.findFirst({
-      where: {
-        organizationId: orgId,
-        deathLunarDay: { not: null },
-        deathLunarMonth: { not: null },
-      },
-      orderBy: [{ generation: 'asc' }, { fullName: 'asc' }],
-      select: { id: true },
-    });
-    if (!person) {
-      throw new NotFoundException('No ceremony demo data found');
-    }
-    return person.id;
-  }
 
   async createShareToken(user: User, personId: number) {
     await this.assertPersonInOrg(user, personId);

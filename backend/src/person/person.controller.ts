@@ -60,11 +60,6 @@ export class PersonController {
     );
   }
 
-  @Get('demo/tree')
-  getDemoFamilyGraph() {
-    return this.personService.getDemoFamilyGraph();
-  }
-
   @Get(':id/tree')
   getFamilyGraph(@Param('id') id: string) {
     return this.personService.getFamilyGraph(+id);
