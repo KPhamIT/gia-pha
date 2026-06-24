@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
@@ -37,7 +37,7 @@ const FamilyTreeGraph = dynamic(
   },
 );
 
-export default function FamilyTreePage() {
+function FamilyTreePageContent() {
   const searchParams = useSearchParams();
   const shouldOpenExport = searchParams.get("export") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
@@ -225,5 +225,15 @@ export default function FamilyTreePage() {
         />
       ) : null}
     </div>
+  );
+}
+
+export default function FamilyTreePage() {
+  return (
+    <Suspense
+      fallback={<FamilyTreeStatus theme="light" type="loading" />}
+    >
+      <FamilyTreePageContent />
+    </Suspense>
   );
 }
