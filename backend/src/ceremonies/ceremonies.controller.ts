@@ -29,7 +29,6 @@ export class CeremoniesController {
   ) {}
 
   @Get('templates/variables')
-  @UseGuards(JwtRequiredGuard)
   listVariables() {
     return CEREMONY_TEMPLATE_VARIABLES;
   }
@@ -77,9 +76,19 @@ export class CeremoniesController {
     return this.ceremonyTemplatesService.remove(req.user, +id);
   }
 
+  @Get('demo/templates')
+  listDemoTemplates() {
+    return this.ceremonyTemplatesService.listForDemo();
+  }
+
   @Get('demo/html')
-  renderDemoHtml() {
-    return this.ceremoniesService.renderDemoCeremony();
+  renderDemoHtml(
+    @Query('personId') personId?: string,
+    @Query('templateId') templateId?: string,
+  ) {
+    const pid = personId ? Number(personId) : undefined;
+    const tid = templateId ? Number(templateId) : undefined;
+    return this.ceremoniesService.renderDemoCeremony(pid, tid);
   }
 
   @Get('demo/share-token')

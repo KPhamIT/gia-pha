@@ -52,9 +52,14 @@ export const ceremonies = {
       .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_PUBLIC_HTML(token))
       .then((r) => r.data),
 
-  getDemoHtml: () =>
+  getDemoHtml: (personId?: number, templateId?: number) =>
     axiosClient
-      .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_DEMO_HTML)
+      .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_DEMO_HTML, {
+        params: {
+          ...(personId != null ? { personId } : {}),
+          ...(templateId != null ? { templateId } : {}),
+        },
+      })
       .then((r) => r.data),
 
   getDemoShareToken: () =>
@@ -67,6 +72,11 @@ export const ceremonies = {
   listTemplates: () =>
     axiosClient
       .get<CeremonyTemplate[]>(API_ROUTES.CEREMONY_TEMPLATES)
+      .then((r) => r.data),
+
+  listDemoTemplates: () =>
+    axiosClient
+      .get<CeremonyTemplate[]>(API_ROUTES.CEREMONY_DEMO_TEMPLATES)
       .then((r) => r.data),
 
   getTemplate: (id: number) =>

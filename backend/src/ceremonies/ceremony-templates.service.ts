@@ -11,6 +11,7 @@ import {
   isSystem,
 } from '../auth/org-access.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { OrganizationService } from '../organization/organization.service.js';
 import {
   CreateCeremonyTemplateDto,
   UpdateCeremonyTemplateDto,
@@ -18,7 +19,20 @@ import {
 
 @Injectable()
 export class CeremonyTemplatesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly organizationService: OrganizationService,
+  ) {}
+
+  /** Mẫu bài cúng của org demo — công khai cho trang xem thử. */
+  async listForDemo() {
+    const orgId = await this.organizationService.getDemoOrganizationId();
+    if (orgId == null) return [];
+    return this.prisma.ceremonyTemplate.findMany({
+      where: { organizationId: orgId },
+      orderBy: [{ isDefault: 'desc' }, { name: 'asc' }],
+    });
+  }
 
   async list(user: User) {
     const organizationId = this.resolveOrganizationId(user);

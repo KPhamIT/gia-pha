@@ -14,6 +14,7 @@ type Props = {
   templateId: number;
   persons: Person[];
   relationships: Relationship[];
+  demo?: boolean;
 };
 
 /** Chọn người đã mất rồi xem + in bài cúng với dữ liệu thật của họ. */
@@ -21,6 +22,7 @@ export default function CeremonyPrintView({
   templateId,
   persons,
   relationships,
+  demo = false,
 }: Props) {
   const [personId, setPersonId] = useState<number | null>(null);
 
@@ -47,7 +49,11 @@ export default function CeremonyPrintView({
         />
       </div>
       {personId != null ? (
-        <CeremonyViewer personId={personId} templateId={templateId} />
+        <CeremonyViewer
+          personId={personId}
+          templateId={templateId}
+          demo={demo}
+        />
       ) : (
         <p className={`text-sm ${BT.mutedOnDark}`}>
           {UI.CEREMONY_PRINT_PICK_PERSON}

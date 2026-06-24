@@ -46,7 +46,7 @@ export default function CeremonyViewer({
   useEffect(() => {
     let cancelled = false;
     const request = demo
-      ? api.ceremonies.getDemoHtml()
+      ? api.ceremonies.getDemoHtml(personId, templateId)
       : shareToken != null
         ? api.ceremonies.getPublicHtml(shareToken)
         : personId != null

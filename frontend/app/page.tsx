@@ -46,6 +46,11 @@ const FEATURES: { icon: IconName; title: string; desc: string }[] = [
     desc: UI.LANDING_FEATURE_CEREMONY_PRINT_DESC,
   },
   {
+    icon: "edit",
+    title: UI.LANDING_FEATURE_CEREMONY_CUSTOM_TITLE,
+    desc: UI.LANDING_FEATURE_CEREMONY_CUSTOM_DESC,
+  },
+  {
     icon: "image",
     title: UI.LANDING_FEATURE_EXPORT_TITLE,
     desc: UI.LANDING_FEATURE_EXPORT_DESC,
@@ -148,6 +153,9 @@ export default function LandingPage() {
           <h2 className="text-lg font-semibold text-neutral-900">
             {UI.LANDING_AUDIENCE_TITLE}
           </h2>
+          <p className={`mt-3 text-sm leading-relaxed ${BT.mutedOnLight}`}>
+            {UI.LANDING_AUDIENCE_INTRO}
+          </p>
           <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}>
             {UI.LANDING_AUDIENCE_ITEMS.map((item, index) => (
               <li key={index}>{item}</li>

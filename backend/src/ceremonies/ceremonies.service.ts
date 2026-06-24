@@ -37,9 +37,26 @@ export class CeremoniesService {
   ) {}
 
   /** Bài cúng mẫu của org demo: người đã mất đầu tiên + mẫu mặc định. Công khai. */
-  async renderDemoCeremony() {
-    const personId = await this.resolveDemoCeremonyPersonId();
-    return this.renderCeremonyHtmlForPerson(personId, null);
+  async renderDemoCeremony(personId?: number, templateId?: number) {
+    const orgId = await this.organizationService.getDemoOrganizationId();
+    if (orgId == null) {
+      throw new NotFoundException('Demo organization is not configured');
+    }
+    const resolvedPersonId =
+      personId ?? (await this.resolveDemoCeremonyPersonId());
+    const person = await this.prisma.person.findUnique({
+      where: { id: resolvedPersonId },
+      select: { organizationId: true },
+    });
+    if (!person || person.organizationId !== orgId) {
+      throw new NotFoundException('Person not found in demo organization');
+    }
+    return this.renderCeremonyHtmlForPerson(
+      resolvedPersonId,
+      null,
+      undefined,
+      templateId,
+    );
   }
 
   /** Share token công khai cho bài cúng demo (org demo là dữ liệu công khai). */

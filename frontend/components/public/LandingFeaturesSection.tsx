@@ -27,6 +27,8 @@ function demoHrefForFeature(title: string): string {
       return "/events?demo=1";
     case UI.LANDING_FEATURE_NOTIF_TITLE:
       return "/notifications?demo=1";
+    case UI.LANDING_FEATURE_CEREMONY_CUSTOM_TITLE:
+      return "/ceremonies/templates?demo=1";
     case UI.LANDING_FEATURE_CEREMONY_TITLE:
     case UI.LANDING_FEATURE_CEREMONY_PRINT_TITLE:
       return "/ceremonies/demo";

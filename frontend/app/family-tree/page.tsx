@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
@@ -19,6 +19,7 @@ import { useTheme } from "@/hooks/useTheme";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
+import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import { getPageShellClass } from "@/utils/theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { useTreeSettingsSync } from "./useTreeSettingsSync";
@@ -39,6 +40,14 @@ const FamilyTreeGraph = dynamic(
 );
 
 export default function FamilyTreePage() {
+  return (
+    <Suspense fallback={<AuthPageLoading />}>
+      <FamilyTreePageContent />
+    </Suspense>
+  );
+}
+
+function FamilyTreePageContent() {
   const searchParams = useSearchParams();
   const demoMode = searchParams.get("demo") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();

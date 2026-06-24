@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import BookPageShell from "@/components/ui/BookPageShell";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
 import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
+import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import { useAuthStore } from "@/store/authStore";
 import { useFamilyTree } from "@/hooks/useFamilyTree";
 import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
@@ -23,6 +24,14 @@ const EventsManager = dynamic(
 );
 
 export default function EventsPage() {
+  return (
+    <Suspense fallback={<AuthPageLoading />}>
+      <EventsPageContent />
+    </Suspense>
+  );
+}
+
+function EventsPageContent() {
   const searchParams = useSearchParams();
   const demoMode = searchParams.get("demo") === "1";
   const { theme } = useTheme();

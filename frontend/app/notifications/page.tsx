@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import BookPageShell from "@/components/ui/BookPageShell";
 import AuthPageLoading from "@/components/ui/AuthPageLoading";
@@ -10,6 +11,14 @@ import { BT } from "@/lib/constants/ui-theme";
 import Link from "next/link";
 
 export default function NotificationsPage() {
+  return (
+    <Suspense fallback={<AuthPageLoading />}>
+      <NotificationsPageContent />
+    </Suspense>
+  );
+}
+
+function NotificationsPageContent() {
   const { loaded, isLoggedIn } = useAuthBootstrap();
   const demoMode = useSearchParams().get("demo") === "1";
 

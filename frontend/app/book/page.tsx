@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
 import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
+import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import {
   consumeBookTouchRecovery,
   useAppNavigation,
@@ -28,6 +29,14 @@ const GenealogyBookViewer = dynamic(
 );
 
 export default function BookPage() {
+  return (
+    <Suspense fallback={<AuthPageLoading />}>
+      <BookPageContent />
+    </Suspense>
+  );
+}
+
+function BookPageContent() {
   const searchParams = useSearchParams();
   const demoMode = searchParams.get("demo") === "1";
   const { theme } = useTheme();

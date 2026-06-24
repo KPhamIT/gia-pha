@@ -43,6 +43,7 @@ export const API_ROUTES = {
   NOTIFICATIONS_STATS: "/notifications/stats",
   CEREMONY_DEMO_HTML: "/ceremonies/demo/html",
   CEREMONY_DEMO_SHARE_TOKEN: "/ceremonies/demo/share-token",
+  CEREMONY_DEMO_TEMPLATES: "/ceremonies/demo/templates",
   CEREMONY_HTML: (personId: number) => `/ceremonies/${personId}/html`,
   CEREMONY_SHARE_TOKEN: (personId: number) =>
     `/ceremonies/${personId}/share-token`,

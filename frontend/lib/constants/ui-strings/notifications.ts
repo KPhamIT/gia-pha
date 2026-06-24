@@ -92,6 +92,10 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_TEMPLATE_UNSAVED_CONFIRM: "Bỏ các thay đổi chưa lưu?",
   CEREMONY_TEMPLATE_READONLY_HINT:
     "Chọn người đã mất để xem và in bài cúng. Chỉ quản trị viên mới sửa được mẫu.",
+  CEREMONY_TEMPLATE_DEMO_HINT:
+    "Xem thử soạn mẫu bài cúng — có thể tạo, chỉnh và xem trước; không lưu lên hệ thống.",
+  CEREMONY_TEMPLATE_DEMO_SAVED:
+    "Chế độ xem thử — mẫu không được lưu. Đăng nhập để dùng thật.",
   CEREMONY_PRINT_OPEN: "Xem & In",
   CEREMONY_PRINT_TITLE: "Xem & In bài cúng",
   CEREMONY_PRINT_PICK_PERSON: "Chọn người đã mất để xem và in bài cúng",

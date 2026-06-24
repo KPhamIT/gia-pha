@@ -21,9 +21,17 @@ import TemplatesToolbar from "./TemplatesToolbar";
 import CeremonyTemplateCard from "./CeremonyTemplateCard";
 import TemplateEditorSheet from "./TemplateEditorSheet";
 import CeremonyPrintView from "./CeremonyPrintView";
+import { filterDemoPersons, filterDemoRelationships } from "@/utils/demo-filter";
 
-export default function CeremonyTemplatesManager() {
+type Props = {
+  /** Chế độ xem thử công khai — dữ liệu org demo, không lưu mẫu. */
+  demo?: boolean;
+};
+
+export default function CeremonyTemplatesManager({ demo = false }: Props) {
   const canMutate = useAuthStore((state) => state.canMutate);
+  const canEdit = demo || canMutate;
+  const canPersist = !demo && canMutate;
   const [templates, setTemplates] = useState<CeremonyTemplate[]>([]);
   const [variables, setVariables] = useState<CeremonyTemplateVariable[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
@@ -36,21 +44,35 @@ export default function CeremonyTemplatesManager() {
 
   const reload = useCallback(
     () =>
-      Promise.all([
-        api.ceremonies.listTemplates(),
-        api.ceremonies.listVariables(),
-        api.person.list(),
-        api.relationship.list(),
-      ])
-        .then(([items, vars, personList, rels]) => {
-          setTemplates(items);
-          setVariables(vars);
-          setPersons(personList);
-          setRelationships(rels);
-        })
+      (demo
+        ? Promise.all([
+            api.ceremonies.listDemoTemplates(),
+            api.ceremonies.listVariables(),
+            api.person.getDemoTree(),
+          ]).then(([items, vars, tree]) => {
+            const persons = filterDemoPersons(tree.persons);
+            setTemplates(items);
+            setVariables(vars);
+            setPersons(persons);
+            setRelationships(
+              filterDemoRelationships(tree.relationships, persons),
+            );
+          })
+        : Promise.all([
+            api.ceremonies.listTemplates(),
+            api.ceremonies.listVariables(),
+            api.person.list(),
+            api.relationship.list(),
+          ]).then(([items, vars, personList, rels]) => {
+            setTemplates(items);
+            setVariables(vars);
+            setPersons(personList);
+            setRelationships(rels);
+          })
+      )
         .catch((err) => notify.error(err, UI.CEREMONY_TEMPLATE_ERR_LOAD))
         .finally(() => setLoading(false)),
-    [],
+    [demo],
   );
 
   useEffect(() => {
@@ -93,6 +115,7 @@ export default function CeremonyTemplatesManager() {
     });
 
   const handleSetDefault = async (id: number) => {
+    if (!canPersist) return;
     try {
       await api.ceremonies.setDefaultTemplate(id);
       notify.success(UI.CEREMONY_TEMPLATE_DEFAULT_SET);
@@ -103,6 +126,7 @@ export default function CeremonyTemplatesManager() {
   };
 
   const handleDelete = async (template: CeremonyTemplate) => {
+    if (!canPersist) return;
     if (!window.confirm(UI.CEREMONY_TEMPLATE_DELETE_CONFIRM)) return;
     try {
       await api.ceremonies.deleteTemplate(template.id);
@@ -119,14 +143,18 @@ export default function CeremonyTemplatesManager() {
 
   return (
     <div className="space-y-4 pb-4">
-      <TemplatesToolbar canEdit={canMutate} onCreate={openCreate} />
+      <TemplatesToolbar
+        canEdit={canEdit}
+        onCreate={openCreate}
+        hint={demo ? UI.CEREMONY_TEMPLATE_DEMO_HINT : undefined}
+      />
 
       {sorted.length === 0 ? (
         <div className={`${BT.card} p-6 text-center`}>
           <p className={`text-sm ${BT.mutedOnLight}`}>
             {UI.CEREMONY_TEMPLATE_EMPTY}
           </p>
-          {canMutate ? (
+          {canEdit ? (
             <button
               type="button"
               className={`mt-4 ${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mx-auto`}
@@ -150,7 +178,8 @@ export default function CeremonyTemplatesManager() {
             <CeremonyTemplateCard
               key={template.id}
               template={template}
-              canEdit={canMutate}
+              canEdit={canEdit}
+              canPersist={canPersist}
               onPrint={() => setPrintTemplate(template)}
               onSetDefault={() => void handleSetDefault(template.id)}
               onDuplicate={() => openDuplicate(template)}
@@ -168,6 +197,7 @@ export default function CeremonyTemplatesManager() {
           persons={deceasedPersons}
           relationships={relationships}
           onClose={() => setTarget(null)}
+          demo={demo}
           onSaved={async () => {
             setTarget(null);
             await reload();
@@ -189,6 +219,7 @@ export default function CeremonyTemplatesManager() {
               templateId={printTemplate.id}
               persons={deceasedPersons}
               relationships={relationships}
+              demo={demo}
             />
           </div>
         </FullScreenSheet>

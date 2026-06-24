@@ -24,6 +24,7 @@ type Props = {
   relationships: Relationship[];
   onClose: () => void;
   onSaved: () => Promise<void>;
+  demo?: boolean;
 };
 
 export default function TemplateEditorSheet({
@@ -33,6 +34,7 @@ export default function TemplateEditorSheet({
   relationships,
   onClose,
   onSaved,
+  demo = false,
 }: Props) {
   const {
     template,
@@ -46,7 +48,7 @@ export default function TemplateEditorSheet({
     insertVariable,
     handleSave,
     requestClose,
-  } = useTemplateEditor(target, variables, onSaved, onClose);
+  } = useTemplateEditor(target, variables, onSaved, onClose, demo);
 
   return (
     <FullScreenSheet

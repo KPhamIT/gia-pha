@@ -9,6 +9,8 @@ import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
 type Props = {
   template: CeremonyTemplate;
   canEdit: boolean;
+  /** Cho phép ghi/xóa lên server (tắt ở chế độ demo). */
+  canPersist?: boolean;
   onPrint: () => void;
   onSetDefault: () => void;
   onDuplicate: () => void;
@@ -19,6 +21,7 @@ type Props = {
 export default function CeremonyTemplateCard({
   template,
   canEdit,
+  canPersist = true,
   onPrint,
   onSetDefault,
   onDuplicate,
@@ -71,7 +74,7 @@ export default function CeremonyTemplateCard({
         </button>
         {canEdit ? (
           <>
-            {!template.isDefault ? (
+            {canPersist && !template.isDefault ? (
               <IconRoundButton
                 icon="check"
                 variant="outline"
@@ -91,12 +94,14 @@ export default function CeremonyTemplateCard({
               onClick={onEdit}
               aria-label={UI.BTN_EDIT}
             />
-            <IconRoundButton
-              icon="trash"
-              variant="danger"
-              onClick={onDelete}
-              aria-label={UI.DELETE_PERSON}
-            />
+            {canPersist ? (
+              <IconRoundButton
+                icon="trash"
+                variant="danger"
+                onClick={onDelete}
+                aria-label={UI.DELETE_PERSON}
+              />
+            ) : null}
           </>
         ) : null}
       </div>

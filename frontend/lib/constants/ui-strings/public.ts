@@ -68,16 +68,22 @@ export const PUBLIC_STRINGS = {
   LANDING_FEATURE_CEREMONY_PRINT_TITLE: "In bài cúng",
   LANDING_FEATURE_CEREMONY_PRINT_DESC:
     "Chọn người trong dòng họ, mở bài cúng ngày giỗ và in hoặc chia sẻ cho gia đình.",
+  LANDING_FEATURE_CEREMONY_CUSTOM_TITLE: "Cá nhân hóa bài cúng",
+  LANDING_FEATURE_CEREMONY_CUSTOM_DESC:
+    "Tự soạn và chỉnh mẫu bài cúng theo dòng họ, từng người hoặc tập thể — nhúng tên, địa danh, ngày giỗ bằng biến thay thế.",
   LANDING_FEATURE_EXPORT_TITLE: "In gia phả nhiều kiểu",
   LANDING_FEATURE_EXPORT_DESC:
     "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều preset phong cách để in hoặc tải về.",
   LANDING_DEMO_BUTTON: "Xem thử",
   LANDING_DEMO_HINT: "Dữ liệu demo hiển thị tới đời 4 (mọi nhánh).",
   LANDING_AUDIENCE_TITLE: "Dành cho ai?",
+  LANDING_AUDIENCE_INTRO:
+    "Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình. Gia phả điện tử giúp bạn nhớ giỗ, soạn sẵn mẫu bài cúng; đến ngày chỉ cần mở ra in, không còn loay hoay tìm chỗ này chỗ khác chép lại.",
   LANDING_AUDIENCE_ITEMS: [
-    "Con cháu muốn tra cứu nguồn gốc, họ hàng.",
-    "Ban quản trị dòng họ cần lưu trữ và cập nhật thông tin tập trung.",
-    "Thư ký họ đòi — quản lý sự kiện, đóng góp, in ấn giỗ tổ.",
+    "Con cháu xa quê — tra cứu nguồn gốc, họ hàng mọi lúc trên điện thoại.",
+    "Người bận rộn — được nhắc ngày giỗ, có sẵn mẫu bài cúng đúng tên người thân; đến ngày in là xong.",
+    "Ban quản trị dòng họ — lưu trữ và cập nhật thông tin tập trung, chia sẻ cho cả họ.",
+    "Thư ký họ đòi — quản lý sự kiện, đóng góp, in ấn giỗ tổ cho dòng họ.",
   ],
   LANDING_LEGAL_HINT:
     "Bằng việc sử dụng dịch vụ, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",
