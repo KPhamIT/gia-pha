@@ -49,7 +49,7 @@ export const PUBLIC_STRINGS = {
     "Đăng ký tên dòng họ — bạn trở thành quản trị viên và chia sẻ liên kết cho con cháu.",
   ],
   LANDING_START_NEW_ORG_CTA: "Đăng ký dòng họ mới",
-  LANDING_FEATURES_TITLE: "Chức năng chính",
+  LANDING_FEATURES_TITLE: "Chức năng chính ✨",
   LANDING_FEATURE_BOOK_TITLE: "Sổ gia phả",
   LANDING_FEATURE_BOOK_DESC:
     "Đọc như sách điện tử, lật trang, tìm tên, in từng trang hoặc cả cuốn sổ.",
@@ -75,15 +75,15 @@ export const PUBLIC_STRINGS = {
   LANDING_FEATURE_EXPORT_DESC:
     "Xuất cây phả hệ với khung, cổng, câu đối và màu sắc — nhiều preset phong cách để in hoặc tải về.",
   LANDING_DEMO_BUTTON: "Xem thử",
-  LANDING_DEMO_HINT: "Dữ liệu demo hiển thị tới đời 4 (mọi nhánh).",
-  LANDING_AUDIENCE_TITLE: "Dành cho ai?",
+  LANDING_DEMO_HINT: "👀 Dữ liệu demo hiển thị tới đời 4 (mọi nhánh).",
+  LANDING_AUDIENCE_TITLE: "Dành cho ai? 💛",
   LANDING_AUDIENCE_INTRO:
-    "Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình. Gia phả điện tử giúp bạn nhớ giỗ, soạn sẵn mẫu bài cúng; đến ngày chỉ cần mở ra in, không còn loay hoay tìm chỗ này chỗ khác chép lại.",
+    "😮‍💨 Bận công việc, bận bao nhiêu chuyện cần xử lý — dễ quên ngày cúng gia đình. Gia phả điện tử 🔔 nhắc giỗ âm lịch qua thông báo điện thoại, 📅 liệt kê ngày giỗ sắp tới, và 📝 soạn sẵn mẫu bài cúng; đến ngày chỉ cần mở ra in 🖨️, không còn loay hoay tìm chỗ này chỗ khác chép lại. ✨ Wow — đúng ngày là xong, tuyệt vời phải không?",
   LANDING_AUDIENCE_ITEMS: [
-    "Con cháu xa quê — tra cứu nguồn gốc, họ hàng mọi lúc trên điện thoại.",
-    "Người bận rộn — được nhắc ngày giỗ, có sẵn mẫu bài cúng đúng tên người thân; đến ngày in là xong.",
-    "Ban quản trị dòng họ — lưu trữ và cập nhật thông tin tập trung, chia sẻ cho cả họ.",
-    "Thư ký họ đòi — quản lý sự kiện, đóng góp, in ấn giỗ tổ cho dòng họ.",
+    "📱 Con cháu xa quê — tra cứu nguồn gốc, họ hàng mọi lúc trên điện thoại.",
+    "🔔 Người bận rộn — nhận thông báo trước ngày giỗ, có sẵn mẫu bài cúng đúng tên người thân; đến ngày in là xong 🎉",
+    "👥 Ban quản trị dòng họ — lưu trữ và cập nhật thông tin tập trung, chia sẻ cho cả họ.",
+    "📋 Thư ký họ đòi — quản lý sự kiện, đóng góp, in ấn giỗ tổ cho dòng họ.",
   ],
   LANDING_LEGAL_HINT:
     "Bằng việc sử dụng dịch vụ, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",

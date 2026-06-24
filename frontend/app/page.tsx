@@ -147,8 +147,6 @@ export default function LandingPage() {
           </div>
           </section>
 
-          <LandingFeaturesSection features={FEATURES} />
-
           <section className={`mt-6 ${BT.card} p-4 md:p-6`}>
           <h2 className="text-lg font-semibold text-neutral-900">
             {UI.LANDING_AUDIENCE_TITLE}
@@ -162,6 +160,8 @@ export default function LandingPage() {
             ))}
           </ul>
           </section>
+
+          <LandingFeaturesSection features={FEATURES} />
 
           <p className={`mt-6 text-center text-xs leading-relaxed ${BT.mutedOnDark}`}>
           {UI.LANDING_LEGAL_HINT}{" "}
