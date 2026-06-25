@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Noto_Serif } from "next/font/google";
 import "./globals.css";
 import { UI } from "@/lib/constants/ui-strings";
+import { getSiteUrl } from "@/lib/site-url";
 import { themeInitScript } from "@/utils/theme";
 import AppToaster from "@/components/ui/AppToaster";
 
@@ -20,9 +21,7 @@ export const metadata: Metadata = {
   title: UI.PAGE_TITLE,
   description: UI.LANDING_HERO_SUBTITLE,
   applicationName: UI.PAGE_TITLE,
-  metadataBase: process.env.NEXT_PUBLIC_SITE_URL
-    ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
-    : undefined,
+  metadataBase: new URL(getSiteUrl()),
   appleWebApp: {
     capable: true,
     title: UI.PAGE_TITLE,
