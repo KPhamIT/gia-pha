@@ -51,4 +51,8 @@ export const API_ROUTES = {
   BLOG: "/blog",
   BLOG_SLUGS: "/blog/slugs",
   BLOG_POST: (slug: string) => `/blog/${encodeURIComponent(slug)}`,
+  BLOG_ADMIN: "/blog/admin",
+  BLOG_ADMIN_POST: (id: number) => `/blog/admin/${id}`,
+  MEDIA_IMAGE_UPLOAD: "/media/images",
+  MEDIA_IMAGE_DELETE: "/media/images",
 };

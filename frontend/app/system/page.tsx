@@ -31,7 +31,7 @@ export default function SystemPage() {
       title={UI.SYSTEM_CONSOLE_TITLE}
       subtitle={UI.SYSTEM_CONSOLE_SUBTITLE}
     >
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <TabButton
           active={tab === "orgs"}
           onClick={() => setTab("orgs")}
@@ -47,7 +47,14 @@ export default function SystemPage() {
           onClick={() => setTab("features")}
           label={UI.SYSTEM_TAB_FEATURES}
         />
+        <Link
+          href="/system/blog"
+          className="rounded-full bg-amber-100 px-3 py-1.5 text-xs font-medium text-amber-950"
+        >
+          {UI.BLOG_ADMIN_TAB}
+        </Link>
       </div>
+
       {tab === "orgs" ? (
         <OrganizationSection />
       ) : tab === "users" ? (

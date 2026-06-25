@@ -22,6 +22,27 @@ export type BlogPost = BlogPostSummary & {
   metaDescription: string;
 };
 
+export type BlogPostAdminSummary = BlogPostSummary & {
+  published: boolean;
+  metaDescription: string;
+};
+
+export type BlogPostAdmin = BlogPost & {
+  published: boolean;
+};
+
+export type BlogPostInput = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  metaDescription: string;
+  category: BlogCategory;
+  tags: string[];
+  published: boolean;
+  publishedAt?: string;
+};
+
 export type BlogSlugEntry = {
   slug: string;
   updatedAt: string;

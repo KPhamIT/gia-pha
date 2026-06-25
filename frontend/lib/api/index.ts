@@ -9,6 +9,8 @@ import { users } from "./modules/users";
 import { standardFeatures } from "./modules/standard-features";
 import { notifications } from "./modules/notifications";
 import { ceremonies } from "./modules/ceremonies";
+import { blog } from "./modules/blog";
+import { media } from "./modules/media";
 
 export const api = {
   auth,
@@ -22,5 +24,7 @@ export const api = {
   standardFeatures,
   notifications,
   ceremonies,
+  blog,
+  media,
 };
 export type ApiType = typeof api;

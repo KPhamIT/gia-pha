@@ -16,6 +16,7 @@ import { StandardFeaturesModule } from './standard-features/standard-features.mo
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { CeremoniesModule } from './ceremonies/ceremonies.module.js';
 import { BlogModule } from './blog/blog.module.js';
+import { MediaModule } from './media/media.module.js';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { BlogModule } from './blog/blog.module.js';
     NotificationsModule,
     CeremoniesModule,
     BlogModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
