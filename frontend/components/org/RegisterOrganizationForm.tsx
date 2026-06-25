@@ -26,6 +26,7 @@ export default function RegisterOrganizationForm() {
   const router = useRouter();
   const { loaded, isLoggedIn } = useAuthBootstrap();
   const isAdmin = useAuthStore((state) => state.isAdmin);
+  const isDemo = useAuthStore((state) => state.isDemo);
   const refreshAuth = useAuthStore((state) => state.refresh);
 
   const [orgName, setOrgName] = useState("");
@@ -126,7 +127,7 @@ export default function RegisterOrganizationForm() {
     );
   }
 
-  if (isLoggedIn) {
+  if (isLoggedIn && !isDemo) {
     return (
       <form className={`${BT.card} space-y-4 p-4`} onSubmit={(e) => void handleLoggedInSubmit(e)}>
         <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>{UI.ORG_REGISTER_LOGGED_IN_HINT}</p>
@@ -161,7 +162,9 @@ export default function RegisterOrganizationForm() {
 
   return (
     <form className={`${BT.card} space-y-4 p-4`} onSubmit={(e) => void handleGuestSubmit(e)}>
-      <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>{UI.ORG_REGISTER_HINT}</p>
+      <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>
+        {isDemo ? UI.ORG_REGISTER_DEMO_HINT : UI.ORG_REGISTER_HINT}
+      </p>
 
       <label className="block">
         <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_NAME_LABEL}</span>
@@ -236,8 +239,11 @@ export default function RegisterOrganizationForm() {
           label={UI.ORG_REGISTER_SUBMIT}
           compact={false}
         />
-        <Link href="/login?next=/tao-dong-ho" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}>
-          {UI.LOGIN_BUTTON}
+        <Link
+          href={isLoggedIn ? "/" : "/login?next=/tao-dong-ho"}
+          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}
+        >
+          {isLoggedIn ? UI.CONTACT_PAGE_BACK : UI.LOGIN_BUTTON}
         </Link>
       </div>
     </form>

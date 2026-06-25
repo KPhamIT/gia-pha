@@ -14,6 +14,8 @@ const notoSerif = Noto_Serif({
   display: "swap",
 });
 
+export { viewport } from "./viewport";
+
 export const metadata: Metadata = {
   title: UI.PAGE_TITLE,
   description: UI.LANDING_HERO_SUBTITLE,

@@ -208,7 +208,7 @@ pnpm dev          # http://localhost:3000
 |------------|------|
 | OAuth Zalo + PKCE | `backend/src/auth/zalo-oauth.service.ts` |
 | Login endpoints | `backend/src/auth/auth.controller.ts` |
-| JWT guard | `backend/src/auth/jwt-auth.guard.ts` |
+| JWT guard | `backend/src/auth/jwt-required.guard.ts` |
 | Trang login | `frontend/app/login/page.tsx` |
 | Nhận token | `frontend/app/auth/callback/page.tsx` |
 | Session helpers | `frontend/lib/auth/session.ts` |

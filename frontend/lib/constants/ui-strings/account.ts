@@ -178,6 +178,8 @@ export const ACCOUNT_STRINGS = {
     "Điền thông tin dòng họ và tài khoản quản trị. Sau khi tạo, bạn sẽ được đăng nhập tự động.",
   ORG_REGISTER_LOGGED_IN_HINT:
     "Bạn đã đăng nhập. Chỉ cần đặt tên dòng họ để gắn tài khoản hiện tại làm quản trị viên.",
+  ORG_REGISTER_DEMO_HINT:
+    "Bạn đang dùng tài khoản demo (chỉ xem). Điền thông tin dòng họ và tài khoản quản trị mới để tạo dòng họ của bạn.",
   ORG_REGISTER_ADMIN_USERNAME: "Tên đăng nhập quản trị",
   ORG_REGISTER_ADMIN_USERNAME_PLACEHOLDER: "Ví dụ: truongho.pham",
   ORG_REGISTER_ADMIN_PASSWORD: "Mật khẩu",

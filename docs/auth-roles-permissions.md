@@ -162,8 +162,6 @@ API:
 | `store/authGateStore.ts` | Mở sheet: `login` \| `admin` \| `permission` |
 | `components/auth/AuthRequiredSheet.tsx` | UI thông báo — **không** copy message riêng |
 
-`useAdminGate()` = alias của `useFeatureAccess()` — code mới **dùng `useFeatureAccess`**.
-
 ### Quy tắc UI
 
 ```typescript

@@ -105,6 +105,11 @@ export class OrganizationService {
     if (user.role === UserRole.ADMIN && user.organizationId != null) {
       throw new BadRequestException('Bạn đã là quản trị viên của một dòng họ');
     }
+    if (user.isDemo) {
+      throw new BadRequestException(
+        'Tài khoản demo không thể dùng để tạo dòng họ. Vui lòng tạo tài khoản quản trị mới.',
+      );
+    }
 
     const name = dto.name.trim();
     const result = await this.prisma.$transaction(async (tx) => {
