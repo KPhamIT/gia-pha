@@ -376,6 +376,25 @@ Nam mô A Di Đà Phật.
   });
   console.log('Seeded standard feature defaults');
 
+  const { buildAllBlogPosts } = await import('./blog-posts-data.js');
+  const blogPosts = buildAllBlogPosts();
+  for (const post of blogPosts) {
+    await prisma.blogPost.upsert({
+      where: { slug: post.slug },
+      create: post,
+      update: {
+        title: post.title,
+        excerpt: post.excerpt,
+        content: post.content,
+        metaDescription: post.metaDescription,
+        category: post.category,
+        tags: post.tags,
+        published: post.published,
+      },
+    });
+  }
+  console.log(`Seeded ${blogPosts.length} blog posts`);
+
   console.log('Seed completed');
 }
 

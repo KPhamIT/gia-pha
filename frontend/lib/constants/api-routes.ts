@@ -48,4 +48,7 @@ export const API_ROUTES = {
   CEREMONY_TEMPLATE_DEFAULT: (id: number) =>
     `/ceremonies/templates/${id}/default`,
   CEREMONY_TEMPLATE_VARIABLES: "/ceremonies/templates/variables",
+  BLOG: "/blog",
+  BLOG_SLUGS: "/blog/slugs",
+  BLOG_POST: (slug: string) => `/blog/${encodeURIComponent(slug)}`,
 };

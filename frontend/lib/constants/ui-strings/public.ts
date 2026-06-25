@@ -17,6 +17,7 @@ export const PUBLIC_STRINGS = {
   PUBLIC_FOOTER_TAGLINE: "Gìn giữ cội nguồn — kết nối con cháu",
   PUBLIC_FOOTER_HOME: "Trang chủ",
   PUBLIC_FOOTER_GUIDE: "Hướng dẫn",
+  PUBLIC_FOOTER_BLOG: "Kiến thức gia phả",
   PUBLIC_FOOTER_ABOUT: "Giới thiệu",
   PUBLIC_FOOTER_CONTACT: "Liên hệ",
   PUBLIC_FOOTER_PRIVACY: "Chính sách bảo mật",

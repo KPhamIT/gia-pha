@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module.js';
 import { StandardFeaturesModule } from './standard-features/standard-features.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { CeremoniesModule } from './ceremonies/ceremonies.module.js';
+import { BlogModule } from './blog/blog.module.js';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CeremoniesModule } from './ceremonies/ceremonies.module.js';
     StandardFeaturesModule,
     NotificationsModule,
     CeremoniesModule,
+    BlogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -331,6 +331,32 @@ enum NotificationStatus {
   SKIPPED
 }
 
+enum BlogCategory {
+  BASICS
+  HOWTO
+  CULTURE
+  FAMILY_TREE
+  ONLINE
+  SEO
+}
+
+model BlogPost {
+  id              Int          @id @default(autoincrement())
+  slug            String       @unique
+  title           String
+  excerpt         String       @db.Text
+  content         String       @db.Text
+  metaDescription String       @db.VarChar(320)
+  category        BlogCategory
+  tags            String[]
+  published       Boolean      @default(true)
+  publishedAt     DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([published, publishedAt(sort: Desc)])
+  @@index([category, published])
+}
+
 model NotificationLog {
   id Int @id @default(autoincrement())
 

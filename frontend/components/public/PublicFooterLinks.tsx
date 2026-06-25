@@ -5,6 +5,7 @@ import { BT } from "@/lib/constants/ui-theme";
 const LINKS = [
   { href: "/", label: UI.PUBLIC_FOOTER_HOME },
   { href: "/huong-dan", label: UI.PUBLIC_FOOTER_GUIDE },
+  { href: "/bai-viet", label: UI.PUBLIC_FOOTER_BLOG },
   { href: "/lien-he", label: UI.PUBLIC_FOOTER_CONTACT },
   { href: "/chinh-sach-bao-mat", label: UI.PUBLIC_FOOTER_PRIVACY },
   { href: "/dieu-khoan-su-dung", label: UI.PUBLIC_FOOTER_TERMS },
