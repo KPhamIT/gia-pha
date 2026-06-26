@@ -3,7 +3,6 @@
 import { type MutableRefObject } from "react";
 import {
   type ExportGeometry,
-  type ExportImageKey,
   type ExportModel,
   type ResolvedLayout,
 } from "@/lib/family-tree/export-tree-svg";
@@ -12,14 +11,11 @@ import {
   getTreeBorderStyle,
 } from "@/lib/family-tree/svg-border";
 import { getCalligraphyFont } from "@/components/family-tree/book/calligraphy-fonts";
-import type {
-  ExportBox,
-  TreeExportSettings,
-} from "@/lib/family-tree/tree-export-settings";
+import type { TreeExportSettings, ExportBox } from "@/lib/family-tree/tree-export-settings";
 import type { DraggableId } from "./tree-export-svg-utils";
 import { useExportSvgDrag } from "./useExportSvgDrag";
 import ExportPersonNode from "./ExportPersonNode";
-import ExportDecorations from "./ExportDecorations";
+import ExportDecorationLayers from "./ExportDecorationLayers";
 
 export type { DraggableId } from "./tree-export-svg-utils";
 
@@ -29,12 +25,32 @@ type TreeExportSvgProps = {
   geometry: ExportGeometry;
   layout: ResolvedLayout;
   settings: TreeExportSettings;
-  imageSources: Record<ExportImageKey, string>;
+  layerImageHrefs: Record<string, string>;
   interactive?: boolean;
   selectedId?: DraggableId | null;
   onSelect?: (id: DraggableId | null) => void;
   onChange?: (id: DraggableId, patch: Partial<ExportBox>) => void;
+  onLayerContextMenu?: (id: string, clientX: number, clientY: number) => void;
 };
+
+const layerGroupProps = (
+  settings: TreeExportSettings,
+  layout: ResolvedLayout,
+  layerImageHrefs: Record<string, string>,
+  interactive: boolean,
+  selectedId: DraggableId | null,
+  beginDrag: ReturnType<typeof useExportSvgDrag>["beginDrag"],
+  onLayerContextMenu?: (id: string, clientX: number, clientY: number) => void,
+) => ({
+  layers: settings.layers,
+  layout,
+  coupletFontFamily: getCalligraphyFont(settings.coupletFontId).cssValue,
+  layerImageHrefs,
+  interactive,
+  selectedId,
+  beginDrag,
+  onLayerContextMenu,
+});
 
 export default function TreeExportSvg({
   svgRef,
@@ -42,11 +58,12 @@ export default function TreeExportSvg({
   geometry,
   layout,
   settings,
-  imageSources,
+  layerImageHrefs,
   interactive = false,
   selectedId = null,
   onSelect,
   onChange,
+  onLayerContextMenu,
 }: TreeExportSvgProps) {
   const { beginDrag, handlePointerMove, endDrag } = useExportSvgDrag(svgRef, {
     interactive,
@@ -61,10 +78,18 @@ export default function TreeExportSvg({
     treeTranslateY,
   } = geometry;
   const border = getTreeBorderStyle(settings.borderStyleId);
-  const coupletFontFamily = getCalligraphyFont(settings.coupletFontId).cssValue;
   const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } =
     settings;
   const nodeCard = getNodeCardStyle(settings.nodeBorderStyleId);
+  const group = layerGroupProps(
+    settings,
+    layout,
+    layerImageHrefs,
+    interactive,
+    selectedId,
+    beginDrag,
+    onLayerContextMenu,
+  );
 
   return (
     <svg
@@ -87,9 +112,10 @@ export default function TreeExportSvg({
         fill={settings.backgroundColor}
       />
 
+      <ExportDecorationLayers {...group} segment="behind-tree" />
+
       {border.render(borderRect, settings.borderColor)}
 
-      {/* Tree (connectors + person cards) */}
       <g transform={`translate(${treeTranslateX} ${treeTranslateY})`}>
         {model.connectors.map((d, i) => (
           <path key={i} d={d} fill="none" stroke="#94a3b8" strokeWidth={1.5} />
@@ -109,14 +135,9 @@ export default function TreeExportSvg({
         ))}
       </g>
 
-      <ExportDecorations
-        layout={layout}
-        imageSources={imageSources}
-        coupletFontFamily={coupletFontFamily}
-        interactive={interactive}
-        selectedId={selectedId}
-        beginDrag={beginDrag}
-      />
+      <ExportDecorationLayers {...group} segment="above-tree" />
+      <ExportDecorationLayers {...group} segment="above-text" />
+      <ExportDecorationLayers {...group} segment="selection" />
     </svg>
   );
 }

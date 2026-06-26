@@ -6,11 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { ExportBox } from "@/lib/family-tree/tree-export-settings";
-import {
-  IMAGE_ASPECT,
-  type DragState,
-  type DraggableId,
-} from "./tree-export-svg-utils";
+import { isCoupletId, type DragState, type DraggableId } from "./tree-export-svg-utils";
 
 type Options = {
   interactive: boolean;
@@ -18,7 +14,7 @@ type Options = {
   onChange?: (id: DraggableId, patch: Partial<ExportBox>) => void;
 };
 
-/** Pointer-driven move/resize for the export overlay's draggable boxes. */
+/** Pointer-driven move/resize for export overlay layers. */
 export function useExportSvgDrag(
   svgRef: MutableRefObject<SVGSVGElement | null>,
   { interactive, onSelect, onChange }: Options,
@@ -41,6 +37,7 @@ export function useExportSvgDrag(
     id: DraggableId,
     mode: "move" | "resize",
     box: { x: number; y: number },
+    aspectRatio = 1,
   ) => {
     if (!interactive) return;
     e.stopPropagation();
@@ -55,6 +52,7 @@ export function useExportSvgDrag(
       startY: p.y,
       boxX: box.x,
       boxY: box.y,
+      aspectRatio,
     };
     svgRef.current?.setPointerCapture(e.pointerId);
   };
@@ -66,7 +64,7 @@ export function useExportSvgDrag(
     if (!p) return;
 
     if (drag.mode === "move") {
-      if (drag.id === "coupletRight") {
+      if (isCoupletId(drag.id) && drag.id === "coupletRight") {
         onChange?.(drag.id, { y: drag.boxY + (p.y - drag.startY) });
       } else {
         onChange?.(drag.id, {
@@ -76,11 +74,9 @@ export function useExportSvgDrag(
       }
       return;
     }
-    // resize (images only): anchor at top-left, lock aspect ratio.
-    const aspect =
-      IMAGE_ASPECT[drag.id as "scroll" | "dragonLeft" | "dragonRight"] ?? 1;
+
     const width = Math.max(40, p.x - drag.boxX);
-    onChange?.(drag.id, { width, height: width / aspect });
+    onChange?.(drag.id, { width, height: width / drag.aspectRatio });
   };
 
   const endDrag = (e: ReactPointerEvent) => {

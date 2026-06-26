@@ -10,6 +10,7 @@ const MIME_EXT: Record<string, string> = {
   'image/png': 'png',
   'image/webp': 'webp',
   'image/gif': 'gif',
+  'image/svg+xml': 'svg',
 };
 
 @Injectable()

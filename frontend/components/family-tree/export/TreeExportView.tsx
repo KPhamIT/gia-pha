@@ -3,6 +3,9 @@
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import ExportAssetLibraryModal from "./ExportAssetLibraryModal";
+import ExportLayerContextMenu from "./ExportLayerContextMenu";
+import ExportLayerToolbar from "./ExportLayerToolbar";
 import TreeExportControls from "./TreeExportControls";
 import TreeExportSvg from "./TreeExportSvg";
 import { useTreeExport } from "./useTreeExport";
@@ -22,6 +25,12 @@ export default function TreeExportView({
   onClose,
   canDownloadExport,
 }: TreeExportViewProps) {
+  const exportState = useTreeExport({
+    treeData,
+    layoutConfig,
+    nodePositionOverrides,
+    canDownloadExport,
+  });
   const {
     svgRef,
     model,
@@ -31,25 +40,34 @@ export default function TreeExportView({
     presets,
     activePresetId,
     selectedId,
+    selectedLayer,
     collapsed,
     exporting,
-    dataUris,
-    imageSources,
+    assetsReady,
+    layerImageHrefs,
+    systemAssets,
+    refreshSystemAssets,
+    libraryOpen,
+    contextMenu,
     setSelectedId,
     setCollapsed,
+    setLibraryOpen,
+    setContextMenu,
     patch,
     patchImage,
     patchCouplet,
+    patchLayer,
     handleItemChange,
+    addImageFromAsset,
+    addTextLayer,
+    deleteSelectedLayer,
+    bringSelectedForward,
+    sendSelectedBackward,
+    openLayerContextMenu,
     handleReset,
     handleApplyPreset,
     handleExport,
-  } = useTreeExport({
-    treeData,
-    layoutConfig,
-    nodePositionOverrides,
-    canDownloadExport,
-  });
+  } = exportState;
 
   return (
     <div className="overlay-viewport z-40 bg-slate-300">
@@ -58,18 +76,25 @@ export default function TreeExportView({
           collapsed ? "pb-36" : "pb-[calc(55vh+1.5rem)]"
         }`}
       >
-        <TreeExportSvg
-          svgRef={svgRef}
-          model={model}
-          geometry={geometry}
-          layout={layout}
-          settings={settings}
-          imageSources={imageSources}
-          interactive
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          onChange={handleItemChange}
-        />
+        <div className="relative h-full w-full max-w-[min(100%,1400px)]">
+          <ExportLayerToolbar
+            onAddText={addTextLayer}
+            onOpenLibrary={() => setLibraryOpen(true)}
+          />
+          <TreeExportSvg
+            svgRef={svgRef}
+            model={model}
+            geometry={geometry}
+            layout={layout}
+            settings={settings}
+            layerImageHrefs={layerImageHrefs}
+            interactive
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onChange={handleItemChange}
+            onLayerContextMenu={openLayerContextMenu}
+          />
+        </div>
       </div>
 
       <TreeExportControls
@@ -78,17 +103,41 @@ export default function TreeExportView({
         activePresetId={activePresetId}
         collapsed={collapsed}
         exporting={exporting}
-        assetsReady={dataUris !== null}
+        assetsReady={assetsReady}
+        selectedLayer={selectedLayer}
         onToggleCollapse={() => setCollapsed((c) => !c)}
         onPatch={patch}
         onPatchImage={patchImage}
         onPatchCouplet={patchCouplet}
+        onPatchLayer={patchLayer}
+        onDeleteLayer={deleteSelectedLayer}
+        onBringLayerForward={bringSelectedForward}
+        onSendLayerBackward={sendSelectedBackward}
         onApplyPreset={handleApplyPreset}
         onReset={handleReset}
         onClose={onClose}
         onExport={handleExport}
         canDownloadExport={canDownloadExport}
       />
+
+      <ExportAssetLibraryModal
+        open={libraryOpen}
+        assets={systemAssets}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={addImageFromAsset}
+        onAssetsChanged={refreshSystemAssets}
+      />
+
+      {contextMenu ? (
+        <ExportLayerContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onBringForward={bringSelectedForward}
+          onSendBackward={sendSelectedBackward}
+          onDelete={deleteSelectedLayer}
+          onClose={() => setContextMenu(null)}
+        />
+      ) : null}
     </div>
   );
 }

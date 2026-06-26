@@ -6,6 +6,7 @@ import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layo
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { UI } from "@/lib/constants/ui-strings";
 import {
+  backgroundImageLayout,
   buildEmbeddedFontFace,
   buildExportModel,
   computeExportGeometry,
@@ -16,7 +17,20 @@ import {
   ensureCalligraphyFontLoaded,
   getCalligraphyFontDef,
 } from "@/components/family-tree/book/calligraphy-font-loader";
+import {
+  EXPORT_NORMAL_FONT_ID,
+  isCalligraphyFontId,
+} from "@/components/family-tree/book/calligraphy-fonts";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import {
+  bringLayerForward,
+  createLayerId,
+  nextLayerOrder,
+  sendLayerBackward,
+  type ExportDecorationLayer,
+  type ExportLayerTier,
+} from "@/lib/family-tree/export-decoration-layers";
+import type { SystemAsset } from "@/lib/family-tree/export-system-assets";
 import {
   defaultTreeExportSettings,
   loadTreeExportSettings,
@@ -24,10 +38,11 @@ import {
   saveTreeExportSettings,
   type ExportCoupletCfg,
   type ExportImageCfg,
+  type ExportBox,
   type TreeExportSettings,
 } from "@/lib/family-tree/tree-export-settings";
 import type { CoupletKey, ImageKey } from "./tree-export-control-bits";
-import type { DraggableId } from "./tree-export-svg-utils";
+import { isCoupletId } from "./tree-export-svg-utils";
 import { useExportAssets } from "./useExportAssets";
 
 type Args = {
@@ -45,14 +60,37 @@ export function useTreeExport({
 }: Args) {
   const { requireAdmin } = useFeatureAccess();
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const { presets, dataUris, imageSources } = useExportAssets();
   const [settings, setSettings] = useState<TreeExportSettings>(
     loadTreeExportSettings,
   );
+  const layerUrls = useMemo(
+    () =>
+      settings.layers
+        .filter((layer) => layer.type === "image")
+        .map((layer) => layer.assetUrl),
+    [settings.layers],
+  );
+  const { presets, assetsReady, layerImageHrefs, systemAssets, refreshSystemAssets } =
+    useExportAssets(layerUrls);
+  const layerImageHrefsById = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const layer of settings.layers) {
+      if (layer.type === "image") {
+        map[layer.id] = layerImageHrefs[layer.assetUrl] ?? layer.assetUrl;
+      }
+    }
+    return map;
+  }, [settings.layers, layerImageHrefs]);
   const [activePresetId, setActivePresetId] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<DraggableId | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    id: string;
+    x: number;
+    y: number;
+  } | null>(null);
 
   useEffect(() => {
     saveTreeExportSettings(settings);
@@ -65,16 +103,21 @@ export function useTreeExport({
         JSON.stringify(normalizeTreeExportSettings(preset.settings)) ===
         JSON.stringify(normalizedCurrent),
     );
-    // Sync preset selection from settings; can't be a useMemo because the user
-    // may explicitly pick "Custom" (null) even when settings match a preset.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setActivePresetId(matched?.id ?? null);
   }, [presets, settings]);
 
-  // Load the calligraphy font so the live preview renders the couplets correctly.
   useEffect(() => {
     ensureCalligraphyFontLoaded(settings.coupletFontId);
   }, [settings.coupletFontId]);
+
+  useEffect(() => {
+    for (const layer of settings.layers) {
+      if (layer.type === "text") {
+        ensureCalligraphyFontLoaded(layer.fontId);
+      }
+    }
+  }, [settings.layers]);
 
   const model = useMemo(
     () => buildExportModel(treeData, layoutConfig, nodePositionOverrides),
@@ -94,16 +137,29 @@ export function useTreeExport({
     [settings, geometry.headerRect],
   );
 
+  const selectedLayer = useMemo(
+    () => settings.layers.find((layer) => layer.id === selectedId) ?? null,
+    [settings.layers, selectedId],
+  );
+
   const patch = useCallback(
     (p: Partial<TreeExportSettings>) =>
       setSettings((prev) => ({ ...prev, ...p })),
     [],
   );
+
+  const patchLayers = useCallback(
+    (updater: (layers: ExportDecorationLayer[]) => ExportDecorationLayer[]) =>
+      setSettings((prev) => ({ ...prev, layers: updater(prev.layers) })),
+    [],
+  );
+
   const patchImage = useCallback(
     (key: ImageKey, p: Partial<ExportImageCfg>) =>
       setSettings((prev) => ({ ...prev, [key]: { ...prev[key], ...p } })),
     [],
   );
+
   const patchCouplet = useCallback(
     (key: CoupletKey, p: Partial<ExportCoupletCfg>) =>
       setSettings((prev) => ({
@@ -116,18 +172,147 @@ export function useTreeExport({
     [],
   );
 
-  const handleItemChange = useCallback(
-    (id: DraggableId, p: Partial<ExportImageCfg & ExportCoupletCfg>) => {
-      if (id === "coupletLeft" || id === "coupletRight") patchCouplet(id, p);
-      else patchImage(id, p);
+  const patchLayerById = useCallback(
+    (id: string, patchValue: Partial<ExportDecorationLayer>) =>
+      patchLayers((layers) =>
+        layers.map((layer) =>
+          layer.id === id
+            ? ({ ...layer, ...patchValue } as ExportDecorationLayer)
+            : layer,
+        ),
+      ),
+    [patchLayers],
+  );
+
+  const patchLayer = useCallback(
+    (patchValue: Partial<ExportDecorationLayer>) => {
+      if (!selectedId) return;
+      const layer = settings.layers.find((item) => item.id === selectedId);
+      if (
+        layer?.type === "image" &&
+        patchValue.tier === "behind-tree"
+      ) {
+        const layout = backgroundImageLayout(geometry.borderRect);
+        patchLayerById(selectedId, { ...patchValue, ...layout });
+        return;
+      }
+      patchLayerById(selectedId, patchValue);
     },
-    [patchCouplet, patchImage],
+    [geometry.borderRect, patchLayerById, selectedId, settings.layers],
+  );
+
+  const handleItemChange = useCallback(
+    (id: string, p: Partial<ExportBox>) => {
+      if (isCoupletId(id)) {
+        patchCouplet(id, p);
+        return;
+      }
+      patchLayerById(id, p as Partial<ExportDecorationLayer>);
+    },
+    [patchCouplet, patchLayerById],
+  );
+
+  const addImageFromAsset = useCallback(
+    (asset: SystemAsset) => {
+      const aspect =
+        asset.aspectRatio ??
+        (asset.width && asset.height ? asset.width / asset.height : 1);
+      const isBackground = asset.category === "background";
+      const tier: ExportLayerTier = isBackground ? "behind-tree" : "above-tree";
+      const frame = isBackground
+        ? backgroundImageLayout(geometry.borderRect)
+        : null;
+      const width = frame?.width ?? Math.min(geometry.headerRect.width * 0.35, 520);
+      const height = frame?.height ?? width / aspect;
+      const x =
+        frame?.x ??
+        geometry.headerRect.x + geometry.headerRect.width / 2 - width / 2;
+      const y = frame?.y ?? geometry.headerRect.y + geometry.headerRect.height * 0.2;
+      const layer: ExportDecorationLayer = {
+        id: createLayerId(),
+        type: "image",
+        tier,
+        order: nextLayerOrder(settings.layers, tier),
+        x,
+        y,
+        width,
+        height,
+        assetUrl: asset.url,
+        assetKey: asset.key,
+        assetDbId: asset.dbId > 0 ? asset.dbId : undefined,
+        assetProvider: asset.provider,
+        name: asset.name,
+        aspectRatio: aspect,
+      };
+      patchLayers((layers) => [...layers, layer]);
+      setSelectedId(layer.id);
+      setLibraryOpen(false);
+    },
+    [geometry.borderRect, geometry.headerRect, patchLayers, settings.layers],
+  );
+
+  const addTextLayer = useCallback(() => {
+    const tier: ExportLayerTier = "above-text";
+    const fontSize = 48;
+    const layer: ExportDecorationLayer = {
+      id: createLayerId(),
+      type: "text",
+      tier,
+      order: nextLayerOrder(settings.layers, tier),
+      x: geometry.headerRect.x + geometry.headerRect.width / 2,
+      y: geometry.headerRect.y + geometry.headerRect.height * 0.45,
+      width: 240,
+      height: 120,
+      text: "Nhập chữ",
+      fontId: EXPORT_NORMAL_FONT_ID,
+      color: settings.coupletColor,
+      fontSize,
+      vertical: false,
+      textCurve: 0,
+      textRotation: 0,
+    };
+    patchLayers((layers) => [...layers, layer]);
+    setSelectedId(layer.id);
+  }, [
+    geometry.headerRect,
+    patchLayers,
+    settings.coupletColor,
+    settings.layers,
+  ]);
+
+  const deleteSelectedLayer = useCallback(() => {
+    if (!selectedId || isCoupletId(selectedId)) return;
+    patchLayers((layers) => layers.filter((layer) => layer.id !== selectedId));
+    setSelectedId(null);
+    setContextMenu(null);
+  }, [patchLayers, selectedId]);
+
+  const bringSelectedForward = useCallback(() => {
+    if (!selectedId || isCoupletId(selectedId)) return;
+    patchLayers((layers) => bringLayerForward(layers, selectedId));
+    setContextMenu(null);
+  }, [patchLayers, selectedId]);
+
+  const sendSelectedBackward = useCallback(() => {
+    if (!selectedId || isCoupletId(selectedId)) return;
+    patchLayers((layers) => sendLayerBackward(layers, selectedId));
+    setContextMenu(null);
+  }, [patchLayers, selectedId]);
+
+  const openLayerContextMenu = useCallback(
+    (id: string, clientX: number, clientY: number) => {
+      if (isCoupletId(id)) return;
+      setSelectedId(id);
+      setContextMenu({ id, x: clientX, y: clientY });
+    },
+    [],
   );
 
   const handleReset = useCallback(() => {
     if (window.confirm(UI.EXPORT_RESET_CONFIRM)) {
       setSettings(defaultTreeExportSettings());
       setSelectedId(null);
+      setContextMenu(null);
     }
   }, []);
 
@@ -155,15 +340,23 @@ export function useTreeExport({
     if (!svg) return;
     setExporting(true);
     setSelectedId(null);
+    setContextMenu(null);
 
-    // Embed the calligraphy font so the standalone SVG renders the couplets.
-    const fontDef = getCalligraphyFontDef(settings.coupletFontId);
-    const fontFaceCss = await buildEmbeddedFontFace(
-      fontDef.family,
-      fontDef.file,
+    const fontIds = new Set(
+      [
+        settings.coupletFontId,
+        ...settings.layers
+          .filter((layer) => layer.type === "text")
+          .map((layer) => layer.fontId),
+      ].filter(isCalligraphyFontId),
+    );
+    const fontFaces = await Promise.all(
+      [...fontIds].map(async (fontId) => {
+        const fontDef = getCalligraphyFontDef(fontId);
+        return buildEmbeddedFontFace(fontDef.family, fontDef.file);
+      }),
     );
 
-    // Defer so the deselect re-render removes selection handles before serializing.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         try {
@@ -172,7 +365,7 @@ export function useTreeExport({
             geometry.canvasWidth,
             geometry.canvasHeight,
             "gia-pha.svg",
-            fontFaceCss,
+            fontFaces.join("\n"),
           );
         } finally {
           setExporting(false);
@@ -185,6 +378,7 @@ export function useTreeExport({
     geometry.canvasHeight,
     requireAdmin,
     settings.coupletFontId,
+    settings.layers,
   ]);
 
   return {
@@ -196,16 +390,30 @@ export function useTreeExport({
     presets,
     activePresetId,
     selectedId,
+    selectedLayer,
     collapsed,
     exporting,
-    dataUris,
-    imageSources,
+    assetsReady,
+    layerImageHrefs: layerImageHrefsById,
+    systemAssets,
+    refreshSystemAssets,
+    libraryOpen,
+    contextMenu,
     setSelectedId,
     setCollapsed,
+    setLibraryOpen,
+    setContextMenu,
     patch,
     patchImage,
     patchCouplet,
+    patchLayer,
     handleItemChange,
+    addImageFromAsset,
+    addTextLayer,
+    deleteSelectedLayer,
+    bringSelectedForward,
+    sendSelectedBackward,
+    openLayerContextMenu,
     handleReset,
     handleApplyPreset,
     handleExport,

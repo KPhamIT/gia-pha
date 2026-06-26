@@ -1,5 +1,14 @@
 import { STORAGE_KEYS } from "@/lib/constants/storage-keys";
 import { isNodeCardId, isTreeBorderId } from "./svg-border";
+import {
+  type ExportDecorationLayer,
+  type ExportLayerTier,
+} from "./export-decoration-layers";
+import {
+  DRAGON_ASPECT,
+  SCROLL_ASPECT,
+} from "./export-tree-geometry";
+import { EXPORT_IMAGE_SOURCES } from "./export-tree-geometry";
 
 /**
  * A draggable box. Any of x/y/width/height may be `null`, meaning "auto" —
@@ -49,6 +58,8 @@ export type TreeExportSettings = {
   nodeBorderStyleId: string;
   /** Name font size (SVG units) inside each person card. */
   nodeFontSize: number;
+  /** Dynamic decoration layers (images + free text). */
+  layers: ExportDecorationLayer[];
 };
 
 export type TreeExportPreset = {
@@ -103,6 +114,7 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     nodeBorderColor: "#ffea00",
     nodeBorderStyleId: "ornate",
     nodeFontSize: 20,
+    layers: [],
   };
 }
 
@@ -135,6 +147,90 @@ function normalizeCoupletRight(
   return { ...normalizeCouplet(partial, base), x: null };
 }
 
+function normalizeLayers(
+  partial: Partial<TreeExportSettings> | null | undefined,
+  legacy: TreeExportSettings,
+): ExportDecorationLayer[] {
+  if (partial && Array.isArray(partial.layers)) {
+    if (partial.layers.length === 0) return [];
+    return partial.layers.map((layer) => {
+      const base = {
+        ...layer,
+        order: layer.order ?? 0,
+        tier: (layer.tier ?? "above-tree") as ExportLayerTier,
+      };
+      if (layer.type === "text") {
+        return {
+          ...base,
+          vertical: layer.vertical ?? false,
+          textCurve: layer.textCurve ?? 0,
+          textRotation: layer.textRotation ?? 0,
+        };
+      }
+      return base;
+    });
+  }
+  return migrateLegacyDecorations(legacy);
+}
+
+function migrateLegacyDecorations(
+  settings: TreeExportSettings,
+): ExportDecorationLayer[] {
+  const layers: ExportDecorationLayer[] = [];
+  let order = 0;
+
+  const pushImage = (
+    id: string,
+    name: string,
+    url: string,
+    cfg: ExportImageCfg,
+    aspectRatio: number,
+    tier: ExportLayerTier = "above-tree",
+  ) => {
+    if (!cfg.visible) return;
+    const width = cfg.width ?? 400;
+    const height = cfg.height ?? width / aspectRatio;
+    layers.push({
+      id,
+      type: "image",
+      tier,
+      order: order++,
+      x: cfg.x ?? 200,
+      y: cfg.y ?? 120,
+      width,
+      height,
+      assetUrl: url,
+      assetProvider: "static",
+      name,
+      aspectRatio,
+    });
+  };
+
+  pushImage(
+    "legacy-scroll",
+    "Cuốn thư",
+    EXPORT_IMAGE_SOURCES.scroll,
+    settings.scroll,
+    SCROLL_ASPECT,
+  );
+  pushImage(
+    "legacy-dragon-left",
+    "Rồng trái",
+    EXPORT_IMAGE_SOURCES.dragonLeft,
+    settings.dragonLeft,
+    DRAGON_ASPECT,
+  );
+  pushImage(
+    "legacy-dragon-right",
+    "Rồng phải",
+    EXPORT_IMAGE_SOURCES.dragonRight,
+    settings.dragonRight,
+    DRAGON_ASPECT,
+  );
+
+  return layers;
+}
+
 /** Merge an untrusted partial onto defaults and drop a stale border id. */
 export function normalizeTreeExportSettings(
   partial: Partial<TreeExportSettings> | null | undefined,
@@ -151,7 +247,9 @@ export function normalizeTreeExportSettings(
       partial?.coupletRight,
       base.coupletRight,
     ),
+    layers: [],
   };
+  merged.layers = normalizeLayers(partial, merged);
   if (!isTreeBorderId(merged.borderStyleId))
     merged.borderStyleId = base.borderStyleId;
   if (!isNodeCardId(merged.nodeBorderStyleId))

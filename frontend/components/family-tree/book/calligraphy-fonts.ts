@@ -43,6 +43,23 @@ export const CALLIGRAPHY_FONTS: CalligraphyFont[] = [
 
 export const DEFAULT_CALLIGRAPHY_FONT_ID = "thanhcong";
 
+/** Không chọn thư pháp — dùng font hệ thống khi thêm chữ export. */
+export const EXPORT_NORMAL_FONT_ID = "";
+
+export const NORMAL_TEXT_FONT_FAMILY =
+  "'Times New Roman', 'Songti SC', serif";
+
+export function isCalligraphyFontId(fontId: string): boolean {
+  return CALLIGRAPHY_FONTS.some((font) => font.id === fontId);
+}
+
 export function getCalligraphyFont(id: string): CalligraphyFont {
   return CALLIGRAPHY_FONTS.find((f) => f.id === id) ?? CALLIGRAPHY_FONTS[0];
+}
+
+export function resolveExportTextFontFamily(fontId: string): string {
+  if (!fontId || !isCalligraphyFontId(fontId)) {
+    return NORMAL_TEXT_FONT_FAMILY;
+  }
+  return getCalligraphyFont(fontId).cssValue;
 }

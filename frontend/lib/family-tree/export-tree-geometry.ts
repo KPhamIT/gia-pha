@@ -94,6 +94,16 @@ export function computeExportGeometry(
   };
 }
 
+/** Ảnh nền: khớp đúng kích thước khung in. */
+export function backgroundImageLayout(borderRect: Rect): Rect {
+  return {
+    x: borderRect.x,
+    y: borderRect.y,
+    width: borderRect.width,
+    height: borderRect.height,
+  };
+}
+
 export type ResolvedImage = Rect & { visible: boolean };
 export type ResolvedCouplet = {
   x: number;
