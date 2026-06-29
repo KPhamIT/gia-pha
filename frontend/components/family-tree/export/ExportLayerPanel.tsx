@@ -117,8 +117,8 @@ export default function ExportLayerPanel({
             <span className={fieldLabel}>{UI.EXPORT_TEXT_SIZE}</span>
             <input
               type="number"
-              min={12}
-              max={200}
+              min={80}
+              max={3000}
               className={selectClass}
               value={layer.fontSize}
               onChange={(e) => onPatch({ fontSize: Number(e.target.value) })}
