@@ -1,11 +1,16 @@
 "use client";
 
+import { useRef } from "react";
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import ExportAssetLibraryModal from "./ExportAssetLibraryModal";
+import ExportLayerContextMenu from "./ExportLayerContextMenu";
+import ExportLayerToolbar from "./ExportLayerToolbar";
 import TreeExportControls from "./TreeExportControls";
 import TreeExportSvg from "./TreeExportSvg";
 import { useTreeExport } from "./useTreeExport";
+import { useExportTreeTransform } from "./useExportTreeTransform";
 
 type TreeExportViewProps = {
   treeData: FamilyTreeData;
@@ -22,8 +27,16 @@ export default function TreeExportView({
   onClose,
   canDownloadExport,
 }: TreeExportViewProps) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const exportState = useTreeExport({
+    treeData,
+    layoutConfig,
+    nodePositionOverrides,
+    canDownloadExport,
+  });
   const {
     svgRef,
+    fitBase,
     model,
     geometry,
     layout,
@@ -31,24 +44,53 @@ export default function TreeExportView({
     presets,
     activePresetId,
     selectedId,
+    selectedLayer,
     collapsed,
     exporting,
-    dataUris,
-    imageSources,
+    assetsReady,
+    layerImageHrefs,
+    systemAssets,
+    refreshSystemAssets,
+    libraryOpen,
+    contextMenu,
     setSelectedId,
     setCollapsed,
+    setLibraryOpen,
+    setContextMenu,
     patch,
     patchImage,
     patchCouplet,
+    patchLayer,
     handleItemChange,
+    addImageFromAsset,
+    addTextLayer,
+    deleteSelectedLayer,
+    bringSelectedForward,
+    sendSelectedBackward,
+    openLayerContextMenu,
     handleReset,
     handleApplyPreset,
     handleExport,
-  } = useTreeExport({
-    treeData,
-    layoutConfig,
-    nodePositionOverrides,
-    canDownloadExport,
+    fitTreeToPage,
+    zoomTreeBy,
+  } = exportState;
+
+  const effectiveScale =
+    fitBase.treeScale * settings.treeUserScale;
+
+  const {
+    beginPan,
+    movePan,
+    endPan,
+    zoomIn,
+    zoomOut,
+    resetTreeTransform,
+  } = useExportTreeTransform(svgRef, viewportRef, {
+    interactive: true,
+    settings,
+    onPatch: patch,
+    onZoomBy: zoomTreeBy,
+    onResetTransform: fitTreeToPage,
   });
 
   return (
@@ -58,18 +100,36 @@ export default function TreeExportView({
           collapsed ? "pb-36" : "pb-[calc(55vh+1.5rem)]"
         }`}
       >
-        <TreeExportSvg
-          svgRef={svgRef}
-          model={model}
-          geometry={geometry}
-          layout={layout}
-          settings={settings}
-          imageSources={imageSources}
-          interactive
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          onChange={handleItemChange}
-        />
+        <div
+          ref={viewportRef}
+          className="relative h-full w-full max-w-[min(100%,1400px)]"
+        >
+          <ExportLayerToolbar
+            onAddText={addTextLayer}
+            onOpenLibrary={() => setLibraryOpen(true)}
+            onZoomIn={zoomIn}
+            onZoomOut={zoomOut}
+            onResetTree={resetTreeTransform}
+            treeScale={effectiveScale}
+          />
+          <TreeExportSvg
+            svgRef={svgRef}
+            fitBase={fitBase}
+            model={model}
+            geometry={geometry}
+            layout={layout}
+            settings={settings}
+            layerImageHrefs={layerImageHrefs}
+            interactive
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onChange={handleItemChange}
+            onLayerContextMenu={openLayerContextMenu}
+            beginTreePan={beginPan}
+            moveTreePan={movePan}
+            endTreePan={endPan}
+          />
+        </div>
       </div>
 
       <TreeExportControls
@@ -78,17 +138,41 @@ export default function TreeExportView({
         activePresetId={activePresetId}
         collapsed={collapsed}
         exporting={exporting}
-        assetsReady={dataUris !== null}
+        assetsReady={assetsReady}
+        selectedLayer={selectedLayer}
         onToggleCollapse={() => setCollapsed((c) => !c)}
         onPatch={patch}
         onPatchImage={patchImage}
         onPatchCouplet={patchCouplet}
+        onPatchLayer={patchLayer}
+        onDeleteLayer={deleteSelectedLayer}
+        onBringLayerForward={bringSelectedForward}
+        onSendLayerBackward={sendSelectedBackward}
         onApplyPreset={handleApplyPreset}
         onReset={handleReset}
         onClose={onClose}
         onExport={handleExport}
         canDownloadExport={canDownloadExport}
       />
+
+      <ExportAssetLibraryModal
+        open={libraryOpen}
+        assets={systemAssets}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={addImageFromAsset}
+        onAssetsChanged={refreshSystemAssets}
+      />
+
+      {contextMenu ? (
+        <ExportLayerContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onBringForward={bringSelectedForward}
+          onSendBackward={sendSelectedBackward}
+          onDelete={deleteSelectedLayer}
+          onClose={() => setContextMenu(null)}
+        />
+      ) : null}
     </div>
   );
 }

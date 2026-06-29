@@ -1,3 +1,5 @@
+import { isCalligraphyFontId } from "./calligraphy-fonts";
+
 type FontDef = {
   family: string;
   file: string;
@@ -37,13 +39,15 @@ function injectFontFace(def: FontDef): void {
   document.head.appendChild(style);
 }
 
-/** Inject @font-face for one calligraphy font (idempotent). */
+/** Inject @font-face for one calligraphy font (idempotent). Bỏ qua font thường. */
 export function ensureCalligraphyFontLoaded(fontId: string): void {
+  if (!isCalligraphyFontId(fontId)) return;
   injectFontFace(getCalligraphyFontDef(fontId));
 }
 
 /** Inject @font-face and wait until the browser can render the family. */
 export async function loadCalligraphyFont(fontId: string): Promise<void> {
+  if (!isCalligraphyFontId(fontId)) return;
   if (typeof document === "undefined") return;
 
   const def = getCalligraphyFontDef(fontId);

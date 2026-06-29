@@ -8,7 +8,9 @@ import type {
   TreeExportSettings,
   TreeExportPreset,
 } from "@/lib/family-tree/tree-export-settings";
+import type { ExportDecorationLayer } from "@/lib/family-tree/export-decoration-layers";
 import type { CoupletKey, ImageKey } from "./tree-export-control-bits";
+import ExportLayerPanel from "./ExportLayerPanel";
 import TreeExportGeneralFields from "./TreeExportGeneralFields";
 import TreeExportStyleFields from "./TreeExportStyleFields";
 
@@ -19,10 +21,15 @@ type TreeExportControlsProps = {
   collapsed: boolean;
   exporting: boolean;
   assetsReady: boolean;
+  selectedLayer: ExportDecorationLayer | null;
   onToggleCollapse: () => void;
   onPatch: (patch: Partial<TreeExportSettings>) => void;
   onPatchImage: (key: ImageKey, patch: Partial<ExportImageCfg>) => void;
   onPatchCouplet: (key: CoupletKey, patch: Partial<ExportCoupletCfg>) => void;
+  onPatchLayer: (patch: Partial<ExportDecorationLayer>) => void;
+  onDeleteLayer: () => void;
+  onBringLayerForward: () => void;
+  onSendLayerBackward: () => void;
   onApplyPreset: (presetId: string | null) => void;
   onReset: () => void;
   onClose: () => void;
@@ -37,10 +44,15 @@ export default function TreeExportControls({
   collapsed,
   exporting,
   assetsReady,
+  selectedLayer,
   onToggleCollapse,
   onPatch,
   onPatchImage,
   onPatchCouplet,
+  onPatchLayer,
+  onDeleteLayer,
+  onBringLayerForward,
+  onSendLayerBackward,
   onApplyPreset,
   onReset,
   onClose,
@@ -94,12 +106,19 @@ export default function TreeExportControls({
               {UI.EXPORT_HINT}
             </p>
 
+            <ExportLayerPanel
+              layer={selectedLayer}
+              onPatch={onPatchLayer}
+              onDelete={onDeleteLayer}
+              onBringForward={onBringLayerForward}
+              onSendBackward={onSendLayerBackward}
+            />
+
             <TreeExportGeneralFields
               settings={settings}
               presets={presets}
               activePresetId={activePresetId}
               onPatch={onPatch}
-              onPatchImage={onPatchImage}
               onApplyPreset={onApplyPreset}
             />
             <TreeExportStyleFields

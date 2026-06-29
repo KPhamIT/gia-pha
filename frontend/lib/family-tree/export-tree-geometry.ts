@@ -16,7 +16,12 @@ export type ExportImageKey = keyof typeof EXPORT_IMAGE_SOURCES;
 
 export const EXPORT_OUTER_MARGIN = 60;
 export const EXPORT_PADDING = 70;
-const MIN_CONTENT_WIDTH = 1400;
+
+/** A0 ngang (ISO 841×1189 mm), 1000 user units ≈ 1 inch — cùng hệ với khung SVG. */
+export const EXPORT_A0_WIDTH = 46811;
+export const EXPORT_A0_HEIGHT = 33110;
+export const EXPORT_A0_WIDTH_MM = 1189;
+export const EXPORT_A0_HEIGHT_MM = 841;
 
 /** Vertical spacing between stacked couplet syllables, as a multiple of font size. */
 export const COUPLET_LINE_FACTOR = 1.1;
@@ -50,9 +55,8 @@ export type ExportGeometry = {
 };
 
 /**
- * Canvas geometry after export root-x adjustment. The root sits on the horizontal
- * midline of the tree extent, so left/right reach are equal and the sheet does
- * not drift sideways on wide trees.
+ * Canvas geometry on fixed A0 landscape. Tree is centred horizontally on the
+ * root; vertical placement follows header height and tree bounds.
  */
 export function computeExportGeometry(
   bounds: Rect,
@@ -60,18 +64,9 @@ export function computeExportGeometry(
   rootCenterX: number,
 ): ExportGeometry {
   const inner0 = EXPORT_OUTER_MARGIN + EXPORT_PADDING;
-  const leftReach = rootCenterX - bounds.x;
-  const rightReach = bounds.x + bounds.width - rootCenterX;
-  const halfSpan = Math.max(
-    leftReach,
-    rightReach,
-    bounds.width / 2,
-    MIN_CONTENT_WIDTH / 2,
-  );
-  const contentWidth = halfSpan * 2;
-  const contentHeight = headerHeight + bounds.height;
-  const canvasWidth = contentWidth + inner0 * 2;
-  const canvasHeight = contentHeight + inner0 * 2;
+  const canvasWidth = EXPORT_A0_WIDTH;
+  const canvasHeight = EXPORT_A0_HEIGHT;
+  const contentWidth = canvasWidth - inner0 * 2;
   const canvasCenterX = canvasWidth / 2;
 
   return {
@@ -91,6 +86,16 @@ export function computeExportGeometry(
     },
     treeTranslateX: canvasCenterX - rootCenterX,
     treeTranslateY: inner0 + headerHeight - bounds.y,
+  };
+}
+
+/** Ảnh nền: khớp đúng kích thước khung in. */
+export function backgroundImageLayout(borderRect: Rect): Rect {
+  return {
+    x: borderRect.x,
+    y: borderRect.y,
+    width: borderRect.width,
+    height: borderRect.height,
   };
 }
 
@@ -182,7 +187,7 @@ export function resolveExportLayout(
       visible: settings.coupletLeft.visible,
     },
     coupletRight: {
-      x: header.x + header.width - coupletFont * 0.9,
+      x: settings.coupletRight.x ?? header.x + header.width - coupletFont * 0.9,
       y: settings.coupletRight.y ?? header.y + coupletFont * 0.5,
       fontSize: coupletFont,
       color: coupletColor,

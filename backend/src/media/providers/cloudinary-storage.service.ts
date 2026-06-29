@@ -3,6 +3,8 @@ import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
 import type { MediaStorageService, UploadImageResult } from '../media.types.js';
 
+const SYSTEM_FOLDER = 'gia-pha/system';
+
 @Injectable()
 export class CloudinaryStorageService implements MediaStorageService {
   constructor() {
@@ -17,7 +19,12 @@ export class CloudinaryStorageService implements MediaStorageService {
     file: Express.Multer.File,
     opts?: { folder?: string },
   ): Promise<UploadImageResult> {
-    const folder = opts?.folder ?? 'gia-pha/blog';
+    const folder =
+      opts?.folder === 'system'
+        ? SYSTEM_FOLDER
+        : opts?.folder
+          ? `gia-pha/${opts.folder}`
+          : 'gia-pha/blog';
     const uploaded = await this.uploadToCloudinary(file.buffer, folder);
     return {
       provider: 'cloudinary',

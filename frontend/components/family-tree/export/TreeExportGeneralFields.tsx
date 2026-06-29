@@ -3,17 +3,14 @@
 import { UI } from "@/lib/constants/ui-strings";
 import { TREE_BORDER_STYLES } from "@/lib/family-tree/svg-border";
 import type {
-  ExportImageCfg,
   TreeExportSettings,
   TreeExportPreset,
 } from "@/lib/family-tree/tree-export-settings";
 import {
   ColorRow,
-  Toggle,
   fieldLabel,
   selectClass,
   sectionTitle,
-  type ImageKey,
 } from "./tree-export-control-bits";
 
 type Props = {
@@ -21,7 +18,6 @@ type Props = {
   presets: TreeExportPreset[];
   activePresetId: string | null;
   onPatch: (patch: Partial<TreeExportSettings>) => void;
-  onPatchImage: (key: ImageKey, patch: Partial<ExportImageCfg>) => void;
   onApplyPreset: (presetId: string | null) => void;
 };
 
@@ -30,7 +26,6 @@ export default function TreeExportGeneralFields({
   presets,
   activePresetId,
   onPatch,
-  onPatchImage,
   onApplyPreset,
 }: Props) {
   return (
@@ -93,23 +88,6 @@ export default function TreeExportGeneralFields({
           className="w-full accent-amber-600"
         />
       </label>
-
-      <div className={sectionTitle}>{UI.EXPORT_SECTION_HEADER}</div>
-      <Toggle
-        label={UI.EXPORT_SHOW_SCROLL}
-        checked={settings.scroll.visible}
-        onChange={(v) => onPatchImage("scroll", { visible: v })}
-      />
-      <Toggle
-        label={UI.EXPORT_SHOW_DRAGON_LEFT}
-        checked={settings.dragonLeft.visible}
-        onChange={(v) => onPatchImage("dragonLeft", { visible: v })}
-      />
-      <Toggle
-        label={UI.EXPORT_SHOW_DRAGON_RIGHT}
-        checked={settings.dragonRight.visible}
-        onChange={(v) => onPatchImage("dragonRight", { visible: v })}
-      />
     </>
   );
 }

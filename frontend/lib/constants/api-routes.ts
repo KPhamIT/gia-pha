@@ -55,4 +55,5 @@ export const API_ROUTES = {
   BLOG_ADMIN_POST: (id: number) => `/blog/admin/${id}`,
   MEDIA_IMAGE_UPLOAD: "/media/images",
   MEDIA_IMAGE_DELETE: "/media/images",
+  MEDIA_SYSTEM_ASSETS: "/media/system-assets",
 };
