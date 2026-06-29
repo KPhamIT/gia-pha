@@ -6,6 +6,8 @@ import {
 } from "./export-decoration-layers";
 import {
   DRAGON_ASPECT,
+  EXPORT_HEADER_HEIGHT_DEFAULT,
+  isLegacyExportScale,
   SCROLL_ASPECT,
 } from "./export-tree-geometry";
 import { EXPORT_IMAGE_SOURCES } from "./export-tree-geometry";
@@ -91,13 +93,13 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     backgroundColor: "#f7f0dd",
     borderStyleId: "classic",
     borderColor: GOLD,
-    headerHeight: 420,
+    headerHeight: EXPORT_HEADER_HEIGHT_DEFAULT,
     scroll: autoImage(),
     dragonLeft: autoImage(),
     dragonRight: autoImage(),
     coupletLeft: {
-      x: 155.16116273557986,
-      y: 469.2951402540331,
+      x: null,
+      y: null,
       width: null,
       height: null,
       visible: true,
@@ -105,7 +107,7 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     },
     coupletRight: {
       x: null,
-      y: 459.6610154981737,
+      y: null,
       width: null,
       height: null,
       visible: true,
@@ -113,7 +115,7 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     },
     coupletFontId: "thanhcong",
     coupletColor: COUPLET_COLOR,
-    coupletFontSize: 62,
+    coupletFontSize: null,
     nodeBgColor: "#f20202",
     nodeTextColor: "#ffdd00",
     nodeBorderColor: "#ffea00",
@@ -232,6 +234,46 @@ function migrateLegacyDecorations(
   return layers;
 }
 
+function migrateLegacyA0Scale(settings: TreeExportSettings): TreeExportSettings {
+  if (!isLegacyExportScale(settings.headerHeight)) {
+    return settings;
+  }
+
+  const scale = EXPORT_HEADER_HEIGHT_DEFAULT / settings.headerHeight;
+  const resetBox = <T extends ExportImageCfg | ExportCoupletCfg>(cfg: T): T => ({
+    ...cfg,
+    x: null,
+    y: null,
+    width: null,
+    height: null,
+  });
+
+  return {
+    ...settings,
+    headerHeight: EXPORT_HEADER_HEIGHT_DEFAULT,
+    scroll: resetBox(settings.scroll),
+    dragonLeft: resetBox(settings.dragonLeft),
+    dragonRight: resetBox(settings.dragonRight),
+    coupletLeft: resetBox(settings.coupletLeft),
+    coupletRight: resetBox(settings.coupletRight),
+    coupletFontSize:
+      settings.coupletFontSize != null && settings.coupletFontSize < 180
+        ? null
+        : settings.coupletFontSize,
+    layers: settings.layers.map((layer) => {
+      if (layer.type !== "text" || layer.fontSize >= 180) return layer;
+      return {
+        ...layer,
+        fontSize: Math.round(layer.fontSize * scale),
+        width: Math.round(layer.width * scale),
+        height: Math.round(layer.height * scale),
+        x: layer.x * scale,
+        y: layer.y * scale,
+      };
+    }),
+  };
+}
+
 /** Merge an untrusted partial onto defaults and drop a stale border id. */
 export function normalizeTreeExportSettings(
   partial: Partial<TreeExportSettings> | null | undefined,
@@ -255,7 +297,10 @@ export function normalizeTreeExportSettings(
   merged.treeOffsetX = partial?.treeOffsetX ?? base.treeOffsetX;
   merged.treeOffsetY = partial?.treeOffsetY ?? base.treeOffsetY;
   merged.treeUserScale = partial?.treeUserScale ?? base.treeUserScale;
-  return merged;
+  if (merged.coupletFontSize != null && merged.coupletFontSize < 180) {
+    merged.coupletFontSize = null;
+  }
+  return migrateLegacyA0Scale(merged);
 }
 
 export function loadTreeExportSettings(): TreeExportSettings {

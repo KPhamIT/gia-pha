@@ -1,6 +1,11 @@
 "use client";
 
 import { UI } from "@/lib/constants/ui-strings";
+import {
+  EXPORT_HEADER_HEIGHT_DEFAULT,
+  EXPORT_HEADER_HEIGHT_MAX,
+  EXPORT_HEADER_HEIGHT_MIN,
+} from "@/lib/family-tree/export-tree-geometry";
 import { TREE_BORDER_STYLES } from "@/lib/family-tree/svg-border";
 import type {
   TreeExportSettings,
@@ -80,9 +85,9 @@ export default function TreeExportGeneralFields({
         </span>
         <input
           type="range"
-          min={200}
-          max={800}
-          step={10}
+          min={EXPORT_HEADER_HEIGHT_MIN}
+          max={EXPORT_HEADER_HEIGHT_MAX}
+          step={50}
           value={settings.headerHeight}
           onChange={(e) => onPatch({ headerHeight: Number(e.target.value) })}
           className="w-full accent-amber-600"

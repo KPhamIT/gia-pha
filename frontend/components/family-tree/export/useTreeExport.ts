@@ -10,6 +10,8 @@ import {
   buildEmbeddedFontFace,
   buildExportModel,
   computeExportGeometry,
+  defaultExportTextBox,
+  defaultExportTextFontSize,
   downloadSvgElement,
   EXPORT_A0_HEIGHT_MM,
   EXPORT_A0_WIDTH_MM,
@@ -299,16 +301,18 @@ export function useTreeExport({
 
   const addTextLayer = useCallback(() => {
     const tier: ExportLayerTier = "above-text";
-    const fontSize = 48;
+    const { headerRect } = geometry;
+    const fontSize = defaultExportTextFontSize(headerRect.height);
+    const box = defaultExportTextBox(headerRect);
     const layer: ExportDecorationLayer = {
       id: createLayerId(),
       type: "text",
       tier,
       order: nextLayerOrder(settings.layers, tier),
-      x: geometry.headerRect.x + geometry.headerRect.width / 2,
-      y: geometry.headerRect.y + geometry.headerRect.height * 0.45,
-      width: 240,
-      height: 120,
+      x: headerRect.x + headerRect.width / 2,
+      y: headerRect.y + headerRect.height * 0.45,
+      width: box.width,
+      height: box.height,
       text: "Nhập chữ",
       fontId: EXPORT_NORMAL_FONT_ID,
       color: settings.coupletColor,

@@ -3,6 +3,11 @@
 import { UI } from "@/lib/constants/ui-strings";
 import { NODE_CARD_STYLES } from "@/lib/family-tree/svg-border";
 import { CALLIGRAPHY_FONTS } from "@/components/family-tree/book/calligraphy-fonts";
+import {
+  defaultCoupletFontSize,
+  EXPORT_HEADER_HEIGHT_MAX,
+  EXPORT_HEADER_HEIGHT_MIN,
+} from "@/lib/family-tree/export-tree-geometry";
 import type {
   ExportCoupletCfg,
   TreeExportSettings,
@@ -27,6 +32,15 @@ export default function TreeExportStyleFields({
   onPatch,
   onPatchCouplet,
 }: Props) {
+  const autoCoupletSize = Math.round(
+    Math.min(
+      defaultCoupletFontSize(settings.coupletLeft.text, settings.headerHeight),
+      defaultCoupletFontSize(settings.coupletRight.text, settings.headerHeight),
+    ),
+  );
+  const coupletSizeMin = Math.round(EXPORT_HEADER_HEIGHT_MIN * 0.035);
+  const coupletSizeMax = Math.round(EXPORT_HEADER_HEIGHT_MAX * 0.22);
+
   return (
     <>
       <div className={sectionTitle}>{UI.EXPORT_SECTION_COUPLETS}</div>
@@ -50,10 +64,10 @@ export default function TreeExportStyleFields({
         </span>
         <input
           type="range"
-          min={20}
-          max={90}
-          step={2}
-          value={settings.coupletFontSize ?? 46}
+          min={coupletSizeMin}
+          max={coupletSizeMax}
+          step={10}
+          value={settings.coupletFontSize ?? autoCoupletSize}
           onChange={(e) => onPatch({ coupletFontSize: Number(e.target.value) })}
           className="w-full accent-amber-600"
         />

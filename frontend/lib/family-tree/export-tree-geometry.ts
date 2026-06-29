@@ -23,10 +23,16 @@ export const EXPORT_A0_HEIGHT = 33110;
 export const EXPORT_A0_WIDTH_MM = 1189;
 export const EXPORT_A0_HEIGHT_MM = 841;
 
+/** Vùng header ≈ 12% chiều cao A0 — đủ chỗ cho cuốn thư, rồng, câu đối. */
+export const EXPORT_HEADER_HEIGHT_DEFAULT = Math.round(EXPORT_A0_HEIGHT * 0.12);
+export const EXPORT_HEADER_HEIGHT_MIN = Math.round(EXPORT_A0_HEIGHT * 0.06);
+export const EXPORT_HEADER_HEIGHT_MAX = Math.round(EXPORT_A0_HEIGHT * 0.22);
+
+const LEGACY_HEADER_HEIGHT_MAX = 1500;
+const LEGACY_TEXT_FONT_MAX = 180;
+
 /** Vertical spacing between stacked couplet syllables, as a multiple of font size. */
 export const COUPLET_LINE_FACTOR = 1.1;
-/** Default couplet column height: 18rem (≈ 288 SVG user units at 16px/rem). */
-export const COUPLET_DEFAULT_COLUMN_HEIGHT = 18 * 16;
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -36,10 +42,33 @@ export function coupletSyllables(text: string): string[] {
   return text.trim().split(/\s+/).filter(Boolean);
 }
 
-/** Font size that makes `text`'s column span the default 18rem height. */
-function defaultCoupletFontSize(text: string): number {
+/** Font size để cột câu đối cao ~82% vùng header. */
+export function defaultCoupletFontSize(
+  text: string,
+  headerHeight: number,
+): number {
+  const columnHeight = headerHeight * 0.82;
   const cells = Math.max(coupletSyllables(text).length, 1);
-  return COUPLET_DEFAULT_COLUMN_HEIGHT / (cells * COUPLET_LINE_FACTOR);
+  return columnHeight / (cells * COUPLET_LINE_FACTOR);
+}
+
+/** Cỡ chữ mặc định cho lớp text tự do trên export A0. */
+export function defaultExportTextFontSize(headerHeight: number): number {
+  return Math.round(headerHeight * 0.14);
+}
+
+export function defaultExportTextBox(header: Rect): {
+  width: number;
+  height: number;
+} {
+  return {
+    width: Math.round(header.width * 0.12),
+    height: Math.round(header.height * 0.4),
+  };
+}
+
+export function isLegacyExportScale(headerHeight: number): boolean {
+  return headerHeight < LEGACY_HEADER_HEIGHT_MAX;
 }
 
 export type ExportGeometry = {
@@ -151,8 +180,8 @@ export function resolveExportLayout(
   const coupletFont =
     settings.coupletFontSize ??
     Math.min(
-      defaultCoupletFontSize(settings.coupletLeft.text),
-      defaultCoupletFontSize(settings.coupletRight.text),
+      defaultCoupletFontSize(settings.coupletLeft.text, header.height),
+      defaultCoupletFontSize(settings.coupletRight.text, header.height),
     );
   const coupletTopY = header.y + coupletFont * 0.5;
 
