@@ -60,6 +60,11 @@ export type TreeExportSettings = {
   nodeFontSize: number;
   /** Dynamic decoration layers (images + free text). */
   layers: ExportDecorationLayer[];
+  /** Extra pan offset on top of auto-fit placement (SVG units). */
+  treeOffsetX: number;
+  treeOffsetY: number;
+  /** Zoom multiplier on top of auto-fit scale (1 = vừa khổ A0). */
+  treeUserScale: number;
 };
 
 export type TreeExportPreset = {
@@ -115,6 +120,9 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     nodeBorderStyleId: "ornate",
     nodeFontSize: 20,
     layers: [],
+    treeOffsetX: 0,
+    treeOffsetY: 0,
+    treeUserScale: 1,
   };
 }
 
@@ -138,13 +146,6 @@ function normalizeCouplet(
   base: ExportCoupletCfg,
 ): ExportCoupletCfg {
   return { ...base, ...(partial ?? {}) };
-}
-
-function normalizeCoupletRight(
-  partial: Partial<ExportCoupletCfg> | undefined,
-  base: ExportCoupletCfg,
-): ExportCoupletCfg {
-  return { ...normalizeCouplet(partial, base), x: null };
 }
 
 function normalizeLayers(
@@ -243,10 +244,7 @@ export function normalizeTreeExportSettings(
     dragonLeft: normalizeImage(partial?.dragonLeft, base.dragonLeft),
     dragonRight: normalizeImage(partial?.dragonRight, base.dragonRight),
     coupletLeft: normalizeCouplet(partial?.coupletLeft, base.coupletLeft),
-    coupletRight: normalizeCoupletRight(
-      partial?.coupletRight,
-      base.coupletRight,
-    ),
+    coupletRight: normalizeCouplet(partial?.coupletRight, base.coupletRight),
     layers: [],
   };
   merged.layers = normalizeLayers(partial, merged);
@@ -254,6 +252,9 @@ export function normalizeTreeExportSettings(
     merged.borderStyleId = base.borderStyleId;
   if (!isNodeCardId(merged.nodeBorderStyleId))
     merged.nodeBorderStyleId = base.nodeBorderStyleId;
+  merged.treeOffsetX = partial?.treeOffsetX ?? base.treeOffsetX;
+  merged.treeOffsetY = partial?.treeOffsetY ?? base.treeOffsetY;
+  merged.treeUserScale = partial?.treeUserScale ?? base.treeUserScale;
   return merged;
 }
 

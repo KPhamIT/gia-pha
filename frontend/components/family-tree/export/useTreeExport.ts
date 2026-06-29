@@ -11,6 +11,8 @@ import {
   buildExportModel,
   computeExportGeometry,
   downloadSvgElement,
+  EXPORT_A0_HEIGHT_MM,
+  EXPORT_A0_WIDTH_MM,
   resolveExportLayout,
 } from "@/lib/family-tree/export-tree-svg";
 import {
@@ -22,6 +24,7 @@ import {
   isCalligraphyFontId,
 } from "@/components/family-tree/book/calligraphy-fonts";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
+import { computeAutoTreeFit, exportFitKey, clampUserTreeZoom, type TreeTransform } from "@/lib/family-tree/export-tree-transform";
 import {
   bringLayerForward,
   createLayerId,
@@ -59,7 +62,13 @@ export function useTreeExport({
   canDownloadExport,
 }: Args) {
   const { requireAdmin } = useFeatureAccess();
+  const [fitBase, setFitBase] = useState<TreeTransform>({
+    treeOffsetX: 0,
+    treeOffsetY: 0,
+    treeScale: 1,
+  });
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const lastFitKeyRef = useRef<string | null>(null);
   const [settings, setSettings] = useState<TreeExportSettings>(
     loadTreeExportSettings,
   );
@@ -148,6 +157,35 @@ export function useTreeExport({
     [],
   );
 
+  const fitTreeToPage = useCallback(() => {
+    const fit = computeAutoTreeFit(
+      model,
+      geometry,
+      settings.headerHeight,
+    );
+    setFitBase(fit);
+    patch({ treeUserScale: 1, treeOffsetX: 0, treeOffsetY: 0 });
+  }, [model, geometry, patch, settings.headerHeight]);
+
+  const fitKey = useMemo(
+    () => exportFitKey(model, settings.headerHeight),
+    [model, settings.headerHeight],
+  );
+
+  useEffect(() => {
+    if (lastFitKeyRef.current === fitKey) return;
+    lastFitKeyRef.current = fitKey;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fitTreeToPage();
+  }, [fitKey, fitTreeToPage]);
+
+  const zoomTreeBy = useCallback((factor: number) => {
+    setSettings((prev) => ({
+      ...prev,
+      treeUserScale: clampUserTreeZoom(prev.treeUserScale * factor),
+    }));
+  }, []);
+
   const patchLayers = useCallback(
     (updater: (layers: ExportDecorationLayer[]) => ExportDecorationLayer[]) =>
       setSettings((prev) => ({ ...prev, layers: updater(prev.layers) })),
@@ -164,10 +202,7 @@ export function useTreeExport({
     (key: CoupletKey, p: Partial<ExportCoupletCfg>) =>
       setSettings((prev) => ({
         ...prev,
-        [key]:
-          key === "coupletRight"
-            ? { ...prev[key], ...p, x: null }
-            : { ...prev[key], ...p },
+        [key]: { ...prev[key], ...p },
       })),
     [],
   );
@@ -366,6 +401,10 @@ export function useTreeExport({
             geometry.canvasHeight,
             "gia-pha.svg",
             fontFaces.join("\n"),
+            {
+              width: `${EXPORT_A0_WIDTH_MM}mm`,
+              height: `${EXPORT_A0_HEIGHT_MM}mm`,
+            },
           );
         } finally {
           setExporting(false);
@@ -383,6 +422,7 @@ export function useTreeExport({
 
   return {
     svgRef,
+    fitBase,
     model,
     geometry,
     layout,
@@ -417,5 +457,7 @@ export function useTreeExport({
     handleReset,
     handleApplyPreset,
     handleExport,
+    fitTreeToPage,
+    zoomTreeBy,
   };
 }

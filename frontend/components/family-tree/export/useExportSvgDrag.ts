@@ -6,7 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { ExportBox } from "@/lib/family-tree/tree-export-settings";
-import { isCoupletId, type DragState, type DraggableId } from "./tree-export-svg-utils";
+import type { DragState, DraggableId } from "./tree-export-svg-utils";
 
 type Options = {
   interactive: boolean;
@@ -64,14 +64,10 @@ export function useExportSvgDrag(
     if (!p) return;
 
     if (drag.mode === "move") {
-      if (isCoupletId(drag.id) && drag.id === "coupletRight") {
-        onChange?.(drag.id, { y: drag.boxY + (p.y - drag.startY) });
-      } else {
-        onChange?.(drag.id, {
-          x: drag.boxX + (p.x - drag.startX),
-          y: drag.boxY + (p.y - drag.startY),
-        });
-      }
+      onChange?.(drag.id, {
+        x: drag.boxX + (p.x - drag.startX),
+        y: drag.boxY + (p.y - drag.startY),
+      });
       return;
     }
 

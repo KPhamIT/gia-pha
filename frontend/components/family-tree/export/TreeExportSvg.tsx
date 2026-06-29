@@ -7,6 +7,12 @@ import {
   type ResolvedLayout,
 } from "@/lib/family-tree/export-tree-svg";
 import {
+  buildExportTreeTransform,
+  effectiveTreeScale,
+  getTreeScalePivot,
+  type TreeTransform,
+} from "@/lib/family-tree/export-tree-transform";
+import {
   getNodeCardStyle,
   getTreeBorderStyle,
 } from "@/lib/family-tree/svg-border";
@@ -14,6 +20,7 @@ import { getCalligraphyFont } from "@/components/family-tree/book/calligraphy-fo
 import type { TreeExportSettings, ExportBox } from "@/lib/family-tree/tree-export-settings";
 import type { DraggableId } from "./tree-export-svg-utils";
 import { useExportSvgDrag } from "./useExportSvgDrag";
+import type { useExportTreeTransform } from "./useExportTreeTransform";
 import ExportPersonNode from "./ExportPersonNode";
 import ExportDecorationLayers from "./ExportDecorationLayers";
 
@@ -21,6 +28,7 @@ export type { DraggableId } from "./tree-export-svg-utils";
 
 type TreeExportSvgProps = {
   svgRef: MutableRefObject<SVGSVGElement | null>;
+  fitBase: TreeTransform;
   model: ExportModel;
   geometry: ExportGeometry;
   layout: ResolvedLayout;
@@ -31,6 +39,9 @@ type TreeExportSvgProps = {
   onSelect?: (id: DraggableId | null) => void;
   onChange?: (id: DraggableId, patch: Partial<ExportBox>) => void;
   onLayerContextMenu?: (id: string, clientX: number, clientY: number) => void;
+  beginTreePan?: ReturnType<typeof useExportTreeTransform>["beginPan"];
+  moveTreePan?: ReturnType<typeof useExportTreeTransform>["movePan"];
+  endTreePan?: ReturnType<typeof useExportTreeTransform>["endPan"];
 };
 
 const layerGroupProps = (
@@ -54,6 +65,7 @@ const layerGroupProps = (
 
 export default function TreeExportSvg({
   svgRef,
+  fitBase,
   model,
   geometry,
   layout,
@@ -64,19 +76,24 @@ export default function TreeExportSvg({
   onSelect,
   onChange,
   onLayerContextMenu,
+  beginTreePan,
+  moveTreePan,
+  endTreePan,
 }: TreeExportSvgProps) {
   const { beginDrag, handlePointerMove, endDrag } = useExportSvgDrag(svgRef, {
     interactive,
     onSelect,
     onChange,
   });
-  const {
-    canvasWidth,
-    canvasHeight,
-    borderRect,
-    treeTranslateX,
-    treeTranslateY,
-  } = geometry;
+  const { canvasWidth, canvasHeight, borderRect } = geometry;
+  const treeTransform = buildExportTreeTransform(
+    geometry,
+    getTreeScalePivot(model),
+    fitBase.treeOffsetX + settings.treeOffsetX,
+    fitBase.treeOffsetY + settings.treeOffsetY,
+    effectiveTreeScale(fitBase.treeScale, settings.treeUserScale),
+  );
+  const treeHitPad = 24;
   const border = getTreeBorderStyle(settings.borderStyleId);
   const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } =
     settings;
@@ -99,9 +116,18 @@ export default function TreeExportSvg({
       height="100%"
       preserveAspectRatio="xMidYMid meet"
       style={{ display: "block", touchAction: "none" }}
-      onPointerMove={handlePointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
+      onPointerMove={(e) => {
+        handlePointerMove(e);
+        moveTreePan?.(e);
+      }}
+      onPointerUp={(e) => {
+        endDrag(e);
+        endTreePan?.(e);
+      }}
+      onPointerCancel={(e) => {
+        endDrag(e);
+        endTreePan?.(e);
+      }}
       onPointerDown={() => interactive && onSelect?.(null)}
     >
       <rect
@@ -116,7 +142,20 @@ export default function TreeExportSvg({
 
       {border.render(borderRect, settings.borderColor)}
 
-      <g transform={`translate(${treeTranslateX} ${treeTranslateY})`}>
+      <g
+        transform={treeTransform}
+        style={{ cursor: interactive ? "grab" : undefined }}
+        onPointerDown={beginTreePan}
+      >
+        {interactive ? (
+          <rect
+            x={model.bounds.x - treeHitPad}
+            y={model.bounds.y - treeHitPad}
+            width={model.bounds.width + treeHitPad * 2}
+            height={model.bounds.height + treeHitPad * 2}
+            fill="transparent"
+          />
+        ) : null}
         {model.connectors.map((d, i) => (
           <path key={i} d={d} fill="none" stroke="#94a3b8" strokeWidth={1.5} />
         ))}

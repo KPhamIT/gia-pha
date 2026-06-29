@@ -30,13 +30,19 @@ export function downloadSvgElement(
   height: number,
   filename: string,
   fontFaceCss?: string,
+  physicalSize?: { width: string; height: string },
 ): void {
   const clone = svg.cloneNode(true) as SVGSVGElement;
   clone.removeAttribute("style");
   clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-  clone.setAttribute("width", String(width));
-  clone.setAttribute("height", String(height));
+  if (physicalSize) {
+    clone.setAttribute("width", physicalSize.width);
+    clone.setAttribute("height", physicalSize.height);
+  } else {
+    clone.setAttribute("width", String(width));
+    clone.setAttribute("height", String(height));
+  }
   clone.querySelectorAll("[data-export-ignore]").forEach((el) => el.remove());
 
   if (fontFaceCss) {

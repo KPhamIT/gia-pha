@@ -23,13 +23,13 @@ export type SystemAsset = {
 
 /** Built-in SVG frame backgrounds for tree export (`/public/images/khung`). */
 const KHUNG_BACKGROUNDS: SystemAsset[] = [
-  { file: "khung1.svg", name: "Khung nền 1", aspectRatio: 11693 / 8268 },
-  { file: "khung2.svg", name: "Khung nền 2", aspectRatio: 41732 / 23622 },
-  { file: "khung3.svg", name: "Khung nền 3", aspectRatio: 11693 / 8268 },
-  { file: "khung4.svg", name: "Khung nền 4", aspectRatio: 11693 / 8268 },
-  { file: "khung5.svg", name: "Khung nền 5", aspectRatio: 11693 / 8268 },
+  { file: "khung1.svg", name: "Khung nền 1", aspectRatio: 10104 / 6746 },
+  { file: "khung2.svg", name: "Khung nền 2", aspectRatio: 33763 / 22055 },
+  { file: "khung3.svg", name: "Khung nền 3", aspectRatio: 10236 / 6804 },
+  { file: "khung4.svg", name: "Khung nền 4", aspectRatio: 11043 / 7521 },
+  { file: "khung5.svg", name: "Khung nền 5", aspectRatio: 11043 / 7521 },
   { file: "khung6.svg", name: "Khung nền 6", aspectRatio: 54000 / 34000 },
-  { file: "khung7.svg", name: "Khung nền 7", aspectRatio: 46811 / 33110 },
+  { file: "khung7.svg", name: "Khung nền 7", aspectRatio: 42377 / 28484 },
 ].map(({ file, name, aspectRatio }) => ({
   id: `builtin-khung-${file.replace(".svg", "")}`,
   dbId: 0,

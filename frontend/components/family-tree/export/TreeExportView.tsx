@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
@@ -9,6 +10,7 @@ import ExportLayerToolbar from "./ExportLayerToolbar";
 import TreeExportControls from "./TreeExportControls";
 import TreeExportSvg from "./TreeExportSvg";
 import { useTreeExport } from "./useTreeExport";
+import { useExportTreeTransform } from "./useExportTreeTransform";
 
 type TreeExportViewProps = {
   treeData: FamilyTreeData;
@@ -25,6 +27,7 @@ export default function TreeExportView({
   onClose,
   canDownloadExport,
 }: TreeExportViewProps) {
+  const viewportRef = useRef<HTMLDivElement>(null);
   const exportState = useTreeExport({
     treeData,
     layoutConfig,
@@ -33,6 +36,7 @@ export default function TreeExportView({
   });
   const {
     svgRef,
+    fitBase,
     model,
     geometry,
     layout,
@@ -67,7 +71,27 @@ export default function TreeExportView({
     handleReset,
     handleApplyPreset,
     handleExport,
+    fitTreeToPage,
+    zoomTreeBy,
   } = exportState;
+
+  const effectiveScale =
+    fitBase.treeScale * settings.treeUserScale;
+
+  const {
+    beginPan,
+    movePan,
+    endPan,
+    zoomIn,
+    zoomOut,
+    resetTreeTransform,
+  } = useExportTreeTransform(svgRef, viewportRef, {
+    interactive: true,
+    settings,
+    onPatch: patch,
+    onZoomBy: zoomTreeBy,
+    onResetTransform: fitTreeToPage,
+  });
 
   return (
     <div className="overlay-viewport z-40 bg-slate-300">
@@ -76,13 +100,21 @@ export default function TreeExportView({
           collapsed ? "pb-36" : "pb-[calc(55vh+1.5rem)]"
         }`}
       >
-        <div className="relative h-full w-full max-w-[min(100%,1400px)]">
+        <div
+          ref={viewportRef}
+          className="relative h-full w-full max-w-[min(100%,1400px)]"
+        >
           <ExportLayerToolbar
             onAddText={addTextLayer}
             onOpenLibrary={() => setLibraryOpen(true)}
+            onZoomIn={zoomIn}
+            onZoomOut={zoomOut}
+            onResetTree={resetTreeTransform}
+            treeScale={effectiveScale}
           />
           <TreeExportSvg
             svgRef={svgRef}
+            fitBase={fitBase}
             model={model}
             geometry={geometry}
             layout={layout}
@@ -93,6 +125,9 @@ export default function TreeExportView({
             onSelect={setSelectedId}
             onChange={handleItemChange}
             onLayerContextMenu={openLayerContextMenu}
+            beginTreePan={beginPan}
+            moveTreePan={movePan}
+            endTreePan={endPan}
           />
         </div>
       </div>

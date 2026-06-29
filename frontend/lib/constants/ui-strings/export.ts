@@ -3,7 +3,7 @@ export const EXPORT_STRINGS = {
   EXPORT_FAB: "Xuất ảnh / In",
   EXPORT_TITLE: "Xuất ảnh gia phả",
   EXPORT_HINT:
-    "Bấm A hoặc biểu tượng ảnh để thêm chữ/hình; kéo để di chuyển, kéo góc để đổi kích thước; chuột phải để đổi thứ tự lớp.",
+    "Khổ giấy cố định A0 ngang (1189×841 mm); cây tự căn vừa khi mở export. Cuộn chuột hoặc nút +/− để phóng to/thu nhỏ thêm; kéo cây để chỉnh vị trí. Bấm A hoặc biểu tượng ảnh để thêm chữ/hình.",
   EXPORT_CLOSE: "Đóng",
   EXPORT_DOWNLOAD: "Tải ảnh SVG",
   EXPORT_DOWNLOAD_ADMIN_ONLY:
@@ -76,4 +76,8 @@ export const EXPORT_STRINGS = {
   EXPORT_TEXT_CANCEL: "Huỷ",
   EXPORT_LAYER_WIDTH: "Rộng",
   EXPORT_LAYER_HEIGHT: "Cao",
+  EXPORT_TREE_ZOOM_IN: "Phóng to cây",
+  EXPORT_TREE_ZOOM_OUT: "Thu nhỏ cây",
+  EXPORT_TREE_RESET: "Căn vừa khổ A0",
+  EXPORT_TREE_SCALE: "Tỷ lệ cây",
 } as const;
