@@ -40,7 +40,7 @@ function toSvgPoint(
   return pt.matrixTransform(ctm.inverse());
 }
 
-/** Pan (drag tree) and zoom (wheel / toolbar) for the export tree group. */
+/** Pan + zoom chỉ nhóm cây gia phả trong khung A0. */
 export function useExportTreeTransform(
   svgRef: MutableRefObject<SVGSVGElement | null>,
   viewportRef: RefObject<HTMLDivElement | null>,
@@ -55,12 +55,8 @@ export function useExportTreeTransform(
   }, []);
 
   const resetTreeTransform = useCallback(() => {
-    if (onResetTransform) {
-      onResetTransform();
-      return;
-    }
-    onPatch({ treeOffsetX: 0, treeOffsetY: 0, treeUserScale: 1 });
-  }, [onPatch, onResetTransform]);
+    onResetTransform?.();
+  }, [onResetTransform]);
 
   const beginPan = useCallback(
     (e: ReactPointerEvent) => {
@@ -71,8 +67,8 @@ export function useExportTreeTransform(
       panRef.current = {
         startX: p.x,
         startY: p.y,
-        offsetX: settings.treeOffsetX,
-        offsetY: settings.treeOffsetY,
+        offsetX: settings.treeOffsetX ?? 0,
+        offsetY: settings.treeOffsetY ?? 0,
       };
       svgRef.current?.setPointerCapture(e.pointerId);
     },
@@ -107,11 +103,12 @@ export function useExportTreeTransform(
     if (!el || !interactive) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       const factor = e.deltaY > 0 ? 1 / TREE_SCALE_STEP : TREE_SCALE_STEP;
       onZoomByRef.current(factor);
     };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    el.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    return () => el.removeEventListener("wheel", onWheel, { capture: true });
   }, [interactive, viewportRef]);
 
   return {

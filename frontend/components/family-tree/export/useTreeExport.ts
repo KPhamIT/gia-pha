@@ -102,7 +102,14 @@ export function useTreeExport({
   } | null>(null);
 
   useEffect(() => {
-    saveTreeExportSettings(settings);
+    const { treeUserScale: _z, treeOffsetX: _x, treeOffsetY: _y, ...persisted } =
+      settings;
+    saveTreeExportSettings({
+      ...persisted,
+      treeUserScale: 1,
+      treeOffsetX: 0,
+      treeOffsetY: 0,
+    });
   }, [settings]);
 
   useEffect(() => {
@@ -157,32 +164,36 @@ export function useTreeExport({
     [],
   );
 
-  const fitTreeToPage = useCallback(() => {
-    const fit = computeAutoTreeFit(
-      model,
-      geometry,
-      settings.headerHeight,
-    );
-    setFitBase(fit);
-    patch({ treeUserScale: 1, treeOffsetX: 0, treeOffsetY: 0 });
-  }, [model, geometry, patch, settings.headerHeight]);
-
   const fitKey = useMemo(
     () => exportFitKey(model, settings.headerHeight),
-    [model, settings.headerHeight],
+    [model.bounds, model.rootCenterX, settings.headerHeight],
+  );
+
+  const autoFit = useMemo(
+    () => computeAutoTreeFit(model, geometry, settings.headerHeight),
+    [model, geometry, settings.headerHeight],
   );
 
   useEffect(() => {
     if (lastFitKeyRef.current === fitKey) return;
     lastFitKeyRef.current = fitKey;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fitTreeToPage();
-  }, [fitKey, fitTreeToPage]);
+    setFitBase(autoFit);
+    patch({ treeUserScale: 1, treeOffsetX: 0, treeOffsetY: 0 });
+  }, [fitKey, autoFit, patch]);
+
+  const fitTreeToPage = useCallback(() => {
+    setFitBase(autoFit);
+    patch({ treeUserScale: 1, treeOffsetX: 0, treeOffsetY: 0 });
+    lastFitKeyRef.current = fitKey;
+  }, [autoFit, fitKey, patch]);
 
   const zoomTreeBy = useCallback((factor: number) => {
     setSettings((prev) => ({
       ...prev,
-      treeUserScale: clampUserTreeZoom(prev.treeUserScale * factor),
+      treeUserScale: clampUserTreeZoom(
+        (prev.treeUserScale ?? 1) * factor,
+      ),
     }));
   }, []);
 

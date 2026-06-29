@@ -91,7 +91,7 @@ export default function TreeExportSvg({
     getTreeScalePivot(model),
     fitBase.treeOffsetX + settings.treeOffsetX,
     fitBase.treeOffsetY + settings.treeOffsetY,
-    effectiveTreeScale(fitBase.treeScale, settings.treeUserScale),
+    effectiveTreeScale(fitBase.treeScale, settings.treeUserScale ?? 1),
   );
   const treeHitPad = 24;
   const border = getTreeBorderStyle(settings.borderStyleId);

@@ -75,8 +75,7 @@ export default function TreeExportView({
     zoomTreeBy,
   } = exportState;
 
-  const effectiveScale =
-    fitBase.treeScale * settings.treeUserScale;
+  const treeZoom = settings.treeUserScale ?? 1;
 
   const {
     beginPan,
@@ -110,7 +109,7 @@ export default function TreeExportView({
             onZoomIn={zoomIn}
             onZoomOut={zoomOut}
             onResetTree={resetTreeTransform}
-            treeScale={effectiveScale}
+            treeScale={treeZoom}
           />
           <TreeExportSvg
             svgRef={svgRef}
