@@ -2,11 +2,12 @@ import type { ExportGeometry } from "./export-tree-geometry";
 import { EXPORT_OUTER_MARGIN, EXPORT_PADDING } from "./export-tree-geometry";
 import type { ExportModel, Rect } from "./export-tree-model";
 
-export const TREE_SCALE_MIN = 0.05;
-export const TREE_SCALE_MAX = 10;
-export const TREE_USER_ZOOM_MIN = 0.08;
-export const TREE_USER_ZOOM_MAX = 6;
 export const TREE_SCALE_STEP = 1.12;
+export const PREVIEW_ZOOM_STEP = 1.2;
+
+/** Ngưỡng tối thiểu — tránh 0/âm; không giới hạn max thực tế cho chỉnh sửa. */
+const ZOOM_FLOOR = 0.01;
+const ZOOM_CEILING = 1_000_000;
 
 export type TreeTransform = {
   treeOffsetX: number;
@@ -14,28 +15,41 @@ export type TreeTransform = {
   treeScale: number;
 };
 
+function sanitizeZoom(zoom: number): number {
+  if (!Number.isFinite(zoom)) return 1;
+  if (zoom < ZOOM_FLOOR) return ZOOM_FLOOR;
+  if (zoom > ZOOM_CEILING) return ZOOM_CEILING;
+  return zoom;
+}
+
 export function clampTreeScale(scale: number): number {
-  return Math.min(Math.max(scale, TREE_SCALE_MIN), TREE_SCALE_MAX);
+  return sanitizeZoom(scale);
 }
 
 export function clampUserTreeZoom(zoom: number): number {
-  return Math.min(Math.max(zoom, TREE_USER_ZOOM_MIN), TREE_USER_ZOOM_MAX);
+  return sanitizeZoom(zoom);
+}
+
+export function clampPreviewZoom(zoom: number): number {
+  return sanitizeZoom(zoom);
 }
 
 export function exportFitKey(model: ExportModel, headerHeight: number): string {
   const b = model.bounds;
   return [
-    b.x,
-    b.y,
-    b.width,
-    b.height,
-    headerHeight,
-    model.rootCenterX,
+    Math.round(b.x),
+    Math.round(b.y),
+    Math.round(b.width),
+    Math.round(b.height),
+    Math.round(headerHeight),
+    Math.round(model.rootCenterX),
   ].join("|");
 }
 
 export function effectiveTreeScale(fitScale: number, userZoom: number): number {
-  return clampTreeScale(fitScale * userZoom);
+  const u = Number.isFinite(userZoom) ? userZoom : 1;
+  const f = Number.isFinite(fitScale) ? fitScale : 1;
+  return sanitizeZoom(f * u);
 }
 
 /** Vùng dưới header, trong khung A0, dành cho cây gia phả. */

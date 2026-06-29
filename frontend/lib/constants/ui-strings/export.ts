@@ -3,7 +3,7 @@ export const EXPORT_STRINGS = {
   EXPORT_FAB: "Xuất ảnh / In",
   EXPORT_TITLE: "Xuất ảnh gia phả",
   EXPORT_HINT:
-    "Khổ giấy cố định A0 ngang (1189×841 mm); cây tự căn vừa khi mở export. Cuộn chuột hoặc nút +/− để phóng to/thu nhỏ thêm; kéo cây để chỉnh vị trí. Bấm A hoặc biểu tượng ảnh để thêm chữ/hình.",
+    "Nút +/− hoặc cuộn chuột phóng to/thu nhỏ cây gia phả (khung A0 giữ nguyên); kéo cây để chỉnh vị trí. Bấm A hoặc biểu tượng ảnh để thêm chữ/hình.",
   EXPORT_CLOSE: "Đóng",
   EXPORT_DOWNLOAD: "Tải ảnh SVG",
   EXPORT_DOWNLOAD_ADMIN_ONLY:

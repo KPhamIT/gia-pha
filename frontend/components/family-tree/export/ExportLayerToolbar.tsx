@@ -27,16 +27,16 @@ export default function ExportLayerToolbar({
       <button
         type="button"
         onClick={onZoomOut}
-        className="grid h-9 min-w-9 place-items-center rounded-lg px-2 text-lg font-semibold text-amber-900 hover:bg-amber-50"
+        className="grid h-9 min-w-9 place-items-center rounded-lg px-2 text-lg font-semibold text-amber-900 hover:bg-amber-50 active:bg-amber-100"
         aria-label={UI.EXPORT_TREE_ZOOM_OUT}
-        title={UI.EXPORT_TREE_ZOOM_OUT}
+        title={`${UI.EXPORT_TREE_ZOOM_OUT} (${scaleLabel})`}
       >
         −
       </button>
       <button
         type="button"
         onClick={onResetTree}
-        className="grid h-9 min-w-9 place-items-center rounded-lg px-2 text-[11px] font-medium text-amber-900 hover:bg-amber-50"
+        className="grid h-9 min-w-9 place-items-center rounded-lg px-2 text-[11px] font-medium text-amber-900 hover:bg-amber-50 active:bg-amber-100"
         aria-label={UI.EXPORT_TREE_RESET}
         title={`${UI.EXPORT_TREE_RESET} (${scaleLabel})`}
       >
@@ -47,14 +47,15 @@ export default function ExportLayerToolbar({
           stroke="currentColor"
           strokeWidth={2}
           pointer={false}
+          className="pointer-events-none"
         />
       </button>
       <button
         type="button"
         onClick={onZoomIn}
-        className="grid h-9 w-9 place-items-center rounded-lg text-amber-900 hover:bg-amber-50"
+        className="grid h-9 w-9 place-items-center rounded-lg text-amber-900 hover:bg-amber-50 active:bg-amber-100"
         aria-label={UI.EXPORT_TREE_ZOOM_IN}
-        title={UI.EXPORT_TREE_ZOOM_IN}
+        title={`${UI.EXPORT_TREE_ZOOM_IN} (${scaleLabel})`}
       >
         <Icon
           path="plus"
@@ -63,6 +64,7 @@ export default function ExportLayerToolbar({
           stroke="currentColor"
           strokeWidth={2}
           pointer={false}
+          className="pointer-events-none"
         />
       </button>
       <div className="mx-0.5 h-6 w-px bg-amber-200" />
