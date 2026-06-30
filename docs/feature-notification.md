@@ -356,7 +356,7 @@ Timezone:
 Asia/Ho_Chi_Minh
 ```
 
-Chạy mỗi ngày lúc 07:00 sáng.
+Chạy mỗi ngày lúc 00:00 sáng (giờ Việt Nam).
 
 ---
 

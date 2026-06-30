@@ -37,6 +37,32 @@ export const COUPLET_COLUMN_HEIGHT_RATIO = 0.28;
 const LEGACY_HEADER_HEIGHT_MAX = 1500;
 const LEGACY_TEXT_FONT_MAX = 180;
 
+/** Pre-A0 persisted coords / sizes for cuốn thư + rồng. */
+export const LEGACY_HEADER_LAYER_COORD_MAX = 6000;
+export const LEGACY_HEADER_LAYER_SIZE_MAX = 2000;
+
+export const LEGACY_HEADER_LAYER_IDS = {
+  scroll: "legacy-scroll",
+  dragonLeft: "legacy-dragon-left",
+  dragonRight: "legacy-dragon-right",
+} as const;
+
+/** Header band used when only `headerHeight` is known (migration / defaults). */
+export function defaultExportHeaderRect(headerHeight: number): Rect {
+  const inner0 = EXPORT_OUTER_MARGIN + EXPORT_PADDING;
+  const contentWidth = EXPORT_A0_WIDTH - inner0 * 2;
+  return { x: inner0, y: inner0, width: contentWidth, height: headerHeight };
+}
+
+export function defaultExportBorderRect(): Rect {
+  return {
+    x: EXPORT_OUTER_MARGIN,
+    y: EXPORT_OUTER_MARGIN,
+    width: EXPORT_A0_WIDTH - EXPORT_OUTER_MARGIN * 2,
+    height: EXPORT_BORDER_HEIGHT,
+  };
+}
+
 /** Vertical spacing between stacked couplet syllables, as a multiple of font size. */
 export const COUPLET_LINE_FACTOR = 1.1;
 
@@ -178,22 +204,23 @@ export function resolveExportLayout(
 ): ResolvedLayout {
   const centerX = header.x + header.width / 2;
 
-  const scrollW = settings.scroll.width ?? clamp(header.width * 0.26, 380, 720);
+  const scrollW = settings.scroll.width ?? header.width * 0.26;
   const scrollH = settings.scroll.height ?? scrollW / SCROLL_ASPECT;
   const scrollX = settings.scroll.x ?? centerX - scrollW / 2;
   const scrollY = settings.scroll.y ?? header.y + header.height * 0.14;
 
-  const dragonSize = header.height * 0.58;
+  const dragonSize = header.height * 1.05;
   const dragonY = header.y + (header.height - dragonSize) / 2;
+  const dragonGap = header.height * 0.02;
 
   const dlW = settings.dragonLeft.width ?? dragonSize;
   const dlH = settings.dragonLeft.height ?? dlW / DRAGON_ASPECT;
-  const dlX = settings.dragonLeft.x ?? scrollX - 50 - dlW;
+  const dlX = settings.dragonLeft.x ?? scrollX - dragonGap - dlW;
   const dlY = settings.dragonLeft.y ?? dragonY;
 
   const drW = settings.dragonRight.width ?? dragonSize;
   const drH = settings.dragonRight.height ?? drW / DRAGON_ASPECT;
-  const drX = settings.dragonRight.x ?? scrollX + scrollW + 50;
+  const drX = settings.dragonRight.x ?? scrollX + scrollW + dragonGap;
   const drY = settings.dragonRight.y ?? dragonY;
 
   const coupletColor = settings.coupletColor;
@@ -255,5 +282,69 @@ export function resolveExportLayout(
       text: settings.coupletRight.text,
       visible: settings.coupletRight.visible,
     },
+  };
+}
+
+export function isLegacyHeaderImageCfg(cfg: {
+  x: number | null;
+  y: number | null;
+  width: number | null;
+  height: number | null;
+}): boolean {
+  return (
+    (cfg.width != null && cfg.width < LEGACY_HEADER_LAYER_SIZE_MAX) ||
+    (cfg.x != null && cfg.x < LEGACY_HEADER_LAYER_COORD_MAX)
+  );
+}
+
+export function isLegacyHeaderImageLayer(layer: {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}): boolean {
+  if (layer.type !== "image") return false;
+  const legacyIds = Object.values(LEGACY_HEADER_LAYER_IDS);
+  if (!legacyIds.includes(layer.id as (typeof legacyIds)[number])) return false;
+  return (
+    layer.width < LEGACY_HEADER_LAYER_SIZE_MAX ||
+    layer.x < LEGACY_HEADER_LAYER_COORD_MAX
+  );
+}
+
+const LEGACY_HEADER_LAYOUT_KEY: Record<
+  string,
+  keyof Pick<ResolvedLayout, "scroll" | "dragonLeft" | "dragonRight">
+> = {
+  [LEGACY_HEADER_LAYER_IDS.scroll]: "scroll",
+  [LEGACY_HEADER_LAYER_IDS.dragonLeft]: "dragonLeft",
+  [LEGACY_HEADER_LAYER_IDS.dragonRight]: "dragonRight",
+};
+
+/** Resolved box for rendering / selection — auto layout until user drags on A0. */
+export function resolveHeaderImageLayer(
+  layer: {
+    id: string;
+    type: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  },
+  layout: ResolvedLayout,
+): ResolvedImage | null {
+  const key = LEGACY_HEADER_LAYOUT_KEY[layer.id];
+  if (!key) return null;
+  const resolved = layout[key];
+  if (!resolved.visible) return null;
+  if (isLegacyHeaderImageLayer(layer)) return resolved;
+  return {
+    x: layer.x,
+    y: layer.y,
+    width: layer.width,
+    height: layer.height,
+    visible: true,
   };
 }

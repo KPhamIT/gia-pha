@@ -1,6 +1,6 @@
 # Cron thông báo ngày giỗ — GitHub Actions
 
-Job gửi push notification ngày giỗ chạy **mỗi ngày lúc 07:00 giờ Việt Nam** (cấu hình `00:00 UTC` trong workflow).  
+Job gửi push notification ngày giỗ chạy **mỗi ngày lúc 00:00 giờ Việt Nam** (đầu ngày — cấu hình `17:00 UTC` trong workflow). GitHub Actions có thể trễ vài phút đến vài giờ; chạy lúc 0h giúp job vẫn hoàn thành trong **sáng sớm cùng ngày** dương lịch tại VN.
 **Miễn phí** trên GitHub (public repo không giới hạn; private repo có quota phút/tháng — job này ~vài giây/ngày).
 
 Backend **không** cần process chạy 24/7 cho cron. Chỉ cần API public + endpoint HTTP.
@@ -9,7 +9,7 @@ Backend **không** cần process chạy 24/7 cho cron. Chỉ cần API public + 
 
 ```mermaid
 flowchart LR
-  GHA["GitHub Actions<br/>00:00 UTC"] --> API["POST /notifications/cron/death-anniversary"]
+  GHA["GitHub Actions<br/>17:00 UTC → 00:00 VN"] --> API["POST /notifications/cron/death-anniversary"]
   API --> Svc["NotificationsService.runDeathAnniversaryCron()"]
   Svc --> OS["OneSignal"]
   Svc --> DB[(PostgreSQL)]
@@ -34,7 +34,7 @@ DATABASE_URL=...
 |------|---------|
 | `CRON_SECRET` | Secret dùng chung với GitHub Actions (xem bước 2) |
 | `ENABLE_INTERNAL_CRON=false` | Tắt `@nestjs/schedule` trong NestJS — tránh gửi trùng với GitHub Actions |
-| `ENABLE_INTERNAL_CRON=true` | Chỉ dùng **local dev** nếu muốn cron 07:00 chạy trong `pnpm start:dev` |
+| `ENABLE_INTERNAL_CRON=true` | Chỉ dùng **local dev** — cron 00:00 ICT trong `pnpm start:dev` |
 
 Tạo secret mạnh (ví dụ):
 
@@ -116,21 +116,23 @@ Kết quả: `{"sentCount": number}`.
 
 ## Lịch chạy
 
-| Múi giờ | Giờ chạy |
-|---------|----------|
-| UTC | 00:00 mỗi ngày |
-| Asia/Ho_Chi_Minh (UTC+7) | **07:00** mỗi ngày |
+| Múi giờ | Giờ chạy (dự kiến) |
+|---------|---------------------|
+| Asia/Ho_Chi_Minh (UTC+7) | **00:00** mỗi ngày (đầu ngày) |
+| UTC | **17:00** mỗi ngày |
 
 Trong [death-anniversary-cron.yml](../.github/workflows/death-anniversary-cron.yml):
 
 ```yaml
 schedule:
-  - cron: '0 0 * * *'
+  - cron: '0 17 * * *'
 ```
+
+GitHub chỉ hỗ trợ cron theo **UTC**; `0 17 * * *` = 00:00 giờ Việt Nam. Scheduled run có thể **trễ** (đặc biệt repo free/private) — đó là lý do chọn 0h thay vì 7h sáng.
 
 Test nhanh không cần đợi schedule: **Actions → Death anniversary cron → Run workflow**.
 
-Muốn đổi giờ: ví dụ 08:00 VN = `0 1 * * *` UTC.
+Muốn đổi giờ: cộng/trừ offset UTC+7. Ví dụ 06:00 VN = `0 23 * * *` UTC (ngày hôm trước).
 
 ## Frontend (Vercel)
 
@@ -167,7 +169,7 @@ ENABLE_INTERNAL_CRON=true
 CRON_SECRET=dev-cron-secret
 ```
 
-Cron NestJS chạy 07:00 ICT trong process `pnpm start:dev` (`NotificationScheduler`).
+Cron NestJS chạy 00:00 ICT trong process `pnpm start:dev` (`NotificationScheduler`).
 
 Hoặc gọi endpoint local:
 

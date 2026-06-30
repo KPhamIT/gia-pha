@@ -6,6 +6,7 @@ import { UI } from "@/lib/constants/ui-strings";
 import { getSiteUrl } from "@/lib/site-url";
 import { themeInitScript } from "@/utils/theme";
 import AppToaster from "@/components/ui/AppToaster";
+import LandingScrollManager from "@/components/public/LandingScrollManager";
 
 const notoSerif = Noto_Serif({
   variable: "--font-noto-serif",
@@ -54,6 +55,7 @@ export default function RootLayout({
           {themeInitScript()}
         </Script>
         {children}
+        <LandingScrollManager />
         <AppToaster />
       </body>
     </html>

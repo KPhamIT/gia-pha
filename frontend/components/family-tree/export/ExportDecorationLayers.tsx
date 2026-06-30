@@ -4,6 +4,7 @@ import {
   coupletSyllables,
   type ResolvedCouplet,
   type ResolvedLayout,
+  resolveHeaderImageLayer,
 } from "@/lib/family-tree/export-tree-svg";
 import {
   type ExportDecorationLayer,
@@ -39,30 +40,44 @@ type Props = {
 
 function ExportLayerImage({
   layer,
+  layout,
   href,
   interactive,
   beginDrag,
   onLayerContextMenu,
 }: {
   layer: Extract<ExportDecorationLayer, { type: "image" }>;
+  layout: ResolvedLayout;
   href: string;
   interactive: boolean;
   selectedId: string | null;
   beginDrag: BeginLayerDrag;
   onLayerContextMenu?: (id: string, clientX: number, clientY: number) => void;
 }) {
+  const resolved = resolveHeaderImageLayer(layer, layout);
+  const isLegacyHeader =
+    layer.id === "legacy-scroll" ||
+    layer.id === "legacy-dragon-left" ||
+    layer.id === "legacy-dragon-right";
+  if (isLegacyHeader && resolved === null) return null;
+  const box = resolved ?? {
+    x: layer.x,
+    y: layer.y,
+    width: layer.width,
+    height: layer.height,
+  };
   return (
     <image
       href={href}
       xlinkHref={href}
-      x={layer.x}
-      y={layer.y}
-      width={layer.width}
-      height={layer.height}
+      x={box.x}
+      y={box.y}
+      width={box.width}
+      height={box.height}
       preserveAspectRatio="none"
       style={{ cursor: interactive ? "move" : "default" }}
       onPointerDown={(e) =>
-        beginDrag(e, layer.id, "move", { x: layer.x, y: layer.y })
+        beginDrag(e, layer.id, "move", { x: box.x, y: box.y })
       }
       onContextMenu={(e) => {
         if (!interactive || !onLayerContextMenu) return;
@@ -247,7 +262,9 @@ function SelectionOverlay({
   const layer = layers.find((item) => item.id === selectedId);
   if (layer) {
     const bounds =
-      layer.type === "text" ? textLayerBounds(layer) : layerBounds(layer);
+      layer.type === "text"
+        ? textLayerBounds(layer)
+        : imageLayerBounds(layer, layout);
     const isImage = layer.type === "image";
     return (
       <g data-export-ignore>
@@ -306,7 +323,19 @@ function SelectionOverlay({
   );
 }
 
-function layerBounds(layer: Extract<ExportDecorationLayer, { type: "image" }>) {
+function imageLayerBounds(
+  layer: Extract<ExportDecorationLayer, { type: "image" }>,
+  layout: ResolvedLayout,
+) {
+  const resolved = resolveHeaderImageLayer(layer, layout);
+  if (resolved) {
+    return {
+      x: resolved.x,
+      y: resolved.y,
+      width: resolved.width,
+      height: resolved.height,
+    };
+  }
   return {
     x: layer.x,
     y: layer.y,
@@ -353,6 +382,7 @@ export default function ExportDecorationLayers({
             <ExportLayerImage
               key={layer.id}
               layer={layer}
+              layout={layout}
               href={layerImageHrefs[layer.id] ?? layer.assetUrl}
               interactive={interactive}
               selectedId={selectedId}
@@ -391,6 +421,7 @@ export default function ExportDecorationLayers({
       <ExportLayerImage
         key={layer.id}
         layer={layer}
+        layout={layout}
         href={layerImageHrefs[layer.id] ?? layer.assetUrl}
         interactive={interactive}
         selectedId={selectedId}

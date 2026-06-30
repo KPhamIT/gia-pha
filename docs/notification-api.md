@@ -22,7 +22,7 @@ Response:
 `deletedLogCount`: số log trong app đã xóa cho các người **đã qua ngày giỗ** (âm lịch) năm hiện tại — chạy đầu mỗi lần cron.
 
 Production: Vercel Cron → `GET /api/cron/death-anniversary` (Next.js) → endpoint này.  
-Local dev: có thể bật `ENABLE_INTERNAL_CRON=true` để dùng `@Cron` 07:00 ICT trong NestJS.  
+Local dev: có thể bật `ENABLE_INTERNAL_CRON=true` để dùng `@Cron` 00:00 ICT trong NestJS.  
 Production khuyến nghị: [GitHub Actions](./cron-github-actions.md) gọi trực tiếp endpoint này.
 
 ## Settings

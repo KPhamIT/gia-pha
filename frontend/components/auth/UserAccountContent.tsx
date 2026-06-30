@@ -167,7 +167,7 @@ export default function UserAccountContent({
 
       <AccountQuickActions isAdmin={isAdmin} isSystem={isSystem} />
 
-      {isAdmin ? <OrgShareLinkSection /> : null}
+      <OrgShareLinkSection />
 
       {isAdmin ? <NotificationStatsPanel /> : null}
 

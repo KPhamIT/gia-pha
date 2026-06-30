@@ -98,13 +98,13 @@ Tóm tắt:
 3. Push `.github/workflows/death-anniversary-cron.yml` (đã có trong repo).
 4. Tab **Actions** → **Death anniversary cron** → **Run workflow** để test.
 
-Lịch: **07:00 Asia/Ho_Chi_Minh** mỗi ngày (`0 0 * * *` UTC).
+Lịch: **00:00 Asia/Ho_Chi_Minh** mỗi ngày (`0 17 * * *` UTC).
 
 ## NestJS Setup Guide
 
 Module: `backend/src/notifications/`
 
-- `NotificationScheduler` — cron nội bộ 07:00 ICT (chỉ khi `ENABLE_INTERNAL_CRON=true`, local dev)
+- `NotificationScheduler` — cron nội bộ 00:00 ICT (chỉ khi `ENABLE_INTERNAL_CRON=true`, local dev)
 - `POST /notifications/cron/death-anniversary` — trigger production qua [GitHub Actions](./cron-github-actions.md)
 - `OneSignalService` — gọi REST API
 - `NotificationsModule` — import trong `AppModule` cùng `ScheduleModule.forRoot()`

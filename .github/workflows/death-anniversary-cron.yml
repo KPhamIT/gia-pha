@@ -1,11 +1,12 @@
-# Gửi push notification ngày giỗ — 07:00 Asia/Ho_Chi_Minh (00:00 UTC).
+# Gửi push notification ngày giỗ — 00:00 Asia/Ho_Chi_Minh (17:00 UTC).
+# GitHub schedule có thể trễ; chạy đầu ngày VN để delay vẫn trong sáng sớm cùng ngày.
 # Cấu hình secrets: docs/cron-github-actions.md
 
 name: Death anniversary cron
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 17 * * *'
   workflow_dispatch:
 
 jobs:

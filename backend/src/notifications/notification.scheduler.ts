@@ -8,8 +8,10 @@ export class NotificationScheduler {
 
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  /** Every day at 07:00 Asia/Ho_Chi_Minh */
-  @Cron(CronExpression.EVERY_DAY_AT_7AM, { timeZone: 'Asia/Ho_Chi_Minh' })
+  /** Mỗi ngày 00:00 Asia/Ho_Chi_Minh (khớp GitHub Actions `0 17 * * *` UTC). */
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+    timeZone: 'Asia/Ho_Chi_Minh',
+  })
   async handleDeathAnniversaryNotifications() {
     this.logger.log('Running death anniversary notification cron');
     try {

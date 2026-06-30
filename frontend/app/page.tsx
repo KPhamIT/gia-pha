@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { IconName } from "@/components/icons/icon-paths";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import LandingFeaturesSection from "@/components/public/LandingFeaturesSection";
+import LandingScrollArea from "@/components/public/LandingScrollArea";
 import LandingServicesSection from "@/components/public/LandingServicesSection";
 import LandingHasLinkCard from "@/components/public/LandingHasLinkCard";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
@@ -106,7 +107,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <div className={`${LAYOUT.sheetBody} min-h-0 w-full flex-1`}>
+      <LandingScrollArea>
         <main className="mx-auto w-full max-w-5xl">
           <div className={LAYOUT.pagePad}>
           <section className="space-y-4">
@@ -183,7 +184,7 @@ export default function LandingPage() {
           <PublicSiteFooter />
           </div>
         </main>
-      </div>
+      </LandingScrollArea>
     </div>
   );
 }

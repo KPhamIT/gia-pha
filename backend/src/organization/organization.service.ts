@@ -368,13 +368,14 @@ export class OrganizationService {
         throw new BadRequestException('organizationId is required');
       }
       orgId = organizationId;
-    } else if (user.role === UserRole.ADMIN) {
-      orgId = adminOrganizationId(user);
+    } else {
+      if (user.organizationId == null) {
+        throw new ForbiddenException('Organization membership required');
+      }
+      orgId = user.organizationId;
       if (organizationId != null && organizationId !== orgId) {
         throw new ForbiddenException('Cannot access another organization');
       }
-    } else {
-      throw new ForbiddenException('Admin or system role required');
     }
 
     const org = await this.prisma.organization.findUnique({

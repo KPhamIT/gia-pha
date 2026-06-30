@@ -6,8 +6,13 @@ import {
 } from "./export-decoration-layers";
 import {
   DRAGON_ASPECT,
+  defaultExportBorderRect,
+  defaultExportHeaderRect,
   EXPORT_HEADER_HEIGHT_DEFAULT,
   isLegacyExportScale,
+  isLegacyHeaderImageCfg,
+  isLegacyHeaderImageLayer,
+  resolveExportLayout,
   SCROLL_ASPECT,
 } from "./export-tree-geometry";
 import { EXPORT_IMAGE_SOURCES } from "./export-tree-geometry";
@@ -179,29 +184,32 @@ function normalizeLayers(
 function migrateLegacyDecorations(
   settings: TreeExportSettings,
 ): ExportDecorationLayer[] {
+  const layout = resolveExportLayout(
+    settings,
+    defaultExportHeaderRect(settings.headerHeight),
+    defaultExportBorderRect(),
+  );
   const layers: ExportDecorationLayer[] = [];
   let order = 0;
 
-  const pushImage = (
+  const pushFromLayout = (
     id: string,
     name: string,
     url: string,
-    cfg: ExportImageCfg,
+    box: (typeof layout)["scroll"],
     aspectRatio: number,
     tier: ExportLayerTier = "above-tree",
   ) => {
-    if (!cfg.visible) return;
-    const width = cfg.width ?? 400;
-    const height = cfg.height ?? width / aspectRatio;
+    if (!box.visible) return;
     layers.push({
       id,
       type: "image",
       tier,
       order: order++,
-      x: cfg.x ?? 200,
-      y: cfg.y ?? 120,
-      width,
-      height,
+      x: box.x,
+      y: box.y,
+      width: box.width,
+      height: box.height,
       assetUrl: url,
       assetProvider: "static",
       name,
@@ -209,25 +217,25 @@ function migrateLegacyDecorations(
     });
   };
 
-  pushImage(
+  pushFromLayout(
     "legacy-scroll",
     "Cuốn thư",
     EXPORT_IMAGE_SOURCES.scroll,
-    settings.scroll,
+    layout.scroll,
     SCROLL_ASPECT,
   );
-  pushImage(
+  pushFromLayout(
     "legacy-dragon-left",
     "Rồng trái",
     EXPORT_IMAGE_SOURCES.dragonLeft,
-    settings.dragonLeft,
+    layout.dragonLeft,
     DRAGON_ASPECT,
   );
-  pushImage(
+  pushFromLayout(
     "legacy-dragon-right",
     "Rồng phải",
     EXPORT_IMAGE_SOURCES.dragonRight,
-    settings.dragonRight,
+    layout.dragonRight,
     DRAGON_ASPECT,
   );
 
@@ -246,6 +254,55 @@ function normalizeCoupletFontSize(
   if (size < LEGACY_COUPLET_FONT_TOO_SMALL) return null;
   if (size > LEGACY_COUPLET_FONT_TOO_LARGE) return null;
   return size;
+}
+
+function migrateLegacyHeaderImageCfg(
+  settings: TreeExportSettings,
+): TreeExportSettings {
+  const resetIfLegacy = (cfg: ExportImageCfg): ExportImageCfg => {
+    if (!isLegacyHeaderImageCfg(cfg)) return cfg;
+    return { ...cfg, x: null, y: null, width: null, height: null };
+  };
+
+  return {
+    ...settings,
+    scroll: resetIfLegacy(settings.scroll),
+    dragonLeft: resetIfLegacy(settings.dragonLeft),
+    dragonRight: resetIfLegacy(settings.dragonRight),
+  };
+}
+
+function migrateLegacyHeaderLayers(
+  settings: TreeExportSettings,
+): TreeExportSettings {
+  const needsSync = settings.layers.some(
+    (layer) => layer.type === "image" && isLegacyHeaderImageLayer(layer),
+  );
+  if (!needsSync) return settings;
+
+  const layout = resolveExportLayout(
+    settings,
+    defaultExportHeaderRect(settings.headerHeight),
+    defaultExportBorderRect(),
+  );
+  const patchById: Record<string, { x: number; y: number; width: number; height: number }> =
+    {
+      "legacy-scroll": layout.scroll,
+      "legacy-dragon-left": layout.dragonLeft,
+      "legacy-dragon-right": layout.dragonRight,
+    };
+
+  return {
+    ...settings,
+    layers: settings.layers.map((layer) => {
+      if (layer.type !== "image" || !isLegacyHeaderImageLayer(layer)) {
+        return layer;
+      }
+      const patch = patchById[layer.id];
+      if (!patch) return layer;
+      return { ...layer, ...patch };
+    }),
+  };
 }
 
 function migrateLegacyCoupletLayout(
@@ -334,7 +391,9 @@ export function normalizeTreeExportSettings(
   merged.treeOffsetY = partial?.treeOffsetY ?? base.treeOffsetY;
   merged.treeUserScale = partial?.treeUserScale ?? base.treeUserScale;
   const migrated = migrateLegacyA0Scale(merged);
-  return migrateLegacyCoupletLayout(migrated);
+  const headerMigrated = migrateLegacyHeaderImageCfg(migrated);
+  const layersMigrated = migrateLegacyHeaderLayers(headerMigrated);
+  return migrateLegacyCoupletLayout(layersMigrated);
 }
 
 export function loadTreeExportSettings(): TreeExportSettings {

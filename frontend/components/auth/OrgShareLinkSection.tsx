@@ -51,8 +51,9 @@ export default function OrgShareLinkSection() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <input
           readOnly
+          disabled
           value={link.publicAccessUrl}
-          className="min-w-0 flex-1 rounded-lg border border-amber-200/70 bg-white px-3 py-2 text-xs text-neutral-800"
+          className={`${BT.input} cursor-default text-xs disabled:opacity-100`}
         />
         <IconRoundButton
           icon="share"

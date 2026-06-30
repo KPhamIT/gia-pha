@@ -35,7 +35,7 @@ export class OrganizationController {
   }
 
   @Get('access-link')
-  @UseGuards(MutateGuard)
+  @UseGuards(JwtRequiredGuard)
   accessLink(
     @Request() req: { user: User },
     @Query('organizationId') organizationId?: string,
