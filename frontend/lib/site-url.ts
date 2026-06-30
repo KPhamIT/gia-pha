@@ -25,5 +25,9 @@ export function getSiteUrl(): string {
 export function getJoinLinkInputPlaceholder(
   sampleToken = "ma-lien-ket-tu-ban-quan-tri",
 ): string {
-  return `${getSiteUrl()}/join/${sampleToken}`;
+  return buildJoinLinkUrl(sampleToken);
+}
+
+export function buildJoinLinkUrl(token: string): string {
+  return `${getSiteUrl()}/join/${encodeURIComponent(token)}`;
 }

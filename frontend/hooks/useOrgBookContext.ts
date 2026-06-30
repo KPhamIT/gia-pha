@@ -18,7 +18,7 @@ export function useOrgBookContext() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    void fetchOrgBookContext(true)
+    void fetchOrgBookContext()
       .then((next) => {
         if (!cancelled) setContext(next);
       })

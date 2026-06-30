@@ -32,6 +32,7 @@ export function useGenealogyBook(persons: Person[]) {
   const loadAll = usePersonDetailStore((s) => s.loadAll);
   const {
     settings,
+    orgContext,
     updateSettings,
     hydrated,
     showCoverSavePrompt,
@@ -80,6 +81,7 @@ export function useGenealogyBook(persons: Person[]) {
     () => ({
       leaves,
       settings,
+      orgContext,
       updateSettings,
       details,
       personCount,
@@ -92,6 +94,7 @@ export function useGenealogyBook(persons: Person[]) {
     [
       leaves,
       settings,
+      orgContext,
       updateSettings,
       details,
       personCount,

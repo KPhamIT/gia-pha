@@ -16,8 +16,6 @@ type TreeFiltersProps = {
   maxGeneration: Generation;
   onBranchChange: (branch: Branch) => void;
   onMaxGenerationChange: (generation: Generation) => void;
-  /** Chừa chỗ góc trái trên cho nút back fixed. */
-  avoidTopLeft?: boolean;
 };
 
 function Tag({
@@ -49,7 +47,6 @@ export default function TreeFilters({
   maxGeneration,
   onBranchChange,
   onMaxGenerationChange,
-  avoidTopLeft = false,
 }: TreeFiltersProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,16 +73,11 @@ export default function TreeFilters({
   }, [open]);
 
   return (
-    <div
-      ref={containerRef}
-      className={`fixed top-4 z-20 pt-[env(safe-area-inset-top)] md:top-6 ${
-        avoidTopLeft ? "left-16 md:left-20" : "left-4 md:left-6"
-      }`}
-    >
+    <div ref={containerRef} className="relative shrink-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`flex max-w-[10rem] items-center gap-1 rounded-full border border-amber-200/80 bg-white px-3 py-2 text-xs font-medium text-amber-950 shadow-sm active:bg-amber-50 md:max-w-[14rem] md:text-sm`}
+        className={`flex h-11 max-w-[10rem] items-center gap-1 rounded-full border border-amber-200/80 bg-white px-3 text-xs font-medium text-amber-950 shadow-sm active:bg-amber-50 md:h-10 md:max-w-[14rem] md:text-sm`}
       >
         <span className="truncate">{summary}</span>
         <Icon
@@ -99,7 +91,9 @@ export default function TreeFilters({
       </button>
 
       {open ? (
-        <div className={`mt-2 w-64 p-3 shadow-xl md:w-72 md:p-4 ${BT.card}`}>
+        <div
+          className={`absolute left-0 top-full z-30 mt-2 w-64 p-3 shadow-xl md:w-72 md:p-4 ${BT.card}`}
+        >
           <p
             className={`mb-1.5 text-[11px] font-semibold uppercase tracking-wide ${BT.mutedOnLight}`}
           >

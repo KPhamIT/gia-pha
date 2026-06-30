@@ -58,8 +58,12 @@ export function patchUserSettingsCache(patch: UserSettings): void {
   cache = { ...(cache ?? {}), ...patch };
 }
 
-export function invalidateUserSettingsCache(): void {
+export function invalidateUserSettingsCache(options?: {
+  includeOrg?: boolean;
+}): void {
   cache = undefined;
   cacheScope = undefined;
-  invalidateOrgBookContext();
+  if (options?.includeOrg !== false) {
+    invalidateOrgBookContext();
+  }
 }

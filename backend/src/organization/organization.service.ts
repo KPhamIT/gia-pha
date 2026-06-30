@@ -236,6 +236,7 @@ export class OrganizationService {
       name: org.name,
       establishedYear: org.establishedYear,
       clanAddress: org.clanAddress,
+      ...this.buildAccessFields(org.id),
     };
   }
 

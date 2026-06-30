@@ -5,8 +5,8 @@ import { NODE_CARD_STYLES } from "@/lib/family-tree/svg-border";
 import { CALLIGRAPHY_FONTS } from "@/components/family-tree/book/calligraphy-fonts";
 import {
   defaultCoupletFontSize,
-  EXPORT_HEADER_HEIGHT_MAX,
-  EXPORT_HEADER_HEIGHT_MIN,
+  exportCoupletColumnHeight,
+  EXPORT_BORDER_HEIGHT,
 } from "@/lib/family-tree/export-tree-geometry";
 import type {
   ExportCoupletCfg,
@@ -32,14 +32,15 @@ export default function TreeExportStyleFields({
   onPatch,
   onPatchCouplet,
 }: Props) {
+  const coupletColumnHeight = exportCoupletColumnHeight();
   const autoCoupletSize = Math.round(
     Math.min(
-      defaultCoupletFontSize(settings.coupletLeft.text, settings.headerHeight),
-      defaultCoupletFontSize(settings.coupletRight.text, settings.headerHeight),
+      defaultCoupletFontSize(settings.coupletLeft.text, coupletColumnHeight),
+      defaultCoupletFontSize(settings.coupletRight.text, coupletColumnHeight),
     ),
   );
-  const coupletSizeMin = Math.round(EXPORT_HEADER_HEIGHT_MIN * 0.035);
-  const coupletSizeMax = Math.round(EXPORT_HEADER_HEIGHT_MAX * 0.22);
+  const coupletSizeMin = Math.round(EXPORT_BORDER_HEIGHT * 0.015);
+  const coupletSizeMax = Math.round(EXPORT_BORDER_HEIGHT * 0.06);
 
   return (
     <>

@@ -13,14 +13,15 @@ import {
   resolveCoverSubtitleClanName,
 } from "./book-cover-subtitle";
 import styles from "./Book.module.scss";
-import { useOrgBookContext } from "@/hooks/useOrgBookContext";
 import {
+  type OrgBookContext,
   resolveOrgClanAddress,
   resolveOrgEstablishedYear,
 } from "@/lib/settings/default-user-settings";
 
 type BookCoverPageProps = {
   settings: BookSettings;
+  orgContext: OrgBookContext | null;
   readOnly?: boolean;
   onChange?: (patch: Partial<BookSettings>) => void;
   showSavePrompt?: boolean;
@@ -31,6 +32,7 @@ type BookCoverPageProps = {
 /** The ornate calligraphy cover (trang bìa). Title/subtitle/lineage editable inline. */
 export default function BookCoverPage({
   settings,
+  orgContext,
   readOnly = false,
   onChange,
   showSavePrompt = false,
@@ -38,7 +40,6 @@ export default function BookCoverPage({
   onSave,
 }: BookCoverPageProps) {
   const font = getCalligraphyFont(settings.coverFontId).cssValue;
-  const { context: orgContext } = useOrgBookContext();
   const establishedYear = resolveOrgEstablishedYear(orgContext);
   const clanAddress = resolveOrgClanAddress(orgContext);
   const clanName = resolveCoverSubtitleClanName(

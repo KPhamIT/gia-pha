@@ -31,6 +31,8 @@ export type DemoOrganization = {
   name: string;
   establishedYear?: string | null;
   clanAddress?: string | null;
+  accessToken: string;
+  publicAccessUrl: string;
 };
 
 export const organizations = {

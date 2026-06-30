@@ -234,13 +234,52 @@ function migrateLegacyDecorations(
   return layers;
 }
 
-function migrateLegacyA0Scale(settings: TreeExportSettings): TreeExportSettings {
+const LEGACY_COUPLET_COORD_MAX = 6000;
+/** Cỡ chữ cũ (pre-A0) hoặc auto quá to (ratio 0.78) → reset về auto. */
+const LEGACY_COUPLET_FONT_TOO_SMALL = 200;
+const LEGACY_COUPLET_FONT_TOO_LARGE = 1800;
+
+function normalizeCoupletFontSize(
+  size: number | null | undefined,
+): number | null {
+  if (size == null) return null;
+  if (size < LEGACY_COUPLET_FONT_TOO_SMALL) return null;
+  if (size > LEGACY_COUPLET_FONT_TOO_LARGE) return null;
+  return size;
+}
+
+function migrateLegacyCoupletLayout(
+  settings: TreeExportSettings,
+): TreeExportSettings {
+  const resetIfLegacy = (cfg: ExportCoupletCfg): ExportCoupletCfg => {
+    const legacy =
+      (cfg.x != null && cfg.x < LEGACY_COUPLET_COORD_MAX) ||
+      (cfg.y != null && cfg.y < LEGACY_COUPLET_COORD_MAX);
+    if (!legacy) return cfg;
+    return { ...cfg, x: null, y: null };
+  };
+
+  const coupletFontSize = normalizeCoupletFontSize(settings.coupletFontSize);
+
+  return {
+    ...settings,
+    coupletLeft: resetIfLegacy(settings.coupletLeft),
+    coupletRight: resetIfLegacy(settings.coupletRight),
+    coupletFontSize,
+  };
+}
+
+function migrateLegacyA0Scale(
+  settings: TreeExportSettings,
+): TreeExportSettings {
   if (!isLegacyExportScale(settings.headerHeight)) {
     return settings;
   }
 
   const scale = EXPORT_HEADER_HEIGHT_DEFAULT / settings.headerHeight;
-  const resetBox = <T extends ExportImageCfg | ExportCoupletCfg>(cfg: T): T => ({
+  const resetBox = <T extends ExportImageCfg | ExportCoupletCfg>(
+    cfg: T,
+  ): T => ({
     ...cfg,
     x: null,
     y: null,
@@ -256,10 +295,7 @@ function migrateLegacyA0Scale(settings: TreeExportSettings): TreeExportSettings 
     dragonRight: resetBox(settings.dragonRight),
     coupletLeft: resetBox(settings.coupletLeft),
     coupletRight: resetBox(settings.coupletRight),
-    coupletFontSize:
-      settings.coupletFontSize != null && settings.coupletFontSize < 180
-        ? null
-        : settings.coupletFontSize,
+    coupletFontSize: normalizeCoupletFontSize(settings.coupletFontSize),
     layers: settings.layers.map((layer) => {
       if (layer.type !== "text" || layer.fontSize >= 180) return layer;
       return {
@@ -297,10 +333,8 @@ export function normalizeTreeExportSettings(
   merged.treeOffsetX = partial?.treeOffsetX ?? base.treeOffsetX;
   merged.treeOffsetY = partial?.treeOffsetY ?? base.treeOffsetY;
   merged.treeUserScale = partial?.treeUserScale ?? base.treeUserScale;
-  if (merged.coupletFontSize != null && merged.coupletFontSize < 180) {
-    merged.coupletFontSize = null;
-  }
-  return migrateLegacyA0Scale(merged);
+  const migrated = migrateLegacyA0Scale(merged);
+  return migrateLegacyCoupletLayout(migrated);
 }
 
 export function loadTreeExportSettings(): TreeExportSettings {

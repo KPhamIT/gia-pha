@@ -151,8 +151,13 @@ export function useTreeExport({
     [model.bounds, settings.headerHeight, model.rootCenterX],
   );
   const layout = useMemo(
-    () => resolveExportLayout(settings, geometry.headerRect),
-    [settings, geometry.headerRect],
+    () =>
+      resolveExportLayout(
+        settings,
+        geometry.headerRect,
+        geometry.borderRect,
+      ),
+    [settings, geometry.headerRect, geometry.borderRect],
   );
 
   const selectedLayer = useMemo(

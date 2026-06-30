@@ -28,6 +28,12 @@ export const EXPORT_HEADER_HEIGHT_DEFAULT = Math.round(EXPORT_A0_HEIGHT * 0.12);
 export const EXPORT_HEADER_HEIGHT_MIN = Math.round(EXPORT_A0_HEIGHT * 0.06);
 export const EXPORT_HEADER_HEIGHT_MAX = Math.round(EXPORT_A0_HEIGHT * 0.22);
 
+/** Chiều cao vùng in bên trong khung viền. */
+export const EXPORT_BORDER_HEIGHT = EXPORT_A0_HEIGHT - EXPORT_OUTER_MARGIN * 2;
+
+/** Cột câu đối dọc hai bên — ~28% chiều cao khổ in (vừa đọc, không phủ hết trang). */
+export const COUPLET_COLUMN_HEIGHT_RATIO = 0.28;
+
 const LEGACY_HEADER_HEIGHT_MAX = 1500;
 const LEGACY_TEXT_FONT_MAX = 180;
 
@@ -42,14 +48,29 @@ export function coupletSyllables(text: string): string[] {
   return text.trim().split(/\s+/).filter(Boolean);
 }
 
-/** Font size để cột câu đối cao ~82% vùng header. */
+/** Font size để cột câu đối vừa chiều cao cột cho trước. */
 export function defaultCoupletFontSize(
   text: string,
-  headerHeight: number,
+  columnHeight: number,
 ): number {
-  const columnHeight = headerHeight * 0.82;
   const cells = Math.max(coupletSyllables(text).length, 1);
   return columnHeight / (cells * COUPLET_LINE_FACTOR);
+}
+
+export function exportCoupletColumnHeight(frameHeight = EXPORT_BORDER_HEIGHT): number {
+  return frameHeight * COUPLET_COLUMN_HEIGHT_RATIO;
+}
+
+function centeredCoupletStartY(
+  text: string,
+  fontSize: number,
+  frame: Rect,
+): number {
+  const count = Math.max(coupletSyllables(text).length, 1);
+  const lineGap = fontSize * COUPLET_LINE_FACTOR;
+  const blockHeight = count * lineGap + fontSize * 0.4;
+  const top = frame.y + (frame.height - blockHeight) / 2;
+  return top + fontSize;
 }
 
 /** Cỡ chữ mặc định cho lớp text tự do trên export A0. */
@@ -153,6 +174,7 @@ export type ResolvedLayout = {
 export function resolveExportLayout(
   settings: TreeExportSettings,
   header: Rect,
+  frame: Rect,
 ): ResolvedLayout {
   const centerX = header.x + header.width / 2;
 
@@ -174,16 +196,26 @@ export function resolveExportLayout(
   const drX = settings.dragonRight.x ?? scrollX + scrollW + 50;
   const drY = settings.dragonRight.y ?? dragonY;
 
-  // Both couplets share one font size + colour. Auto size fits the longer
-  // couplet's column to ≈ 18rem so neither overflows.
   const coupletColor = settings.coupletColor;
+  const coupletColumnHeight = exportCoupletColumnHeight(frame.height);
   const coupletFont =
     settings.coupletFontSize ??
     Math.min(
-      defaultCoupletFontSize(settings.coupletLeft.text, header.height),
-      defaultCoupletFontSize(settings.coupletRight.text, header.height),
+      defaultCoupletFontSize(settings.coupletLeft.text, coupletColumnHeight),
+      defaultCoupletFontSize(settings.coupletRight.text, coupletColumnHeight),
     );
-  const coupletTopY = header.y + coupletFont * 0.5;
+  const leftAutoY = centeredCoupletStartY(
+    settings.coupletLeft.text,
+    coupletFont,
+    frame,
+  );
+  const rightAutoY = centeredCoupletStartY(
+    settings.coupletRight.text,
+    coupletFont,
+    frame,
+  );
+  const leftAutoX = frame.x + frame.width * 0.08;
+  const rightAutoX = frame.x + frame.width * 0.92;
 
   return {
     scroll: {
@@ -208,16 +240,16 @@ export function resolveExportLayout(
       visible: settings.dragonRight.visible,
     },
     coupletLeft: {
-      x: settings.coupletLeft.x ?? header.x + coupletFont * 0.9,
-      y: settings.coupletLeft.y ?? coupletTopY,
+      x: settings.coupletLeft.x ?? leftAutoX,
+      y: settings.coupletLeft.y ?? leftAutoY,
       fontSize: coupletFont,
       color: coupletColor,
       text: settings.coupletLeft.text,
       visible: settings.coupletLeft.visible,
     },
     coupletRight: {
-      x: settings.coupletRight.x ?? header.x + header.width - coupletFont * 0.9,
-      y: settings.coupletRight.y ?? header.y + coupletFont * 0.5,
+      x: settings.coupletRight.x ?? rightAutoX,
+      y: settings.coupletRight.y ?? rightAutoY,
       fontSize: coupletFont,
       color: coupletColor,
       text: settings.coupletRight.text,

@@ -48,6 +48,7 @@ export function useBookSettings() {
   const [showCoverSavePrompt, setShowCoverSavePrompt] = useState(false);
   const [isSavingCover, setIsSavingCover] = useState(false);
   const [persistRevision, setPersistRevision] = useState(0);
+  const [orgContext, setOrgContext] = useState<OrgBookContext | null>(null);
   const saveTimer = useRef<number | null>(null);
   const coverPromptTimer = useRef<number | null>(null);
   const userEdited = useRef(false);
@@ -98,12 +99,13 @@ export function useBookSettings() {
     activeOrgToken.current = orgToken;
 
     void (async () => {
-      const orgContext = await fetchOrgBookContext(true);
+      const loadedOrgContext = await fetchOrgBookContext();
       if (cancelled || activeUserId.current !== userId) return;
 
-      orgContextRef.current = orgContext;
+      orgContextRef.current = loadedOrgContext;
+      setOrgContext(loadedOrgContext);
       const persisted = loadBookSettings(userId, orgToken);
-      const resolved = resolveBookSettings(persisted, orgContext);
+      const resolved = resolveBookSettings(persisted, loadedOrgContext);
 
       /* eslint-disable react-hooks/set-state-in-effect */
       setSettings(resolved);
@@ -115,7 +117,7 @@ export function useBookSettings() {
 
       if (userId == null && !orgToken) return;
 
-      invalidateUserSettingsCache();
+      invalidateUserSettingsCache({ includeOrg: false });
 
       try {
         const remotePersisted = await fetchRemoteBookSettings();
@@ -129,7 +131,7 @@ export function useBookSettings() {
         if (remotePersisted) {
           const remoteResolved = resolveBookSettings(
             remotePersisted,
-            orgContext,
+            loadedOrgContext,
           );
           setSettings(remoteResolved);
           saveBookSettings(remotePersisted, userId, orgToken);
@@ -238,6 +240,7 @@ export function useBookSettings() {
 
   return {
     settings,
+    orgContext,
     updateSettings,
     hydrated: hydrated && authLoaded,
     showCoverSavePrompt,

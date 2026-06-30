@@ -155,15 +155,14 @@ function FamilyTreePageContent() {
         canEditSettings={canUseFeature("settings")}
         onOpenSettings={() => setShowSettings(true)}
         onBack={goBack}
-      />
-
-      <TreeFilters
-        branch={effectiveBranch}
-        maxGeneration={maxGeneration}
-        onBranchChange={setFilterBranch}
-        onMaxGenerationChange={setMaxGeneration}
-        avoidTopLeft
-      />
+      >
+        <TreeFilters
+          branch={effectiveBranch}
+          maxGeneration={maxGeneration}
+          onBranchChange={setFilterBranch}
+          onMaxGenerationChange={setMaxGeneration}
+        />
+      </TreeTopBar>
 
       <NotificationOptInBanner />
 

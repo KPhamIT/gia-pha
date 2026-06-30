@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { IconName } from "@/components/icons/icon-paths";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
 import LandingStartCta from "@/components/public/LandingStartCta";
 import { inputClassName } from "@/components/ui/CollapsibleSection";
+import { api } from "@/lib/api";
 import { parseOrgJoinLink } from "@/lib/org/parse-join-link";
-import { getJoinLinkInputPlaceholder } from "@/lib/site-url";
+import { buildJoinLinkUrl, getJoinLinkInputPlaceholder } from "@/lib/site-url";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import { LAYOUT } from "@/lib/constants/ui-layout";
@@ -26,6 +27,22 @@ export default function LandingHasLinkCard({
   const router = useRouter();
   const [link, setLink] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void api.organizations
+      .getDemo()
+      .then((demo) => {
+        if (cancelled || !demo?.accessToken) return;
+        setLink(buildJoinLinkUrl(demo.accessToken));
+      })
+      .catch(() => {
+        /* không có org demo — giữ ô trống */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleJoin = useCallback(() => {
     const path = parseOrgJoinLink(link);

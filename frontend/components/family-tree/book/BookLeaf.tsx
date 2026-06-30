@@ -10,11 +10,13 @@ import BookPrefacePage from "./BookPrefacePage";
 import { getBorderStyle } from "./page-border-styles";
 import type { BookSettings } from "./book-settings";
 import type { Leaf } from "./book-leaves";
+import type { OrgBookContext } from "@/lib/settings/default-user-settings";
 import styles from "./GenealogyBook.module.css";
 
 export type BookLeafCtx = {
   leaves: Leaf[];
   settings: BookSettings;
+  orgContext: OrgBookContext | null;
   updateSettings: (patch: Partial<BookSettings>) => void;
   details: Record<number, PersonDetail>;
   personCount: number;
@@ -46,6 +48,7 @@ export default function BookLeaf({
     return (
       <BookCoverPage
         settings={ctx.settings}
+        orgContext={ctx.orgContext}
         readOnly={!editable}
         onChange={ctx.updateSettings}
         showSavePrompt={Boolean(ctx.showCoverSavePrompt && ctx.isCoverDirty)}

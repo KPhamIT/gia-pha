@@ -85,21 +85,23 @@ export function filterSystemAssets(
   return assets.filter((asset) => {
     if (category !== "all" && asset.category !== category) return false;
     if (!q) return true;
+
     return asset.name.toLowerCase().includes(q);
   });
 }
 
-export function mergeSystemAssets(
-  uploaded: SystemAsset[],
-): SystemAsset[] {
+export function mergeSystemAssets(uploaded: SystemAsset[]): SystemAsset[] {
   const seen = new Set<string>();
   const merged: SystemAsset[] = [];
+
   for (const asset of [...BUILTIN_SYSTEM_ASSETS, ...uploaded]) {
     const dedupeKey = asset.key ?? asset.url;
     if (seen.has(dedupeKey)) continue;
+
     seen.add(dedupeKey);
     merged.push(asset);
   }
+
   return merged;
 }
 
