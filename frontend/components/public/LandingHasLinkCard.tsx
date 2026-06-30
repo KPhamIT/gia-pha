@@ -6,9 +6,10 @@ import type { IconName } from "@/components/icons/icon-paths";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
 import LandingStartCta from "@/components/public/LandingStartCta";
 import { inputClassName } from "@/components/ui/CollapsibleSection";
-import { api } from "@/lib/api";
+import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
+import { fetchDefaultJoinLinkUrl } from "@/lib/org/default-join-link";
 import { parseOrgJoinLink } from "@/lib/org/parse-join-link";
-import { buildJoinLinkUrl, getJoinLinkInputPlaceholder } from "@/lib/site-url";
+import { getJoinLinkInputPlaceholder } from "@/lib/site-url";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import { LAYOUT } from "@/lib/constants/ui-layout";
@@ -25,24 +26,21 @@ export default function LandingHasLinkCard({
   steps,
 }: LandingHasLinkCardProps) {
   const router = useRouter();
+  const { loaded, isLoggedIn, isDemo } = useAuthBootstrap();
   const [link, setLink] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!loaded) return;
+
     let cancelled = false;
-    void api.organizations
-      .getDemo()
-      .then((demo) => {
-        if (cancelled || !demo?.accessToken) return;
-        setLink(buildJoinLinkUrl(demo.accessToken));
-      })
-      .catch(() => {
-        /* không có org demo — giữ ô trống */
-      });
+    void fetchDefaultJoinLinkUrl({ isLoggedIn, isDemo }).then((url) => {
+      if (!cancelled && url) setLink(url);
+    });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [loaded, isLoggedIn, isDemo]);
 
   const handleJoin = useCallback(() => {
     const path = parseOrgJoinLink(link);

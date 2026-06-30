@@ -6,7 +6,7 @@ import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { BRANCH_OPTIONS, getBranchLabel } from "@/lib/constants/branches";
 
-const GENERATION_OPTIONS = [3, 4, 5, 6];
+const GENERATION_OPTIONS = [3, 4, 5, 6, 7, 8];
 
 type Branch = number | "all";
 type Generation = number | "all";
