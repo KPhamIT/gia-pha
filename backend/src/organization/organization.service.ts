@@ -22,6 +22,7 @@ import {
 } from './org-access-token.js';
 import { createRootPersonForOrg } from './create-root-person.js';
 import { AuthService } from '../auth/auth.service.js';
+import { OrgRegistrationMailService } from '../mail/org-registration-mail.service.js';
 
 export type OrganizationPublicAccess = {
   accessToken: string;
@@ -66,6 +67,7 @@ export class OrganizationService {
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
     private readonly authService: AuthService,
+    private readonly orgRegistrationMail: OrgRegistrationMailService,
   ) {}
 
   async listForUser(user: User) {
@@ -143,12 +145,13 @@ export class OrganizationService {
     const passwordHash = await AuthService.hashPassword(dto.password);
     const email = dto.email?.trim() || null;
 
-    const user = await this.prisma.$transaction(async (tx) => {
+    const registeredAt = new Date();
+    const { org, user } = await this.prisma.$transaction(async (tx) => {
       const org = await tx.organization.create({
         data: { name, ...defaultOrgBookFields() },
       });
       await createRootPersonForOrg(tx, org.id);
-      return tx.user.create({
+      const user = await tx.user.create({
         data: {
           username,
           email,
@@ -159,6 +162,15 @@ export class OrganizationService {
           organizationId: org.id,
         },
       });
+      return { org, user };
+    });
+
+    this.orgRegistrationMail.notify({
+      organizationId: org.id,
+      organizationName: org.name,
+      adminUsername: username,
+      adminEmail: email,
+      registeredAt,
     });
 
     return this.authService.buildAuthResponse(user);

@@ -321,7 +321,7 @@ Nam mô A Di Đà Phật.
       provider: 'local',
       providerId: 'local:system',
       username: 'system',
-      email: 'system@local.dev',
+      email: 'phamvankhanhvmm@gmail.com',
       passwordHash: systemHash,
       role: 'SYSTEM',
       organizationId: null,
