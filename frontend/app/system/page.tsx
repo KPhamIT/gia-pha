@@ -53,6 +53,12 @@ export default function SystemPage() {
         >
           {UI.BLOG_ADMIN_TAB}
         </Link>
+        <Link
+          href="/system/billing"
+          className="rounded-full bg-amber-100 px-3 py-1.5 text-xs font-medium text-amber-950"
+        >
+          {UI.BILLING_ADMIN_OPEN}
+        </Link>
       </div>
 
       {tab === "orgs" ? (

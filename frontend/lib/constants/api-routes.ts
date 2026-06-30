@@ -56,4 +56,18 @@ export const API_ROUTES = {
   MEDIA_IMAGE_UPLOAD: "/media/images",
   MEDIA_IMAGE_DELETE: "/media/images",
   MEDIA_SYSTEM_ASSETS: "/media/system-assets",
+  BILLING_CONFIG: "/billing/config",
+  BILLING_QUOTE: "/billing/quote",
+  BILLING_ORDERS: "/billing/orders",
+  BILLING_ORDER_SUBMIT_PAID: "/billing/orders/submit-paid",
+  BILLING_ORDER: (id: number) => `/billing/orders/${id}`,
+  BILLING_ORDER_MARK_PAID: (id: number) => `/billing/orders/${id}/mark-paid`,
+  BILLING_ORDER_CONFIRM: (id: number) => `/billing/orders/${id}/confirm`,
+  BILLING_ORDER_REJECT: (id: number) => `/billing/orders/${id}/reject`,
+  BILLING_ORDER_CANCEL: (id: number) => `/billing/orders/${id}/cancel`,
+  BILLING_ORDER_BY_CODE: (code: string) =>
+    `/billing/orders/by-code/${encodeURIComponent(code)}`,
+  ORGANIZATION_SUBSCRIPTION: (id: number) => `/organizations/${id}/subscription`,
+  ORGANIZATION_EXPORT_ELIGIBILITY: (id: number) =>
+    `/organizations/${id}/export-download-eligibility`,
 };

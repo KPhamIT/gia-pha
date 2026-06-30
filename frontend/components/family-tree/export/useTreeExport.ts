@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { api } from "@/lib/api";
+import type { ExportEligibility } from "@/lib/api/modules/billing";
+import { BILLING_ENABLED } from "@/lib/constants/billing";
 import { UI } from "@/lib/constants/ui-strings";
 import {
   backgroundImageLayout,
@@ -55,6 +58,7 @@ type Args = {
   layoutConfig?: FamilyTreeLayoutConfig;
   nodePositionOverrides?: NodePositionOverrides;
   canDownloadExport: boolean;
+  organizationId?: number | null;
 };
 
 export function useTreeExport({
@@ -62,6 +66,7 @@ export function useTreeExport({
   layoutConfig = {},
   nodePositionOverrides,
   canDownloadExport,
+  organizationId,
 }: Args) {
   const { requireAdmin } = useFeatureAccess();
   const [fitBase, setFitBase] = useState<TreeTransform>({
@@ -101,6 +106,10 @@ export function useTreeExport({
     id: string;
     x: number;
     y: number;
+  } | null>(null);
+  const [paywall, setPaywall] = useState<{
+    nodeCount: number;
+    eligibility: Extract<ExportEligibility, { allowed: false }>;
   } | null>(null);
 
   useEffect(() => {
@@ -387,10 +396,39 @@ export function useTreeExport({
   );
 
   const handleExport = useCallback(async () => {
-    if (!canDownloadExport) {
+    const billingActive = BILLING_ENABLED;
+    if (!billingActive && !canDownloadExport) {
       requireAdmin();
       return;
     }
+
+    const nodeCount = model.nodes.length;
+    if (billingActive && organizationId) {
+      try {
+        const eligibility = await api.billing.getExportEligibility(
+          organizationId,
+          nodeCount,
+        );
+        if (!eligibility.allowed) {
+          setPaywall({ nodeCount, eligibility });
+          return;
+        }
+      } catch {
+        setPaywall({
+          nodeCount,
+          eligibility: {
+            allowed: false,
+            reason: "NO_SUBSCRIPTION",
+            nodeCount,
+          },
+        });
+        return;
+      }
+    } else if (billingActive && !organizationId) {
+      requireAdmin();
+      return;
+    }
+
     const svg = svgRef.current;
     if (!svg) return;
     setExporting(true);
@@ -433,8 +471,10 @@ export function useTreeExport({
     });
   }, [
     canDownloadExport,
+    organizationId,
     geometry.canvasWidth,
     geometry.canvasHeight,
+    model.nodes.length,
     requireAdmin,
     settings.coupletFontId,
     settings.layers,
@@ -479,5 +519,7 @@ export function useTreeExport({
     handleExport,
     fitTreeToPage,
     zoomTreeBy,
+    paywall,
+    dismissPaywall: () => setPaywall(null),
   };
 }

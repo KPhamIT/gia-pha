@@ -45,6 +45,7 @@ type Props = {
   exportPositionOverrides?: NodePositionOverrides;
   onCloseExport: () => void;
   canDownloadExport: boolean;
+  organizationId?: number | null;
   // Welcome (không bắt chọn nhánh)
   showWelcome: boolean;
   onCompleteWelcome: () => void;
@@ -79,6 +80,7 @@ export default function FamilyTreeSheets({
           nodePositionOverrides={p.exportPositionOverrides}
           onClose={p.onCloseExport}
           canDownloadExport={p.canDownloadExport}
+          organizationId={p.organizationId}
         />
       ) : null}
 

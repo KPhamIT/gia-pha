@@ -11,6 +11,8 @@ import TreeExportControls from "./TreeExportControls";
 import TreeExportSvg from "./TreeExportSvg";
 import { useTreeExport } from "./useTreeExport";
 import { useExportTreeTransform } from "./useExportTreeTransform";
+import ExportPaywallSheet from "@/components/billing/ExportPaywallSheet";
+import { BILLING_ENABLED } from "@/lib/constants/billing";
 
 type TreeExportViewProps = {
   treeData: FamilyTreeData;
@@ -18,6 +20,7 @@ type TreeExportViewProps = {
   nodePositionOverrides?: NodePositionOverrides;
   onClose: () => void;
   canDownloadExport: boolean;
+  organizationId?: number | null;
 };
 
 export default function TreeExportView({
@@ -26,13 +29,16 @@ export default function TreeExportView({
   nodePositionOverrides,
   onClose,
   canDownloadExport,
+  organizationId,
 }: TreeExportViewProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const showDownload = BILLING_ENABLED || canDownloadExport;
   const exportState = useTreeExport({
     treeData,
     layoutConfig,
     nodePositionOverrides,
-    canDownloadExport,
+    canDownloadExport: showDownload,
+    organizationId,
   });
   const {
     svgRef,
@@ -73,6 +79,8 @@ export default function TreeExportView({
     handleExport,
     fitTreeToPage,
     zoomTreeBy,
+    paywall,
+    dismissPaywall,
   } = exportState;
 
   const treeZoom = settings.treeUserScale ?? 1;
@@ -151,8 +159,17 @@ export default function TreeExportView({
         onReset={handleReset}
         onClose={onClose}
         onExport={handleExport}
-        canDownloadExport={canDownloadExport}
+        canDownloadExport={showDownload}
       />
+
+      {paywall && organizationId ? (
+        <ExportPaywallSheet
+          nodeCount={paywall.nodeCount}
+          organizationId={organizationId}
+          eligibility={paywall.eligibility}
+          onClose={dismissPaywall}
+        />
+      ) : null}
 
       <ExportAssetLibraryModal
         open={libraryOpen}

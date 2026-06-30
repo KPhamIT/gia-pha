@@ -35,6 +35,29 @@ enum UserRole {
   STANDARD
 }
 
+enum SubscriptionTier {
+  FAMILY
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum BillingOrderStatus {
+  PENDING_PAYMENT
+  AWAITING_REVIEW
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   email        String?  @unique
@@ -66,6 +89,8 @@ model User {
   notificationLogs NotificationLog[]
   personEditLogs    PersonEditLog[]
   lastEditedPersons Person[]        @relation("PersonLastEditor")
+  reviewedBillingOrders BillingOrder[] @relation("BillingOrderReviewer")
+  activatedSubscriptions OrganizationSubscription[] @relation("SubscriptionActivator")
 
   createdAt DateTime @default(now())
 
@@ -164,7 +189,58 @@ model Organization {
 
   ceremonyTemplates CeremonyTemplate[]
 
+  billingOrders BillingOrder[]
+  subscriptions OrganizationSubscription[]
+
   createdAt DateTime @default(now())
+}
+
+model BillingOrder {
+  id             Int                @id @default(autoincrement())
+  organizationId Int
+  transferCode   String             @unique
+  tier           SubscriptionTier
+  personCountAtOrder Int
+  amountVnd      Int
+  status         BillingOrderStatus @default(PENDING_PAYMENT)
+  contactName    String?
+  contactPhone   String?
+  contactEmail   String?
+  note           String?
+  paidAt         DateTime?
+  reviewedAt     DateTime?
+  reviewedByUserId Int?
+  reviewNote     String?
+  expiresAt      DateTime
+  createdAt      DateTime           @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  reviewedBy   User?        @relation("BillingOrderReviewer", fields: [reviewedByUserId], references: [id])
+  subscription OrganizationSubscription?
+
+  @@index([organizationId, status])
+  @@index([status, createdAt])
+}
+
+model OrganizationSubscription {
+  id                    Int                @id @default(autoincrement())
+  organizationId        Int
+  tier                  SubscriptionTier
+  personCountAtPurchase Int
+  status                SubscriptionStatus
+  startsAt              DateTime
+  expiresAt             DateTime
+  amountVnd             Int
+  billingOrderId        Int?               @unique
+  paymentRef            String?
+  activatedByUserId     Int?
+  createdAt             DateTime           @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  billingOrder BillingOrder? @relation(fields: [billingOrderId], references: [id])
+  activatedBy  User?         @relation("SubscriptionActivator", fields: [activatedByUserId], references: [id])
+
+  @@index([organizationId, status, expiresAt])
 }
 
 model CeremonyTemplate {

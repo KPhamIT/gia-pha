@@ -20,6 +20,7 @@ import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
 import { getPageShellClass } from "@/utils/theme";
 import { UI } from "@/lib/constants/ui-strings";
+import { BILLING_ENABLED } from "@/lib/constants/billing";
 import { useTreeSettingsSync } from "./useTreeSettingsSync";
 import { usePersonSheets } from "./usePersonSheets";
 import FamilyTreeSheets from "./FamilyTreeSheets";
@@ -42,6 +43,7 @@ function FamilyTreePageContent() {
   const shouldOpenExport = searchParams.get("export") === "1";
   const { requireFeature, canUseFeature, canMutate } = useFeatureAccess();
   const refreshAuth = useAuthStore((state) => state.refresh);
+  const authOrganizationId = useAuthStore((s) => s.user?.organizationId ?? null);
   const goBack = useBackNavigation("/");
   const { ready: orgReady } = useRequireOrgAccess();
   const {
@@ -129,6 +131,14 @@ function FamilyTreePageContent() {
         : null,
     [treeData, effectiveBranch, maxGeneration],
   );
+
+  const organizationId =
+    authOrganizationId ??
+    treeData?.persons[0]?.organizationId ??
+    treeData?.root?.organizationId ??
+    null;
+
+  const showExportDownload = BILLING_ENABLED || canMutate;
 
   if (!orgReady || (loading && !treeData)) {
     return <FamilyTreeStatus theme={theme} type="loading" />;
@@ -218,7 +228,8 @@ function FamilyTreePageContent() {
           exportTreeData={filteredTreeData ?? treeData}
           exportPositionOverrides={exportPositionOverrides}
           onCloseExport={handleCloseExport}
-          canDownloadExport={canMutate}
+          canDownloadExport={showExportDownload}
+          organizationId={organizationId}
           showWelcome={branchHydrated && !welcomeDone}
           onCompleteWelcome={completeWelcome}
         />

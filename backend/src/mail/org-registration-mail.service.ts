@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserRole } from '../../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { escapeHtml } from './escape-html.js';
+import { resolveAdminNotifyEmail } from './resolve-admin-notify-email.js';
 import { ResendMailService } from './resend-mail.service.js';
 
 export type OrgRegistrationMailPayload = {
@@ -28,7 +29,7 @@ export class OrgRegistrationMailService {
   }
 
   private async send(payload: OrgRegistrationMailPayload): Promise<void> {
-    const to = await this.resolveNotifyEmail();
+    const to = await resolveAdminNotifyEmail(this.prisma, this.config);
     if (!to) {
       this.logger.warn(
         'Không có email nhận thông báo đăng ký dòng họ — cấu hình ORG_REGISTRATION_NOTIFY_EMAIL hoặc email user SYSTEM',
@@ -80,32 +81,4 @@ export class OrgRegistrationMailService {
       `Gửi email thông báo đăng ký dòng họ #${payload.organizationId} thất bại: ${result.error}`,
     );
   }
-
-  private async resolveNotifyEmail(): Promise<string | null> {
-    const override = this.config
-      .get<string>('ORG_REGISTRATION_NOTIFY_EMAIL')
-      ?.trim();
-    if (override) return override;
-
-    const systemUser = await this.prisma.user.findFirst({
-      where: {
-        role: UserRole.SYSTEM,
-        isActive: true,
-        email: { not: null },
-      },
-      orderBy: { id: 'asc' },
-      select: { email: true },
-    });
-
-    const email = systemUser?.email?.trim();
-    return email || null;
-  }
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
 }
