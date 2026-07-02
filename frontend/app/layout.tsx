@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Noto_Serif } from "next/font/google";
+import { Be_Vietnam_Pro, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { createRootMetadata } from "@/lib/seo";
 import { themeInitScript } from "@/utils/theme";
 import AppToaster from "@/components/ui/AppToaster";
 import LandingScrollManager from "@/components/public/LandingScrollManager";
 
-const notoSerif = Noto_Serif({
-  variable: "--font-noto-serif",
+const beVietnamPro = Be_Vietnam_Pro({
+  variable: "--font-be-vietnam-pro",
   subsets: ["latin", "vietnamese"],
   style: ["normal", "italic"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display",
+  subsets: ["latin", "vietnamese"],
+  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -27,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${notoSerif.variable} h-full antialiased`}
+      className={`${beVietnamPro.variable} ${playfairDisplay.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>

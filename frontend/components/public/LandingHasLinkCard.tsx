@@ -4,15 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { IconName } from "@/components/icons/icon-paths";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
-import LandingStartCta from "@/components/public/LandingStartCta";
 import { inputClassName } from "@/components/ui/CollapsibleSection";
 import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
 import { fetchDefaultJoinLinkUrl } from "@/lib/org/default-join-link";
 import { parseOrgJoinLink } from "@/lib/org/parse-join-link";
 import { getJoinLinkInputPlaceholder } from "@/lib/site-url";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
-import { LAYOUT } from "@/lib/constants/ui-layout";
 
 type LandingHasLinkCardProps = {
   icon: IconName;
@@ -53,29 +50,27 @@ export default function LandingHasLinkCard({
   }, [link, router]);
 
   return (
-    <div className={`${BT.card} ${LAYOUT.landingStartCard} p-4 md:p-5`}>
+    <div className="rounded-xl border border-[#d4c3c1] bg-white p-6 shadow-sm md:p-8">
       <LandingCardHeader
         icon={icon}
         title={title}
-        titleClassName="text-base font-semibold text-neutral-900"
+        titleClassName="text-lg font-semibold text-[#321716]"
       />
-      <ol
-        className={`mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed ${BT.mutedOnLight}`}
-      >
+      <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-[#504443]">
         {steps.map((step, index) => (
           <li key={index}>{step}</li>
         ))}
       </ol>
 
       <label className="mt-4 block">
-        <span className={`mb-1 block text-sm font-medium ${BT.mutedOnLight}`}>
+        <span className="mb-1 block text-sm font-medium text-[#321716]">
           {UI.LANDING_START_HAS_LINK_INPUT_LABEL}
         </span>
         <input
           type="url"
           inputMode="url"
           autoComplete="off"
-          className={inputClassName}
+          className={`${inputClassName} border-[#d4c3c1] bg-white text-[#1c1c19] focus:border-[#321716] focus:ring-[#321716]/20`}
           value={link}
           onChange={(e) => {
             setLink(e.target.value);
@@ -92,17 +87,19 @@ export default function LandingHasLinkCard({
       </label>
 
       {error ? (
-        <p className={`mt-2 ${BT.errorBgLight}`} role="alert">
+        <p className="mt-2 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
           {error}
         </p>
       ) : null}
 
       <div className="mt-auto pt-5">
-        <LandingStartCta
-          label={UI.LANDING_START_HAS_LINK_CTA}
-          variant="primary"
+        <button
+          type="button"
           onClick={handleJoin}
-        />
+          className="w-full rounded-lg bg-[#321716] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4a2c2a]"
+        >
+          {UI.LANDING_START_HAS_LINK_CTA}
+        </button>
       </div>
     </div>
   );

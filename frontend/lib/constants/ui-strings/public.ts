@@ -28,8 +28,16 @@ export const PUBLIC_STRINGS = {
 
   // Landing
   LANDING_HERO_TITLE: "Gia phả điện tử cho gia đình và dòng họ",
+  LANDING_HERO_TITLE_LINE1: "Gia phả điện tử",
+  LANDING_HERO_TITLE_LINE2: "cho dòng họ",
   LANDING_HERO_SUBTITLE:
     "Tra cứu sổ gia phả, cây phả hệ, sự kiện và ngày giỗ — mọi lúc trên điện thoại, không cần cài app.",
+  LANDING_NAV_HOME: "Trang chủ",
+  LANDING_NAV_CLAN: "Gia tộc",
+  LANDING_NAV_EVENTS: "Sự kiện",
+  LANDING_NAV_LIBRARY: "Thư viện",
+  LANDING_NAV_SERVICES: "Dịch vụ",
+  LANDING_NAV_SEARCH_ARIA: "Tìm kiếm",
   LANDING_CTA_GUIDE: "Xem hướng dẫn",
   LANDING_CTA_BOOK: "Vào sổ gia phả",
   LANDING_CTA_LOGIN: "Đăng nhập",
@@ -39,6 +47,7 @@ export const PUBLIC_STRINGS = {
     "Mở liên kết một lần — thiết bị sẽ nhớ dòng họ; lần sau chỉ cần vào website.",
   ],
   LANDING_START_TITLE: "Hai cách bắt đầu",
+  LANDING_START_SUBTITLE: "Chọn phương thức phù hợp với hiện trạng dòng họ của bạn.",
   LANDING_START_HAS_LINK_TITLE: "Đã có liên kết dòng họ",
   LANDING_START_HAS_LINK_STEPS: [
     "Nhận liên kết từ ban quản trị / thư ký qua Zalo, Facebook hoặc tin nhắn.",
@@ -126,6 +135,38 @@ export const PUBLIC_STRINGS = {
   LANDING_SERVICES_CTA: "Liên hệ tư vấn",
   LANDING_LEGAL_HINT:
     "Bằng việc sử dụng dịch vụ, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",
+  LANDING_STATS_ITEMS: [
+    { value: "10,000+", label: "Dòng họ tham gia" },
+    { value: "500k+", label: "Thành viên ghi danh" },
+    { value: "100%", label: "Bảo mật dữ liệu" },
+    { value: "Vĩnh viễn", label: "Lưu trữ truyền đời" },
+  ],
+  LANDING_BENTO_TREE_TITLE: "Phả đồ tương tác thông minh",
+  LANDING_BENTO_TREE_DESC:
+    "Dễ theo dõi nhiều thế hệ, xem nhanh nhánh họ và quan hệ trong cùng một màn hình.",
+  LANDING_BENTO_REMINDER_TITLE: "Thông báo kỵ nhật",
+  LANDING_BENTO_REMINDER_DESC:
+    "Nhắc ngày giỗ tự động theo âm lịch, không bỏ lỡ ngày quan trọng của dòng tộc.",
+  LANDING_BENTO_MORE: "Tìm hiểu thêm",
+  LANDING_BENTO_SECURITY_TITLE: "Bảo mật tuyệt đối",
+  LANDING_BENTO_SECURITY_DESC:
+    "Dữ liệu gia phả là tài sản vô giá. Hệ thống phân quyền rõ ràng cho từng tổ chức.",
+  LANDING_BENTO_SECURITY_BADGE: "Đạt chuẩn",
+  LANDING_BENTO_ARCHIVE_TITLE: "Lưu trữ số hóa tài liệu cổ",
+  LANDING_BENTO_ARCHIVE_DESC:
+    "Số hóa tư liệu gia phả, lưu giữ lâu dài và dễ dàng tra cứu cho con cháu đời sau.",
+  LANDING_FINAL_CTA_TITLE: "Bắt đầu lưu giữ lịch sử dòng họ ngay hôm nay",
+  LANDING_FINAL_CTA_BODY:
+    "\"Cây có gốc mới nở cành xanh ngọn, nước có nguồn mới bể rộng sông sâu.\" Hãy để Cội Nguồn đồng hành cùng gia đình bạn trên hành trình tìm về nguồn cội.",
+  LANDING_FOOTER_ABOUT:
+    "Nền tảng công nghệ giúp lưu giữ gia phả, kết nối con cháu và bảo tồn giá trị cội nguồn cho nhiều thế hệ.",
+  LANDING_FOOTER_DISCOVER_TITLE: "Khám phá",
+  LANDING_FOOTER_SUPPORT_TITLE: "Hỗ trợ",
+  LANDING_FOOTER_CONTACT_TITLE: "Liên hệ",
+  LANDING_FOOTER_NEWS: "Tin tức",
+  LANDING_FOOTER_CONTACT_EMAIL: "phamvankhanhvmm@gmail.com",
+  LANDING_FOOTER_CONTACT_PHONE: "0975 925 223",
+  LANDING_FOOTER_CONTACT_ADDRESS: "Nghệ An, Việt Nam",
 
   // Contact
   CONTACT_PAGE_TITLE: "Liên hệ",

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 
 const FOOTER_LINKS = [
   { href: "/", label: UI.PUBLIC_FOOTER_HOME },
@@ -17,10 +16,10 @@ export default function PublicSiteFooter() {
 
   return (
     <footer
-      className={`mt-10 border-t border-amber-200/20 pt-6 ${BT.mutedOnDark}`}
+      className="mt-10 border-t border-[#d4c3c1] pt-6 text-[#504443]"
       aria-label={UI.PUBLIC_FOOTER_NAV_LABEL}
     >
-      <p className="text-center text-sm font-medium text-amber-100/90">
+      <p className="text-center text-sm font-medium text-[#321716]">
         {UI.PUBLIC_FOOTER_TAGLINE}
       </p>
       <nav className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs">
@@ -28,7 +27,7 @@ export default function PublicSiteFooter() {
           <Link
             key={link.href}
             href={link.href}
-            className="underline-offset-2 hover:text-amber-50 hover:underline"
+            className="underline-offset-2 hover:text-[#321716] hover:underline"
           >
             {link.label}
           </Link>
