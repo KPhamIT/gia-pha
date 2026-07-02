@@ -60,6 +60,9 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_PUBLIC_SUBTITLE: "Xem và in bài cúng — không cần đăng nhập",
   CEREMONY_LOADING: "Đang tải bài cúng...",
   CEREMONY_ERR: "Không thể tải bài cúng",
+  CEREMONY_FONT_SIZE: "Cỡ chữ",
+  CEREMONY_FONT_SIZE_DECREASE: "Giảm cỡ chữ",
+  CEREMONY_FONT_SIZE_INCREASE: "Tăng cỡ chữ",
 
   // Admin notification stats
   NOTIF_STATS_TITLE: "Thống kê thông báo",
@@ -99,7 +102,7 @@ export const NOTIFICATION_STRINGS = {
     "Chế độ xem thử — mẫu không được lưu. Đăng nhập để dùng thật.",
   CEREMONY_PRINT_OPEN: "Xem & In",
   CEREMONY_PRINT_TITLE: "Xem & In bài cúng",
-  CEREMONY_PRINT_PICK_PERSON: "Chọn người đã mất để xem và in bài cúng",
+  CEREMONY_PRINT_PICK_PERSON: "Chọn người đã mất để điền thông tin vào bài cúng",
   CEREMONY_PRINT_SEARCH: "Tìm người đã mất…",
   CEREMONY_PRINT_CHANGE_PERSON: "Đổi người",
   CEREMONY_PRINT_NO_PERSONS: "Chưa có người đã mất nào có ngày giỗ âm lịch",
