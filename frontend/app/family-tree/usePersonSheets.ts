@@ -42,6 +42,7 @@ export function usePersonSheets({
 }: Args) {
   const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
   const [selectedNode, setSelectedNode] = useState<Person | null>(null);
+  const [nodeStylePerson, setNodeStylePerson] = useState<Person | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode | null>(null);
   const [focusNodeId, setFocusNodeId] = useState<number | null>(null);
   const [showSearch, setShowSearch] = useState(false);
@@ -72,15 +73,27 @@ export function usePersonSheets({
   });
 
   const openPersonDetail = useCallback((person: Person) => {
+    setNodeStylePerson(null);
     setSelectedNode(person);
     setSelectedPersonId(person.id);
     setFocusNodeId(person.id);
     setViewMode("detail");
   }, []);
 
+  const openNodeStyleSheet = useCallback((person: Person) => {
+    setNodeStylePerson(person);
+    setViewMode(null);
+    setSelectedPersonId(null);
+    setSelectedNode(null);
+  }, []);
+
+  const closeNodeStyleSheet = useCallback(() => {
+    setNodeStylePerson(null);
+  }, []);
+
   const handleNodeClick = useCallback(
-    (_id: number, person: Person) => openPersonDetail(person),
-    [openPersonDetail],
+    (_id: number, person: Person) => openNodeStyleSheet(person),
+    [openNodeStyleSheet],
   );
   const handleSelectPerson = useCallback(
     (personId: number) => {
@@ -167,6 +180,7 @@ export function usePersonSheets({
   return {
     selectedPersonId,
     selectedNode,
+    nodeStylePerson,
     viewMode,
     focusNodeId,
     showSearch,
@@ -176,6 +190,8 @@ export function usePersonSheets({
     actionLoading,
     modalLoading,
     openPersonDetail,
+    openNodeStyleSheet,
+    closeNodeStyleSheet,
     handleNodeClick,
     handleSelectPerson,
     handleSearchSelect,

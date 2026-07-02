@@ -1,6 +1,6 @@
 import type { ExportGeometry } from "./export-tree-geometry";
 import { EXPORT_OUTER_MARGIN, EXPORT_PADDING } from "./export-tree-geometry";
-import type { ExportModel, Rect } from "./export-tree-model";
+import type { ExportModel, ExportNode, Rect } from "./export-tree-model";
 
 export const TREE_SCALE_STEP = 1.12;
 export const PREVIEW_ZOOM_STEP = 1.2;
@@ -52,6 +52,40 @@ export function effectiveTreeScale(fitScale: number, userZoom: number): number {
   return sanitizeZoom(f * u);
 }
 
+/** Gộp auto-fit + pan/zoom người dùng thành transform cuối cho nhóm cây. */
+export function resolveTreeTransform(
+  autoFit: TreeTransform,
+  userOffsetX: number,
+  userOffsetY: number,
+  userZoom: number,
+): TreeTransform {
+  return {
+    treeOffsetX: autoFit.treeOffsetX + userOffsetX,
+    treeOffsetY: autoFit.treeOffsetY + userOffsetY,
+    treeScale: effectiveTreeScale(autoFit.treeScale, userZoom),
+  };
+}
+
+/** Bao từng thẻ node (theo kích thước riêng) — chính xác hơn bounds chung. */
+export function unionExportNodeBounds(nodes: ExportNode[]): Rect {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const node of nodes) {
+    const w = node.appearance.nodeWidth;
+    const h = node.appearance.nodeHeight;
+    minX = Math.min(minX, node.x);
+    minY = Math.min(minY, node.y);
+    maxX = Math.max(maxX, node.x + w);
+    maxY = Math.max(maxY, node.y + h);
+  }
+  if (!Number.isFinite(minX)) {
+    return { x: 0, y: 0, width: 0, height: 0 };
+  }
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
 /** Vùng dưới header, trong khung A0, dành cho cây gia phả. */
 export function getExportTreeArea(
   geometry: ExportGeometry,
@@ -74,8 +108,8 @@ export function getTreeScalePivot(model: ExportModel): { x: number; y: number } 
   const root = model.nodes.find((node) => node.isRoot);
   if (root) {
     return {
-      x: root.x + model.nodeWidth / 2,
-      y: root.y + model.nodeHeight / 2,
+      x: root.x + root.appearance.nodeWidth / 2,
+      y: root.y + root.appearance.nodeHeight / 2,
     };
   }
   return {
@@ -98,6 +132,12 @@ export function buildExportTreeTransform(
   return `translate(${tx} ${ty}) translate(${px} ${py}) scale(${scale}) translate(${-px} ${-py})`;
 }
 
+function treeLocalBounds(model: ExportModel): Rect {
+  const union = unionExportNodeBounds(model.nodes);
+  if (union.width > 0 && union.height > 0) return union;
+  return model.bounds;
+}
+
 function treeCanvasBounds(
   model: ExportModel,
   geometry: ExportGeometry,
@@ -107,7 +147,7 @@ function treeCanvasBounds(
 ): Rect {
   const pivot = getTreeScalePivot(model);
   const { x: px, y: py } = pivot;
-  const b = model.bounds;
+  const b = treeLocalBounds(model);
   const corners = [
     [b.x, b.y],
     [b.x + b.width, b.y],

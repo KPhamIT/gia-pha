@@ -8,10 +8,10 @@ import {
 } from "@/lib/family-tree/export-tree-svg";
 import {
   buildExportTreeTransform,
-  effectiveTreeScale,
   getTreeScalePivot,
   type TreeTransform,
 } from "@/lib/family-tree/export-tree-transform";
+import { DEFAULT_EDGE_COLOR } from "@/components/family-tree/graph/layout";
 import {
   getNodeCardStyle,
   getTreeBorderStyle,
@@ -28,12 +28,13 @@ export type { DraggableId } from "./tree-export-svg-utils";
 
 type TreeExportSvgProps = {
   svgRef: MutableRefObject<SVGSVGElement | null>;
-  fitBase: TreeTransform;
+  treeTransform: TreeTransform;
   model: ExportModel;
   geometry: ExportGeometry;
   layout: ResolvedLayout;
   settings: TreeExportSettings;
   layerImageHrefs: Record<string, string>;
+  edgeColor?: string;
   interactive?: boolean;
   selectedId?: DraggableId | null;
   onSelect?: (id: DraggableId | null) => void;
@@ -65,12 +66,13 @@ const layerGroupProps = (
 
 export default function TreeExportSvg({
   svgRef,
-  fitBase,
+  treeTransform,
   model,
   geometry,
   layout,
   settings,
   layerImageHrefs,
+  edgeColor = DEFAULT_EDGE_COLOR,
   interactive = false,
   selectedId = null,
   onSelect,
@@ -86,18 +88,17 @@ export default function TreeExportSvg({
     onChange,
   });
   const { canvasWidth, canvasHeight, borderRect } = geometry;
-  const treeTransform = buildExportTreeTransform(
+  const treeTransformAttr = buildExportTreeTransform(
     geometry,
     getTreeScalePivot(model),
-    fitBase.treeOffsetX + settings.treeOffsetX,
-    fitBase.treeOffsetY + settings.treeOffsetY,
-    effectiveTreeScale(fitBase.treeScale, settings.treeUserScale ?? 1),
+    treeTransform.treeOffsetX,
+    treeTransform.treeOffsetY,
+    treeTransform.treeScale,
   );
   const treeHitPad = 24;
   const border = getTreeBorderStyle(settings.borderStyleId);
-  const { nodeBgColor, nodeTextColor, nodeBorderColor, nodeFontSize } =
-    settings;
   const nodeCard = getNodeCardStyle(settings.nodeBorderStyleId);
+  const { nodeBorderColor } = settings;
   const group = layerGroupProps(
     settings,
     layout,
@@ -143,7 +144,8 @@ export default function TreeExportSvg({
       {border.render(borderRect, settings.borderColor)}
 
       <g
-        transform={treeTransform}
+        data-export-tree
+        transform={treeTransformAttr}
         style={{ cursor: interactive ? "grab" : undefined }}
         onPointerDown={beginTreePan}
       >
@@ -157,19 +159,20 @@ export default function TreeExportSvg({
           />
         ) : null}
         {model.connectors.map((d, i) => (
-          <path key={i} d={d} fill="none" stroke="#94a3b8" strokeWidth={1.5} />
+          <path
+            key={i}
+            d={d}
+            fill="none"
+            stroke={edgeColor}
+            strokeWidth={1.5}
+          />
         ))}
         {model.nodes.map((n) => (
           <ExportPersonNode
             key={n.id}
             node={n}
-            nodeWidth={model.nodeWidth}
-            nodeHeight={model.nodeHeight}
             nodeCard={nodeCard}
-            nodeBgColor={nodeBgColor}
-            nodeTextColor={nodeTextColor}
             nodeBorderColor={nodeBorderColor}
-            nodeFontSize={nodeFontSize}
           />
         ))}
       </g>

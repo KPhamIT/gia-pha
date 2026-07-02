@@ -23,22 +23,24 @@ export default function GraphViewportController({
   focusNodeId,
   centerTreeKey,
 }: GraphViewportControllerProps) {
-  const { setCenter, fitView, getNode } = useReactFlow();
+  const { setCenter, fitView, getNode, getViewport } = useReactFlow();
 
   useEffect(() => {
     if (focusNodeId == null) return;
     const node = getNode(String(focusNodeId));
     if (!node) return;
 
+    const zoom = getViewport().zoom;
+
     setCenter(
       node.position.x + NODE_WIDTH / 2,
       node.position.y + NODE_HEIGHT / 2,
       {
-        zoom: 1,
+        zoom,
         duration: 400,
       },
     );
-  }, [focusNodeId, getNode, setCenter]);
+  }, [focusNodeId, getNode, getViewport, setCenter]);
 
   useEffect(() => {
     if (centerTreeKey == null || centerTreeKey === 0) return;

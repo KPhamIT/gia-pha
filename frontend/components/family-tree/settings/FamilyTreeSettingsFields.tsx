@@ -1,34 +1,17 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import type {
-  LayoutConfig,
-  ThemeMode,
-} from "@/components/types/family-tree-types";
+import type { LayoutConfig, ThemeMode } from "@/components/types/family-tree-types";
 import Icon from "@/components/icons/Icon";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 
 const labelClass = `block text-sm font-medium text-neutral-800`;
 const fieldClass = BT.input;
-const colorRowClass = `mt-2 flex items-center gap-2 rounded-xl border border-amber-200/80 bg-white px-3 py-2`;
-const colorPickerClass =
-  "h-9 w-10 shrink-0 cursor-pointer rounded-lg border border-amber-200/80 bg-white p-0.5";
-const colorHexClass = "min-w-0 flex-1 text-sm text-neutral-900";
 
-type NumberKey = "horizontalGap" | "verticalStep" | "nodeWidth" | "nodeHeight";
-type ColorKey = "nodeBgColor" | "nodeTextColor";
-
-const NUMBER_FIELDS: { key: NumberKey; label: string; min: number }[] = [
-  { key: "horizontalGap", label: UI.H_GAP_LABEL, min: 0 },
-  { key: "verticalStep", label: UI.V_GAP_LABEL, min: 0 },
-  { key: "nodeWidth", label: UI.NODE_WIDTH_LABEL, min: 40 },
-  { key: "nodeHeight", label: UI.NODE_HEIGHT_LABEL, min: 40 },
-];
-
-const COLOR_FIELDS: { key: ColorKey; label: string }[] = [
-  { key: "nodeBgColor", label: UI.NODE_BG_COLOR },
-  { key: "nodeTextColor", label: UI.NODE_TEXT_COLOR },
+const GAP_FIELDS = [
+  { key: "horizontalGap" as const, label: UI.H_GAP_LABEL, min: 0 },
+  { key: "verticalStep" as const, label: UI.V_GAP_LABEL, min: 0 },
 ];
 
 type Props = {
@@ -38,6 +21,7 @@ type Props = {
   setTheme: Dispatch<SetStateAction<ThemeMode>>;
 };
 
+/** Cài đặt toàn cây — không gồm kiểu thẻ từng node (chỉnh qua bottom sheet khi bấm node). */
 export default function FamilyTreeSettingsFields({
   layoutConfig,
   setLayoutConfig,
@@ -70,7 +54,7 @@ export default function FamilyTreeSettingsFields({
         </div>
       </label>
 
-      {NUMBER_FIELDS.map(({ key, label, min }) => (
+      {GAP_FIELDS.map(({ key, label, min }) => (
         <label key={key} className={labelClass}>
           {label}
           <input
@@ -89,28 +73,25 @@ export default function FamilyTreeSettingsFields({
         </label>
       ))}
 
-      {COLOR_FIELDS.map(({ key, label }) => (
-        <label key={key} className={labelClass}>
-          {label}
-          <div className={colorRowClass}>
-            <input
-              type="color"
-              value={layoutConfig[key]}
-              onChange={(event) =>
-                setLayoutConfig((prev) => ({
-                  ...prev,
-                  [key]: event.target.value,
-                }))
-              }
-              className={colorPickerClass}
-              aria-label={label}
-            />
-            <span className={`${colorHexClass} font-mono`}>
-              {layoutConfig[key]}
-            </span>
-          </div>
-        </label>
-      ))}
+      <label className={labelClass}>
+        {UI.EDGE_COLOR_LABEL}
+        <div className="mt-2 flex items-center gap-3">
+          <input
+            type="color"
+            value={layoutConfig.edgeColor}
+            onChange={(event) =>
+              setLayoutConfig((prev) => ({
+                ...prev,
+                edgeColor: event.target.value,
+              }))
+            }
+            className="h-10 w-14 cursor-pointer rounded-lg border border-amber-200/80 bg-white p-0.5"
+          />
+          <span className="text-xs text-neutral-500">{layoutConfig.edgeColor}</span>
+        </div>
+      </label>
+
+      <p className="text-xs text-neutral-500">{UI.TREE_SETTINGS_NODE_HINT}</p>
     </div>
   );
 }

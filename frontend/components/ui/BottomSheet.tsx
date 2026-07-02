@@ -13,7 +13,7 @@ type BottomSheetProps = {
   showHandle?: boolean;
   zClass?: string;
   /** Fixed-height search sheet — stays at bottom, only inner list updates. */
-  variant?: "default" | "search";
+  variant?: "default" | "search" | "toolbar";
 };
 
 const MAX_WIDTH: Record<NonNullable<BottomSheetProps["maxWidth"]>, string> = {
@@ -32,12 +32,17 @@ export default function BottomSheet({
   variant = "default",
 }: BottomSheetProps) {
   const isSearch = variant === "search";
+  const isToolbar = variant === "toolbar";
   const overlayClass = isSearch
     ? LAYOUT.bottomSheetSearchOverlay
-    : LAYOUT.bottomSheetOverlay;
+    : isToolbar
+      ? LAYOUT.bottomSheetToolbarOverlay
+      : LAYOUT.bottomSheetOverlay;
   const panelClass = isSearch
     ? LAYOUT.bottomSheetSearchPanel
-    : `${LAYOUT.bottomSheetPanel} ${MAX_WIDTH[maxWidth]}`;
+    : isToolbar
+      ? LAYOUT.bottomSheetToolbarPanel
+      : `${LAYOUT.bottomSheetPanel} ${MAX_WIDTH[maxWidth]}`;
 
   useEffect(() => () => dismissOverlayFocus(), []);
 
@@ -49,7 +54,7 @@ export default function BottomSheet({
   return (
     <OverlayPortal>
       <div className={`${overlayClass} ${zClass}`}>
-        {onClose ? (
+        {onClose && !isToolbar ? (
           <button
             type="button"
             className="absolute inset-0 cursor-default"
@@ -58,7 +63,7 @@ export default function BottomSheet({
           />
         ) : null}
         <div className={panelClass}>
-          {showHandle ? <div className={LAYOUT.bottomSheetHandle} /> : null}
+          {showHandle && !isToolbar ? <div className={LAYOUT.bottomSheetHandle} /> : null}
           {children}
         </div>
       </div>

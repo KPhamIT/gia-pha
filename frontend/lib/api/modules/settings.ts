@@ -1,14 +1,28 @@
 import axiosClient from "@/lib/axiosClient";
 import { API_ROUTES } from "@/lib/constants/api-routes";
 
+import type {
+  LevelNodeStyle,
+  NodeFontWeight,
+  NodeTextCase,
+  NodeTextDirection,
+} from "@/components/types/family-tree-types";
+
 export type UserSettings = {
   theme?: string;
   horizontalGap?: number;
   verticalStep?: number;
+  edgeColor?: string;
   nodeWidth?: number;
   nodeHeight?: number;
   nodeBgColor?: string;
   nodeTextColor?: string;
+  nodeFontSize?: number;
+  nodeFontWeight?: NodeFontWeight;
+  nodeTextDirection?: NodeTextDirection;
+  nodeTextCase?: NodeTextCase;
+  levelStyles?: Record<string, LevelNodeStyle>;
+  nodeStyles?: Record<string, LevelNodeStyle>;
   [key: string]: unknown;
 };
 

@@ -1,6 +1,13 @@
 import { Handle, Position } from "@xyflow/react";
 import { memo } from "react";
+import type { NodeFontWeight, NodeTextCase, NodeTextDirection } from "@/components/types/family-tree-types";
 import { NODE_HEIGHT, NODE_WIDTH } from "@/components/family-tree/graph/layout";
+import {
+  formatNodeDisplayName,
+  nodeNameLines,
+  verticalWordLineGap,
+} from "@/lib/family-tree/node-name-lines";
+import { DEFAULT_NODE_APPEARANCE } from "@/lib/family-tree/node-appearance";
 
 type PersonNodeData = {
   fullName: string;
@@ -13,6 +20,10 @@ type PersonNodeData = {
   nodeTextColor?: string;
   nodeWidth?: number;
   nodeHeight?: number;
+  nodeFontSize?: number;
+  nodeFontWeight?: NodeFontWeight;
+  nodeTextDirection?: NodeTextDirection;
+  nodeTextCase?: NodeTextCase;
 };
 
 type FamilyTreeNodeProps = {
@@ -22,13 +33,67 @@ type FamilyTreeNodeProps = {
 
 const birthDateFormatter = new Intl.DateTimeFormat("vi-VN");
 
+const FONT_WEIGHT_CLASS: Record<NodeFontWeight, string> = {
+  normal: "font-normal",
+  semibold: "font-semibold",
+  bold: "font-bold",
+};
+
 function formatBirthDate(birthDate?: string | null) {
   if (!birthDate) return "";
   return birthDateFormatter.format(new Date(birthDate));
 }
 
+function PersonNameLabel({
+  fullName,
+  fontSize,
+  fontWeight,
+  direction,
+  textCase,
+}: {
+  fullName: string;
+  fontSize: number;
+  fontWeight: NodeFontWeight;
+  direction: NodeTextDirection;
+  textCase: NodeTextCase;
+}) {
+  const weightClass = FONT_WEIGHT_CLASS[fontWeight] ?? "font-semibold";
+  const displayName = formatNodeDisplayName(fullName, textCase);
+  const lines = nodeNameLines(displayName, direction);
+
+  if (direction === "vertical") {
+    const lineGap = verticalWordLineGap(fontSize);
+    return (
+      <div
+        className={`${weightClass} flex flex-col items-center`}
+        style={{ fontSize, gap: Math.max(4, lineGap - fontSize) }}
+      >
+        {lines.map((word, i) => (
+          <span key={`${i}-${word}`} className="block text-center leading-none">
+            {word}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <p
+      className={`${weightClass} text-center`}
+      style={{ fontSize, whiteSpace: "nowrap" }}
+    >
+      {displayName}
+    </p>
+  );
+}
+
 function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
   const birthDate = formatBirthDate(data.birthDate);
+  const fontSize = data.nodeFontSize ?? 18;
+  const fontWeight = data.nodeFontWeight ?? "semibold";
+  const textDirection =
+    data.nodeTextDirection ?? DEFAULT_NODE_APPEARANCE.nodeTextDirection;
+  const textCase = data.nodeTextCase ?? "none";
 
   return (
     <div
@@ -38,22 +103,29 @@ function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
         width: data.nodeWidth ?? NODE_WIDTH,
         height: data.nodeHeight ?? NODE_HEIGHT,
       }}
-      className={`px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 ${
+      className={`flex flex-col px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 ${
         selected
           ? "border-amber-600 shadow-lg ring-2 ring-amber-300"
           : "border-slate-200 shadow-sm hover:border-amber-400"
       }`}
     >
       <Handle type="source" position={Position.Top} />
-      <div className="flex flex-col items-center">
-        {data.fullName.split(" ").map((word, i) => (
-          <p key={i} className="font-semibold text-lg leading-snug text-center">
-            {word}
-          </p>
-        ))}
+      <div className="flex min-h-0 flex-1 items-center justify-center py-1">
+        <PersonNameLabel
+          fullName={data.fullName}
+          fontSize={fontSize}
+          fontWeight={fontWeight}
+          direction={textDirection}
+          textCase={textCase}
+        />
       </div>
       {birthDate ? (
-        <div className="mt-2 text-center text-xs opacity-70">{birthDate}</div>
+        <div
+          className="shrink-0 text-center opacity-70"
+          style={{ fontSize: Math.max(10, fontSize - 6) }}
+        >
+          {birthDate}
+        </div>
       ) : null}
       <Handle type="target" position={Position.Bottom} />
     </div>

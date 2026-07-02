@@ -1,4 +1,11 @@
-import type { FamilyTreeData } from "@/components/types/family-tree-types";
+import type {
+  FamilyTreeData,
+  LevelNodeStyle,
+  NodeFontWeight,
+  NodeTextCase,
+  NodeTextDirection,
+} from "@/components/types/family-tree-types";
+import { resolvePersonNodeAppearance } from "@/lib/family-tree/node-appearance";
 import { getRootPerson } from "@/utils/family-tree-utils";
 import {
   buildRelationMaps,
@@ -10,13 +17,23 @@ import { buildGenerationMap, computeLevels } from "./levels";
 import { computeCoordinates } from "./positions";
 import { buildFlowEdges, buildFlowNodes } from "./flow";
 
+export const DEFAULT_EDGE_COLOR = "#94a3b8";
+export const SELECTED_EDGE_COLOR = "#d97706";
+
 export type FamilyTreeLayoutConfig = {
   horizontalGap?: number;
   verticalStep?: number;
+  edgeColor?: string;
   nodeWidth?: number;
   nodeHeight?: number;
   nodeBgColor?: string;
   nodeTextColor?: string;
+  nodeFontSize?: number;
+  nodeFontWeight?: NodeFontWeight;
+  nodeTextDirection?: NodeTextDirection;
+  nodeTextCase?: NodeTextCase;
+  levelStyles?: Record<string, LevelNodeStyle>;
+  nodeStyles?: Record<string, LevelNodeStyle>;
 };
 
 export const NODE_WIDTH = 90;
@@ -45,8 +62,12 @@ export function buildFamilyTreeGraph(
   const generationMap = buildGenerationMap(persons, levels);
   const horizontalGap = config.horizontalGap ?? DEFAULT_HORIZONTAL_GAP;
   const verticalStep = config.verticalStep ?? DEFAULT_VERTICAL_STEP;
-  const nodeWidth = config.nodeWidth ?? NODE_WIDTH;
-  const nodeHeight = config.nodeHeight ?? NODE_HEIGHT;
+  const nodeWidthFor = (personId: number) =>
+    resolvePersonNodeAppearance(
+      personId,
+      generationMap.get(personId),
+      config,
+    ).nodeWidth;
   const coordinates = computeCoordinates(
     generationMap,
     childMap,
@@ -54,16 +75,14 @@ export function buildFamilyTreeGraph(
     layoutRootId,
     horizontalGap,
     verticalStep,
-    nodeWidth,
+    nodeWidthFor,
   );
   const nodes = buildFlowNodes(
     persons,
     layoutRootId,
     coordinates,
-    config.nodeBgColor,
-    config.nodeTextColor,
-    nodeWidth,
-    nodeHeight,
+    generationMap,
+    config,
   );
   const edges = buildFlowEdges(effectiveRelationships);
 

@@ -39,6 +39,7 @@ type Props = {
   savingSettings: boolean;
   saveSuccess: boolean;
   settingsSaveError: string | null;
+  canSaveSettings: boolean;
   // Export
   showExport: boolean;
   exportTreeData: FamilyTreeData | null;

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
-import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
+import { DEFAULT_EDGE_COLOR, type FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { api } from "@/lib/api";
 import type { ExportEligibility } from "@/lib/api/modules/billing";
@@ -29,7 +29,7 @@ import {
   isCalligraphyFontId,
 } from "@/components/family-tree/book/calligraphy-fonts";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
-import { computeAutoTreeFit, exportFitKey, clampUserTreeZoom, type TreeTransform } from "@/lib/family-tree/export-tree-transform";
+import { computeAutoTreeFit, exportFitKey, clampUserTreeZoom, resolveTreeTransform } from "@/lib/family-tree/export-tree-transform";
 import {
   bringLayerForward,
   createLayerId,
@@ -69,11 +69,6 @@ export function useTreeExport({
   organizationId,
 }: Args) {
   const { requireAdmin } = useFeatureAccess();
-  const [fitBase, setFitBase] = useState<TreeTransform>({
-    treeOffsetX: 0,
-    treeOffsetY: 0,
-    treeScale: 1,
-  });
   const svgRef = useRef<SVGSVGElement | null>(null);
   const lastFitKeyRef = useRef<string | null>(null);
   const [settings, setSettings] = useState<TreeExportSettings>(
@@ -150,6 +145,7 @@ export function useTreeExport({
     () => buildExportModel(treeData, layoutConfig, nodePositionOverrides),
     [treeData, layoutConfig, nodePositionOverrides],
   );
+  const edgeColor = layoutConfig.edgeColor ?? DEFAULT_EDGE_COLOR;
   const geometry = useMemo(
     () =>
       computeExportGeometry(
@@ -190,19 +186,32 @@ export function useTreeExport({
     [model, geometry, settings.headerHeight],
   );
 
+  const treeTransform = useMemo(
+    () =>
+      resolveTreeTransform(
+        autoFit,
+        settings.treeOffsetX ?? 0,
+        settings.treeOffsetY ?? 0,
+        settings.treeUserScale ?? 1,
+      ),
+    [
+      autoFit,
+      settings.treeOffsetX,
+      settings.treeOffsetY,
+      settings.treeUserScale,
+    ],
+  );
+
   useEffect(() => {
     if (lastFitKeyRef.current === fitKey) return;
     lastFitKeyRef.current = fitKey;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFitBase(autoFit);
     patch({ treeUserScale: 1, treeOffsetX: 0, treeOffsetY: 0 });
-  }, [fitKey, autoFit, patch]);
+  }, [fitKey, patch]);
 
   const fitTreeToPage = useCallback(() => {
-    setFitBase(autoFit);
     patch({ treeUserScale: 1, treeOffsetX: 0, treeOffsetY: 0 });
     lastFitKeyRef.current = fitKey;
-  }, [autoFit, fitKey, patch]);
+  }, [fitKey, patch]);
 
   const zoomTreeBy = useCallback((factor: number) => {
     setSettings((prev) => ({
@@ -453,6 +462,7 @@ export function useTreeExport({
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         try {
+          // Giữ nguyên transform trên DOM (zoom/pan người dùng) — WYSIWYG.
           downloadSvgElement(
             svg,
             geometry.canvasWidth,
@@ -472,9 +482,9 @@ export function useTreeExport({
   }, [
     canDownloadExport,
     organizationId,
-    geometry.canvasWidth,
-    geometry.canvasHeight,
-    model.nodes.length,
+    geometry,
+    model,
+    settings.headerHeight,
     requireAdmin,
     settings.coupletFontId,
     settings.layers,
@@ -482,7 +492,8 @@ export function useTreeExport({
 
   return {
     svgRef,
-    fitBase,
+    treeTransform,
+    edgeColor,
     model,
     geometry,
     layout,

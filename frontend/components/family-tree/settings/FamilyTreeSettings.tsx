@@ -56,7 +56,7 @@ export default function FamilyTreeSettings({
                 {UI.SETTINGS_TITLE}
               </h2>
               <p className={`mt-1 text-xs ${BT.mutedOnDark}`}>
-                {UI.SETTINGS_XY_HINT}
+                {UI.TREE_SETTINGS_PANEL_HINT}
               </p>
             </div>
             <IconRoundButton

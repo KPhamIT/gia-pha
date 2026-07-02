@@ -182,9 +182,22 @@ function FamilyTreePageContent() {
             treeData={filteredTreeData ?? treeData}
             layoutConfig={layoutConfig}
             graphApiRef={graphApiRef}
-            selectedNodeId={sheets.selectedPersonId}
+            selectedNodeId={sheets.nodeStylePerson?.id ?? sheets.selectedPersonId}
             focusNodeId={sheets.focusNodeId}
             centerTreeKey={centerTreeKey}
+            nodeStyleSheet={
+              sheets.nodeStylePerson
+                ? {
+                    person: sheets.nodeStylePerson,
+                    layoutConfig,
+                    setLayoutConfig,
+                    onClose: sheets.closeNodeStyleSheet,
+                    onOpenDetail: sheets.openPersonDetail,
+                    onSaveSettings: handleSaveSettings,
+                    canSaveSettings: canUseFeature("settings"),
+                  }
+                : null
+            }
             onNodeClick={sheets.handleNodeClick}
             onPersonAdded={addPerson}
             onRelationshipAdded={addRelationship}
@@ -224,6 +237,7 @@ function FamilyTreePageContent() {
           savingSettings={savingSettings}
           saveSuccess={saveSuccess}
           settingsSaveError={settingsSaveError}
+          canSaveSettings={canUseFeature("settings")}
           showExport={showExport}
           exportTreeData={filteredTreeData ?? treeData}
           exportPositionOverrides={exportPositionOverrides}

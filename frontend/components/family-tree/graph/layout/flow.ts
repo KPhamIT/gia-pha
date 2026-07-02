@@ -3,19 +3,25 @@ import type {
   Person,
   Relationship,
 } from "@/components/types/family-tree-types";
+import { resolvePersonNodeAppearance } from "@/lib/family-tree/node-appearance";
+import type { FamilyTreeLayoutConfig } from "./index";
 import type { Coordinates } from "./types";
 
 export function buildFlowNodes(
   persons: Person[],
   rootId: number,
   coordinates: Coordinates,
-  nodeBgColor?: string,
-  nodeTextColor?: string,
-  nodeWidth?: number,
-  nodeHeight?: number,
+  generationMap: Map<number, number>,
+  config: FamilyTreeLayoutConfig,
 ) {
   return persons.map((person) => {
     const pos = coordinates.get(person.id) || { x: 0, y: 0 };
+    const generation = generationMap.get(person.id);
+    const style = resolvePersonNodeAppearance(
+      person.id,
+      generation,
+      config,
+    );
     return {
       id: person.id.toString(),
       type: "default",
@@ -27,10 +33,7 @@ export function buildFlowNodes(
         isRoot: person.id === rootId,
         personId: person.id,
         person,
-        nodeBgColor,
-        nodeTextColor,
-        nodeWidth,
-        nodeHeight,
+        ...style,
       },
       position: pos,
     } as Node;

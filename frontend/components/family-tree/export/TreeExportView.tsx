@@ -42,7 +42,8 @@ export default function TreeExportView({
   });
   const {
     svgRef,
-    fitBase,
+    treeTransform,
+    edgeColor,
     model,
     geometry,
     layout,
@@ -83,7 +84,7 @@ export default function TreeExportView({
     dismissPaywall,
   } = exportState;
 
-  const treeZoom = settings.treeUserScale ?? 1;
+  const treeZoom = treeTransform.treeScale;
 
   const {
     beginPan,
@@ -121,12 +122,13 @@ export default function TreeExportView({
           />
           <TreeExportSvg
             svgRef={svgRef}
-            fitBase={fitBase}
+            treeTransform={treeTransform}
             model={model}
             geometry={geometry}
             layout={layout}
             settings={settings}
             layerImageHrefs={layerImageHrefs}
+            edgeColor={edgeColor}
             interactive
             selectedId={selectedId}
             onSelect={setSelectedId}

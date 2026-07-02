@@ -138,13 +138,44 @@ export type AuthResponse = {
 
 export type ThemeMode = "light" | "dark";
 
+export type NodeFontWeight = "normal" | "semibold" | "bold";
+
+/** Hướng hiển thị tên trên thẻ: ngang (trái→phải) hoặc dọc (trên→dưới). */
+export type NodeTextDirection = "horizontal" | "vertical";
+
+/** Kiểu chữ hoa/thường trên thẻ. */
+export type NodeTextCase = "none" | "uppercase" | "lowercase";
+
+/** Ghi đè kiểu thẻ theo đời thứ (key = số đời dạng chuỗi). */
+export type LevelNodeStyle = {
+  nodeWidth?: number;
+  nodeHeight?: number;
+  nodeBgColor?: string;
+  nodeTextColor?: string;
+  nodeFontSize?: number;
+  nodeFontWeight?: NodeFontWeight;
+  nodeTextDirection?: NodeTextDirection;
+  nodeTextCase?: NodeTextCase;
+};
+
+/** Ghi đè kiểu thẻ theo từng thành viên (key = personId dạng chuỗi). */
+export type NodeStyleOverride = LevelNodeStyle;
+
 export type LayoutConfig = {
   horizontalGap: number;
   verticalStep: number;
+  /** Màu đường nối giữa các thẻ thành viên. */
+  edgeColor: string;
   nodeWidth: number;
   nodeHeight: number;
   nodeBgColor: string;
   nodeTextColor: string;
+  nodeFontSize: number;
+  nodeFontWeight: NodeFontWeight;
+  nodeTextDirection: NodeTextDirection;
+  nodeTextCase: NodeTextCase;
+  levelStyles?: Record<string, LevelNodeStyle>;
+  nodeStyles?: Record<string, NodeStyleOverride>;
 };
 
 export type CreateChildInput = {
@@ -168,6 +199,7 @@ export type CreateChildFormInput = {
 
 export type FamilyTreeEdgeData = {
   relationshipId?: number;
+  edgeColor?: string;
   /** Cho phép xóa quan hệ (quyền `editTree`). */
   canEdit?: boolean;
   onRelationshipRemoved?: (relationshipId: number) => void;

@@ -12,7 +12,7 @@ export function computeCoordinates(
   rootId: number,
   horizontalGap: number,
   verticalStep: number,
-  nodeWidth: number,
+  nodeWidthFor: (personId: number) => number,
 ) {
   const yMap = buildYMap(generationMap, verticalStep);
   const coordinates: Coordinates = new Map();
@@ -22,15 +22,16 @@ export function computeCoordinates(
   const widthCtx = {
     childMap,
     relevantPersonIds,
-    nodeWidth,
+    nodeWidthFor,
     horizontalGap,
     widthMemo: subtreeWidthMap,
     computing: new Set<number>(),
   };
 
   const layoutNode = (personId: number, left: number): number => {
+    const selfWidth = nodeWidthFor(personId);
     if (assigned.has(personId)) {
-      const width = subtreeWidthMap.get(personId) ?? nodeWidth;
+      const width = subtreeWidthMap.get(personId) ?? selfWidth;
       const oldX = coordinates.get(personId)?.x ?? 0;
       if (oldX !== left) {
         shiftSubtree(
@@ -44,7 +45,7 @@ export function computeCoordinates(
       return width;
     }
     if (layoutComputing.has(personId)) {
-      return subtreeWidthMap.get(personId) ?? nodeWidth;
+      return subtreeWidthMap.get(personId) ?? selfWidth;
     }
 
     const children = Array.from(new Set(childMap.get(personId) ?? []))
@@ -55,9 +56,9 @@ export function computeCoordinates(
     if (children.length === 0) {
       coordinates.set(personId, { x: left, y });
       assigned.add(personId);
-      subtreeWidthMap.set(personId, nodeWidth);
+      subtreeWidthMap.set(personId, selfWidth);
       layoutComputing.delete(personId);
-      return nodeWidth;
+      return selfWidth;
     }
 
     let currentLeft = left;
@@ -83,11 +84,17 @@ export function computeCoordinates(
     }
 
     const minChildX = Math.min(...childXPositions);
-    const maxChildX = Math.max(...childXPositions) + nodeWidth;
-    const x = minChildX + (maxChildX - minChildX) / 2 - nodeWidth / 2;
+    const maxChildX =
+      Math.max(
+        ...children.map(
+          (childId) =>
+            (coordinates.get(childId)?.x ?? 0) + nodeWidthFor(childId),
+        ),
+      );
+    const x = minChildX + (maxChildX - minChildX) / 2 - selfWidth / 2;
     coordinates.set(personId, { x, y });
     assigned.add(personId);
-    const width = Math.max(subtreeWidth, nodeWidth);
+    const width = Math.max(subtreeWidth, selfWidth);
     subtreeWidthMap.set(personId, width);
     layoutComputing.delete(personId);
     return width;

@@ -12,6 +12,7 @@ import { applyEdgeChanges, applyNodeChanges } from "@xyflow/react";
 import type { Edge, EdgeChange, Node, NodeChange } from "@xyflow/react";
 import {
   buildFamilyTreeGraph,
+  DEFAULT_EDGE_COLOR,
   FamilyTreeLayoutConfig,
 } from "@/components/family-tree/graph/layout";
 import type {
@@ -94,18 +95,21 @@ export function useFamilyTreeGraph({
     [nodes, selectedNodeId],
   );
 
+  const edgeColor = layoutConfig?.edgeColor ?? DEFAULT_EDGE_COLOR;
+
   const enhancedEdges = useMemo(
     () =>
       edges.map((edge) => ({
         ...edge,
         data: {
           ...edge.data,
+          edgeColor,
           canEdit,
           onRelationshipRemoved: (relationshipId: number) =>
             onRelationshipRemovedRef.current?.(relationshipId),
         },
       })),
-    [edges, canEdit],
+    [edges, edgeColor, canEdit],
   );
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {

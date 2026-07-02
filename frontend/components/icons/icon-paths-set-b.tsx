@@ -123,4 +123,107 @@ export const ICON_SET_B: Partial<Record<IconName, IconDefinition>> = {
       </>
     ),
   },
+  fontSize: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M4 20h7" />
+        <path d="M7.5 4 12 20" />
+        <path d="m9.5 14 5 6" />
+        <path d="M14 4v16" />
+        <path d="M18 8h4" />
+        <path d="M20 6v4" />
+      </>
+    ),
+  },
+  expandWidth: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M8 12h8" />
+        <path d="M4 12H2" />
+        <path d="M22 12h-2" />
+        <path d="m6 9-2 3 2 3" />
+        <path d="m18 9 2 3-2 3" />
+      </>
+    ),
+  },
+  expandHeight: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M12 8v8" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m9 6 3-2 3 2" />
+        <path d="m9 18 3 2 3-2" />
+      </>
+    ),
+  },
+  textHorizontal: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M4 7h16" />
+        <path d="M6 12h12" />
+        <path d="M8 17h8" />
+      </>
+    ),
+  },
+  textVertical: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M9 4v16" />
+        <path d="M14 7v10" />
+        <path d="M19 10v4" />
+      </>
+    ),
+  },
+  layers: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="m12 2 8 4.5v7L12 18l-8-4.5v-7z" />
+        <path d="M4 14.5 12 19l8-4.5" />
+      </>
+    ),
+  },
+  fillColor: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2a2 2 0 0 0 2.8 0z" />
+        <path d="m5 21 5-5" />
+        <path d="M14 3l7 7" />
+      </>
+    ),
+  },
+  textColor: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M4 20h8" />
+        <path d="M6.5 4 11 20" />
+        <path d="M9 14h5" />
+      </>
+    ),
+  },
+  tree: {
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <circle cx="12" cy="5" r="2" />
+        <circle cx="7" cy="11" r="2" />
+        <circle cx="17" cy="11" r="2" />
+        <circle cx="12" cy="17" r="2" />
+        <path d="M12 7v3" />
+        <path d="M10 9.5 8 11" />
+        <path d="M14 9.5 16 11" />
+        <path d="M12 13v2" />
+        <path d="M9.5 15.5 10.5 17" />
+        <path d="M14.5 15.5 13.5 17" />
+      </>
+    ),
+  },
 };

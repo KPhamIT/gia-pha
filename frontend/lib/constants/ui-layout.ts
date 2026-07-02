@@ -32,6 +32,11 @@ export const LAYOUT = {
     "overlay-viewport z-50 flex items-end justify-center pb-0 md:bg-slate-900/35 md:px-6 md:pb-6",
   bottomSheetSearchPanel:
     "relative flex h-[min(75dvh,28rem)] min-h-[min(75dvh,28rem)] w-full max-w-full min-w-0 flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl pb-[env(safe-area-inset-bottom)] md:max-w-md md:rounded-2xl md:pb-0",
+  /** Mini toolbar — góc dưới, không chặn thao tác trên cây. */
+  bottomSheetToolbarOverlay:
+    "overlay-viewport z-50 pointer-events-none flex items-end justify-start p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:p-4 md:pb-5",
+  bottomSheetToolbarPanel:
+    "pointer-events-auto relative w-full max-w-[min(100%,20rem)] overflow-hidden rounded-2xl border border-neutral-200/90 bg-white shadow-xl ring-1 ring-black/5",
   sidePanelOverlay: "overlay-viewport z-50 flex md:bg-slate-900/35",
   sidePanel:
     "relative ml-auto h-screen w-full max-w-[min(100%,20rem)] bg-white p-5 shadow-2xl ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-slate-700 md:max-w-xs lg:max-w-sm",

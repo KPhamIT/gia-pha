@@ -4,6 +4,10 @@ import { memo } from "react";
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from "@xyflow/react";
 import type { EdgeProps } from "@xyflow/react";
 import type { FamilyTreeEdgeData } from "@/components/types/family-tree-types";
+import {
+  DEFAULT_EDGE_COLOR,
+  SELECTED_EDGE_COLOR,
+} from "@/components/family-tree/graph/layout";
 import { deleteRelationshipById } from "@/lib/family-tree/mutations";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
@@ -42,12 +46,14 @@ function FamilyTreeEdge({
     }
   };
 
+  const edgeColor = edgeData?.edgeColor ?? DEFAULT_EDGE_COLOR;
+
   return (
     <>
       <BaseEdge
         path={edgePath}
         style={{
-          stroke: selected ? "#d97706" : "#94a3b8",
+          stroke: selected ? SELECTED_EDGE_COLOR : edgeColor,
           strokeWidth: selected ? 2 : 1.5,
         }}
       />

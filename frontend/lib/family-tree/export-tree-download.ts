@@ -31,6 +31,7 @@ export function downloadSvgElement(
   filename: string,
   fontFaceCss?: string,
   physicalSize?: { width: string; height: string },
+  treeTransform?: string,
 ): void {
   const clone = svg.cloneNode(true) as SVGSVGElement;
   clone.removeAttribute("style");
@@ -44,6 +45,11 @@ export function downloadSvgElement(
     clone.setAttribute("height", String(height));
   }
   clone.querySelectorAll("[data-export-ignore]").forEach((el) => el.remove());
+
+  if (treeTransform) {
+    const treeGroup = clone.querySelector("[data-export-tree]");
+    treeGroup?.setAttribute("transform", treeTransform);
+  }
 
   if (fontFaceCss) {
     const styleEl = document.createElementNS(

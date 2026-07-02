@@ -46,6 +46,7 @@ export const CORE_STRINGS = {
   // Settings panel
   SETTINGS_TITLE: "Cài đặt",
   SETTINGS_XY_HINT: "Khoảng cách X / Y",
+  TREE_SETTINGS_PANEL_HINT: "Khoảng cách cây · bấm thẻ thành viên để chỉnh kiểu",
   CLOSE_SETTINGS: "Đóng cài đặt",
   DISPLAY_MODE: "Chế độ hiển thị",
   THEME_DARK: "Tối",
@@ -53,6 +54,7 @@ export const CORE_STRINGS = {
   SWITCH_TO_LIGHT: "Chuyển sang chế độ sáng",
   SWITCH_TO_DARK: "Chuyển sang chế độ tối",
   H_GAP_LABEL: "Khoảng cách tối thiểu giữa node (px)",
+  EDGE_COLOR_LABEL: "Màu đường nối giữa các thẻ",
   V_GAP_LABEL: "Khoảng cách dọc giữa thế hệ (px)",
 
   // Node appearance
@@ -60,6 +62,31 @@ export const CORE_STRINGS = {
   NODE_HEIGHT_LABEL: "Chiều cao thẻ (px)",
   NODE_BG_COLOR: "Màu nền thẻ",
   NODE_TEXT_COLOR: "Màu chữ thẻ",
+  NODE_FONT_SIZE_LABEL: "Cỡ chữ thẻ (px)",
+  NODE_FONT_WEIGHT_LABEL: "Độ đậm chữ",
+  NODE_FONT_WEIGHT_NORMAL: "Thường",
+  NODE_FONT_WEIGHT_SEMIBOLD: "Vừa đậm",
+  NODE_FONT_WEIGHT_BOLD: "Đậm",
+  NODE_TEXT_DIRECTION_LABEL: "Hướng chữ",
+  NODE_TEXT_DIRECTION_HORIZONTAL: "Ngang",
+  NODE_TEXT_DIRECTION_VERTICAL: "Dọc",
+  NODE_TEXT_CASE_LABEL: "Chữ hoa/thường",
+  NODE_TEXT_CASE_AS_TYPED: "Như gốc",
+  NODE_TEXT_CASE_UPPER: "CHỮ HOA",
+  NODE_TEXT_CASE_LOWER: "chữ thường",
+  LEVEL_STYLE_TARGET: "Cấu hình cho",
+  LEVEL_STYLE_DEFAULT: "Mặc định (tất cả đời)",
+  LEVEL_STYLE_HINT: "Cùng đời thứ dùng chung một kiểu thẻ",
+  LEVEL_STYLE_RESET: "Dùng mặc định cho đời này",
+  TREE_SETTINGS_NODE_HINT:
+    "Bấm vào thẻ thành viên trên cây để chỉnh màu sắc, cỡ chữ và kích thước.",
+  NODE_STYLE_SHEET_HINT: "Thay đổi được xem trước ngay trên cây.",
+  NODE_STYLE_APPLY_SAME_LEVEL: "Áp dụng cho tất cả node cùng đời",
+  NODE_STYLE_APPLY_WHOLE_TREE: "Áp dụng cho toàn cây",
+  NODE_STYLE_APPLY_SAME_LEVEL_DISABLED: "Thành viên chưa có đời thứ — chỉ áp dụng cho node này.",
+  NODE_STYLE_OPEN_DETAIL: "Xem chi tiết",
+  NODE_STYLE_APPLY: "Áp dụng",
+  NODE_STYLE_SHEET_NO_GENERATION: "Chưa ghi đời thứ",
 
   // Save settings
   SAVE_SETTINGS: "Lưu cài đặt",

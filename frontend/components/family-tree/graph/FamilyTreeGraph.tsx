@@ -5,6 +5,8 @@ import {
   ReactFlowProvider,
   Background,
   Controls,
+  NodeToolbar,
+  Position,
 } from "@xyflow/react";
 import type { Node } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -23,6 +25,9 @@ import GraphViewportController, {
   GRAPH_MIN_ZOOM,
 } from "./GraphViewportController";
 import type { FamilyTreeLayoutConfig } from "./layout";
+import NodeStylePanel, {
+  type NodeStylePanelProps,
+} from "@/components/family-tree/node-style/NodeStylePanel";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import { useFamilyTreeGraph } from "@/hooks/useFamilyTreeGraph";
 import { FAMILY_TREE_FLOW_PRO_OPTIONS } from "@/lib/family-tree/react-flow-config";
@@ -39,6 +44,7 @@ export type FamilyTreeGraphProps = {
   selectedNodeId?: number | null;
   focusNodeId?: number | null;
   centerTreeKey?: number;
+  nodeStyleSheet?: NodeStylePanelProps | null;
   onPersonAdded?: (person: Person, relationship: Relationship) => void;
   onRelationshipAdded?: (relationship: Relationship) => void;
   onRelationshipRemoved?: (relationshipId: number) => void;
@@ -89,6 +95,17 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
           focusNodeId={props.focusNodeId}
           centerTreeKey={props.centerTreeKey}
         />
+        {props.nodeStyleSheet ? (
+          <NodeToolbar
+            nodeId={String(props.nodeStyleSheet.person.id)}
+            isVisible
+            position={Position.Top}
+            offset={8}
+            align="center"
+          >
+            <NodeStylePanel {...props.nodeStyleSheet} />
+          </NodeToolbar>
+        ) : null}
       </ReactFlow>
 
       {graph.saveError ? (

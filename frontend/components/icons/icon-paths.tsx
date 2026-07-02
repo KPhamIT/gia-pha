@@ -30,7 +30,16 @@ export type IconName =
   | "download"
   | "lock"
   | "share"
-  | "refresh";
+  | "refresh"
+  | "fontSize"
+  | "expandWidth"
+  | "expandHeight"
+  | "textHorizontal"
+  | "textVertical"
+  | "layers"
+  | "fillColor"
+  | "textColor"
+  | "tree";
 
 export interface IconDefinition {
   viewBox: string;

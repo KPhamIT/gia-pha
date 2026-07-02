@@ -38,7 +38,7 @@ export function buildYMap(
 export type SubtreeWidthCtx = {
   childMap: Map<number, number[]>;
   relevantPersonIds: Set<number>;
-  nodeWidth: number;
+  nodeWidthFor: (personId: number) => number;
   horizontalGap: number;
   /** Memoised result per person (shared with the placement pass). */
   widthMemo: Map<number, number>;
@@ -54,16 +54,17 @@ export function computeSubtreeWidth(
   const {
     childMap,
     relevantPersonIds,
-    nodeWidth,
+    nodeWidthFor,
     horizontalGap,
     widthMemo,
     computing,
   } = ctx;
+  const selfWidth = nodeWidthFor(personId);
   if (widthMemo.has(personId)) return widthMemo.get(personId)!;
 
   if (computing.has(personId)) {
-    widthMemo.set(personId, nodeWidth);
-    return nodeWidth;
+    widthMemo.set(personId, selfWidth);
+    return selfWidth;
   }
 
   const children = Array.from(new Set(childMap.get(personId) ?? []))
@@ -71,9 +72,9 @@ export function computeSubtreeWidth(
     .sort((a, b) => a - b);
   computing.add(personId);
   if (children.length === 0) {
-    widthMemo.set(personId, nodeWidth);
+    widthMemo.set(personId, selfWidth);
     computing.delete(personId);
-    return nodeWidth;
+    return selfWidth;
   }
 
   let total = 0;
@@ -81,7 +82,7 @@ export function computeSubtreeWidth(
     total += computeSubtreeWidth(child, ctx);
   }
   if (children.length > 1) total += horizontalGap * (children.length - 1);
-  const width = Math.max(total, nodeWidth);
+  const width = Math.max(total, selfWidth);
   widthMemo.set(personId, width);
   computing.delete(personId);
   return width;

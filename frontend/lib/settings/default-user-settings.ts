@@ -22,7 +22,14 @@ export const DEFAULT_USER_SETTINGS = {
   nodeBgColor: "#f60404",
   verticalStep: 220,
   horizontalGap: 15,
+  edgeColor: "#94a3b8",
   nodeTextColor: "#d4f005",
+  nodeFontSize: 18,
+  nodeFontWeight: "semibold",
+  nodeTextDirection: "vertical",
+  nodeTextCase: "none",
+  levelStyles: {},
+  nodeStyles: {},
 } satisfies UserSettings;
 
 export type OrgBookContext = {
