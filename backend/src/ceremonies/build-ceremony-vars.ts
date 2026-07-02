@@ -31,6 +31,61 @@ type WorshipperPerson = {
   birthPlace: string | null;
 } | null;
 
+const PLACEHOLDER = '…………';
+
+/** Biến mẫu khi chưa chọn người — giữ ngày hôm nay và thông tin tổ chức/tín chủ. */
+export function buildPlaceholderCeremonyVars(
+  organizationName: string,
+  worshipper: WorshipperPerson,
+  referenceDate = new Date(),
+): CeremonyVarGroups {
+  const todayLunar = Lunar.fromDate(referenceDate);
+  const worshipperName = worshipper?.fullName?.trim() || PLACEHOLDER;
+  const worshipperAddress =
+    worshipper?.currentLocation?.trim() ||
+    worshipper?.birthPlace?.trim() ||
+    PLACEHOLDER;
+
+  return {
+    person: {
+      full_name: PLACEHOLDER,
+      name: PLACEHOLDER,
+      birth_date: PLACEHOLDER,
+      birth_year: PLACEHOLDER,
+      death_date: PLACEHOLDER,
+      death_year: PLACEHOLDER,
+      birth_place: PLACEHOLDER,
+      current_location: PLACEHOLDER,
+      grave_cemetery: PLACEHOLDER,
+      grave_address: PLACEHOLDER,
+      grave_notes: PLACEHOLDER,
+    },
+    organization: {
+      name: organizationName,
+    },
+    ceremony: {
+      lunar_date: PLACEHOLDER,
+      lunar_day: PLACEHOLDER,
+      lunar_month: PLACEHOLDER,
+      lunar_year: String(todayLunar.getYear()),
+    },
+    today: {
+      lunar_day: String(todayLunar.getDay()),
+      lunar_month: String(todayLunar.getMonth()),
+      lunar_year: String(todayLunar.getYear()),
+      lunar_date: formatLunarDeathDate(
+        todayLunar.getMonth(),
+        todayLunar.getDay(),
+      ),
+    },
+    worshipper: {
+      full_name: worshipperName,
+      name: worshipperName,
+      address: worshipperAddress,
+    },
+  };
+}
+
 export function buildCeremonyVars(
   person: PersonWithOrg,
   worshipper: WorshipperPerson,

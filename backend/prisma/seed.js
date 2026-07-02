@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { PrismaClient } from '../dist/generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
+import { loadCeremonyTemplatesFromPdf } from './ceremony-pdf-seed-data.js';
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL ?? '',
@@ -198,48 +199,68 @@ async function main() {
     console.log('Created organization:', organization.name);
   }
 
-  const existingCeremonyTemplate = await prisma.ceremonyTemplate.findFirst({
+  const existingCeremonyTemplates = await prisma.ceremonyTemplate.findMany({
     where: { organizationId: organization.id },
+    select: { id: true, name: true, isDefault: true },
   });
+  const templatesFromBook = await loadCeremonyTemplatesFromPdf();
+  let seededCeremonyCount = 0;
+  for (let i = 0; i < templatesFromBook.length; i += 1) {
+    const template = templatesFromBook[i];
+    const existing = existingCeremonyTemplates.find(
+      (item) => item.name === template.name,
+    );
+    const isDefault =
+      existingCeremonyTemplates.length === 0 && i === 0
+        ? true
+        : (existing?.isDefault ?? false);
 
-  if (!existingCeremonyTemplate) {
-    await prisma.ceremonyTemplate.create({
-      data: {
-        organizationId: organization.id,
-        name: 'Bài cúng ngày giỗ (mặc định)',
-        isDefault: true,
-        content: `<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <title>Bài cúng — {{person.full_name}}</title>
-  <style>
-    body { font-family: "Noto Serif", Georgia, serif; max-width: 720px; margin: 2rem auto; padding: 1.5rem; line-height: 1.8; color: #1a1a1a; }
-    h1 { text-align: center; font-size: 1.5rem; margin-bottom: 1.5rem; }
-    .meta { text-align: center; margin-bottom: 2rem; color: #555; }
-    .content { white-space: pre-wrap; }
-    @media print { body { margin: 0; padding: 1rem; } }
-  </style>
-</head>
-<body>
-  <h1>BÀI CÚNG NGÀY GIỖ</h1>
-  <p class="meta">{{organization.name}} — {{ceremony.lunar_date}}</p>
-  <div class="content">
-Kính cúng linh hồn cụ {{person.full_name}}
+    const data = {
+      organizationId: organization.id,
+      name: template.name,
+      content: template.content,
+      intro: template.intro,
+      meaning: template.meaning,
+      preparation: template.preparation,
+      sourceBookTitle: template.sourceBookTitle,
+      seoSlug: template.seoSlug,
+      seoTitle: template.seoTitle,
+      seoDescription: template.seoDescription,
+      seoExcerpt: template.seoExcerpt,
+      seoKeywords: template.seoKeywords,
+      isDefault,
+    };
 
-Hôm nay, ngày {{ceremony.lunar_date}}, con cháu dòng họ {{organization.name}} thành kính dâng lễ vật, thắp hương thành tâm, tưởng nhớ công lao và đức hạnh của cụ.
+    if (existing) {
+      await prisma.ceremonyTemplate.update({
+        where: { id: existing.id },
+        data,
+      });
+      seededCeremonyCount += 1;
+      continue;
+    }
 
-Cụ sinh năm {{person.birth_date}}, mất năm {{person.death_date}}.
+    await prisma.ceremonyTemplate.create({ data });
+    seededCeremonyCount += 1;
+  }
+  console.log(`Seeded ${seededCeremonyCount} ceremony templates from PDF`);
 
-Nguyện cầu linh hồn cụ được an lạc, phù hộ con cháu mạnh khỏe, gia đạo hưng thịnh.
-
-Nam mô A Di Đà Phật.
-  </div>
-</body>
-</html>`,
-      },
+  const hasDefaultTemplate = await prisma.ceremonyTemplate.findFirst({
+    where: { organizationId: organization.id, isDefault: true },
+    select: { id: true },
+  });
+  if (!hasDefaultTemplate) {
+    const fallback = await prisma.ceremonyTemplate.findFirst({
+      where: { organizationId: organization.id },
+      orderBy: { id: 'asc' },
+      select: { id: true },
     });
-    console.log('Created default ceremony template');
+    if (fallback) {
+      await prisma.ceremonyTemplate.update({
+        where: { id: fallback.id },
+        data: { isDefault: true },
+      });
+    }
   }
 
   const existingRoot = await prisma.person.findFirst({

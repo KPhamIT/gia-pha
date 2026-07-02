@@ -11,6 +11,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import {
   DEFAULT_CEREMONY_TEMPLATE,
   buildCeremonyVars,
+  buildPlaceholderCeremonyVars,
   renderCeremonyTemplate,
 } from './ceremony-template.js';
 import { normalizeCeremonyHtml } from './ceremony-html.js';
@@ -46,6 +47,33 @@ export class CeremoniesService {
       throw new UnauthorizedException('Invalid or expired share link');
     }
     return this.renderCeremonyHtmlForPerson(personId, null);
+  }
+
+  async renderTemplatePreviewHtml(user: User, templateId: number) {
+    const template = await this.ceremonyTemplates.findOne(user, templateId);
+    const organization = await this.prisma.organization.findUnique({
+      where: { id: template.organizationId },
+      select: { id: true, name: true },
+    });
+    if (!organization) throw new NotFoundException('Organization not found');
+
+    const worshipper = await this.prisma.person.findUnique({
+      where: { userId: user.id },
+      select: { fullName: true, currentLocation: true, birthPlace: true },
+    });
+    const vars = buildPlaceholderCeremonyVars(
+      organization.name,
+      worshipper,
+    );
+    const rendered = renderCeremonyTemplate(template.content, vars);
+    const html = normalizeCeremonyHtml(rendered);
+
+    return {
+      personId: null,
+      fullName: '',
+      organizationId: organization.id,
+      html,
+    };
   }
 
   async renderCeremonyHtml(user: User, personId: number, templateId?: number) {

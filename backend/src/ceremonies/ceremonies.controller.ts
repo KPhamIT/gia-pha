@@ -39,6 +39,15 @@ export class CeremoniesController {
     return this.ceremonyTemplatesService.list(req.user);
   }
 
+  @Get('templates/:id/preview-html')
+  @UseGuards(JwtRequiredGuard)
+  previewTemplateHtml(
+    @Request() req: { user: User },
+    @Param('id') id: string,
+  ) {
+    return this.ceremoniesService.renderTemplatePreviewHtml(req.user, +id);
+  }
+
   @Get('templates/:id')
   @UseGuards(JwtRequiredGuard)
   getTemplate(@Request() req: { user: User }, @Param('id') id: string) {
