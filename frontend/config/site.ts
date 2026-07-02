@@ -51,6 +51,9 @@ export const SITE = {
   /** Highest-resolution brand logo for schema.org (512×512 PNG route). */
   logoPath: "/icons/pwa-512",
   defaultOgImagePath: "/icons/pwa-512",
+  faviconPath: "/favicon.ico",
+  faviconSvgPath: "/favicon.svg",
+  appleIconPath: "/apple-icon",
   twitter: {
     card: "summary_large_image" as const,
     site: "@coinguon",

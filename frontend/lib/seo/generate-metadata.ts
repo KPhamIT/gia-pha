@@ -77,8 +77,12 @@ export function createRootMetadata(): Metadata {
       telephone: false,
     },
     icons: {
-      icon: [{ url: SITE.logoPath, sizes: "512x512", type: "image/png" }],
-      apple: [{ url: SITE.logoPath, sizes: "512x512", type: "image/png" }],
+      icon: [
+        { url: SITE.faviconPath, sizes: "any" },
+        { url: SITE.faviconSvgPath, type: "image/svg+xml" },
+      ],
+      apple: [{ url: SITE.appleIconPath, sizes: "180x180", type: "image/png" }],
+      shortcut: SITE.faviconPath,
     },
   };
 }
