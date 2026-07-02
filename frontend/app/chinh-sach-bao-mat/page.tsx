@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PublicDocPageShell from "@/components/public/PublicDocPageShell";
 import PublicProseContent from "@/components/public/PublicProseContent";
+import SeoSchemas from "@/components/seo/SeoSchemas";
 import { PRIVACY_DOCUMENT } from "@/lib/constants/ui-strings/public";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `${PRIVACY_DOCUMENT.title} | ${UI.PAGE_TITLE}`,
+export const metadata: Metadata = createMetadata({
+  title: PRIVACY_DOCUMENT.title,
   description: PRIVACY_DOCUMENT.subtitle,
-};
+  path: "/chinh-sach-bao-mat",
+});
 
 export default function PrivacyPage() {
   return (
@@ -17,6 +20,11 @@ export default function PrivacyPage() {
       title={PRIVACY_DOCUMENT.title}
       subtitle={PRIVACY_DOCUMENT.subtitle}
     >
+      <SeoSchemas
+        path="/chinh-sach-bao-mat"
+        title={PRIVACY_DOCUMENT.title}
+        description={PRIVACY_DOCUMENT.subtitle}
+      />
       <PublicProseContent document={PRIVACY_DOCUMENT} />
       <p className={`mt-6 text-sm ${BT.mutedOnLight}`}>
         <Link href="/lien-he" className="font-medium text-amber-800 underline-offset-2 hover:underline">

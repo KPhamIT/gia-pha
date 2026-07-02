@@ -16,7 +16,7 @@ type Props = {
   relationships: Relationship[];
 };
 
-/** Chọn người đã mất rồi xem + in bài cúng với dữ liệu thật của họ. */
+/** Xem bài cúng ngay; chọn người đã mất để điền thông tin cá nhân. */
 export default function CeremonyPrintView({
   templateId,
   persons,
@@ -24,35 +24,38 @@ export default function CeremonyPrintView({
 }: Props) {
   const [personId, setPersonId] = useState<number | null>(null);
 
-  if (persons.length === 0) {
-    return (
-      <p className={`text-sm ${BT.mutedOnDark}`}>
-        {UI.CEREMONY_PRINT_NO_PERSONS}
-      </p>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      <div className={`${BT.card} p-3`}>
-        <PersonSearchPanel
-          persons={persons}
-          relationships={relationships}
-          selectedPersonId={personId}
-          onSelect={(item) => setPersonId(item.id)}
-          onClear={() => setPersonId(null)}
-          placeholder={UI.CEREMONY_PRINT_SEARCH}
-          clearLabel={UI.CEREMONY_PRINT_CHANGE_PERSON}
-          listClassName="max-h-60 overflow-y-auto rounded-xl border border-amber-100 bg-amber-50/30 px-1 py-1"
-        />
-      </div>
-      {personId != null ? (
-        <CeremonyViewer personId={personId} templateId={templateId} />
+      {persons.length > 0 ? (
+        <div className={`${BT.card} p-3`}>
+          <PersonSearchPanel
+            persons={persons}
+            relationships={relationships}
+            selectedPersonId={personId}
+            onSelect={(item) => setPersonId(item.id)}
+            onClear={() => setPersonId(null)}
+            placeholder={UI.CEREMONY_PRINT_SEARCH}
+            clearLabel={UI.CEREMONY_PRINT_CHANGE_PERSON}
+            listClassName="max-h-60 overflow-y-auto rounded-xl border border-amber-100 bg-amber-50/30 px-1 py-1"
+          />
+        </div>
       ) : (
+        <p className={`text-sm ${BT.mutedOnDark}`}>
+          {UI.CEREMONY_PRINT_NO_PERSONS}
+        </p>
+      )}
+
+      {personId == null && persons.length > 0 ? (
         <p className={`text-sm ${BT.mutedOnDark}`}>
           {UI.CEREMONY_PRINT_PICK_PERSON}
         </p>
-      )}
+      ) : null}
+
+      <CeremonyViewer
+        key={`${templateId}-${personId ?? "preview"}`}
+        templateId={templateId}
+        personId={personId ?? undefined}
+      />
     </div>
   );
 }

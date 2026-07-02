@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
 import { useAuthStore } from "@/store/authStore";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 import { userDisplayInitials } from "@/utils/user-display";
 
 /** Góc phải header: đăng nhập (khách) hoặc avatar 2 chữ cái → /account. */
@@ -19,7 +18,7 @@ export default function AccountHeaderButton() {
     return (
       <Link
         href="/login"
-        className={`${BT.btnBase} ${BT.btnSm} ${BT.btnGhost} text-amber-100`}
+        className="inline-flex items-center rounded-lg border border-[#d4c3c1] bg-white px-4 py-2 text-sm font-semibold text-[#321716] transition hover:bg-[#f6f3ee]"
       >
         {UI.LANDING_CTA_LOGIN}
       </Link>

@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import PublicDocPageShell from "@/components/public/PublicDocPageShell";
 import BlogArticle from "@/components/blog/BlogArticle";
+import SeoSchemas from "@/components/seo/SeoSchemas";
 import { fetchBlogPost, fetchBlogSlugs } from "@/lib/blog/server-api";
-import { blogArticleJsonLd } from "@/lib/blog/json-ld";
 import { UI } from "@/lib/constants/ui-strings";
-import { getSiteUrl } from "@/lib/site-url";
+import { createMetadata } from "@/lib/seo";
 import { BT } from "@/lib/constants/ui-theme";
 
 type BlogPostPageProps = {
@@ -23,25 +23,18 @@ export async function generateMetadata({
 }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await fetchBlogPost(slug);
-  if (!post) return { title: UI.PAGE_TITLE };
+  if (!post) return createMetadata({ title: UI.PAGE_TITLE, description: UI.PAGE_DESCRIPTION, path: "/bai-viet" });
 
-  const url = `${getSiteUrl()}/bai-viet/${post.slug}`;
-  return {
-    title: `${post.title} | ${UI.PAGE_TITLE}`,
+  return createMetadata({
+    title: post.title,
     description: post.metaDescription,
+    path: `/bai-viet/${post.slug}`,
     keywords: post.tags,
-    alternates: { canonical: url },
-    openGraph: {
-      title: post.title,
-      description: post.metaDescription,
-      url,
-      type: "article",
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
-      tags: post.tags,
-      locale: "vi_VN",
-    },
-  };
+    type: "article",
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt,
+    pageType: "article",
+  });
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -49,17 +42,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = await fetchBlogPost(slug);
   if (!post) notFound();
 
-  const jsonLd = blogArticleJsonLd(post);
-
   return (
     <PublicDocPageShell
       title={post.title}
       subtitle={post.metaDescription}
       backHref="/bai-viet"
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <SeoSchemas
+        path={`/bai-viet/${post.slug}`}
+        title={post.title}
+        headline={post.title}
+        description={post.metaDescription}
+        pageType="article"
+        publishedAt={post.publishedAt}
+        updatedAt={post.updatedAt}
+        keywords={post.tags}
       />
       <div className="space-y-4">
         <Link

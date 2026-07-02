@@ -63,6 +63,7 @@ Nam mô A Di Đà Phật.
 
 export {
   buildCeremonyVars,
+  buildPlaceholderCeremonyVars,
   renderCeremonyTemplate,
 } from './build-ceremony-vars.js';
 export type { CeremonyVarGroups } from './build-ceremony-vars.js';

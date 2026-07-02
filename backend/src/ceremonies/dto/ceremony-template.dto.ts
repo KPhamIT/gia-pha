@@ -1,4 +1,10 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateCeremonyTemplateDto {
   @IsNotEmpty()
@@ -12,6 +18,43 @@ export class CreateCeremonyTemplateDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsOptional()
+  @IsString()
+  intro?: string;
+
+  @IsOptional()
+  @IsString()
+  meaning?: string;
+
+  @IsOptional()
+  @IsString()
+  preparation?: string;
+
+  @IsOptional()
+  @IsString()
+  sourceBookTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  seoSlug?: string;
+
+  @IsOptional()
+  @IsString()
+  seoTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  seoDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  seoExcerpt?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  seoKeywords?: string[];
 }
 
 export class UpdateCeremonyTemplateDto {
@@ -26,4 +69,41 @@ export class UpdateCeremonyTemplateDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsOptional()
+  @IsString()
+  intro?: string;
+
+  @IsOptional()
+  @IsString()
+  meaning?: string;
+
+  @IsOptional()
+  @IsString()
+  preparation?: string;
+
+  @IsOptional()
+  @IsString()
+  sourceBookTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  seoSlug?: string;
+
+  @IsOptional()
+  @IsString()
+  seoTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  seoDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  seoExcerpt?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  seoKeywords?: string[];
 }

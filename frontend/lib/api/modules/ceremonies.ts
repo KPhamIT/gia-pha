@@ -2,7 +2,7 @@ import axiosClient from "@/lib/axiosClient";
 import { API_ROUTES } from "@/lib/constants/api-routes";
 
 export type CeremonyHtmlResponse = {
-  personId: number;
+  personId: number | null;
   fullName: string;
   organizationId: number;
   html: string;
@@ -13,6 +13,15 @@ export type CeremonyTemplate = {
   organizationId: number;
   name: string;
   content: string;
+  intro?: string | null;
+  meaning?: string | null;
+  preparation?: string | null;
+  sourceBookTitle?: string | null;
+  seoSlug?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoExcerpt?: string | null;
+  seoKeywords?: string[];
   isDefault: boolean;
   createdAt: string;
   updatedAt: string;
@@ -27,6 +36,15 @@ export type CreateCeremonyTemplateInput = {
   name: string;
   content: string;
   isDefault?: boolean;
+  intro?: string;
+  meaning?: string;
+  preparation?: string;
+  sourceBookTitle?: string;
+  seoSlug?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoExcerpt?: string;
+  seoKeywords?: string[];
 };
 
 export type UpdateCeremonyTemplateInput = Partial<CreateCeremonyTemplateInput>;
@@ -37,6 +55,13 @@ export const ceremonies = {
       .get<CeremonyHtmlResponse>(API_ROUTES.CEREMONY_HTML(personId), {
         params: templateId != null ? { templateId } : undefined,
       })
+      .then((r) => r.data),
+
+  getTemplatePreviewHtml: (templateId: number) =>
+    axiosClient
+      .get<CeremonyHtmlResponse>(
+        API_ROUTES.CEREMONY_TEMPLATE_PREVIEW_HTML(templateId),
+      )
       .then((r) => r.data),
 
   getShareToken: (personId: number) =>

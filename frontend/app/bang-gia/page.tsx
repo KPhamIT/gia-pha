@@ -2,14 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PricingTierCard from "@/components/billing/PricingTierCard";
 import PublicDocPageShell from "@/components/public/PublicDocPageShell";
+import SeoSchemas from "@/components/seo/SeoSchemas";
 import { TIER_CATALOG } from "@/lib/constants/billing";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `${UI.PRICING_PAGE_TITLE} | ${UI.PAGE_TITLE}`,
+export const metadata: Metadata = createMetadata({
+  title: UI.PRICING_PAGE_TITLE,
   description: UI.PRICING_PAGE_SUBTITLE,
-};
+  path: "/bang-gia",
+  keywords: ["bảng giá", "gia phả", "dòng họ"],
+  pageType: "software",
+});
 
 type PageProps = {
   searchParams: Promise<{ orgId?: string }>;
@@ -25,6 +30,12 @@ export default async function PricingPage({ searchParams }: PageProps) {
       title={UI.PRICING_PAGE_TITLE}
       subtitle={UI.PRICING_PAGE_SUBTITLE}
     >
+      <SeoSchemas
+        path="/bang-gia"
+        title={UI.PRICING_PAGE_TITLE}
+        description={UI.PRICING_PAGE_SUBTITLE}
+        pageType="software"
+      />
       <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>
         {UI.PRICING_INTRO}
       </p>

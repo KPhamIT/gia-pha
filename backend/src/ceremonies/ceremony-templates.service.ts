@@ -55,6 +55,15 @@ export class CeremonyTemplatesService {
           name: dto.name.trim(),
           content: dto.content,
           isDefault,
+          intro: dto.intro,
+          meaning: dto.meaning,
+          preparation: dto.preparation,
+          sourceBookTitle: dto.sourceBookTitle,
+          seoSlug: dto.seoSlug,
+          seoTitle: dto.seoTitle,
+          seoDescription: dto.seoDescription,
+          seoExcerpt: dto.seoExcerpt,
+          seoKeywords: dto.seoKeywords,
         },
       });
     });
@@ -78,6 +87,15 @@ export class CeremonyTemplatesService {
           name: dto.name?.trim(),
           content: dto.content,
           isDefault: dto.isDefault,
+          intro: dto.intro,
+          meaning: dto.meaning,
+          preparation: dto.preparation,
+          sourceBookTitle: dto.sourceBookTitle,
+          seoSlug: dto.seoSlug,
+          seoTitle: dto.seoTitle,
+          seoDescription: dto.seoDescription,
+          seoExcerpt: dto.seoExcerpt,
+          seoKeywords: dto.seoKeywords,
         },
       });
     });

@@ -24,12 +24,20 @@ export const PUBLIC_STRINGS = {
   PUBLIC_FOOTER_TERMS: "Điều khoản sử dụng",
   PUBLIC_FOOTER_BOOK: "Vào sổ gia phả",
   PUBLIC_FOOTER_COPYRIGHT: (year: number) =>
-    `© ${year} Gia phả điện tử. Mọi quyền được bảo lưu.`,
+    `© ${year} Cội Nguồn — Gia phả điện tử. Mọi quyền được bảo lưu.`,
 
   // Landing
-  LANDING_HERO_TITLE: "Gia phả điện tử cho dòng họ",
+  LANDING_HERO_TITLE: "Gia phả điện tử cho gia đình và dòng họ",
+  LANDING_HERO_TITLE_LINE1: "Gia phả điện tử",
+  LANDING_HERO_TITLE_LINE2: "cho dòng họ",
   LANDING_HERO_SUBTITLE:
     "Tra cứu sổ gia phả, cây phả hệ, sự kiện và ngày giỗ — mọi lúc trên điện thoại, không cần cài app.",
+  LANDING_NAV_HOME: "Trang chủ",
+  LANDING_NAV_CLAN: "Gia tộc",
+  LANDING_NAV_EVENTS: "Sự kiện",
+  LANDING_NAV_LIBRARY: "Thư viện",
+  LANDING_NAV_SERVICES: "Dịch vụ",
+  LANDING_NAV_SEARCH_ARIA: "Tìm kiếm",
   LANDING_CTA_GUIDE: "Xem hướng dẫn",
   LANDING_CTA_BOOK: "Vào sổ gia phả",
   LANDING_CTA_LOGIN: "Đăng nhập",
@@ -39,6 +47,7 @@ export const PUBLIC_STRINGS = {
     "Mở liên kết một lần — thiết bị sẽ nhớ dòng họ; lần sau chỉ cần vào website.",
   ],
   LANDING_START_TITLE: "Hai cách bắt đầu",
+  LANDING_START_SUBTITLE: "Chọn phương thức phù hợp với hiện trạng dòng họ của bạn.",
   LANDING_START_HAS_LINK_TITLE: "Đã có liên kết dòng họ",
   LANDING_START_HAS_LINK_STEPS: [
     "Nhận liên kết từ ban quản trị / thư ký qua Zalo, Facebook hoặc tin nhắn.",
@@ -126,6 +135,80 @@ export const PUBLIC_STRINGS = {
   LANDING_SERVICES_CTA: "Liên hệ tư vấn",
   LANDING_LEGAL_HINT:
     "Bằng việc sử dụng dịch vụ, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",
+  LANDING_STATS_ITEMS: [
+    { value: "10,000+", label: "Dòng họ tham gia" },
+    { value: "500k+", label: "Thành viên ghi danh" },
+    { value: "100%", label: "Bảo mật dữ liệu" },
+    { value: "Vĩnh viễn", label: "Lưu trữ truyền đời" },
+  ],
+  LANDING_BENTO_TREE_TITLE: "Phả đồ tương tác thông minh",
+  LANDING_BENTO_TREE_DESC:
+    "Dễ theo dõi nhiều thế hệ, xem nhanh nhánh họ và quan hệ trong cùng một màn hình.",
+  LANDING_BENTO_REMINDER_TITLE: "Thông báo kỵ nhật",
+  LANDING_BENTO_REMINDER_DESC:
+    "Nhắc ngày giỗ tự động theo âm lịch, không bỏ lỡ ngày quan trọng của dòng tộc.",
+  LANDING_BENTO_MORE: "Tìm hiểu thêm",
+  LANDING_BENTO_SECURITY_TITLE: "Bảo mật tuyệt đối",
+  LANDING_BENTO_SECURITY_DESC:
+    "Dữ liệu gia phả là tài sản vô giá. Hệ thống phân quyền rõ ràng cho từng tổ chức.",
+  LANDING_BENTO_SECURITY_BADGE: "Đạt chuẩn",
+  LANDING_BENTO_ARCHIVE_TITLE: "Lưu trữ số hóa tài liệu cổ",
+  LANDING_BENTO_ARCHIVE_DESC:
+    "Số hóa tư liệu gia phả, lưu giữ lâu dài và dễ dàng tra cứu cho con cháu đời sau.",
+  LANDING_FINAL_CTA_TITLE: "Bắt đầu lưu giữ lịch sử dòng họ ngay hôm nay",
+  LANDING_FINAL_CTA_BODY:
+    "\"Cây có gốc mới nở cành xanh ngọn, nước có nguồn mới bể rộng sông sâu.\" Hãy để Cội Nguồn đồng hành cùng gia đình bạn trên hành trình tìm về nguồn cội.",
+  LANDING_FOOTER_ABOUT:
+    "Nền tảng công nghệ giúp lưu giữ gia phả, kết nối con cháu và bảo tồn giá trị cội nguồn cho nhiều thế hệ.",
+  LANDING_FOOTER_DISCOVER_TITLE: "Khám phá",
+  LANDING_FOOTER_SUPPORT_TITLE: "Hỗ trợ",
+  LANDING_FOOTER_CONTACT_TITLE: "Liên hệ",
+  LANDING_FOOTER_NEWS: "Tin tức",
+  LANDING_FOOTER_CONTACT_EMAIL: "phamvankhanhvmm@gmail.com",
+  LANDING_FOOTER_CONTACT_PHONE: "0975 925 223",
+  LANDING_FOOTER_CONTACT_ADDRESS: "Nghệ An, Việt Nam",
+
+  // About page (design-based)
+  ABOUT_PAGE_META_TITLE: "Về Cội Nguồn - Gìn giữ giá trị trăm năm",
+  ABOUT_PAGE_META_DESC:
+    "Hành trình số hóa gia phả và kết nối các thế hệ người Việt.",
+  ABOUT_PAGE_KEYWORDS: ["giới thiệu", "gia phả điện tử", "dòng họ"],
+  ABOUT_PAGE_HERO_TITLE: "Về Cội Nguồn - Gìn giữ giá trị trăm năm",
+  ABOUT_PAGE_HERO_QUOTE:
+    "\"Cội Nguồn sinh ra từ khát vọng kết nối quá khứ với tương lai, biến những trang gia phả phủ bụi thời gian thành di sản số trường tồn cho muôn đời con cháu.\"",
+  ABOUT_PAGE_HERO_CTA: "Khám phá hành trình",
+  ABOUT_PAGE_STORY_BADGE: "Hành trình của chúng tôi",
+  ABOUT_PAGE_STORY_TITLE: "Số hóa niềm tự hào dân tộc",
+  ABOUT_PAGE_STORY_PARAGRAPHS: [
+    "Câu chuyện của Cội Nguồn bắt đầu từ những trăn trở về việc các dòng tộc Việt Nam đang dần mất đi sự kết nối khi thế hệ trẻ rời xa quê hương.",
+    "Chúng tôi xây dựng một \"Đền thờ số\" - nơi mỗi người Việt có thể tìm thấy gốc gác, lưu giữ ký ức và kết nối với anh em họ hàng dù ở bất cứ đâu trên thế giới.",
+  ],
+  ABOUT_PAGE_VALUES_TITLE: "Giá trị cốt lõi",
+  ABOUT_PAGE_VALUES: [
+    {
+      title: "Bảo tồn",
+      desc: "Cam kết lưu giữ chính xác và bảo mật tuyệt đối các tư liệu lịch sử dòng họ, từ hình ảnh, video đến những câu chuyện truyền miệng từ đời này sang đời khác.",
+    },
+    {
+      title: "Kết nối",
+      desc: "Xóa nhòa khoảng cách địa lý và thế hệ, tạo ra không gian tương tác ấm cúng để các thành viên trong gia tộc tìm thấy nhau và thắt chặt tình thân.",
+    },
+    {
+      title: "Hiện đại",
+      desc: "Ứng dụng công nghệ để tái hiện cây gia phả trực quan, dễ tiếp cận cho cả người lớn tuổi và thế hệ trẻ.",
+    },
+  ],
+  ABOUT_PAGE_VISION_TITLE: "Tầm nhìn chiến lược",
+  ABOUT_PAGE_VISION_DESC:
+    "Cội Nguồn hướng tới mục tiêu trở thành trung tâm lưu trữ phả hệ số lớn nhất Việt Nam và xây dựng hệ sinh thái văn hóa cho dòng họ.",
+  ABOUT_PAGE_VISION_BULLETS: [
+    "1 triệu gia tộc được số hóa vào năm 2030",
+    "Ứng dụng AI phục dựng ảnh chân dung tổ tiên",
+    "Xây dựng bản đồ di cư của người Việt toàn cầu",
+  ],
+  ABOUT_PAGE_CTA_TITLE: "Bạn đã sẵn sàng viết tiếp câu chuyện của dòng họ mình?",
+  ABOUT_PAGE_CTA_DESC:
+    "Mọi hành trình vạn dặm đều bắt đầu từ một bước chân. Hãy để Cội Nguồn cùng bạn chăm sóc rễ cây gia tộc hôm nay.",
 
   // Contact
   CONTACT_PAGE_TITLE: "Liên hệ",
@@ -138,35 +221,6 @@ export const PUBLIC_STRINGS = {
 
   PUBLIC_LAST_UPDATED: (date: string) => `Cập nhật lần cuối: ${date}`,
 } as const;
-
-export const ABOUT_DOCUMENT: PublicProseDocument = {
-  title: "Giới thiệu",
-  subtitle: "Nền tảng gia phả điện tử cho dòng họ Việt Nam",
-  lastUpdated: "18/06/2025",
-  sections: [
-    {
-      title: "Sứ mệnh",
-      paragraphs: [
-        "Chúng tôi xây dựng công cụ giúp các dòng họ Việt Nam lưu giữ, tra cứu và truyền lại thông tin tổ tiên cho con cháu — qua sổ gia phả, cây phả hệ và các hoạt động dòng họ.",
-        "Mục tiêu là ai cũng có thể xem được trên điện thoại, kể cả người lớn tuổi, mà không cần cài ứng dụng phức tạp.",
-      ],
-    },
-    {
-      title: "Ai vận hành dữ liệu?",
-      paragraphs: [
-        "Mỗi dòng họ có không gian riêng (tổ chức). Ban quản trị dòng họ chịu trách nhiệm nội dung: thành viên, tiểu sử, sự kiện, liên kết chia sẻ.",
-        "Nền tảng cung cấp phần mềm và bảo mật truy cập theo liên kết — không hiển thị lẫn dữ liệu giữa các dòng họ.",
-      ],
-    },
-    {
-      title: "Quyền xem và quyền sửa",
-      paragraphs: [
-        "Thành viên mở liên kết dòng họ có thể xem sổ và cây theo mặc định.",
-        "Chỉnh sửa, quản lý user và cấu hình nâng cao dành cho tài khoản quản trị được cấp quyền.",
-      ],
-    },
-  ],
-};
 
 export const PRIVACY_DOCUMENT: PublicProseDocument = {
   title: "Chính sách bảo mật",

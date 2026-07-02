@@ -7,6 +7,9 @@ import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
+import CeremonyFontSizeControls from "@/components/ceremonies/CeremonyFontSizeControls";
+import { applyCeremonyFontScale } from "@/lib/ceremony/apply-ceremony-font-scale";
+import { useCeremonyFontSize } from "@/hooks/useCeremonyFontSize";
 
 type CeremonyViewerProps = {
   personId?: number;
@@ -24,6 +27,17 @@ function measureIframeContent(iframe: HTMLIFrameElement | null): number {
   );
 }
 
+function resolveCeremonyRequest(
+  personId: number | undefined,
+  shareToken: string | undefined,
+  templateId: number | undefined,
+) {
+  if (shareToken != null) return api.ceremonies.getPublicHtml(shareToken);
+  if (personId != null) return api.ceremonies.getHtml(personId, templateId);
+  if (templateId != null) return api.ceremonies.getTemplatePreviewHtml(templateId);
+  return Promise.reject(new Error("Missing ceremony source"));
+}
+
 export default function CeremonyViewer({
   personId,
   shareToken,
@@ -34,21 +48,25 @@ export default function CeremonyViewer({
   const [loading, setLoading] = useState(true);
   const [contentHeight, setContentHeight] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const hasPerson = personId != null || shareToken != null;
+  const fontSize = useCeremonyFontSize();
 
   const syncIframeHeight = useCallback(() => {
     setContentHeight(measureIframeContent(iframeRef.current));
   }, []);
 
+  const applyFontAndMeasure = useCallback(() => {
+    applyCeremonyFontScale(iframeRef.current, fontSize.scale);
+    syncIframeHeight();
+  }, [fontSize.scale, syncIframeHeight]);
+
   useEffect(() => {
     let cancelled = false;
-    const request =
-      shareToken != null
-        ? api.ceremonies.getPublicHtml(shareToken)
-        : personId != null
-          ? api.ceremonies.getHtml(personId, templateId)
-          : Promise.reject(new Error("Missing ceremony source"));
+    setLoading(true);
+    setHtml(null);
+    setFullName("");
 
-    request
+    resolveCeremonyRequest(personId, shareToken, templateId)
       .then((res) => {
         if (cancelled) return;
         setHtml(res.html);
@@ -71,10 +89,15 @@ export default function CeremonyViewer({
     const iframe = iframeRef.current;
     if (!iframe) return;
 
-    const handleLoad = () => syncIframeHeight();
+    const handleLoad = () => applyFontAndMeasure();
     iframe.addEventListener("load", handleLoad);
     return () => iframe.removeEventListener("load", handleLoad);
-  }, [html, syncIframeHeight]);
+  }, [html, applyFontAndMeasure]);
+
+  useEffect(() => {
+    if (!html) return;
+    applyFontAndMeasure();
+  }, [html, fontSize.scale, applyFontAndMeasure]);
 
   const handlePrint = useCallback(() => {
     const doc = iframeRef.current?.contentDocument;
@@ -99,11 +122,20 @@ export default function CeremonyViewer({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-end gap-2">
-        <ShareCeremonyActions
-          personId={personId}
-          fullName={fullName}
-          shareUrl={shareUrl}
+        <CeremonyFontSizeControls
+          scaleLabel={fontSize.scaleLabel}
+          canDecrease={fontSize.canDecrease}
+          canIncrease={fontSize.canIncrease}
+          onDecrease={fontSize.decrease}
+          onIncrease={fontSize.increase}
         />
+        {hasPerson ? (
+          <ShareCeremonyActions
+            personId={personId}
+            fullName={fullName}
+            shareUrl={shareUrl}
+          />
+        ) : null}
         <IconRoundButton
           icon="print"
           variant="gold"
@@ -111,9 +143,11 @@ export default function CeremonyViewer({
           onClick={handlePrint}
         />
       </div>
-      <p className={`text-xs leading-relaxed ${BT.mutedOnDark}`}>
-        {UI.CEREMONY_SHARE_HINT}
-      </p>
+      {hasPerson ? (
+        <p className={`text-xs leading-relaxed ${BT.mutedOnDark}`}>
+          {UI.CEREMONY_SHARE_HINT}
+        </p>
+      ) : null}
 
       <iframe
         ref={iframeRef}
@@ -127,7 +161,9 @@ export default function CeremonyViewer({
         sandbox="allow-same-origin allow-modals"
       />
 
-      <p className={`text-xs ${BT.mutedOnDark}`}>{fullName}</p>
+      {fullName ? (
+        <p className={`text-xs ${BT.mutedOnDark}`}>{fullName}</p>
+      ) : null}
     </div>
   );
 }

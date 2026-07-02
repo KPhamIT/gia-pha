@@ -45,6 +45,8 @@ export const API_ROUTES = {
     `/ceremonies/public/${encodeURIComponent(token)}/html`,
   CEREMONY_TEMPLATES: "/ceremonies/templates",
   CEREMONY_TEMPLATE: (id: number) => `/ceremonies/templates/${id}`,
+  CEREMONY_TEMPLATE_PREVIEW_HTML: (id: number) =>
+    `/ceremonies/templates/${id}/preview-html`,
   CEREMONY_TEMPLATE_DEFAULT: (id: number) =>
     `/ceremonies/templates/${id}/default`,
   CEREMONY_TEMPLATE_VARIABLES: "/ceremonies/templates/variables",

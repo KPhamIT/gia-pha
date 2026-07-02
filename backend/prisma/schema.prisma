@@ -253,6 +253,25 @@ model CeremonyTemplate {
   /// HTML với biến {{person.full_name}}, {{organization.name}}, ...
   content String @db.Text
 
+  /// Mô tả ngắn/hoàn cảnh của bài cúng.
+  intro String? @db.Text
+
+  /// Ý nghĩa của nghi lễ.
+  meaning String? @db.Text
+
+  /// Cách chuẩn bị đồ lễ.
+  preparation String? @db.Text
+
+  /// Nguồn tài liệu tham khảo.
+  sourceBookTitle String?
+
+  /// Dữ liệu SEO để tạo bài viết từ mẫu bài cúng.
+  seoSlug String?
+  seoTitle String?
+  seoDescription String? @db.VarChar(320)
+  seoExcerpt String? @db.Text
+  seoKeywords String[] @default([])
+
   isDefault Boolean @default(false)
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -261,6 +280,7 @@ model CeremonyTemplate {
   updatedAt DateTime @updatedAt
 
   @@index([organizationId, isDefault])
+  @@index([organizationId, seoSlug])
 }
 
 model AppConfig {
