@@ -24,10 +24,10 @@ export const PUBLIC_STRINGS = {
   PUBLIC_FOOTER_TERMS: "Điều khoản sử dụng",
   PUBLIC_FOOTER_BOOK: "Vào sổ gia phả",
   PUBLIC_FOOTER_COPYRIGHT: (year: number) =>
-    `© ${year} Gia phả điện tử. Mọi quyền được bảo lưu.`,
+    `© ${year} Cội Nguồn — Gia phả điện tử. Mọi quyền được bảo lưu.`,
 
   // Landing
-  LANDING_HERO_TITLE: "Gia phả điện tử cho dòng họ",
+  LANDING_HERO_TITLE: "Gia phả điện tử cho gia đình và dòng họ",
   LANDING_HERO_SUBTITLE:
     "Tra cứu sổ gia phả, cây phả hệ, sự kiện và ngày giỗ — mọi lúc trên điện thoại, không cần cài app.",
   LANDING_CTA_GUIDE: "Xem hướng dẫn",

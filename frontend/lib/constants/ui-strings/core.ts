@@ -1,8 +1,8 @@
 /** Page chrome, status, generic errors, forms, node + settings, person detail. */
 export const CORE_STRINGS = {
-  // Page metadata
-  PAGE_TITLE: "Gia phả",
-  PAGE_DESCRIPTION: "Cây gia phả",
+  // Page metadata / brand (in-app chrome)
+  PAGE_TITLE: "Cội Nguồn",
+  PAGE_DESCRIPTION: "Cội Nguồn - Gia phả điện tử",
 
   // Status messages
   LOADING: "Đang tải cây gia đình...",

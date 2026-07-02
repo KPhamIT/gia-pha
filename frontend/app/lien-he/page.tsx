@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PublicDocPageShell from "@/components/public/PublicDocPageShell";
+import SeoSchemas from "@/components/seo/SeoSchemas";
 import {
   getContactInfo,
   hasContactInfo,
 } from "@/lib/constants/contact-info";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `${UI.CONTACT_PAGE_TITLE} | ${UI.PAGE_TITLE}`,
+export const metadata: Metadata = createMetadata({
+  title: UI.CONTACT_PAGE_TITLE,
   description: UI.CONTACT_PAGE_SUBTITLE,
-};
+  path: "/lien-he",
+  keywords: ["liên hệ", "hỗ trợ", "gia phả"],
+  pageType: "contact",
+});
 
 export default function ContactPage() {
   const info = getContactInfo();
@@ -22,6 +27,12 @@ export default function ContactPage() {
       title={UI.CONTACT_PAGE_TITLE}
       subtitle={UI.CONTACT_PAGE_SUBTITLE}
     >
+      <SeoSchemas
+        path="/lien-he"
+        title={UI.CONTACT_PAGE_TITLE}
+        description={UI.CONTACT_PAGE_SUBTITLE}
+        pageType="contact"
+      />
       <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>
         {UI.CONTACT_PAGE_INTRO}
       </p>

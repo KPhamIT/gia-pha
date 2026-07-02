@@ -3,14 +3,32 @@ import Link from "next/link";
 import BookPageShell from "@/components/ui/BookPageShell";
 import GuideSectionBlock from "@/components/guide/GuideSectionBlock";
 import PublicSiteFooter from "@/components/public/PublicSiteFooter";
+import SeoSchemas from "@/components/seo/SeoSchemas";
+import JsonLd from "@/components/seo/JsonLd";
 import { GUIDE_SECTIONS } from "@/lib/constants/ui-strings/guide";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
+import { createMetadata } from "@/lib/seo";
+import { generateHowToSchema } from "@/lib/schema";
 
-export const metadata: Metadata = {
-  title: `${UI.GUIDE_PAGE_TITLE} | ${UI.PAGE_TITLE}`,
+export const metadata: Metadata = createMetadata({
+  title: UI.GUIDE_PAGE_TITLE,
   description: UI.GUIDE_PAGE_SUBTITLE,
-};
+  path: "/huong-dan",
+  keywords: ["hướng dẫn", "gia phả", "sổ gia phả", "cây gia phả"],
+  pageType: "guide",
+});
+
+const howToSchema = generateHowToSchema({
+  name: UI.GUIDE_PAGE_TITLE,
+  description: UI.GUIDE_PAGE_SUBTITLE,
+  steps: GUIDE_SECTIONS.flatMap((section) =>
+    section.steps.map((step) => ({
+      name: step.title,
+      text: step.paragraphs.join(" "),
+    })),
+  ),
+});
 
 export default function UserGuidePage() {
   return (
@@ -20,6 +38,13 @@ export default function UserGuidePage() {
       backHref="/"
       hideNavFab
     >
+      <SeoSchemas
+        path="/huong-dan"
+        title={UI.GUIDE_PAGE_TITLE}
+        description={UI.GUIDE_PAGE_SUBTITLE}
+        pageType="guide"
+      />
+      {howToSchema ? <JsonLd data={howToSchema} id="schema-howto-guide" /> : null}
       <div className="space-y-8 pb-8">
         <div className={`${BT.card} space-y-4 p-4 md:p-5`}>
           <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>

@@ -8,15 +8,22 @@ import LandingServicesSection from "@/components/public/LandingServicesSection";
 import LandingHasLinkCard from "@/components/public/LandingHasLinkCard";
 import LandingCardHeader from "@/components/public/LandingCardHeader";
 import LandingStartCta from "@/components/public/LandingStartCta";
+import SeoSchemas from "@/components/seo/SeoSchemas";
+import { SITE } from "@/config/site";
+import { createMetadata } from "@/lib/seo";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import PublicSiteFooter from "@/components/public/PublicSiteFooter";
 import { LAYOUT } from "@/lib/constants/ui-layout";
 
-export const metadata: Metadata = {
-  title: `${UI.PAGE_TITLE} — Gia phả điện tử`,
-  description: UI.LANDING_HERO_SUBTITLE,
-};
+export const metadata: Metadata = createMetadata({
+  title: SITE.title,
+  titleAbsolute: true,
+  description: SITE.description,
+  path: "/",
+  keywords: [...SITE.keywords],
+  pageType: "home",
+});
 
 const FEATURES: { icon: IconName; title: string; desc: string }[] = [
   {
@@ -74,6 +81,12 @@ export default function LandingPage() {
     <div
       className={`flex h-dvh min-h-0 flex-col overflow-hidden ${BT.shell} ${BT.shellText}`}
     >
+      <SeoSchemas
+        path="/"
+        title={SITE.title}
+        description={SITE.description}
+        pageType="home"
+      />
       <header
         className={`relative shrink-0 ${LAYOUT.sheetHeader} ${LAYOUT.sheetHeaderBook}`}
       >
@@ -82,7 +95,7 @@ export default function LandingPage() {
         </div>
         <div className="mx-auto w-full max-w-5xl pr-14 md:pr-16">
           <p className="text-sm font-medium uppercase tracking-wide text-amber-200/80">
-            {UI.PAGE_TITLE}
+            {SITE.brandName}
           </p>
           <h1 className="mt-1 text-2xl font-semibold md:text-3xl">
             {UI.LANDING_HERO_TITLE}

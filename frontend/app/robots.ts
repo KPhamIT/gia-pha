@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/lib/site-url";
+import { getSiteUrl } from "@/config/site";
 
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = getSiteUrl();
   return {
     rules: {
       userAgent: "*",
@@ -12,8 +13,15 @@ export default function robots(): MetadataRoute.Robots {
         "/org-users",
         "/api/",
         "/auth/callback",
+        "/login",
+        "/join/",
+        "/book",
+        "/family-tree",
+        "/account",
+        "/ceremonies/",
       ],
     },
-    sitemap: `${getSiteUrl()}/sitemap.xml`,
+    host: siteUrl,
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

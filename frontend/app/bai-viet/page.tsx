@@ -2,23 +2,19 @@ import type { Metadata } from "next";
 import PublicDocPageShell from "@/components/public/PublicDocPageShell";
 import BlogPostCard from "@/components/blog/BlogPostCard";
 import BlogCategoryNav from "@/components/blog/BlogCategoryNav";
+import SeoSchemas from "@/components/seo/SeoSchemas";
 import { fetchBlogPosts } from "@/lib/blog/server-api";
 import type { BlogCategory } from "@/lib/blog/types";
 import { UI } from "@/lib/constants/ui-strings";
-import { getSiteUrl } from "@/lib/site-url";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `${UI.BLOG_LIST_TITLE} | ${UI.PAGE_TITLE}`,
+export const metadata: Metadata = createMetadata({
+  title: UI.BLOG_LIST_TITLE,
   description: UI.BLOG_LIST_SUBTITLE,
-  alternates: { canonical: `${getSiteUrl()}/bai-viet` },
-  openGraph: {
-    title: UI.BLOG_LIST_TITLE,
-    description: UI.BLOG_LIST_SUBTITLE,
-    url: `${getSiteUrl()}/bai-viet`,
-    locale: "vi_VN",
-    type: "website",
-  },
-};
+  path: "/bai-viet",
+  keywords: ["gia phả", "dòng họ", "SEO", "kiến thức gia phả"],
+  pageType: "collection",
+});
 
 const VALID_CATEGORIES = new Set<BlogCategory>([
   "BASICS",
@@ -43,6 +39,12 @@ export default async function BlogListPage({ searchParams }: BlogListPageProps) 
 
   return (
     <PublicDocPageShell title={UI.BLOG_LIST_TITLE} subtitle={UI.BLOG_LIST_SUBTITLE}>
+      <SeoSchemas
+        path="/bai-viet"
+        title={UI.BLOG_LIST_TITLE}
+        description={UI.BLOG_LIST_SUBTITLE}
+        pageType="collection"
+      />
       <div className="space-y-6">
         <BlogCategoryNav active={category} />
         {posts.length === 0 ? (

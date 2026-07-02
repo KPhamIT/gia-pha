@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
-import { UI } from "@/lib/constants/ui-strings";
+import { SITE } from "@/config/site";
 
 /** PWA manifest — mở từ màn hình chính sẽ ẩn thanh URL & thanh điều hướng trình duyệt. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: UI.LANDING_HERO_TITLE,
-    short_name: UI.PAGE_TITLE,
-    description: UI.LANDING_HERO_SUBTITLE,
+    name: SITE.siteName,
+    short_name: SITE.brandName,
+    description: SITE.description,
     start_url: "/book",
     scope: "/",
     display: "standalone",
@@ -14,22 +14,16 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait-primary",
     background_color: "#451a03",
     theme_color: "#78350f",
-    lang: "vi",
+    lang: SITE.language,
     icons: [
       {
-        src: "/icons/pwa-192",
-        sizes: "192x192",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/pwa-512",
+        src: SITE.logoPath,
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/pwa-512",
+        src: SITE.logoPath,
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
