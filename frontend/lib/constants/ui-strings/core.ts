@@ -75,6 +75,12 @@ export const CORE_STRINGS = {
   CLOSE: "Đóng",
   BACK: "Quay lại",
 
+  // Mobile bottom navigation
+  MOBILE_NAV_HOME: "Trang chủ",
+  MOBILE_NAV_FAMILY: "Gia tộc",
+  MOBILE_NAV_EVENTS: "Sự kiện",
+  MOBILE_NAV_PROFILE: "Tài khoản",
+
   // Person generation (đời thứ N)
   GENERATION_ORDINAL: (n: number) => `Đời thứ ${n}`,
   PERSON_LAST_EDITED_BY: (name: string, when: string) =>

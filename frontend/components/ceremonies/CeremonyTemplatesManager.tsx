@@ -11,18 +11,27 @@ import type {
   Person,
   Relationship,
 } from "@/components/types/family-tree-types";
+import {
+  filterCeremonyTemplates,
+  type CeremonyTemplateFilterId,
+} from "@/lib/ceremonies/template-filters";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 import { useAuthStore } from "@/store/authStore";
 import FullScreenSheet from "@/components/ui/FullScreenSheet";
 import { EMPTY_FORM, type EditTarget } from "./ceremony-template-shared";
-import TemplatesToolbar from "./TemplatesToolbar";
+import TemplatesSearchFilters from "./TemplatesSearchFilters";
 import CeremonyTemplateCard from "./CeremonyTemplateCard";
 import TemplateEditorSheet from "./TemplateEditorSheet";
 import CeremonyPrintView from "./CeremonyPrintView";
 
-export default function CeremonyTemplatesManager() {
+type CeremonyTemplatesManagerProps = {
+  onCreateRef?: (openCreate: () => void) => void;
+};
+
+export default function CeremonyTemplatesManager({
+  onCreateRef,
+}: CeremonyTemplatesManagerProps) {
   const canMutate = useAuthStore((state) => state.canMutate);
   const canEdit = canMutate;
   const canPersist = canMutate;
@@ -31,6 +40,8 @@ export default function CeremonyTemplatesManager() {
   const [persons, setPersons] = useState<Person[]>([]);
   const [relationships, setRelationships] = useState<Relationship[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [filterId, setFilterId] = useState<CeremonyTemplateFilterId>("all");
   const [target, setTarget] = useState<EditTarget | null>(null);
   const [printTemplate, setPrintTemplate] = useState<CeremonyTemplate | null>(
     null,
@@ -59,13 +70,26 @@ export default function CeremonyTemplatesManager() {
     void reload();
   }, [reload]);
 
+  const openCreate = useCallback(
+    () => setTarget({ template: null, initial: EMPTY_FORM }),
+    [],
+  );
+
+  useEffect(() => {
+    onCreateRef?.(openCreate);
+  }, [onCreateRef, openCreate]);
+
   const sorted = useMemo(
     () =>
       [...templates].sort((a, b) => Number(b.isDefault) - Number(a.isDefault)),
     [templates],
   );
 
-  /** Người đã mất có ngày giỗ âm lịch — điều kiện để render bài cúng. */
+  const filtered = useMemo(
+    () => filterCeremonyTemplates(sorted, query, filterId),
+    [sorted, query, filterId],
+  );
+
   const deceasedPersons = useMemo(
     () =>
       persons.filter(
@@ -74,7 +98,6 @@ export default function CeremonyTemplatesManager() {
     [persons],
   );
 
-  const openCreate = () => setTarget({ template: null, initial: EMPTY_FORM });
   const openEdit = (template: CeremonyTemplate) =>
     setTarget({
       template,
@@ -84,6 +107,7 @@ export default function CeremonyTemplatesManager() {
         isDefault: template.isDefault,
       },
     });
+
   const openDuplicate = (template: CeremonyTemplate) =>
     setTarget({
       template: null,
@@ -118,22 +142,65 @@ export default function CeremonyTemplatesManager() {
   };
 
   if (loading) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+    return <p className="text-sm text-[#504443]">{UI.LOADING}</p>;
   }
 
   return (
     <div className="space-y-4 pb-4">
-      <TemplatesToolbar canEdit={canEdit} onCreate={openCreate} />
-
-      {sorted.length === 0 ? (
-        <div className={`${BT.card} p-6 text-center`}>
-          <p className={`text-sm ${BT.mutedOnLight}`}>
-            {UI.CEREMONY_TEMPLATE_EMPTY}
+      <header className="mb-2 hidden md:flex md:flex-row md:items-center md:justify-between md:gap-4">
+        <div>
+          <h1 className="font-serif text-3xl font-bold text-[#4a2c2a]">
+            {UI.CEREMONY_TEMPLATES_TITLE}
+          </h1>
+          <p className="mt-2 italic text-[#504443]">
+            {UI.CEREMONY_TEMPLATES_PAGE_DESC}
           </p>
-          {canEdit ? (
+        </div>
+        {canEdit ? (
+          <button
+            type="button"
+            onClick={openCreate}
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-[#4a2c2a] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#321716] active:scale-95"
+          >
+            <Icon
+              path="plus"
+              size={18}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              pointer={false}
+            />
+            {UI.CEREMONY_TEMPLATE_CREATE_DESKTOP}
+          </button>
+        ) : null}
+      </header>
+
+      {!canEdit ? (
+        <p className="rounded-xl border border-[#d4c3c1] bg-[#f6f3ee] px-4 py-3 text-sm text-[#504443]">
+          {UI.CEREMONY_TEMPLATE_READONLY_HINT}
+        </p>
+      ) : null}
+
+      <div className="mb-6 min-w-0 md:mb-8 md:rounded-xl md:border md:border-[#e5e1da] md:bg-[#f6f3ee] md:p-4">
+        <TemplatesSearchFilters
+          query={query}
+          filterId={filterId}
+          onQueryChange={setQuery}
+          onFilterChange={setFilterId}
+        />
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-xl border border-[#d4c3c1] bg-white p-8 text-center shadow-sm">
+          <p className="text-sm text-[#504443]">
+            {sorted.length === 0
+              ? UI.CEREMONY_TEMPLATE_EMPTY
+              : UI.CEREMONY_TEMPLATE_VARIABLES_NONE}
+          </p>
+          {canEdit && sorted.length === 0 ? (
             <button
               type="button"
-              className={`mt-4 ${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary} mx-auto`}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white"
               onClick={openCreate}
             >
               <Icon
@@ -149,8 +216,8 @@ export default function CeremonyTemplatesManager() {
           ) : null}
         </div>
       ) : (
-        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {sorted.map((template) => (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+          {filtered.map((template) => (
             <CeremonyTemplateCard
               key={template.id}
               template={template}
@@ -163,7 +230,7 @@ export default function CeremonyTemplatesManager() {
               onDelete={() => void handleDelete(template)}
             />
           ))}
-        </ul>
+        </div>
       )}
 
       {target ? (
@@ -187,7 +254,7 @@ export default function CeremonyTemplatesManager() {
           onClose={() => setPrintTemplate(null)}
         >
           <div className="mx-auto w-full max-w-3xl space-y-4 p-4 md:p-6">
-            <p className={`text-sm font-medium ${BT.mutedOnDark}`}>
+            <p className="text-sm font-medium text-[#504443]">
               {printTemplate.name}
             </p>
             <CeremonyPrintView

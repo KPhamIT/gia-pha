@@ -131,4 +131,13 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_TEMPLATE_ERR_SAVE: "Không thể lưu mẫu bài cúng",
   CEREMONY_TEMPLATE_ERR_DELETE: "Không thể xóa mẫu bài cúng",
   CEREMONY_TEMPLATES_OPEN: "Mẫu bài cúng",
+  CEREMONY_TEMPLATES_PAGE_DESC:
+    "Lưu giữ và quản lý các bài văn khấn truyền thống cho gia đình.",
+  CEREMONY_TEMPLATE_SEARCH_PLACEHOLDER: "Tìm kiếm mẫu bài cúng...",
+  CEREMONY_TEMPLATE_FILTER_ALL: "Tất cả",
+  CEREMONY_TEMPLATE_FILTER_GIO: "Giỗ chạp",
+  CEREMONY_TEMPLATE_FILTER_TET: "Lễ tết",
+  CEREMONY_TEMPLATE_FILTER_THO_CONG: "Thổ công",
+  CEREMONY_TEMPLATE_FILTER_MUC: "Cúng Mụ",
+  CEREMONY_TEMPLATE_CREATE_DESKTOP: "Tạo mẫu mới",
 } as const;
