@@ -41,6 +41,23 @@ export const PUBLIC_STRINGS = {
   LANDING_CTA_GUIDE: "Xem hướng dẫn",
   LANDING_CTA_BOOK: "Vào sổ gia phả",
   LANDING_CTA_LOGIN: "Đăng nhập",
+  LANDING_TODAY_LUNAR_LABEL: "Âm lịch",
+  LANDING_TODAY_PROVERB:
+    "Cây có cội mới trổ cành xanh lá, Nước có nguồn mới bể cả sông sâu.",
+  LANDING_TODAY_AUSPICIOUS_BADGE: "GIỜ HOÀNG ĐẠO",
+  LANDING_TODAY_EVENTS_TITLE: "Sự kiện hôm nay",
+  LANDING_TODAY_DEATH_LABEL: "Ngày giỗ",
+  LANDING_TODAY_BIRTHDAY_LABEL: "Sinh nhật",
+  LANDING_TODAY_DEATH_COUNTDOWN: (days: number) =>
+    days === 0 ? "Hôm nay" : `Còn ${days} ngày`,
+  LANDING_TODAY_BIRTHDAY_TODAY: "Hôm nay",
+  LANDING_TODAY_UPDATED_AT: (time: string) => `Cập nhật lúc ${time}`,
+  LANDING_TODAY_INFO_TITLE: "Thông tin dòng họ",
+  LANDING_TODAY_INFO_LABEL: "Thành viên mới trong tháng",
+  LANDING_TODAY_INFO_CTA: "Xem danh sách",
+  LANDING_TODAY_DEMO_NOTE: "Ví dụ minh họa — đăng nhập để xem dòng họ của bạn",
+  LANDING_TODAY_DEMO_DEATH_NAME: "Cụ Tổ đời thứ 4",
+  LANDING_TODAY_DEMO_BIRTHDAY_NAME: "Minh Anh (Cháu)",
   LANDING_HOW_TITLE: "Bắt đầu trong 2 bước",
   LANDING_HOW_STEPS: [
     "Nhận liên kết từ ban quản trị / thư ký dòng họ qua Zalo, Facebook hoặc tin nhắn.",
@@ -213,11 +230,63 @@ export const PUBLIC_STRINGS = {
   // Contact
   CONTACT_PAGE_TITLE: "Liên hệ",
   CONTACT_PAGE_SUBTITLE: "Hỗ trợ tra cứu gia phả và tài khoản",
+  CONTACT_PAGE_HERO_TITLE: "Liên hệ với chúng tôi",
+  CONTACT_PAGE_HERO_DESC:
+    "Chúng tôi luôn sẵn lòng lắng nghe và hỗ trợ bạn trên hành trình tìm lại cội nguồn, gìn giữ những giá trị văn hóa và tình cảm thiêng liêng của gia đình qua các thế hệ.",
   CONTACT_PAGE_INTRO:
     "Nếu bạn chưa có liên kết dòng họ hoặc cần quyền chỉnh sửa, vui lòng liên hệ ban quản trị / người phụ trách gia phả của dòng họ bạn.",
   CONTACT_PAGE_EMPTY:
     "Chưa cấu hình thông tin liên hệ công khai. Ban quản trị website vui lòng thiết lập biến môi trường NEXT_PUBLIC_CONTACT_*.",
   CONTACT_PAGE_BACK: "Quay lại trang chủ",
+  CONTACT_CARD_ADDRESS_TITLE: "Trụ sở chính",
+  CONTACT_CARD_PHONE_TITLE: "Điện thoại",
+  CONTACT_CARD_PHONE_NOTE: "Tổng đài hỗ trợ 24/7",
+  CONTACT_CARD_EMAIL_TITLE: "Email",
+  CONTACT_CARD_HOURS_TITLE: "Giờ làm việc",
+  CONTACT_CARD_HOURS_WEEKDAY_LABEL: "Thứ 2 - Thứ 6:",
+  CONTACT_CARD_HOURS_WEEKDAY: "08:00 - 18:00",
+  CONTACT_CARD_HOURS_SAT_LABEL: "Thứ 7:",
+  CONTACT_CARD_HOURS_SAT: "08:30 - 12:00",
+  CONTACT_CARD_HOURS_SUN_LABEL: "Chủ nhật:",
+  CONTACT_CARD_HOURS_SUN: "Nghỉ",
+  CONTACT_FORM_TITLE: "Gửi tin nhắn cho chúng tôi",
+  CONTACT_FORM_NAME: "Họ và tên",
+  CONTACT_FORM_NAME_PLACEHOLDER: "Nguyễn Văn A",
+  CONTACT_FORM_EMAIL: "Email",
+  CONTACT_FORM_EMAIL_PLACEHOLDER: "example@gmail.com",
+  CONTACT_FORM_PHONE: "Số điện thoại",
+  CONTACT_FORM_PHONE_PLACEHOLDER: "0123 456 789",
+  CONTACT_FORM_SUBJECT: "Chủ đề",
+  CONTACT_FORM_SUBJECT_OPTIONS: [
+    "Hỗ trợ kỹ thuật",
+    "Dịch vụ gia tộc",
+    "Sự kiện & Triển lãm",
+    "Hợp tác & Quảng cáo",
+    "Khác",
+  ] as const,
+  CONTACT_FORM_MESSAGE: "Lời nhắn",
+  CONTACT_FORM_MESSAGE_PLACEHOLDER: "Viết tin nhắn của bạn tại đây...",
+  CONTACT_FORM_SUBMIT: "Gửi lời nhắn",
+  CONTACT_FORM_EMAIL_REQUIRED: "Vui lòng nhập email để chúng tôi phản hồi.",
+  CONTACT_MAP_OFFICE: "Văn phòng Cội Nguồn",
+  CONTACT_FAQ_TITLE: "Câu hỏi thường gặp",
+  CONTACT_FAQ_ITEMS: [
+    {
+      question: "Tôi có thể tự cập nhật cây phả hệ của mình không?",
+      answer:
+        "Có, hệ thống của chúng tôi được thiết kế để các thành viên trong gia tộc có thể cùng nhau đóng góp và cập nhật thông tin một cách dễ dàng và bảo mật nhất.",
+    },
+    {
+      question: "Dịch vụ số hóa gia phả mất bao lâu để hoàn thành?",
+      answer:
+        "Thời gian hoàn thành phụ thuộc vào khối lượng tài liệu và độ phức tạp của thông tin. Thông thường, một bộ gia phả tiêu chuẩn sẽ mất từ 2-4 tuần để số hóa hoàn thiện.",
+    },
+    {
+      question: "Thông tin gia đình tôi có được bảo mật không?",
+      answer:
+        "Bảo mật là ưu tiên hàng đầu của chúng tôi. Dữ liệu của bạn được mã hóa và bạn có toàn quyền kiểm soát ai có thể xem hoặc chỉnh sửa thông tin gia tộc của mình.",
+    },
+  ] as const,
 
   PUBLIC_LAST_UPDATED: (date: string) => `Cập nhật lần cuối: ${date}`,
 } as const;
