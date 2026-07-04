@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
@@ -22,6 +22,11 @@ export function useTemplateEditor(
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const insertRestoreRef = useRef<{
+    scrollTop: number;
+    scrollLeft: number;
+    caret: number;
+  } | null>(null);
 
   const knownKeys = useMemo(
     () => new Set(variables.map((v) => v.key)),
@@ -44,21 +49,36 @@ export function useTemplateEditor(
   const insertVariable = useCallback((key: string) => {
     const token = `{{${key}}}`;
     const el = contentRef.current;
-    setTab("edit");
-    setForm((prev) => {
-      if (!el) return { ...prev, content: prev.content + token };
-      const start = el.selectionStart ?? prev.content.length;
-      const end = el.selectionEnd ?? prev.content.length;
-      const next =
-        prev.content.slice(0, start) + token + prev.content.slice(end);
-      requestAnimationFrame(() => {
-        el.focus();
-        const caret = start + token.length;
-        el.setSelectionRange(caret, caret);
-      });
-      return { ...prev, content: next };
-    });
+    if (!el) {
+      setForm((prev) => ({ ...prev, content: prev.content + token }));
+      return;
+    }
+
+    const start = el.selectionStart ?? el.value.length;
+    const end = el.selectionEnd ?? el.value.length;
+    insertRestoreRef.current = {
+      scrollTop: el.scrollTop,
+      scrollLeft: el.scrollLeft,
+      caret: start + token.length,
+    };
+
+    setForm((prev) => ({
+      ...prev,
+      content: prev.content.slice(0, start) + token + prev.content.slice(end),
+    }));
   }, []);
+
+  useLayoutEffect(() => {
+    const pending = insertRestoreRef.current;
+    const el = contentRef.current;
+    if (!pending || !el) return;
+
+    insertRestoreRef.current = null;
+    el.focus({ preventScroll: true });
+    el.setSelectionRange(pending.caret, pending.caret);
+    el.scrollTop = pending.scrollTop;
+    el.scrollLeft = pending.scrollLeft;
+  }, [form.content]);
 
   const handleSave = useCallback(async () => {
     if (!form.name.trim() || !form.content.trim()) {

@@ -78,7 +78,8 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_TEMPLATE_NAME: "Tên mẫu",
   CEREMONY_TEMPLATE_CONTENT: "Nội dung bài cúng",
   CEREMONY_TEMPLATE_CONTENT_HINT:
-    "Nhập nội dung bài cúng — giữ Enter để xuống dòng. Chạm vào biến ở danh sách bên cạnh để chèn thông tin tự động (tên, ngày giỗ…); hệ thống sẽ tự điền khi in.",
+    "Nhập nội dung bài cúng — giữ Enter để xuống dòng. Chạm Chèn biến (điện thoại) hoặc chọn biến ở cột phải (máy tính) để chèn tên, ngày giỗ…",
+  CEREMONY_TEMPLATE_INSERT_VARIABLE: "Chèn biến",
   CEREMONY_TEMPLATE_HINT:
     "Soạn mẫu bài cúng dùng chung. Chạm vào biến để chèn thông tin tự động như tên, ngày giỗ, dòng họ… hệ thống tự điền khi in.",
   CEREMONY_TEMPLATE_VARIABLES: "Biến có thể dùng",
@@ -105,6 +106,8 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_PRINT_PICK_PERSON: "Chọn người đã mất để điền thông tin vào bài cúng",
   CEREMONY_PRINT_SEARCH: "Tìm người đã mất…",
   CEREMONY_PRINT_CHANGE_PERSON: "Đổi người",
+  CEREMONY_PRINT_CONTEXT_LABEL: "Người được cúng",
+  CEREMONY_SCROLL_HINT: "Vuốt để đọc tiếp",
   CEREMONY_PRINT_NO_PERSONS: "Chưa có người đã mất nào có ngày giỗ âm lịch",
   CEREMONY_PREVIEW_SAVE_FIRST:
     "Hãy lưu mẫu trước để xem trước với dữ liệu thật",

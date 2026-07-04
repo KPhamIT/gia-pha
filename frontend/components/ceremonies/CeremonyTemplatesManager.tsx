@@ -18,7 +18,6 @@ import {
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
 import { useAuthStore } from "@/store/authStore";
-import FullScreenSheet from "@/components/ui/FullScreenSheet";
 import { EMPTY_FORM, type EditTarget } from "./ceremony-template-shared";
 import TemplatesSearchFilters from "./TemplatesSearchFilters";
 import CeremonyTemplateCard from "./CeremonyTemplateCard";
@@ -237,8 +236,6 @@ export default function CeremonyTemplatesManager({
         <TemplateEditorSheet
           target={target}
           variables={variables}
-          persons={deceasedPersons}
-          relationships={relationships}
           onClose={() => setTarget(null)}
           onSaved={async () => {
             setTarget(null);
@@ -248,22 +245,12 @@ export default function CeremonyTemplatesManager({
       ) : null}
 
       {printTemplate ? (
-        <FullScreenSheet
-          tone="book"
-          title={UI.CEREMONY_PRINT_TITLE}
+        <CeremonyPrintView
+          templateId={printTemplate.id}
+          persons={deceasedPersons}
+          relationships={relationships}
           onClose={() => setPrintTemplate(null)}
-        >
-          <div className="mx-auto w-full max-w-3xl space-y-4 p-4 md:p-6">
-            <p className="text-sm font-medium text-[#504443]">
-              {printTemplate.name}
-            </p>
-            <CeremonyPrintView
-              templateId={printTemplate.id}
-              persons={deceasedPersons}
-              relationships={relationships}
-            />
-          </div>
-        </FullScreenSheet>
+        />
       ) : null}
     </div>
   );

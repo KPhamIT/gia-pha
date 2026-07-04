@@ -11,9 +11,15 @@ import { nsLabel } from "./ceremony-template-shared";
 type Props = {
   variables: CeremonyTemplateVariable[];
   onInsert: (key: string) => void;
+  /** card: thẻ trong form cũ; sidebar: cột phải desktop; sheet: bottom sheet mobile. */
+  variant?: "card" | "sidebar" | "sheet";
 };
 
-export default function VariablePicker({ variables, onInsert }: Props) {
+export default function VariablePicker({
+  variables,
+  onInsert,
+  variant = "card",
+}: Props) {
   const [query, setQuery] = useState("");
 
   const groups = useMemo(() => {
@@ -42,19 +48,20 @@ export default function VariablePicker({ variables, onInsert }: Props) {
     String(variables.length),
   );
 
+  const shellClass =
+    variant === "sidebar" || variant === "sheet"
+      ? `flex min-h-0 flex-1 flex-col overflow-hidden${variant === "sheet" ? " p-4" : ""}`
+      : `${BT.card} flex max-h-[60vh] min-h-0 flex-col p-3 md:sticky md:top-4 md:max-h-[calc(100dvh-12rem)] md:w-72 md:shrink-0`;
+
   return (
-    <aside
-      className={`${BT.card} flex max-h-[60vh] min-h-0 flex-col p-3 md:sticky md:top-4 md:max-h-[calc(100dvh-12rem)] md:w-72 md:shrink-0`}
-    >
-      <div className="flex items-center gap-2">
-        <span className="min-w-0 flex-1 text-sm font-semibold text-neutral-900">
+    <aside className={shellClass}>
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="min-w-0 flex-1 text-sm font-semibold text-stone-800">
           {UI.CEREMONY_TEMPLATE_VARIABLES}
         </span>
-        <span className={`shrink-0 text-xs ${BT.mutedOnLight}`}>
-          {countLabel}
-        </span>
+        <span className="shrink-0 text-xs text-stone-500">{countLabel}</span>
       </div>
-      <p className={`mt-0.5 text-xs ${BT.mutedOnLight}`}>
+      <p className="mt-0.5 shrink-0 text-xs text-stone-500">
         {UI.CEREMONY_TEMPLATE_VARIABLES_INSERT_HINT}
       </p>
 
@@ -93,6 +100,7 @@ export default function VariablePicker({ variables, onInsert }: Props) {
                   <button
                     key={item.key}
                     type="button"
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => onInsert(item.key)}
                     className="flex w-full min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors active:bg-amber-50 md:hover:bg-amber-50"
                   >

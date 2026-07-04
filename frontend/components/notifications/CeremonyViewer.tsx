@@ -6,16 +6,19 @@ import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
-import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
+import CeremonyHeritageActionBar from "@/components/ceremonies/CeremonyHeritageActionBar";
 import CeremonyFontSizeControls from "@/components/ceremonies/CeremonyFontSizeControls";
+import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
+import { HERITAGE_LAYOUT } from "@/lib/constants/heritage-theme";
 import { applyCeremonyFontScale } from "@/lib/ceremony/apply-ceremony-font-scale";
 import { useCeremonyFontSize } from "@/hooks/useCeremonyFontSize";
+import { useScrollIdleReveal } from "@/hooks/useScrollIdleReveal";
 
 type CeremonyViewerProps = {
   personId?: number;
   shareToken?: string;
-  /** Render với một mẫu cụ thể; bỏ trống = mẫu mặc định của dòng họ. */
   templateId?: number;
+  variant?: "legacy" | "heritage";
 };
 
 function measureIframeContent(iframe: HTMLIFrameElement | null): number {
@@ -42,6 +45,7 @@ export default function CeremonyViewer({
   personId,
   shareToken,
   templateId,
+  variant = "legacy",
 }: CeremonyViewerProps) {
   const [html, setHtml] = useState<string | null>(null);
   const [fullName, setFullName] = useState("");
@@ -50,6 +54,9 @@ export default function CeremonyViewer({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hasPerson = personId != null || shareToken != null;
   const fontSize = useCeremonyFontSize();
+  const isHeritage = variant === "heritage";
+  const { scrollRef, visible: barVisible, handleScroll } =
+    useScrollIdleReveal();
 
   const syncIframeHeight = useCallback(() => {
     setContentHeight(measureIframeContent(iframeRef.current));
@@ -106,18 +113,75 @@ export default function CeremonyViewer({
     doc.defaultView?.print();
   }, []);
 
-  if (loading) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.CEREMONY_LOADING}</p>;
-  }
-
-  if (!html) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.CEREMONY_ERR}</p>;
-  }
-
   const shareUrl =
     typeof window !== "undefined" && shareToken
       ? `${window.location.origin}/ceremonies/share/${encodeURIComponent(shareToken)}`
       : undefined;
+
+  const loadingClass = isHeritage ? "text-stone-500" : BT.mutedOnDark;
+
+  if (loading) {
+    return <p className={`text-sm ${loadingClass}`}>{UI.CEREMONY_LOADING}</p>;
+  }
+
+  if (!html) {
+    return <p className={`text-sm ${loadingClass}`}>{UI.CEREMONY_ERR}</p>;
+  }
+
+  const iframeEl = (
+    <iframe
+      ref={iframeRef}
+      title={UI.CEREMONY_TITLE}
+      srcDoc={html}
+      className={
+        isHeritage
+          ? "block w-full overflow-hidden bg-transparent"
+          : "block w-full overflow-hidden rounded-xl border border-amber-200/30 bg-white shadow-inner"
+      }
+      style={{
+        height: contentHeight > 0 ? contentHeight : undefined,
+        minHeight: contentHeight > 0 ? undefined : "12rem",
+      }}
+      sandbox="allow-same-origin allow-modals"
+    />
+  );
+
+  if (isHeritage) {
+    return (
+      <div className={HERITAGE_LAYOUT.viewerRoot}>
+        <article
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={HERITAGE_LAYOUT.scrollBody}
+          data-purpose="prayer-body"
+        >
+          <div className={HERITAGE_LAYOUT.prayerContent}>{iframeEl}</div>
+        </article>
+        <div className={HERITAGE_LAYOUT.floatingBar}>
+          <div
+            className={`${HERITAGE_LAYOUT.floatingBarInner} ${
+              barVisible
+                ? HERITAGE_LAYOUT.floatingBarInnerVisible
+                : HERITAGE_LAYOUT.floatingBarInnerHidden
+            }`}
+          >
+            <CeremonyHeritageActionBar
+              scaleLabel={fontSize.scaleLabel}
+              canDecrease={fontSize.canDecrease}
+              canIncrease={fontSize.canIncrease}
+              onDecrease={fontSize.decrease}
+              onIncrease={fontSize.increase}
+              sharePersonId={personId}
+              shareFullName={fullName}
+              shareUrl={shareUrl}
+              showShare={hasPerson}
+              onPrint={handlePrint}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -148,19 +212,7 @@ export default function CeremonyViewer({
           {UI.CEREMONY_SHARE_HINT}
         </p>
       ) : null}
-
-      <iframe
-        ref={iframeRef}
-        title={UI.CEREMONY_TITLE}
-        srcDoc={html}
-        className="block w-full overflow-hidden rounded-xl border border-amber-200/30 bg-white shadow-inner"
-        style={{
-          height: contentHeight > 0 ? contentHeight : undefined,
-          minHeight: contentHeight > 0 ? undefined : "12rem",
-        }}
-        sandbox="allow-same-origin allow-modals"
-      />
-
+      {iframeEl}
       {fullName ? (
         <p className={`text-xs ${BT.mutedOnDark}`}>{fullName}</p>
       ) : null}
