@@ -5,12 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
-import {
-  adminOrganizationId,
-  assertOrgMemberAccess,
-  isSystem,
-} from '../auth/org-access.js';
+import { isSystem } from '../auth/org-access.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import {
+  assertCanCreateCeremonyTemplate,
+  assertCanMutateCeremonyTemplate,
+  assertCanSetDefaultCeremonyTemplate,
+  assertCanViewCeremonyTemplate,
+  listCeremonyTemplatesWhere,
+  withCeremonyTemplateAccess,
+} from './ceremony-template-access.js';
 import {
   CreateCeremonyTemplateDto,
   UpdateCeremonyTemplateDto,
@@ -21,40 +25,56 @@ export class CeremonyTemplatesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async list(user: User) {
-    const organizationId = this.resolveOrganizationId(user);
-    return this.prisma.ceremonyTemplate.findMany({
-      where: { organizationId },
+    if (!isSystem(user) && user.organizationId == null) {
+      const items = await this.prisma.ceremonyTemplate.findMany({
+        where: { isSystemTemplate: true },
+        orderBy: [{ isDefault: 'desc' }, { name: 'asc' }],
+      });
+      return items.map((item) => withCeremonyTemplateAccess(user, item));
+    }
+
+    const items = await this.prisma.ceremonyTemplate.findMany({
+      where: listCeremonyTemplatesWhere(user),
       orderBy: [{ isDefault: 'desc' }, { name: 'asc' }],
     });
+    return items.map((item) => withCeremonyTemplateAccess(user, item));
   }
 
   async findOne(user: User, id: number) {
     const template = await this.getTemplateOrThrow(id);
-    assertOrgMemberAccess(user, template.organizationId);
-    return template;
+    assertCanViewCeremonyTemplate(user, template);
+    return withCeremonyTemplateAccess(user, template);
   }
 
   async create(user: User, dto: CreateCeremonyTemplateDto) {
-    const organizationId = this.resolveOrganizationId(user);
+    assertCanCreateCeremonyTemplate(user);
+    const organizationId = await this.resolveOrganizationIdForCreate(user);
+    const isSystemTemplate = isSystem(user);
+
     const count = await this.prisma.ceremonyTemplate.count({
-      where: { organizationId },
+      where: {
+        organizationId,
+        isSystemTemplate: false,
+      },
     });
     const isDefault = dto.isDefault ?? count === 0;
 
     return this.prisma.$transaction(async (tx) => {
       if (isDefault) {
         await tx.ceremonyTemplate.updateMany({
-          where: { organizationId },
+          where: { organizationId, isSystemTemplate: false },
           data: { isDefault: false },
         });
       }
 
-      return tx.ceremonyTemplate.create({
+      const created = await tx.ceremonyTemplate.create({
         data: {
           organizationId,
           name: dto.name.trim(),
           content: dto.content,
-          isDefault,
+          isDefault: isSystemTemplate ? false : isDefault,
+          isSystemTemplate,
+          createdByUserId: user.id,
           intro: dto.intro,
           meaning: dto.meaning,
           preparation: dto.preparation,
@@ -66,22 +86,27 @@ export class CeremonyTemplatesService {
           seoKeywords: dto.seoKeywords,
         },
       });
+
+      return withCeremonyTemplateAccess(user, created);
     });
   }
 
   async update(user: User, id: number, dto: UpdateCeremonyTemplateDto) {
     const existing = await this.getTemplateOrThrow(id);
-    this.assertManageAccess(user, existing.organizationId);
+    assertCanMutateCeremonyTemplate(user, existing);
 
     return this.prisma.$transaction(async (tx) => {
       if (dto.isDefault) {
         await tx.ceremonyTemplate.updateMany({
-          where: { organizationId: existing.organizationId },
+          where: {
+            organizationId: existing.organizationId,
+            isSystemTemplate: false,
+          },
           data: { isDefault: false },
         });
       }
 
-      return tx.ceremonyTemplate.update({
+      const updated = await tx.ceremonyTemplate.update({
         where: { id },
         data: {
           name: dto.name?.trim(),
@@ -98,41 +123,61 @@ export class CeremonyTemplatesService {
           seoKeywords: dto.seoKeywords,
         },
       });
+
+      return withCeremonyTemplateAccess(user, updated);
     });
   }
 
   async setDefault(user: User, id: number) {
     const existing = await this.getTemplateOrThrow(id);
-    this.assertManageAccess(user, existing.organizationId);
+    assertCanSetDefaultCeremonyTemplate(user, existing);
+    if (existing.isSystemTemplate) {
+      throw new ForbiddenException(
+        'Cannot set a system template as organization default',
+      );
+    }
 
     return this.prisma.$transaction(async (tx) => {
       await tx.ceremonyTemplate.updateMany({
-        where: { organizationId: existing.organizationId },
+        where: {
+          organizationId: existing.organizationId,
+          isSystemTemplate: false,
+        },
         data: { isDefault: false },
       });
-      return tx.ceremonyTemplate.update({
+      const updated = await tx.ceremonyTemplate.update({
         where: { id },
         data: { isDefault: true },
       });
+      return withCeremonyTemplateAccess(user, updated);
     });
   }
 
   async remove(user: User, id: number) {
     const existing = await this.getTemplateOrThrow(id);
-    this.assertManageAccess(user, existing.organizationId);
+    assertCanMutateCeremonyTemplate(user, existing);
 
-    const remaining = await this.prisma.ceremonyTemplate.count({
-      where: { organizationId: existing.organizationId, id: { not: id } },
-    });
-    if (remaining === 0) {
-      throw new BadRequestException('Cannot delete the only ceremony template');
+    if (!existing.isSystemTemplate) {
+      const remaining = await this.prisma.ceremonyTemplate.count({
+        where: {
+          organizationId: existing.organizationId,
+          isSystemTemplate: false,
+          id: { not: id },
+        },
+      });
+      if (remaining === 0) {
+        throw new BadRequestException('Cannot delete the only ceremony template');
+      }
     }
 
     await this.prisma.ceremonyTemplate.delete({ where: { id } });
 
-    if (existing.isDefault) {
+    if (existing.isDefault && !existing.isSystemTemplate) {
       const next = await this.prisma.ceremonyTemplate.findFirst({
-        where: { organizationId: existing.organizationId },
+        where: {
+          organizationId: existing.organizationId,
+          isSystemTemplate: false,
+        },
         orderBy: { id: 'asc' },
       });
       if (next) {
@@ -148,37 +193,56 @@ export class CeremonyTemplatesService {
 
   async resolveTemplateContent(organizationId: number): Promise<string | null> {
     const template = await this.prisma.ceremonyTemplate.findFirst({
-      where: { organizationId, isDefault: true },
+      where: { organizationId, isDefault: true, isSystemTemplate: false },
     });
     if (template) return template.content;
 
     const fallback = await this.prisma.ceremonyTemplate.findFirst({
-      where: { organizationId },
+      where: { organizationId, isSystemTemplate: false },
       orderBy: { id: 'asc' },
     });
-    return fallback?.content ?? null;
+    if (fallback) return fallback.content;
+
+    const systemDefault = await this.prisma.ceremonyTemplate.findFirst({
+      where: { isSystemTemplate: true, isDefault: true },
+    });
+    if (systemDefault) return systemDefault.content;
+
+    const systemFallback = await this.prisma.ceremonyTemplate.findFirst({
+      where: { isSystemTemplate: true },
+      orderBy: { id: 'asc' },
+    });
+    return systemFallback?.content ?? null;
   }
 
-  private resolveOrganizationId(user: User): number {
-    if (isSystem(user)) {
-      throw new BadRequestException(
-        'System user must use org context via admin account',
+  assertTemplateUsableForOrganization(
+    template: { organizationId: number; isSystemTemplate: boolean },
+    organizationId: number,
+  ): void {
+    if (template.isSystemTemplate) return;
+    if (template.organizationId !== organizationId) {
+      throw new ForbiddenException(
+        'Template does not belong to the person organization',
       );
+    }
+  }
+
+  private async resolveOrganizationIdForCreate(user: User): Promise<number> {
+    if (isSystem(user)) {
+      if (user.organizationId != null) return user.organizationId;
+      const org = await this.prisma.organization.findFirst({
+        orderBy: { id: 'asc' },
+        select: { id: true },
+      });
+      if (!org) {
+        throw new BadRequestException('No organization available for templates');
+      }
+      return org.id;
     }
     if (user.organizationId == null) {
       throw new ForbiddenException('User is not assigned to an organization');
     }
     return user.organizationId;
-  }
-
-  private assertManageAccess(user: User, organizationId: number): void {
-    if (isSystem(user)) return;
-    if (user.organizationId !== adminOrganizationId(user)) {
-      throw new ForbiddenException('No access to this organization');
-    }
-    if (organizationId !== user.organizationId) {
-      throw new ForbiddenException('No access to this template');
-    }
   }
 
   private async getTemplateOrThrow(id: number) {

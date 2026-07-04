@@ -89,6 +89,7 @@ model User {
   notificationLogs NotificationLog[]
   personEditLogs    PersonEditLog[]
   lastEditedPersons Person[]        @relation("PersonLastEditor")
+  ceremonyTemplates CeremonyTemplate[]
   reviewedBillingOrders BillingOrder[] @relation("BillingOrderReviewer")
   activatedSubscriptions OrganizationSubscription[] @relation("SubscriptionActivator")
 
@@ -274,6 +275,13 @@ model CeremonyTemplate {
 
   isDefault Boolean @default(false)
 
+  /// Tài khoản tạo mẫu — chỉ người này được sửa/xóa.
+  createdByUserId Int?
+  createdBy       User? @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  /// Mẫu do tài khoản SYSTEM tạo (hoặc mẫu hệ thống) — mọi người đăng nhập đều xem/in được.
+  isSystemTemplate Boolean @default(false)
+
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -281,6 +289,8 @@ model CeremonyTemplate {
 
   @@index([organizationId, isDefault])
   @@index([organizationId, seoSlug])
+  @@index([isSystemTemplate])
+  @@index([createdByUserId])
 }
 
 model AppConfig {

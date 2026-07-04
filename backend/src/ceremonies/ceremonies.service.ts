@@ -154,11 +154,10 @@ export class CeremoniesService {
       if (!user)
         throw new ForbiddenException('Template selection requires login');
       const template = await this.ceremonyTemplates.findOne(user, templateId);
-      if (template.organizationId !== organizationId) {
-        throw new ForbiddenException(
-          'Template does not belong to the person organization',
-        );
-      }
+      this.ceremonyTemplates.assertTemplateUsableForOrganization(
+        template,
+        organizationId,
+      );
       return template.content;
     }
     return (

@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import type { User } from '../../generated/prisma/client.js';
 import { JwtRequiredGuard } from '../auth/jwt-required.guard.js';
-import { MutateGuard } from '../auth/mutate.guard.js';
 import { CeremoniesService } from './ceremonies.service.js';
 import { CeremonyTemplatesService } from './ceremony-templates.service.js';
 import {
@@ -55,7 +54,7 @@ export class CeremoniesController {
   }
 
   @Post('templates')
-  @UseGuards(JwtRequiredGuard, MutateGuard)
+  @UseGuards(JwtRequiredGuard)
   createTemplate(
     @Request() req: { user: User },
     @Body() dto: CreateCeremonyTemplateDto,
@@ -64,7 +63,7 @@ export class CeremoniesController {
   }
 
   @Patch('templates/:id')
-  @UseGuards(JwtRequiredGuard, MutateGuard)
+  @UseGuards(JwtRequiredGuard)
   updateTemplate(
     @Request() req: { user: User },
     @Param('id') id: string,
@@ -74,13 +73,13 @@ export class CeremoniesController {
   }
 
   @Patch('templates/:id/default')
-  @UseGuards(JwtRequiredGuard, MutateGuard)
+  @UseGuards(JwtRequiredGuard)
   setDefaultTemplate(@Request() req: { user: User }, @Param('id') id: string) {
     return this.ceremonyTemplatesService.setDefault(req.user, +id);
   }
 
   @Delete('templates/:id')
-  @UseGuards(JwtRequiredGuard, MutateGuard)
+  @UseGuards(JwtRequiredGuard)
   removeTemplate(@Request() req: { user: User }, @Param('id') id: string) {
     return this.ceremonyTemplatesService.remove(req.user, +id);
   }

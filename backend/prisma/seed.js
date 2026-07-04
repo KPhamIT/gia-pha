@@ -229,6 +229,7 @@ async function main() {
       seoExcerpt: template.seoExcerpt,
       seoKeywords: template.seoKeywords,
       isDefault,
+      isSystemTemplate: true,
     };
 
     if (existing) {
@@ -355,6 +356,17 @@ async function main() {
     },
   });
   console.log('Seeded system user (username: system)');
+
+  const systemUser = await prisma.user.findUnique({
+    where: { providerId: 'local:system' },
+    select: { id: true },
+  });
+  if (systemUser) {
+    await prisma.ceremonyTemplate.updateMany({
+      where: { isSystemTemplate: true, createdByUserId: null },
+      data: { createdByUserId: systemUser.id },
+    });
+  }
 
   const presets = buildExportPresets();
   await prisma.$transaction([
