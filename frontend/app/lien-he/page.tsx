@@ -1,84 +1,63 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import PublicDocPageShell from "@/components/public/PublicDocPageShell";
+import LandingScrollArea from "@/components/public/LandingScrollArea";
+import ContactFaq from "@/components/public/contact/ContactFaq";
+import ContactForm from "@/components/public/contact/ContactForm";
+import ContactInfoCards from "@/components/public/contact/ContactInfoCards";
+import ContactMapSection from "@/components/public/contact/ContactMapSection";
+import LandingHeader from "@/components/public/landing/LandingHeader";
+import LandingSiteFooter from "@/components/public/landing/LandingSiteFooter";
 import SeoSchemas from "@/components/seo/SeoSchemas";
-import {
-  getContactInfo,
-  hasContactInfo,
-} from "@/lib/constants/contact-info";
+import { SITE } from "@/config/site";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createMetadata({
   title: UI.CONTACT_PAGE_TITLE,
-  description: UI.CONTACT_PAGE_SUBTITLE,
+  description: UI.CONTACT_PAGE_HERO_DESC,
   path: "/lien-he",
-  keywords: ["liên hệ", "hỗ trợ", "gia phả"],
+  keywords: ["liên hệ", "hỗ trợ", "gia phả", "Cội Nguồn"],
   pageType: "contact",
 });
 
 export default function ContactPage() {
-  const info = getContactInfo();
-  const hasInfo = hasContactInfo(info);
-
   return (
-    <PublicDocPageShell
-      title={UI.CONTACT_PAGE_TITLE}
-      subtitle={UI.CONTACT_PAGE_SUBTITLE}
-    >
+    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#fcf9f4] text-[#1c1c19]">
       <SeoSchemas
         path="/lien-he"
         title={UI.CONTACT_PAGE_TITLE}
-        description={UI.CONTACT_PAGE_SUBTITLE}
+        description={UI.CONTACT_PAGE_HERO_DESC}
         pageType="contact"
       />
-      <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>
-        {UI.CONTACT_PAGE_INTRO}
-      </p>
+      <LandingHeader brandName={SITE.brandName} />
+      <LandingScrollArea>
+        <main>
+          <section className="relative overflow-hidden py-16 md:py-20">
+            <div className="relative z-10 mx-auto max-w-4xl px-4 text-center md:px-6">
+              <h1 className="font-serif text-4xl font-bold leading-tight text-[#321716] md:text-5xl">
+                {UI.CONTACT_PAGE_HERO_TITLE}
+              </h1>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-[#504443]">
+                {UI.CONTACT_PAGE_HERO_DESC}
+              </p>
+            </div>
+          </section>
 
-      {hasInfo ? (
-        <ul className={`mt-6 space-y-2 text-sm ${BT.mutedOnLight}`}>
-          {info.name ? (
-            <li>
-              <span className="font-medium text-neutral-800">{UI.CONTACT_NAME}:</span>{" "}
-              {info.name}
-            </li>
-          ) : null}
-          {info.phone ? (
-            <li>
-              <span className="font-medium text-neutral-800">{UI.CONTACT_PHONE}:</span>{" "}
-              <a href={`tel:${info.phone.replace(/\s/g, "")}`} className="text-amber-800 underline-offset-2 hover:underline">
-                {info.phone}
-              </a>
-            </li>
-          ) : null}
-          {info.email ? (
-            <li>
-              <span className="font-medium text-neutral-800">{UI.CONTACT_EMAIL}:</span>{" "}
-              <a href={`mailto:${info.email}`} className="text-amber-800 underline-offset-2 hover:underline">
-                {info.email}
-              </a>
-            </li>
-          ) : null}
-          {info.note ? (
-            <li className="pt-2 text-neutral-600">{info.note}</li>
-          ) : null}
-        </ul>
-      ) : (
-        <p className={`mt-6 rounded-lg border border-amber-200/80 bg-amber-50/80 p-4 text-sm ${BT.mutedOnLight}`}>
-          {UI.CONTACT_PAGE_EMPTY}
-        </p>
-      )}
+          <section className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+              <div className="lg:col-span-5">
+                <ContactInfoCards />
+              </div>
+              <div className="lg:col-span-7">
+                <ContactForm />
+              </div>
+            </div>
+          </section>
 
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/huong-dan" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnPrimary}`}>
-          {UI.LANDING_CTA_GUIDE}
-        </Link>
-        <Link href="/" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}>
-          {UI.CONTACT_PAGE_BACK}
-        </Link>
-      </div>
-    </PublicDocPageShell>
+          <ContactMapSection />
+          <ContactFaq />
+          <LandingSiteFooter />
+        </main>
+      </LandingScrollArea>
+    </div>
   );
 }

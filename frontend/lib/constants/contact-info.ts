@@ -30,3 +30,19 @@ export function formatContactLines(
   if (info.note) lines.push(`${UI.CONTACT_NOTE}: ${info.note}`);
   return lines;
 }
+
+export type PublicContactDisplay = {
+  address: string;
+  phone: string;
+  email: string;
+};
+
+/** Thông tin liên hệ công khai — ưu tiên env, fallback footer landing. */
+export function getPublicContactDisplay(): PublicContactDisplay {
+  const info = getContactInfo();
+  return {
+    address: UI.LANDING_FOOTER_CONTACT_ADDRESS,
+    phone: info.phone || UI.LANDING_FOOTER_CONTACT_PHONE,
+    email: info.email || UI.LANDING_FOOTER_CONTACT_EMAIL,
+  };
+}

@@ -4,6 +4,7 @@ import LandingBentoSection from "@/components/public/landing/LandingBentoSection
 import LandingBottomSection from "@/components/public/landing/LandingBottomSection";
 import LandingHeader from "@/components/public/landing/LandingHeader";
 import LandingHeroSection from "@/components/public/landing/LandingHeroSection";
+import LandingTodayCarousel from "@/components/public/landing/LandingTodayCarousel";
 import LandingStartSection from "@/components/public/landing/LandingStartSection";
 import LandingStatsSection from "@/components/public/landing/LandingStatsSection";
 import SeoSchemas from "@/components/seo/SeoSchemas";
@@ -41,6 +42,7 @@ export default function LandingPage() {
       <LandingScrollArea>
         <main>
           <LandingHeroSection />
+          <LandingTodayCarousel />
           <LandingStatsSection />
           <LandingStartSection
             registerTitle={REGISTER_START.title}

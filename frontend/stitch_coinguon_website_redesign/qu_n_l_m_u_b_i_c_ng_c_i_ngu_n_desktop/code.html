@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mẫu Bài Cúng - Phả Hệ Việt</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Noto Serif -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<!-- BEGIN: Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'deep-wood': '#4a2c2a',
+            'surface': '#fcf9f4',
+            'surface-dim': '#dcdad5',
+            'surface-container': '#f6f3ee',
+            'primary': '#4a2c2a',
+            'secondary': '#8b5e3c',
+            'outline': '#e5e1da'
+          },
+          fontFamily: {
+            'serif': ['"Noto Serif"', 'serif'],
+          },
+          maxWidth: {
+            'container-max': '1280px'
+          },
+          spacing: {
+            'margin-desktop': '2rem'
+          }
+        }
+      }
+    }
+  </script>
+<!-- END: Tailwind Configuration -->
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="typography">
+    body {
+      font-family: 'Noto Serif', serif;
+      background-color: #fcf9f4;
+      color: #4a2c2a;
+    }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;  
+      overflow: hidden;
+    }
+  </style>
+<style data-purpose="layout-adjustments">
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(74, 44, 42, 0.1), 0 2px 4px -1px rgba(74, 44, 42, 0.06);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      transition: all 0.3s ease;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- BEGIN: TopNavBar -->
+<nav class="bg-surface border-b border-outline shadow-sm sticky top-0 z-50" data-purpose="main-navigation">
+<div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-serif text-2xl font-bold text-deep-wood tracking-tight" href="#">Phả Hệ Việt</a>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-medium" href="#">Trang chủ</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-medium" href="#">Gia tộc</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-medium" href="#">Sự kiện</a>
+<a class="text-secondary border-b-2 border-secondary pb-1 font-bold" href="#">Thư viện</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-medium" href="#">Dịch vụ</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block text-primary font-medium hover:underline px-4 py-2">Về chúng tôi</button>
+<div class="w-10 h-10 rounded-full bg-deep-wood flex items-center justify-center text-white cursor-pointer hover:opacity-90 transition-opacity">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</nav>
+<!-- END: TopNavBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow max-w-container-max mx-auto w-full px-margin-desktop py-8">
+<!-- BEGIN: HeaderSection -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-purpose="page-header">
+<div>
+<h1 class="text-3xl font-bold text-deep-wood mb-2">Mẫu Bài Cúng</h1>
+<p class="text-stone-600 italic">Lưu giữ và quản lý các bài văn khấn truyền thống cho gia đình.</p>
+</div>
+<button class="bg-deep-wood text-white px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-stone-800 transition-colors shadow-md active:scale-95">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="font-medium">Tạo mẫu mới</span>
+</button>
+</header>
+<!-- END: HeaderSection -->
+<!-- BEGIN: SearchAndFilters -->
+<section class="bg-surface-container rounded-xl p-4 mb-8 border border-outline flex flex-col lg:flex-row gap-4" data-purpose="filters">
+<div class="relative flex-grow">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</span>
+<input class="block w-full pl-10 pr-3 py-2 border border-outline rounded-md bg-white focus:ring-deep-wood focus:border-deep-wood sm:text-sm" placeholder="Tìm kiếm mẫu bài cúng..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full bg-deep-wood text-white text-sm font-medium">Tất cả</button>
+<button class="px-4 py-2 rounded-full bg-white border border-outline text-stone-700 text-sm font-medium hover:bg-stone-50">Giỗ chạp</button>
+<button class="px-4 py-2 rounded-full bg-white border border-outline text-stone-700 text-sm font-medium hover:bg-stone-50">Lễ tết</button>
+<button class="px-4 py-2 rounded-full bg-white border border-outline text-stone-700 text-sm font-medium hover:bg-stone-50">Thổ công</button>
+<button class="px-4 py-2 rounded-full bg-white border border-outline text-stone-700 text-sm font-medium hover:bg-stone-50">Cúng Mụ</button>
+</div>
+</section>
+<!-- END: SearchAndFilters -->
+<!-- BEGIN: TemplateGrid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-purpose="template-grid">
+<!-- Card 1 -->
+<div class="bg-white rounded-xl border border-outline p-6 card-shadow card-hover flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-bold text-deep-wood">Bài cúng ngày giỗ</h3>
+<span class="bg-stone-100 text-stone-600 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded">Mặc định</span>
+</div>
+<p class="text-stone-500 text-sm mb-4 line-clamp-3 leading-relaxed italic">
+            "Nam mô A Di Đà Phật! (3 lần)... Con lạy chín phương Trời, mười phương Chư Phật... Hôm nay là ngày... tháng... năm..."
+          </p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-stone-50">
+<button class="text-deep-wood font-bold text-sm hover:underline flex items-center gap-1">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Xem &amp; In
+          </button>
+<div class="flex gap-2">
+<button class="p-2 text-stone-400 hover:text-blue-600 transition-colors" title="Sửa">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button class="p-2 text-stone-400 hover:text-red-600 transition-colors" title="Xóa">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white rounded-xl border border-outline p-6 card-shadow card-hover flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-bold text-deep-wood">Bài Cúng Rằm Tháng 7</h3>
+</div>
+<p class="text-stone-500 text-sm mb-4 line-clamp-3 leading-relaxed italic">
+            "Kính lạy: Tổ tiên nội ngoại dòng họ... Hôm nay là ngày rằm tháng bảy, tiết Vu Lan báo hiếu..."
+          </p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-stone-50">
+<button class="text-deep-wood font-bold text-sm hover:underline flex items-center gap-1">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Xem &amp; In
+          </button>
+<div class="flex gap-2">
+<button class="p-2 text-stone-400 hover:text-blue-600 transition-colors">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button class="p-2 text-stone-400 hover:text-red-600 transition-colors">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white rounded-xl border border-outline p-6 card-shadow card-hover flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-bold text-deep-wood">Bài cúng Thổ Công ngày giỗ</h3>
+<span class="bg-stone-100 text-stone-600 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded">Mặc định</span>
+</div>
+<p class="text-stone-500 text-sm mb-4 line-clamp-3 leading-relaxed italic">
+            "Kính lạy Ngài Bản cảnh Thành hoàng, Ngài Bản xứ Thần linh Thổ địa... Hôm nay ngày giỗ..."
+          </p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-stone-50">
+<button class="text-deep-wood font-bold text-sm hover:underline flex items-center gap-1">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Xem &amp; In
+          </button>
+<div class="flex gap-2">
+<button class="p-2 text-stone-400 hover:text-blue-600 transition-colors">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button class="p-2 text-stone-400 hover:text-red-600 transition-colors">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-white rounded-xl border border-outline p-6 card-shadow card-hover flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-3">
+<h3 class="text-xl font-bold text-deep-wood">Lễ cúng Mụ (Đầy cữ, tháng, năm)</h3>
+</div>
+<p class="text-stone-500 text-sm mb-4 line-clamp-3 leading-relaxed italic">
+            "Kính lạy Đệ nhất Thiên tỷ đại tiên chủ, Đệ nhị Thiên đế đại tiên chủ... Phù hộ cho cháu..."
+          </p>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-stone-50">
+<button class="text-deep-wood font-bold text-sm hover:underline flex items-center gap-1">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Xem &amp; In
+          </button>
+<div class="flex gap-2">
+<button class="p-2 text-stone-400 hover:text-blue-600 transition-colors">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button class="p-2 text-stone-400 hover:text-red-600 transition-colors">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- END: TemplateGrid -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: Footer -->
+<footer class="bg-primary text-on-primary" data-purpose="site-footer">
+<div class="w-full py-12 px-margin-desktop mt-auto flex flex-col md:flex-row justify-between items-center gap-8 max-w-container-max mx-auto">
+<div class="flex flex-col items-center md:items-start">
+<h2 class="font-serif text-2xl font-bold mb-2">Phả Hệ Việt</h2>
+<p class="text-sm opacity-80 text-center md:text-left">© 2024 Phả Hệ Việt. Gìn giữ cội nguồn cho thế hệ mai sau.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-sm opacity-80 hover:opacity-100 transition-opacity hover:text-secondary-fixed" href="#">Điều khoản</a>
+<a class="text-sm opacity-80 hover:opacity-100 transition-opacity hover:text-secondary-fixed" href="#">Bảo mật</a>
+<a class="text-sm opacity-80 hover:opacity-100 transition-opacity hover:text-secondary-fixed" href="#">Liên hệ</a>
+<a class="text-sm opacity-80 hover:opacity-100 transition-opacity hover:text-secondary-fixed" href="#">Hỗ trợ</a>
+</div>
+</div>
+</footer>
+<!-- END: Footer -->
+<!-- Floating Add Button for Mobile -->
+<div class="fixed bottom-6 right-6 md:hidden">
+<button class="bg-deep-wood text-white p-4 rounded-full shadow-lg active:scale-90 transition-transform">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</body></html>
