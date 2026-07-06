@@ -73,7 +73,9 @@ export default function LandingSiteFooter() {
         </div>
       </div>
       <div className="mx-auto mt-8 w-full max-w-6xl border-t border-white/10 pt-5 text-center text-xs text-[#eabcb8]">
-        {UI.PUBLIC_FOOTER_COPYRIGHT(new Date().getFullYear())}
+        <span suppressHydrationWarning>
+          {UI.PUBLIC_FOOTER_COPYRIGHT(new Date().getFullYear())}
+        </span>
       </div>
     </footer>
   );

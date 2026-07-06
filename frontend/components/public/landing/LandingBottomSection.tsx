@@ -28,7 +28,11 @@ export default function LandingBottomSection() {
           <FooterLinks title={UI.LANDING_FOOTER_SUPPORT_TITLE} links={[{ href: "/huong-dan", label: UI.PUBLIC_FOOTER_GUIDE }, { href: "/dieu-khoan-su-dung", label: UI.PUBLIC_FOOTER_TERMS }, { href: "/chinh-sach-bao-mat", label: UI.PUBLIC_FOOTER_PRIVACY }, { href: "/lien-he", label: UI.PUBLIC_FOOTER_CONTACT }]} />
           <div><h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#ffb783]">{UI.LANDING_FOOTER_CONTACT_TITLE}</h4><div className="space-y-3 text-sm text-[#f3f0eb]/85"><p>{UI.LANDING_FOOTER_CONTACT_EMAIL}</p><p>{UI.LANDING_FOOTER_CONTACT_PHONE}</p><p>{UI.LANDING_FOOTER_CONTACT_ADDRESS}</p></div></div>
         </div>
-        <div className="mx-auto mt-8 w-full max-w-6xl border-t border-white/10 pt-5 text-center text-xs text-[#eabcb8]">{UI.PUBLIC_FOOTER_COPYRIGHT(new Date().getFullYear())}</div>
+        <div className="mx-auto mt-8 w-full max-w-6xl border-t border-white/10 pt-5 text-center text-xs text-[#eabcb8]">
+          <span suppressHydrationWarning>
+            {UI.PUBLIC_FOOTER_COPYRIGHT(new Date().getFullYear())}
+          </span>
+        </div>
       </footer>
     </section>
   );

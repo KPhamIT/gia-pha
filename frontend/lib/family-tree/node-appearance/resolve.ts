@@ -3,7 +3,7 @@ import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layo
 import {
   NODE_HEIGHT,
   NODE_WIDTH,
-} from "@/components/family-tree/graph/layout";
+} from "@/components/family-tree/graph/layout/constants";
 import type {
   NodeAppearancePatch,
   NodeAppearanceValues,
