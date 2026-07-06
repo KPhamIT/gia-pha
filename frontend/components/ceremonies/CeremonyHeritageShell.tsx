@@ -42,14 +42,14 @@ function HeritagePanel({
       onClick={embedded ? undefined : (e) => e.stopPropagation()}
     >
       <header
-        className={`${HERITAGE_LAYOUT.header}${headerSubtitle ? " items-start" : ""}`}
+        className={`${HERITAGE_LAYOUT.header}${headerSubtitle ? " md:items-start" : ""}`}
       >
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {onClose ? (
             <button
               type="button"
               onClick={onClose}
-              className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition hover:bg-white/10 active:bg-white/10${headerSubtitle ? " self-start" : ""}`}
+              className={`grid h-10 w-10 shrink-0 place-items-center rounded-full transition hover:bg-white/10 active:bg-white/10${headerSubtitle ? " md:self-start" : ""}`}
               aria-label={UI.CLOSE}
             >
               <Icon
@@ -72,7 +72,7 @@ function HeritagePanel({
           </div>
         </div>
         {headerAction ? (
-          <div className={`shrink-0${headerSubtitle ? " self-center" : ""}`}>
+          <div className={`shrink-0${headerSubtitle ? " md:self-center" : ""}`}>
             {headerAction}
           </div>
         ) : null}

@@ -18,7 +18,7 @@ export const HERITAGE_LAYOUT = {
   header:
     "sticky top-0 z-20 flex shrink-0 items-center justify-between gap-2 bg-[#4a2c2a] px-4 py-3 text-white shadow-md pt-[max(0.75rem,env(safe-area-inset-top))] md:rounded-t-2xl md:px-6 md:pt-3",
   headerSubtitle:
-    "mt-0.5 text-xs leading-snug text-white/75 md:text-[13px]",
+    "mt-0.5 hidden text-xs leading-snug text-white/75 md:block md:text-[13px]",
   contextBar: "shrink-0 border-b border-stone-200 bg-stone-100 px-6 py-2 md:px-8",
   scrollBody:
     "min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-8 pb-36 md:px-10 md:py-10 lg:px-16",
