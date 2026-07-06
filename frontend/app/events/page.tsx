@@ -1,59 +1,14 @@
-"use client";
-
-import { useEffect } from "react";
-import dynamic from "next/dynamic";
-import BookPageShell from "@/components/ui/BookPageShell";
-import FamilyTreeStatus from "@/components/family-tree/graph/FamilyTreeStatus";
-import AuthRequiredSheet from "@/components/auth/AuthRequiredSheet";
-import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
-import { useAuthStore } from "@/store/authStore";
-import { useFamilyTree } from "@/hooks/useFamilyTree";
-import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
-import { useTheme } from "@/hooks/useTheme";
+import type { Metadata } from "next";
+import EventsPageView from "@/components/family-tree/events/EventsPageView";
 import { UI } from "@/lib/constants/ui-strings";
+import { createMetadata } from "@/lib/seo";
 
-const EventsManager = dynamic(
-  () => import("@/components/family-tree/events/EventsManager"),
-  { ssr: false },
-);
+export const metadata: Metadata = createMetadata({
+  title: UI.EVENTS_PAGE_TITLE,
+  description: UI.EVENTS_SUBTITLE,
+  path: "/events",
+});
 
 export default function EventsPage() {
-  const { theme } = useTheme();
-  const refreshAuth = useAuthStore((state) => state.refresh);
-  const { ready: orgReady } = useRequireOrgAccess();
-  const { treeData, loading, error } = useFamilyTree({
-    enabled: orgReady,
-  });
-
-  useEffect(() => {
-    void refreshAuth();
-  }, [refreshAuth]);
-
-  if (!orgReady || (loading && !treeData)) {
-    return <FamilyTreeStatus theme={theme} type="loading" />;
-  }
-
-  if (error && !treeData) {
-    return <FamilyTreeStatus theme={theme} type="error" message={error} />;
-  }
-
-  if (!treeData) {
-    return <FamilyTreeStatus theme={theme} type="empty" />;
-  }
-
-  return (
-    <>
-      <NotificationOptInBanner />
-
-      <BookPageShell title={UI.EVENTS_TITLE} subtitle={UI.EVENTS_SUBTITLE}>
-        <EventsManager
-          persons={treeData.persons}
-          relationships={treeData.relationships}
-          standalone
-        />
-      </BookPageShell>
-
-      <AuthRequiredSheet />
-    </>
-  );
+  return <EventsPageView />;
 }

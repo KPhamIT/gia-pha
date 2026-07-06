@@ -1,31 +1,14 @@
-"use client";
-
-import BookPageShell from "@/components/ui/BookPageShell";
-import BillingOrdersSection from "@/components/system/BillingOrdersSection";
-import { useSystemAccess } from "@/hooks/useSystemAccess";
-import { BT } from "@/lib/constants/ui-theme";
+import type { Metadata } from "next";
+import SystemBillingPageView from "@/components/system/SystemBillingPageView";
 import { UI } from "@/lib/constants/ui-strings";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createMetadata({
+  title: UI.BILLING_ADMIN_TITLE,
+  description: UI.BILLING_ADMIN_SUBTITLE,
+  path: "/system/billing",
+});
 
 export default function SystemBillingPage() {
-  const { ready } = useSystemAccess();
-
-  if (!ready) {
-    return (
-      <div
-        className={`flex min-h-dvh items-center justify-center text-sm ${BT.mutedOnDark}`}
-      >
-        {UI.LOADING}
-      </div>
-    );
-  }
-
-  return (
-    <BookPageShell
-      title={UI.BILLING_ADMIN_TITLE}
-      subtitle={UI.BILLING_ADMIN_SUBTITLE}
-      backHref="/system"
-    >
-      <BillingOrdersSection />
-    </BookPageShell>
-  );
+  return <SystemBillingPageView />;
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import Icon from "@/components/icons/Icon";
 import { UI } from "@/lib/constants/ui-strings";
+import type { LandingLunarInfo } from "@/utils/landing-lunar";
 import {
   formatLandingUpdateTime,
   getLandingLunarInfo,
@@ -13,10 +14,21 @@ import {
 
 const DEMO_DEATH_DAYS = 12;
 
+type CarouselData = {
+  lunar: LandingLunarInfo;
+  updatedAt: string;
+};
+
 export default function LandingTodayCarousel() {
-  const lunar = useMemo(() => getLandingLunarInfo(), []);
-  const updatedAt = useMemo(() => formatLandingUpdateTime(), []);
+  const [data, setData] = useState<CarouselData | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    setData({
+      lunar: getLandingLunarInfo(),
+      updatedAt: formatLandingUpdateTime(),
+    });
+  }, []);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 6000, stopOnInteraction: true }),
@@ -37,6 +49,19 @@ export default function LandingTodayCarousel() {
   }, [emblaApi, onSelect]);
 
   const scrollTo = (index: number) => emblaApi?.scrollTo(index);
+
+  if (!data) {
+    return (
+      <section
+        className="overflow-hidden bg-[#faf7f2] px-4 py-6 md:hidden"
+        aria-hidden
+      >
+        <div className="h-[220px] rounded-xl border border-[#d4c3c1] bg-[#f6f3ee] shadow-sm" />
+      </section>
+    );
+  }
+
+  const { lunar, updatedAt } = data;
 
   return (
     <section className="overflow-hidden bg-[#faf7f2] px-4 py-6 md:hidden">
@@ -75,11 +100,7 @@ export default function LandingTodayCarousel() {
   );
 }
 
-function LunarSlide({
-  lunar,
-}: {
-  lunar: ReturnType<typeof getLandingLunarInfo>;
-}) {
+function LunarSlide({ lunar }: { lunar: LandingLunarInfo }) {
   return (
     <>
       <div className="flex items-center justify-between border-b border-[#d4c3c1] pb-3">

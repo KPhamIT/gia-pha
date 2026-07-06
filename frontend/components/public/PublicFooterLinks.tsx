@@ -30,7 +30,10 @@ export default function PublicFooterLinks({
       : "underline-offset-2 hover:text-neutral-800 hover:underline";
 
   return (
-    <nav className={navClass} aria-label={UI.PUBLIC_FOOTER_NAV_LABEL}>
+    <nav
+      className={`${navClass} hidden md:flex`}
+      aria-label={UI.PUBLIC_FOOTER_NAV_LABEL}
+    >
       {LINKS.map((link) => (
         <Link key={link.href} href={link.href} className={linkClass}>
           {link.label}

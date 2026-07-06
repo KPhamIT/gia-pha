@@ -5,9 +5,9 @@ import type {
   Relationship,
 } from "@/components/types/family-tree-types";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import PersonSearchPanel from "@/components/family-tree/person/PersonSearchPanel";
+import { AC } from "./account-theme";
 
 type Props = {
   persons: Person[];
@@ -20,7 +20,6 @@ type Props = {
   onSave: () => void;
 };
 
-/** "Liên kết thành viên" — link the account to a person in the tree. */
 export default function AccountLinkSection({
   persons,
   relationships,
@@ -32,14 +31,10 @@ export default function AccountLinkSection({
   onSave,
 }: Props) {
   return (
-    <section className={`${BT.card} space-y-3 p-4`}>
+    <section className={`${AC.card} space-y-4 p-5 md:p-6`}>
       <div>
-        <h2 className="text-sm font-semibold text-neutral-900">
-          {UI.ACCOUNT_LINK_PERSON}
-        </h2>
-        <p className={`mt-1 text-xs ${BT.mutedOnLight}`}>
-          {UI.ACCOUNT_LINK_PERSON_HINT}
-        </p>
+        <h2 className={AC.sectionTitle}>{UI.ACCOUNT_LINK_PERSON}</h2>
+        <p className={`mt-1 text-sm ${AC.muted}`}>{UI.ACCOUNT_LINK_PERSON_HINT}</p>
       </div>
       <PersonSearchPanel
         persons={persons}
@@ -48,21 +43,26 @@ export default function AccountLinkSection({
         onSelect={(item) => onSelectPerson(item.id)}
         onClear={() => onSelectPerson(null)}
         clearLabel={UI.ACCOUNT_CLEAR_LINK}
-        listClassName="max-h-52 overflow-y-auto rounded-xl border border-amber-100 bg-amber-50/30 px-1 py-1"
+        listClassName="max-h-52 overflow-y-auto rounded-xl border border-[#d4c3c1] bg-[#f6f3ee] px-1 py-1"
       />
       <div className="flex justify-end">
-        <IconRoundButton
-          icon="save"
-          variant="gold"
-          loading={saving}
-          label={UI.SAVE}
+        <button
+          type="button"
+          disabled={saving}
           onClick={onSave}
-        />
+          className="inline-flex items-center gap-2 rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 active:scale-95 disabled:opacity-60"
+        >
+          {UI.ACCOUNT_SAVE_LINK}
+        </button>
       </div>
       {message ? (
-        <p className={`text-sm font-medium ${BT.gold}`}>{message}</p>
+        <p className="text-sm font-medium text-[#944a00]">{message}</p>
       ) : null}
-      {error ? <p className={BT.errorBgLight}>{error}</p> : null}
+      {error ? (
+        <p className="rounded-lg bg-[#ffdad6] px-3 py-2 text-sm text-[#93000a]">
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }

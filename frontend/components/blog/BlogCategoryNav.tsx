@@ -3,7 +3,6 @@ import { BLOG_CATEGORIES } from "@/lib/constants/ui-strings/blog";
 import { blogCategoryLabel } from "@/lib/blog/format";
 import type { BlogCategory } from "@/lib/blog/types";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 
 type BlogCategoryNavProps = {
   active?: BlogCategory;
@@ -12,26 +11,26 @@ type BlogCategoryNavProps = {
 export default function BlogCategoryNav({ active }: BlogCategoryNavProps) {
   return (
     <nav
-      className="flex flex-wrap gap-2"
+      className="mb-8 flex flex-wrap gap-3 md:mb-10"
       aria-label={UI.BLOG_ALL_CATEGORIES}
     >
-      <CategoryLink href="/bai-viet" active={!active}>
+      <CategoryChip href="/bai-viet" active={!active}>
         {UI.BLOG_ALL_CATEGORIES}
-      </CategoryLink>
+      </CategoryChip>
       {BLOG_CATEGORIES.map((category) => (
-        <CategoryLink
+        <CategoryChip
           key={category}
           href={`/bai-viet?category=${category}`}
           active={active === category}
         >
           {blogCategoryLabel(category)}
-        </CategoryLink>
+        </CategoryChip>
       ))}
     </nav>
   );
 }
 
-function CategoryLink({
+function CategoryChip({
   href,
   active,
   children,
@@ -43,11 +42,11 @@ function CategoryLink({
   return (
     <Link
       href={href}
-      className={
+      className={`rounded-lg px-5 py-2 text-sm font-medium transition-all ${
         active
-          ? `${BT.btnBase} ${BT.btnSm} ${BT.btnGold}`
-          : `${BT.btnBase} ${BT.btnSm} ${BT.btnOutline} border-amber-200/60`
-      }
+          ? "border border-[#d4af37]/30 bg-[#fef3c7] text-[#4a2c2a] shadow-sm"
+          : "border border-gray-200 bg-white text-[#4a2c2a]/70 hover:border-[#d4af37]/50 hover:bg-[#fef3c7]/20"
+      }`}
     >
       {children}
     </Link>

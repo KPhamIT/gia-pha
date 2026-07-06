@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AC } from "@/components/auth/account-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import { FormField, inputClassName } from "@/components/ui/CollapsibleSection";
 import { BT } from "@/lib/constants/ui-theme";
@@ -13,8 +14,12 @@ function normalizeYearInput(raw: string): string {
   return raw.replace(/\D/g, "").slice(0, 4);
 }
 
-/** Admin chỉnh năm lập gia phả & địa chỉ dòng họ (lưu trên Organization). */
-export default function OrgBookInfoSection() {
+type Props = {
+  variant?: "book" | "landing";
+};
+
+export default function OrgBookInfoSection({ variant = "book" }: Props) {
+  const isLanding = variant === "landing";
   const { items, loading, error, update } = useOrganizations();
   const org = items[0] ?? null;
 
@@ -55,30 +60,45 @@ export default function OrgBookInfoSection() {
     }
   };
 
+  const loadingClass = isLanding ? AC.muted : BT.mutedOnDark;
+  const errorClass = isLanding
+    ? "rounded-lg bg-[#ffdad6] px-3 py-2 text-sm text-[#93000a]"
+    : BT.errorBg;
+  const panelClass = isLanding ? AC.cardPaper : BT.panel;
+  const fieldInputClass = isLanding ? AC.input : inputClassName;
+
   if (loading) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+    return <p className={`text-sm ${loadingClass}`}>{UI.LOADING}</p>;
   }
   if (error) {
-    return <p className={BT.errorBg}>{error}</p>;
+    return <p className={errorClass}>{error}</p>;
   }
   if (!org) {
     return (
-      <p className={`text-sm ${BT.mutedOnDark}`}>{UI.SYSTEM_USER_ORG_REQUIRED}</p>
+      <p className={`text-sm ${loadingClass}`}>{UI.SYSTEM_USER_ORG_REQUIRED}</p>
     );
   }
 
   return (
-    <div className={`space-y-4 ${BT.panel} p-4`}>
+    <div className={`space-y-4 ${panelClass} p-5 md:p-6`}>
       <div>
-        <h2 className="text-base font-semibold text-amber-950">
+        <h2
+          className={
+            isLanding
+              ? AC.sectionTitle
+              : "text-base font-semibold text-amber-950"
+          }
+        >
           {UI.ORG_BOOK_INFO_TITLE}
         </h2>
-        <p className={`mt-1 text-sm ${BT.mutedOnLight}`}>{UI.ORG_BOOK_INFO_HINT}</p>
+        <p className={`mt-1 text-sm ${isLanding ? AC.muted : BT.mutedOnLight}`}>
+          {UI.ORG_BOOK_INFO_HINT}
+        </p>
       </div>
 
       <FormField label={UI.ORG_BOOK_ESTABLISHED_YEAR_LABEL}>
         <input
-          className={inputClassName}
+          className={fieldInputClass}
           inputMode="numeric"
           maxLength={4}
           value={establishedYear}
@@ -89,7 +109,7 @@ export default function OrgBookInfoSection() {
 
       <FormField label={UI.ORG_BOOK_CLAN_ADDRESS_LABEL}>
         <input
-          className={inputClassName}
+          className={fieldInputClass}
           value={clanAddress}
           placeholder={UI.ORG_BOOK_CLAN_ADDRESS_PLACEHOLDER}
           onChange={(e) => setClanAddress(e.target.value)}
@@ -97,14 +117,25 @@ export default function OrgBookInfoSection() {
       </FormField>
 
       <div className="flex justify-end">
-        <IconRoundButton
-          icon="save"
-          variant="gold"
-          label={UI.SAVE}
-          loading={saving}
-          disabled={!isDirty}
-          onClick={() => void handleSave()}
-        />
+        {isLanding ? (
+          <button
+            type="button"
+            disabled={!isDirty || saving}
+            onClick={() => void handleSave()}
+            className="rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {UI.SAVE}
+          </button>
+        ) : (
+          <IconRoundButton
+            icon="save"
+            variant="gold"
+            label={UI.SAVE}
+            loading={saving}
+            disabled={!isDirty}
+            onClick={() => void handleSave()}
+          />
+        )}
       </div>
     </div>
   );

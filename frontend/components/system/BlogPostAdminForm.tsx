@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { AC } from "@/components/auth/account-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import { FormField, inputClassName } from "@/components/ui/CollapsibleSection";
 import {
@@ -20,9 +21,27 @@ import BlogContentEditor from "./BlogContentEditor";
 type BlogPostAdminFormProps = {
   initial?: BlogPostAdmin;
   saving?: boolean;
+  variant?: "book" | "landing";
   onCancel: () => void;
   onSubmit: (data: BlogPostInput) => Promise<void>;
 };
+
+function LandingFormField({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <label className={`mb-1 block text-sm font-medium ${AC.label}`}>
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
 
 function toDateInputValue(iso?: string): string {
   if (!iso) return "";
@@ -45,9 +64,13 @@ function formatTags(tags: string[]): string {
 export default function BlogPostAdminForm({
   initial,
   saving = false,
+  variant = "book",
   onCancel,
   onSubmit,
 }: BlogPostAdminFormProps) {
+  const isLanding = variant === "landing";
+  const Field = isLanding ? LandingFormField : FormField;
+  const fieldInputClass = isLanding ? AC.input : inputClassName;
   const [title, setTitle] = useState(initial?.title ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [category, setCategory] = useState<BlogCategory>(
@@ -95,30 +118,30 @@ export default function BlogPostAdminForm({
     });
   };
 
-  const textareaClass = `${inputClassName} min-h-24 resize-y`;
+  const textareaClass = `${fieldInputClass} min-h-24 resize-y`;
 
   return (
     <div className="space-y-3">
-      <FormField label={UI.BLOG_ADMIN_TITLE}>
+      <Field label={UI.BLOG_ADMIN_TITLE}>
         <input
-          className={inputClassName}
+          className={fieldInputClass}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-      </FormField>
+      </Field>
 
-      <FormField label={UI.BLOG_ADMIN_SLUG}>
+      <Field label={UI.BLOG_ADMIN_SLUG}>
         <input
-          className={inputClassName}
+          className={fieldInputClass}
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           spellCheck={false}
         />
-      </FormField>
+      </Field>
 
-      <FormField label={UI.BLOG_ADMIN_CATEGORY}>
+      <Field label={UI.BLOG_ADMIN_CATEGORY}>
         <select
-          className={inputClassName}
+          className={fieldInputClass}
           value={category}
           onChange={(e) => setCategory(e.target.value as BlogCategory)}
         >
@@ -128,58 +151,60 @@ export default function BlogPostAdminForm({
             </option>
           ))}
         </select>
-      </FormField>
+      </Field>
 
-      <FormField label={UI.BLOG_ADMIN_EXCERPT}>
+      <Field label={UI.BLOG_ADMIN_EXCERPT}>
         <textarea
           className={textareaClass}
           value={excerpt}
           onChange={(e) => setExcerpt(e.target.value)}
         />
-      </FormField>
+      </Field>
 
-      <FormField label={UI.BLOG_ADMIN_META}>
+      <Field label={UI.BLOG_ADMIN_META}>
         <input
-          className={inputClassName}
+          className={fieldInputClass}
           maxLength={320}
           value={metaDescription}
           onChange={(e) => setMetaDescription(e.target.value)}
         />
-      </FormField>
+      </Field>
 
-      <FormField label={UI.BLOG_ADMIN_CONTENT}>
+      <Field label={UI.BLOG_ADMIN_CONTENT}>
         <BlogContentEditor
           value={content}
           onChange={setContent}
           imageAltBase={title}
         />
-      </FormField>
+      </Field>
 
-      <FormField label={UI.BLOG_ADMIN_TAGS}>
+      <Field label={UI.BLOG_ADMIN_TAGS}>
         <input
-          className={inputClassName}
+          className={fieldInputClass}
           value={tags}
           onChange={(e) => setTags(e.target.value)}
           placeholder="gia phả, dòng họ"
         />
-      </FormField>
+      </Field>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <FormField label={UI.BLOG_ADMIN_PUBLISHED_AT}>
+        <Field label={UI.BLOG_ADMIN_PUBLISHED_AT}>
           <input
             type="date"
-            className={inputClassName}
+            className={fieldInputClass}
             value={publishedAt}
             onChange={(e) => setPublishedAt(e.target.value)}
           />
-        </FormField>
+        </Field>
 
-        <label className="flex items-center gap-2 pt-6 text-sm text-neutral-800">
+        <label
+          className={`flex items-center gap-2 pt-6 text-sm ${isLanding ? "text-[#504443]" : "text-neutral-800"}`}
+        >
           <input
             type="checkbox"
             checked={published}
             onChange={(e) => setPublished(e.target.checked)}
-            className="size-4 rounded border-amber-300"
+            className={`size-4 rounded ${isLanding ? "border-[#d4c3c1]" : "border-amber-300"}`}
           />
           {UI.BLOG_ADMIN_PUBLISHED_LABEL}
         </label>
@@ -203,7 +228,7 @@ export default function BlogPostAdminForm({
           <Link
             href={`/bai-viet/${initial.slug}`}
             target="_blank"
-            className={`text-sm font-medium underline-offset-2 hover:underline ${BT.mutedOnDark}`}
+            className={`text-sm font-medium underline-offset-2 hover:underline ${isLanding ? AC.muted : BT.mutedOnDark}`}
           >
             {UI.BLOG_ADMIN_VIEW_PUBLIC} →
           </Link>

@@ -136,7 +136,7 @@ function LoginContent() {
           ) : null}
         </div>
 
-        <ContactInfoPanel />
+        <ContactInfoPanel variant="book" />
         <PublicFooterLinks />
       </div>
 

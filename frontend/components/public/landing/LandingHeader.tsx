@@ -22,7 +22,7 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
             <Link href="/family-tree" className="transition-colors hover:text-[#944a00]">{UI.LANDING_NAV_CLAN}</Link>
             <Link href="/events" className="transition-colors hover:text-[#944a00]">{UI.LANDING_NAV_EVENTS}</Link>
             <Link href="/bai-viet" className="transition-colors hover:text-[#944a00]">{UI.LANDING_NAV_LIBRARY}</Link>
-            <Link href="/lien-he" className="transition-colors hover:text-[#944a00]">{UI.LANDING_NAV_SERVICES}</Link>
+            <Link href="/dich-vu" className="transition-colors hover:text-[#944a00]">{UI.LANDING_NAV_SERVICES}</Link>
           </nav>
         </div>
         <div className="flex items-center gap-3">

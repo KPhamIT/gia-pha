@@ -27,7 +27,7 @@ export default function LandingScrollArea({
     <div
       ref={ref}
       data-landing-scroll
-      className={`${LAYOUT.sheetBody} h-0 min-h-0 w-full flex-1`}
+      className={`${LAYOUT.sheetBody} h-0 min-h-0 w-full flex-1 pb-24 md:pb-0`}
     >
       {children}
     </div>

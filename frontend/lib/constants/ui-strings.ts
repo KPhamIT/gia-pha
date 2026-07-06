@@ -6,9 +6,11 @@ import { EVENT_STRINGS } from "./ui-strings/events";
 import { EXPORT_STRINGS } from "./ui-strings/export";
 import { NOTIFICATION_STRINGS } from "./ui-strings/notifications";
 import { GUIDE_STRINGS } from "./ui-strings/guide";
+import { INSTALL_PAGE_STRINGS } from "./ui-strings/install-page";
 import { PUBLIC_STRINGS } from "./ui-strings/public";
 import { BLOG_UI } from "./ui-strings/blog";
 import { BILLING_STRINGS } from "./ui-strings/billing";
+import { PAGINATION_STRINGS } from "./ui-strings/pagination";
 
 /**
  * App-wide Vietnamese UI strings, merged from per-domain modules under
@@ -22,9 +24,11 @@ export const UI = {
   ...EXPORT_STRINGS,
   ...NOTIFICATION_STRINGS,
   ...GUIDE_STRINGS,
+  ...INSTALL_PAGE_STRINGS,
   ...PUBLIC_STRINGS,
   ...BLOG_UI,
   ...BILLING_STRINGS,
+  ...PAGINATION_STRINGS,
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

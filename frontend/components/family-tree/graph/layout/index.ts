@@ -16,6 +16,9 @@ import {
 import { buildGenerationMap, computeLevels } from "./levels";
 import { computeCoordinates } from "./positions";
 import { buildFlowEdges, buildFlowNodes } from "./flow";
+import { NODE_HEIGHT, NODE_WIDTH } from "./constants";
+
+export { NODE_HEIGHT, NODE_WIDTH } from "./constants";
 
 export const DEFAULT_EDGE_COLOR = "#94a3b8";
 export const SELECTED_EDGE_COLOR = "#d97706";
@@ -36,8 +39,6 @@ export type FamilyTreeLayoutConfig = {
   nodeStyles?: Record<string, LevelNodeStyle>;
 };
 
-export const NODE_WIDTH = 90;
-export const NODE_HEIGHT = 120;
 const DEFAULT_HORIZONTAL_GAP = 20;
 const DEFAULT_VERTICAL_STEP = 200;
 

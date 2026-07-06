@@ -3,12 +3,18 @@
 import { UI } from "@/lib/constants/ui-strings";
 import { BT } from "@/lib/constants/ui-theme";
 
-export default function AuthPageLoading() {
+type AuthPageLoadingProps = {
+  message?: string;
+};
+
+export default function AuthPageLoading({
+  message = UI.LOADING,
+}: AuthPageLoadingProps) {
   return (
     <div
       className={`flex min-h-dvh items-center justify-center text-sm ${BT.shell} ${BT.shellText} ${BT.mutedOnDark}`}
     >
-      {UI.LOADING}
+      {message}
     </div>
   );
 }

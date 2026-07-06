@@ -1,4 +1,10 @@
-import type { BlogCategory, BlogPost, BlogPostSummary, BlogSlugEntry } from "./types";
+import type {
+  BlogCategory,
+  BlogPost,
+  BlogPostListResponse,
+  BlogSlugEntry,
+} from "./types";
+import { BLOG_DESKTOP_PAGE_SIZE } from "./constants";
 
 function apiBase(): string {
   return (
@@ -19,9 +25,17 @@ async function fetchJson<T>(path: string): Promise<T | null> {
   }
 }
 
-export function fetchBlogPosts(category?: BlogCategory) {
-  const query = category ? `?category=${category}` : "";
-  return fetchJson<BlogPostSummary[]>(`/blog${query}`);
+export function fetchBlogPostsPage(options?: {
+  category?: BlogCategory;
+  page?: number;
+  limit?: number;
+}) {
+  const params = new URLSearchParams();
+  if (options?.category) params.set("category", options.category);
+  params.set("page", String(options?.page ?? 1));
+  params.set("limit", String(options?.limit ?? BLOG_DESKTOP_PAGE_SIZE));
+  const query = params.toString();
+  return fetchJson<BlogPostListResponse>(`/blog?${query}`);
 }
 
 export function fetchBlogPost(slug: string) {

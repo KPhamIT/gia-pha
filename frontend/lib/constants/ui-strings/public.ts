@@ -1,14 +1,8 @@
 /** Public marketing, legal, and contact pages. */
-export type PublicProseSection = {
-  title: string;
-  paragraphs: readonly string[];
-};
-
-export type PublicProseDocument = {
+export type PublicLegalDocument = {
   title: string;
   subtitle: string;
   lastUpdated: string;
-  sections: readonly PublicProseSection[];
 };
 
 export const PUBLIC_STRINGS = {
@@ -39,6 +33,7 @@ export const PUBLIC_STRINGS = {
   LANDING_NAV_SERVICES: "Dịch vụ",
   LANDING_NAV_SEARCH_ARIA: "Tìm kiếm",
   LANDING_CTA_GUIDE: "Xem hướng dẫn",
+  LANDING_CTA_INSTALL: "Cài đặt ứng dụng",
   LANDING_CTA_BOOK: "Vào sổ gia phả",
   LANDING_CTA_LOGIN: "Đăng nhập",
   LANDING_TODAY_LUNAR_LABEL: "Âm lịch",
@@ -122,32 +117,6 @@ export const PUBLIC_STRINGS = {
     "🔔 Người bận rộn — nhận thông báo trước ngày giỗ, có sẵn mẫu bài cúng đúng tên người mất; đến ngày in là xong 🎉",
     "👥 Ban quản trị dòng họ — lưu trữ và cập nhật thông tin tập trung, chia sẻ cho cả họ.",
     "📋 Thư ký dòng họ mong muốn — quản lý sự kiện, đóng góp, thu chi, in ấn giỗ tổ cho dòng họ.",
-  ],
-  LANDING_SERVICES_TITLE: "Dịch vụ của chúng tôi",
-  LANDING_SERVICES_INTRO:
-    "Bên cạnh phần mềm tự dùng, chúng tôi nhập liệu, in ấn và vận hành gia phả theo nhu cầu gia đình hoặc cả dòng họ — bạn tập trung vào nghi lễ, phần còn lại để chúng tôi lo.",
-  LANDING_SERVICE_PRINT_TITLE: "Nhập liệu & in gia phả",
-  LANDING_SERVICE_PRINT_POINTS: [
-    "Gửi sơ đồ, sổ giấy hoặc danh sách họ hàng — chúng tôi nhập liệu lên hệ thống.",
-    "Chọn mẫu sổ, khung cây hoặc phong cách in phù hợp nhà thờ họ.",
-    "In và gửi trong vòng 1 tuần làm việc — bạn có ngay bản trưng bày trang trọng.",
-    "Liên hệ để xem mẫu thực tế và nhận báo giá.",
-  ],
-  LANDING_SERVICE_PERSONAL_TITLE: "Sử dụng cá nhân / gia đình",
-  LANDING_SERVICE_PERSONAL_POINTS: [
-    "Nhập thông tin những người thân bạn muốn nhớ ngày giỗ.",
-    "Nhắc trước 3 ngày qua điện thoại; bài cúng đã điền đúng tên, ngày và quan hệ.",
-    "Đến ngày, ra tiệm photo — chia sẻ link là in được, không cần chép tay.",
-    "Kho mẫu bài cúng theo phong tục Việt Nam; có thể tạo mẫu riêng cho gia đình.",
-  ],
-  LANDING_SERVICE_CLAN_TITLE: "Sử dụng cho dòng họ",
-  LANDING_SERVICE_CLAN_POINTS: [
-    "Toàn bộ lợi ích gói cá nhân, mở rộng cho cả họ với quy mô lớn.",
-    "Cây phả hệ, sổ gia phả và nguồn gốc dòng họ — con cháu tra cứu mọi lúc trên điện thoại.",
-    "Ban quản trị cập nhật tập trung; thông báo giỗ gửi tới người đăng ký trong họ.",
-    "Một liên kết chia sẻ cho cả dòng — không cần cài app.",
-    "Hỗ trợ họp họ, sự kiện, công đức và in ấn đồng bộ cho nhà thờ họ.",
-    "Phù hợp trưởng họ, thư ký và ban quản lý dòng họ.",
   ],
   LANDING_SERVICES_CTA: "Liên hệ tư vấn",
   LANDING_LEGAL_HINT:
@@ -291,113 +260,14 @@ export const PUBLIC_STRINGS = {
   PUBLIC_LAST_UPDATED: (date: string) => `Cập nhật lần cuối: ${date}`,
 } as const;
 
-export const PRIVACY_DOCUMENT: PublicProseDocument = {
+export const PRIVACY_DOCUMENT: PublicLegalDocument = {
   title: "Chính sách bảo mật",
   subtitle: "Cam kết bảo vệ thông tin người dùng và dữ liệu gia phả",
   lastUpdated: "18/06/2025",
-  sections: [
-    {
-      title: "1. Phạm vi áp dụng",
-      paragraphs: [
-        "Chính sách này mô tả cách chúng tôi xử lý thông tin khi bạn truy cập website gia phả, mở liên kết dòng họ, đăng nhập hoặc sử dụng các chức năng liên quan.",
-      ],
-    },
-    {
-      title: "2. Thông tin thu thập",
-      paragraphs: [
-        "Thông tin bạn cung cấp: tên đăng nhập, email (nếu có), liên kết với thành viên gia phả, cài đặt cá nhân.",
-        "Dữ liệu gia phả do ban quản trị dòng họ nhập: họ tên, ngày sinh/mất, tiểu sử, quan hệ gia đình, thông tin mộ phần, sự kiện…",
-        "Dữ liệu kỹ thuật: mã truy cập dòng họ lưu trên trình duyệt (localStorage), token đăng nhập, nhật ký truy cập server phục vụ vận hành và bảo mật.",
-      ],
-    },
-    {
-      title: "3. Mục đích sử dụng",
-      paragraphs: [
-        "Hiển thị đúng gia phả của dòng họ bạn được phép xem.",
-        "Xác thực tài khoản, phân quyền chỉnh sửa, gửi thông báo ngày giỗ (khi bạn bật).",
-        "Cải thiện ổn định, bảo mật và hỗ trợ kỹ thuật.",
-      ],
-    },
-    {
-      title: "4. Chia sẻ thông tin",
-      paragraphs: [
-        "Dữ liệu gia phả trong một tổ chức chỉ hiển thị cho người có liên kết truy cập hoặc tài khoản thuộc tổ chức đó — không công khai cho tổ chức khác.",
-        "Chúng tôi không bán dữ liệu cá nhân. Có thể dùng dịch vụ bên thứ ba (ví dụ: đăng nhập Facebook/Zalo, push notification) theo chính sách của họ.",
-      ],
-    },
-    {
-      title: "5. Lưu trữ & bảo mật",
-      paragraphs: [
-        "Dữ liệu lưu trên hệ thống máy chủ có biện pháp bảo vệ phù hợp (mã hóa truy cập API, phân quyền theo tổ chức).",
-        "Bạn có thể xóa cookie/localStorage bằng cách xóa dữ liệu trình duyệt — sẽ cần mở lại liên kết dòng họ.",
-      ],
-    },
-    {
-      title: "6. Quyền của bạn",
-      paragraphs: [
-        "Yêu cầu ban quản trị dòng họ cập nhật hoặc điều chỉnh thông tin gia phả liên quan đến bạn.",
-        "Tắt thông báo push trong cài đặt trình duyệt hoặc trong trang Cài đặt thông báo.",
-        "Liên hệ qua trang Liên hệ hoặc admin dòng họ để được hỗ trợ thêm.",
-      ],
-    },
-    {
-      title: "7. Liên hệ",
-      paragraphs: [
-        "Mọi thắc mắc về bảo mật, vui lòng dùng thông tin tại trang Liên hệ hoặc liên hệ trực tiếp ban quản trị dòng họ của bạn.",
-      ],
-    },
-  ],
 };
 
-export const TERMS_DOCUMENT: PublicProseDocument = {
+export const TERMS_DOCUMENT: PublicLegalDocument = {
   title: "Điều khoản sử dụng",
   subtitle: "Quy định khi truy cập và sử dụng nền tảng gia phả",
   lastUpdated: "18/06/2025",
-  sections: [
-    {
-      title: "1. Chấp nhận điều khoản",
-      paragraphs: [
-        "Khi truy cập website, mở liên kết dòng họ hoặc đăng nhập, bạn đồng ý tuân thủ các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng dịch vụ.",
-      ],
-    },
-    {
-      title: "2. Mục đích sử dụng",
-      paragraphs: [
-        "Dịch vụ phục vụ tra cứu, lưu trữ và quản lý thông tin gia phả trong phạm vi dòng họ được cấp quyền.",
-        "Không sử dụng cho mục đích vi phạm pháp luật, xâm phạm quyền riêng tư người khác hoặc phát tán thông tin sai lệch cố ý.",
-      ],
-    },
-    {
-      title: "3. Liên kết truy cập dòng họ",
-      paragraphs: [
-        "Liên kết join do ban quản trị phát hành — chỉ chia sẻ trong phạm vi họ hàng được phép biết.",
-        "Không cố truy cập dòng họ khác khi không có liên kết hoặc tài khoản hợp lệ.",
-      ],
-    },
-    {
-      title: "4. Tài khoản & nội dung",
-      paragraphs: [
-        "Người có quyền chỉnh sửa chịu trách nhiệm tính chính xác thông tin đăng tải.",
-        "Không đăng nội dung xúc phạm, vi phạm bản quyền hoặc thông tin cá nhân của người khác khi chưa được phép.",
-      ],
-    },
-    {
-      title: "5. Sở hữu trí tuệ",
-      paragraphs: [
-        "Giao diện và phần mềm nền tảng thuộc quyền sở hữu của đơn vị vận hành. Nội dung gia phả do dòng họ cung cấp thuộc trách nhiệm của ban quản trị tương ứng.",
-      ],
-    },
-    {
-      title: "6. Miễn trừ trách nhiệm",
-      paragraphs: [
-        "Dịch vụ cung cấp “nguyên trạng”. Ban quản trị dòng họ chịu trách nhiệm về nội dung hiển thị. Chúng tôi nỗ lực duy trì hoạt động ổn định nhưng không đảm bảo không gián đoạn.",
-      ],
-    },
-    {
-      title: "7. Thay đổi & chấm dứt",
-      paragraphs: [
-        "Có thể cập nhật điều khoản; ngày cập nhật ghi trên trang này. Ban quản trị dòng họ có thể thu hồi liên kết hoặc tài khoản khi vi phạm nội quy nội bộ.",
-      ],
-    },
-  ],
 };

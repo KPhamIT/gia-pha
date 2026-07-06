@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FullScreenSheet from "@/components/ui/FullScreenSheet";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
@@ -19,14 +19,16 @@ import EventFormSheet from "./EventFormSheet";
 import EventContributionView from "./EventContributionView";
 import EventDonationsView from "./EventDonationsView";
 import EventCard from "./EventCard";
+import EventsLandingBoard from "./EventsLandingBoard";
 import { ET } from "./event-theme";
 
 type Props = {
   persons: Person[];
   relationships: Relationship[];
-  /** Trang riêng `/events` — không bọc FullScreenSheet. */
+  /** Trang riêng `/events` — layout landing mới. */
   standalone?: boolean;
   onClose?: () => void;
+  onCreateRef?: (openCreate: () => void) => void;
 };
 
 export default function EventsManager({
@@ -34,6 +36,7 @@ export default function EventsManager({
   relationships,
   standalone = false,
   onClose,
+  onCreateRef,
 }: Props) {
   const { requireFeature, canUseFeature } = useFeatureAccess();
   const {
@@ -53,10 +56,14 @@ export default function EventsManager({
     useState<FamilyEvent | null>(null);
   const [donationEvent, setDonationEvent] = useState<FamilyEvent | null>(null);
 
-  const openCreate = () => {
+  const openCreate = useCallback(() => {
     setEditing(null);
     setFormOpen(true);
-  };
+  }, []);
+
+  useEffect(() => {
+    onCreateRef?.(openCreate);
+  }, [onCreateRef, openCreate]);
 
   const openEdit = (event: FamilyEvent) => {
     setEditing(event);
@@ -85,7 +92,9 @@ export default function EventsManager({
     }
   };
 
-  const addButton = canUseFeature("editEvents") ? (
+  const canEdit = canUseFeature("editEvents");
+
+  const addButton = canEdit ? (
     <IconRoundButton
       icon="plus"
       variant="gold"
@@ -94,14 +103,12 @@ export default function EventsManager({
     />
   ) : null;
 
-  const body = loading ? (
+  const bookListBody = loading ? (
     <div className="flex justify-center py-12">
       <LoadingSpinner size={36} label={UI.LOADING} />
     </div>
   ) : error ? (
-    <div
-      className={`flex flex-col items-center gap-3 py-12 text-center ${standalone ? "" : ET.pagePad}`}
-    >
+    <div className={`flex flex-col items-center gap-3 py-12 text-center ${ET.pagePad}`}>
       <p className="text-sm text-amber-100/80">{error}</p>
       <IconRoundButton
         icon="refresh"
@@ -111,18 +118,17 @@ export default function EventsManager({
       />
     </div>
   ) : events.length === 0 ? (
-    <p
-      className={`py-12 text-center text-sm text-amber-100/70 ${standalone ? "" : ET.pagePad}`}
-    >
-      {UI.EVENTS_EMPTY}
-    </p>
+    <div className={`py-12 text-center ${ET.pagePad}`}>
+      <p className="text-sm text-amber-100/70">{UI.EVENTS_EMPTY}</p>
+    </div>
   ) : (
-    <div className={`${ET.cardGrid} ${standalone ? "" : ET.pagePad}`}>
+    <div className={`${ET.cardGrid} ${ET.pagePad}`}>
       {events.map((event) => (
         <EventCard
           key={event.id}
           event={event}
-          canEdit={canUseFeature("editEvents")}
+          canEdit={canEdit}
+          variant="book"
           onEdit={() => openEdit(event)}
           onDelete={() => void handleDelete(event)}
           onViewContribution={() => setContributionEvent(event)}
@@ -135,20 +141,26 @@ export default function EventsManager({
   return (
     <>
       {standalone ? (
-        <div>
-          {addButton ? (
-            <div className="mb-4 flex justify-end">{addButton}</div>
-          ) : null}
-          {body}
-        </div>
+        <EventsLandingBoard
+          events={events}
+          loading={loading}
+          error={error}
+          canEdit={canEdit}
+          onReload={() => void reload()}
+          onCreate={openCreate}
+          onEdit={openEdit}
+          onDelete={(event) => void handleDelete(event)}
+          onViewContribution={setContributionEvent}
+          onViewDonation={setDonationEvent}
+        />
       ) : (
         <FullScreenSheet
-          title={UI.EVENTS_TITLE}
+          title={UI.EVENTS_PAGE_TITLE}
           onClose={onClose!}
           headerRight={addButton}
           tone="book"
         >
-          {body}
+          {bookListBody}
         </FullScreenSheet>
       )}
 
@@ -169,7 +181,7 @@ export default function EventsManager({
           event={contributionEvent}
           persons={persons}
           relationships={relationships}
-          canEdit={canUseFeature("editEvents")}
+          canEdit={canEdit}
           onClose={() => setContributionEvent(null)}
           onEventPatched={(patch) => patchEvent(contributionEvent.id, patch)}
         />
@@ -179,7 +191,7 @@ export default function EventsManager({
         <EventDonationsView
           event={donationEvent}
           persons={persons}
-          canEdit={canUseFeature("editEvents")}
+          canEdit={canEdit}
           onClose={() => setDonationEvent(null)}
           onEventPatched={(patch) => patchEvent(donationEvent.id, patch)}
         />

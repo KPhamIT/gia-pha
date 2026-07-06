@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Icon from "@/components/icons/Icon";
 import { api } from "@/lib/api";
 import type { OrganizationAccessLink } from "@/lib/api/modules/organizations";
-import IconRoundButton from "@/components/ui/IconRoundButton";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 import { notify } from "@/lib/notify";
 import { getErrorMessage } from "@/utils/errors";
+import { AC } from "./account-theme";
 
 export default function OrgShareLinkSection() {
   const [link, setLink] = useState<OrganizationAccessLink | null>(null);
@@ -33,18 +33,22 @@ export default function OrgShareLinkSection() {
   }, [link?.publicAccessUrl]);
 
   if (loading) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+    return <p className={`text-sm ${AC.muted}`}>{UI.LOADING}</p>;
   }
 
   if (error || !link) {
-    return error ? <p className={BT.errorBgLight}>{error}</p> : null;
+    return error ? (
+      <p className="rounded-lg bg-[#ffdad6] px-3 py-2 text-sm text-[#93000a]">
+        {error}
+      </p>
+    ) : null;
   }
 
   return (
-    <section className={`${BT.card} space-y-3 p-4`}>
+    <section className={`${AC.cardPaper} space-y-4 p-5 md:p-6`}>
       <div>
-        <h2 className="text-sm font-semibold text-neutral-900">{UI.ORG_SHARE_TITLE}</h2>
-        <p className={`mt-1 text-xs leading-relaxed ${BT.mutedOnLight}`}>
+        <h2 className={AC.sectionTitle}>{UI.ORG_SHARE_TITLE}</h2>
+        <p className={`mt-1 text-sm leading-relaxed ${AC.muted}`}>
           {UI.ORG_SHARE_HINT}
         </p>
       </div>
@@ -53,14 +57,23 @@ export default function OrgShareLinkSection() {
           readOnly
           disabled
           value={link.publicAccessUrl}
-          className={`${BT.input} cursor-default text-xs disabled:opacity-100`}
+          className={`${AC.input} cursor-default text-xs disabled:opacity-100`}
         />
-        <IconRoundButton
-          icon="share"
-          variant="gold"
-          label={UI.ORG_SHARE_COPY}
+        <button
+          type="button"
           onClick={() => void handleCopy()}
-        />
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-[#d4c3c1] bg-white px-4 py-2.5 text-sm font-semibold text-[#321716] transition hover:bg-[#f0ede9]"
+        >
+          <Icon
+            path="share"
+            size={18}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            pointer={false}
+          />
+          {UI.ORG_SHARE_COPY}
+        </button>
       </div>
     </section>
   );
