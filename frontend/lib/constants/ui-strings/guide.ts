@@ -1,5 +1,6 @@
 /** User guide page — marketing / end-user help (Facebook, onboarding). */
 export const GUIDE_STRINGS = {
+  GUIDE_PAGE_EYEBROW: "Trợ giúp",
   GUIDE_PAGE_TITLE: "Hướng dẫn sử dụng",
   GUIDE_PAGE_SUBTITLE:
     "Tra cứu gia phả dòng họ trên điện thoại và máy tính — xem sổ, cây phả hệ, sự kiện, ngày giỗ.",

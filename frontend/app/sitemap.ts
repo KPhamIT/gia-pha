@@ -10,6 +10,7 @@ const STATIC_PAGES: {
 }[] = [
   { path: "", changeFrequency: "weekly", priority: 1 },
   { path: "/huong-dan", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/cai-dat", changeFrequency: "monthly", priority: 0.85 },
   { path: "/bai-viet", changeFrequency: "weekly", priority: 0.9 },
   { path: "/gioi-thieu", changeFrequency: "monthly", priority: 0.8 },
   { path: "/dich-vu", changeFrequency: "monthly", priority: 0.8 },

@@ -2,16 +2,23 @@
 export const NOTIFICATION_STRINGS = {
   // Notifications
   NOTIFICATIONS_TITLE: "Thông báo",
-  NOTIFICATIONS_SUBTITLE: "Lịch sử thông báo ngày giỗ và sự kiện",
-  NOTIFICATIONS_EMPTY: "Chưa có thông báo nào",
+  NOTIFICATIONS_PAGE_EYEBROW: "Lịch sử & Nhắc nhở",
+  NOTIFICATIONS_SUBTITLE:
+    "Xem lại các thông báo ngày giỗ, sự kiện dòng họ và bài viết đã gửi trong ứng dụng.",
+  NOTIFICATIONS_LOADING: "Đang tải thông báo…",
+  NOTIFICATIONS_EMPTY: "Chưa có thông báo nào.",
+  NOTIFICATIONS_CENTER_QUICK_LINKS: "Truy cập nhanh",
   NOTIF_IN_APP_HINT:
     "Danh sách dưới là lịch sử trong app (sau khi cron chạy). Popup hệ thống (góc màn hình) là push trình duyệt — cần bật quyền ở Cài đặt thông báo; thử thu nhỏ tab hoặc chuyển sang tab khác khi test.",
   NOTIF_PUSH_SENT: "Đã gửi push",
   NOTIF_PUSH_FAILED: "Push thất bại",
   NOTIF_PUSH_LOGGED: "Trong ứng dụng",
   NOTIFICATIONS_SETTINGS_TITLE: "Cài đặt thông báo",
+  NOTIFICATIONS_SETTINGS_PAGE_EYEBROW: "Nhắc nhở & Cập nhật",
   NOTIFICATIONS_SETTINGS_SUBTITLE:
-    "Quản lý quyền và loại thông báo bạn muốn nhận",
+    "Bật thông báo push trên thiết bị và chọn loại tin bạn muốn nhận về ngày giỗ, sự kiện dòng họ.",
+  NOTIFICATIONS_SETTINGS_LOADING: "Đang tải cài đặt thông báo…",
+  NOTIFICATIONS_SETTINGS_QUICK_LINKS: "Truy cập nhanh",
   NOTIF_DEATH_ANNIVERSARY: "Nhận thông báo ngày giỗ",
   NOTIF_EVENTS: "Nhận thông báo sự kiện dòng họ",
   NOTIF_POSTS: "Nhận thông báo bài viết mới",
@@ -42,8 +49,12 @@ export const NOTIFICATION_STRINGS = {
   DEATH_LUNAR_DAY: "Ngày mất (âm lịch)",
   DEATH_LUNAR_MONTH: "Tháng mất (âm lịch)",
   CEREMONIES_UPCOMING_TITLE: "Ngày giỗ sắp tới",
-  CEREMONIES_UPCOMING_SUBTITLE: "Danh sách ngày giỗ trong vòng 3 ngày tới",
-  CEREMONIES_EMPTY: "Không có ngày giỗ sắp tới",
+  CEREMONIES_UPCOMING_PAGE_EYEBROW: "Âm lịch & Lễ nghi",
+  CEREMONIES_UPCOMING_SUBTITLE:
+    "Theo dõi ngày giỗ trong vài ngày tới, xem bài cúng và chia sẻ với con cháu trong dòng họ.",
+  CEREMONIES_UPCOMING_LOADING: "Đang tải ngày giỗ sắp tới…",
+  CEREMONIES_UPCOMING_QUICK_LINKS: "Truy cập nhanh",
+  CEREMONIES_EMPTY: "Không có ngày giỗ sắp tới trong 3 ngày tới.",
   CEREMONIES_DAYS_UNTIL: (days: number) =>
     days === 0 ? "Hôm nay" : `Còn ${days} ngày`,
   CEREMONIES_VIEW: "Xem bài cúng",

@@ -1,0 +1,14 @@
+import { UI } from "@/lib/constants/ui-strings";
+
+export default function InstallPageHero() {
+  return (
+    <section className="py-4 md:py-8">
+      <span className="text-sm font-semibold uppercase tracking-widest text-[#944a00]">
+        {UI.INSTALL_PAGE_EYEBROW}
+      </span>
+      <h1 className="mt-2 font-serif text-2xl font-semibold text-[#321716] md:text-[32px] md:leading-10">
+        {UI.INSTALL_PAGE_TITLE}
+      </h1>
+    </section>
+  );
+}

@@ -57,6 +57,7 @@ export default function LandingSiteFooter() {
           title={UI.LANDING_FOOTER_SUPPORT_TITLE}
           links={[
             { href: "/huong-dan", label: UI.PUBLIC_FOOTER_GUIDE },
+            { href: "/cai-dat", label: UI.INSTALL_PAGE_TITLE },
             { href: "/dieu-khoan-su-dung", label: UI.PUBLIC_FOOTER_TERMS },
             { href: "/chinh-sach-bao-mat", label: UI.PUBLIC_FOOTER_PRIVACY },
             { href: "/lien-he", label: UI.PUBLIC_FOOTER_CONTACT },

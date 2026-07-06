@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AC } from "@/components/auth/account-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
@@ -20,6 +21,7 @@ type Mode = "defaults" | "org";
 type StandardFeaturesSectionProps = {
   mode: Mode;
   organizationId?: number;
+  variant?: "book" | "landing";
 };
 
 function featuresEqual(a: StandardFeatures, b: StandardFeatures): boolean {
@@ -29,7 +31,9 @@ function featuresEqual(a: StandardFeatures, b: StandardFeatures): boolean {
 export default function StandardFeaturesSection({
   mode,
   organizationId,
+  variant = "book",
 }: StandardFeaturesSectionProps) {
+  const isLanding = variant === "landing";
   const [baseline, setBaseline] = useState<StandardFeatures | null>(null);
   const [draft, setDraft] = useState<StandardFeatures | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,34 +104,45 @@ export default function StandardFeaturesSection({
     }
   };
 
-  if (loading)
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
-  if (error && !draft) return <p className={BT.errorBg}>{error}</p>;
+  const loadingClass = isLanding ? AC.muted : BT.mutedOnDark;
+  const errorClass = isLanding
+    ? "rounded-lg bg-[#ffdad6] px-3 py-2 text-sm text-[#93000a]"
+    : BT.errorBg;
+  const cardClass = isLanding ? AC.card : BT.card;
+
+  if (loading) return <p className={`text-sm ${loadingClass}`}>{UI.LOADING}</p>;
+  if (error && !draft) return <p className={errorClass}>{error}</p>;
   if (!draft) return null;
 
   return (
     <div className="space-y-4">
-      <p className={`text-sm ${BT.mutedOnDark}`}>
+      <p className={`text-sm ${loadingClass}`}>
         {mode === "defaults" ? UI.FEATURES_DEFAULTS_HINT : UI.FEATURES_ORG_HINT}
       </p>
 
       {FEATURE_GROUPS.map((group) => (
-        <section key={group.title} className={`${BT.card} p-3`}>
-          <h3 className="mb-3 text-sm font-semibold text-amber-950">
+        <section key={group.title} className={`${cardClass} p-4 md:p-5`}>
+          <h3
+            className={`mb-3 text-sm font-semibold ${
+              isLanding ? "font-serif text-lg text-[#321716]" : "text-amber-950"
+            }`}
+          >
             {group.title}
           </h3>
           <ul className="space-y-2">
             {group.keys.map((key) => (
               <li key={key}>
                 <label
-                  className={`flex cursor-pointer items-center justify-between gap-3 text-sm ${BT.mutedOnLight}`}
+                  className={`flex cursor-pointer items-center justify-between gap-3 text-sm ${
+                    isLanding ? AC.muted : BT.mutedOnLight
+                  }`}
                 >
-                  <span className="text-neutral-800">
+                  <span className={isLanding ? "text-[#321716]" : "text-neutral-800"}>
                     {FEATURE_LABELS[key]}
                   </span>
                   <input
                     type="checkbox"
-                    className="h-4 w-4 accent-amber-600"
+                    className={`h-4 w-4 ${isLanding ? "accent-[#944a00]" : "accent-amber-600"}`}
                     checked={draft[key]}
                     onChange={() => toggle(key)}
                   />
@@ -138,17 +153,28 @@ export default function StandardFeaturesSection({
         </section>
       ))}
 
-      {error ? <p className={BT.errorBg}>{error}</p> : null}
+      {error ? <p className={errorClass}>{error}</p> : null}
 
       <div className="flex justify-end">
-        <IconRoundButton
-          icon="save"
-          variant="gold"
-          label={UI.SAVE}
-          disabled={!isDirty}
-          loading={saving}
-          onClick={() => void handleSave()}
-        />
+        {isLanding ? (
+          <button
+            type="button"
+            disabled={!isDirty || saving}
+            onClick={() => void handleSave()}
+            className="rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {UI.SAVE}
+          </button>
+        ) : (
+          <IconRoundButton
+            icon="save"
+            variant="gold"
+            label={UI.SAVE}
+            disabled={!isDirty}
+            loading={saving}
+            onClick={() => void handleSave()}
+          />
+        )}
       </div>
     </div>
   );

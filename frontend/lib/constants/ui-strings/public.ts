@@ -33,6 +33,7 @@ export const PUBLIC_STRINGS = {
   LANDING_NAV_SERVICES: "Dịch vụ",
   LANDING_NAV_SEARCH_ARIA: "Tìm kiếm",
   LANDING_CTA_GUIDE: "Xem hướng dẫn",
+  LANDING_CTA_INSTALL: "Cài đặt ứng dụng",
   LANDING_CTA_BOOK: "Vào sổ gia phả",
   LANDING_CTA_LOGIN: "Đăng nhập",
   LANDING_TODAY_LUNAR_LABEL: "Âm lịch",

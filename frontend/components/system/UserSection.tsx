@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Icon from "@/components/icons/Icon";
 import type { UserRole } from "@/components/types/family-tree-types";
+import { AC } from "@/components/auth/account-theme";
 import { useAuthStore } from "@/store/authStore";
 import { UI } from "@/lib/constants/ui-strings";
 import { useUsersAdmin } from "@/hooks/useUsersAdmin";
@@ -11,23 +13,23 @@ import IconRoundButton from "@/components/ui/IconRoundButton";
 import { BT } from "@/lib/constants/ui-theme";
 import UserCard from "./UserCard";
 import UserForm from "./UserForm";
-import OrganizationCreateForm from "./OrganizationCreateForm";
 
 type UserSectionProps = {
   mode?: "system" | "org";
-  /** Chỉ hiển thị user có role này (dùng ở trang quản lý admin). */
+  variant?: "book" | "landing";
   roleFilter?: UserRole;
   emptyMessage?: string;
-  /** Hiện form tạo tổ chức phía trên (trang quản lý admin). */
   showOrgCreate?: boolean;
 };
 
 export default function UserSection({
   mode = "system",
+  variant = "book",
   roleFilter,
   emptyMessage,
   showOrgCreate = false,
 }: UserSectionProps) {
+  const isLanding = variant === "landing";
   const isOrgMode = mode === "org";
   const currentUserId = useAuthStore((state) => state.user?.id);
   const users = useUsersAdmin();
@@ -47,31 +49,61 @@ export default function UserSection({
     [roleFilter, users.items],
   );
 
+  const loadingClass = isLanding ? AC.muted : BT.mutedOnDark;
+  const cardClass = isLanding ? AC.card : BT.card;
+  const errorClass = isLanding
+    ? "rounded-lg bg-[#ffdad6] px-3 py-2 text-sm text-[#93000a]"
+    : BT.errorBg;
+
   if (users.loading || (!isOrgMode && orgs.loading)) {
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
+    return <p className={`text-sm ${loadingClass}`}>{UI.LOADING}</p>;
   }
 
   return (
     <div className="space-y-4">
       {showOrgCreate ? (
-        <h2 className="text-sm font-semibold text-neutral-900">
+        <h2
+          className={
+            isLanding
+              ? AC.sectionTitle
+              : "text-sm font-semibold text-neutral-900"
+          }
+        >
           {UI.SYSTEM_ADMINS_LIST_SECTION}
         </h2>
       ) : null}
 
       <div className="flex justify-end">
-        <IconRoundButton
-          icon="plus"
-          variant="gold"
-          label={UI.BTN_CREATE}
-          onClick={() => setShowCreate(true)}
-        />
+        {isLanding ? (
+          <button
+            type="button"
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 active:scale-95"
+          >
+            <Icon
+              path="plus"
+              size={18}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              pointer={false}
+            />
+            {UI.BTN_CREATE}
+          </button>
+        ) : (
+          <IconRoundButton
+            icon="plus"
+            variant="gold"
+            label={UI.BTN_CREATE}
+            onClick={() => setShowCreate(true)}
+          />
+        )}
       </div>
 
-      {users.error ? <p className={BT.errorBg}>{users.error}</p> : null}
+      {users.error ? <p className={errorClass}>{users.error}</p> : null}
 
       {showCreate ? (
-        <div className={`${BT.card} p-4`}>
+        <div className={`${cardClass} p-4 md:p-5`}>
           <UserForm
             mode={mode}
             fixedRole={roleFilter}
@@ -86,7 +118,7 @@ export default function UserSection({
       ) : null}
 
       {roleFilter && visibleUsers.length === 0 ? (
-        <p className={`text-sm ${BT.mutedOnDark}`}>
+        <p className={`text-sm ${loadingClass}`}>
           {emptyMessage ?? UI.SYSTEM_ADMINS_EMPTY}
         </p>
       ) : null}
@@ -96,6 +128,7 @@ export default function UserSection({
           <UserCard
             key={user.id}
             mode={mode}
+            variant={variant}
             user={user}
             currentUserId={currentUserId}
             deletableRoles={roleFilter ? [roleFilter] : undefined}

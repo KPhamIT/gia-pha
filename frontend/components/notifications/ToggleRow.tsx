@@ -4,6 +4,7 @@ type Props = {
   label: string;
   checked: boolean;
   disabled?: boolean;
+  variant?: "book" | "landing";
   onChange: (value: boolean) => void;
 };
 
@@ -11,10 +12,17 @@ export default function ToggleRow({
   label,
   checked,
   disabled,
+  variant = "book",
   onChange,
 }: Props) {
+  const isLanding = variant === "landing";
+
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm text-neutral-900">
+    <label
+      className={`flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm ${
+        isLanding ? "text-[#321716]" : "text-neutral-900"
+      }`}
+    >
       <span className="min-w-0 flex-1">{label}</span>
       <button
         type="button"
@@ -24,7 +32,13 @@ export default function ToggleRow({
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
-          checked ? "bg-amber-600" : "bg-neutral-300"
+          checked
+            ? isLanding
+              ? "bg-[#944a00]"
+              : "bg-amber-600"
+            : isLanding
+              ? "bg-[#d4c3c1]"
+              : "bg-neutral-300"
         }`}
       >
         <span

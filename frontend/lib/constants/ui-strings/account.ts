@@ -20,6 +20,8 @@ export const ACCOUNT_STRINGS = {
 
   // Account
   ACCOUNT_TITLE: "Tài khoản",
+  ACCOUNT_PAGE_EYEBROW: "Hồ sơ & Quyền truy cập",
+  ACCOUNT_PAGE_TITLE: "Tài khoản của tôi",
   ACCOUNT_LINK_PERSON: "Liên kết thành viên",
   ACCOUNT_LINK_PERSON_HINT:
     "Chọn thành viên trong gia phả tương ứng với tài khoản của bạn",
@@ -39,13 +41,19 @@ export const ACCOUNT_STRINGS = {
   ACCOUNT_LINK_SAVED: "Đã lưu liên kết",
   ACCOUNT_CLEAR_LINK: "Bỏ liên kết",
   ACCOUNT_OPEN: "Tài khoản",
-  ACCOUNT_SUBTITLE: "Thông tin đăng nhập và liên kết thành viên gia phả",
+  ACCOUNT_SUBTITLE:
+    "Quản lý thông tin đăng nhập, liên kết với hồ sơ gia phả và truy cập nhanh các cài đặt dòng họ.",
+  ACCOUNT_LOADING: "Đang tải tài khoản…",
   ERR_ADMIN_REQUIRED:
     "Chỉ tài khoản quản trị mới có thể chỉnh sửa và lưu dữ liệu. Vui lòng đăng nhập bằng tài khoản quản trị.",
 
   // System / org admin
   SYSTEM_CONSOLE_TITLE: "Quản trị hệ thống",
-  SYSTEM_CONSOLE_SUBTITLE: "Quản lý tổ chức và người dùng",
+  SYSTEM_PAGE_EYEBROW: "Hệ thống",
+  SYSTEM_CONSOLE_SUBTITLE:
+    "Quản lý tổ chức, người dùng, quyền mặc định và cấu hình toàn nền tảng.",
+  SYSTEM_LOADING: "Đang tải quản trị hệ thống…",
+  SYSTEM_QUICK_LINKS: "Truy cập nhanh",
   SYSTEM_TAB_ORGS: "Tổ chức",
   SYSTEM_TAB_USERS: "User",
   SYSTEM_ORG_NAME: "Tên tổ chức",
@@ -81,8 +89,10 @@ export const ACCOUNT_STRINGS = {
   SYSTEM_ROLE_ADMIN: "Admin tổ chức",
   SYSTEM_ROLE_STANDARD: "Người dùng",
   ORG_USERS_TITLE: "Quản lý người dùng tổ chức",
+  ORG_USERS_PAGE_EYEBROW: "Quản trị dòng họ",
   ORG_USERS_SUBTITLE:
-    "Thêm, sửa, xóa tài khoản người dùng trong tổ chức của bạn",
+    "Thêm và quản lý tài khoản, phân quyền chức năng và thông tin bìa sổ gia phả cho tổ chức của bạn.",
+  ORG_USERS_LOADING: "Đang tải quản trị tổ chức…",
   ORG_USERS_OPEN: "Quản lý user",
   ORG_USER_DELETE_CONFIRM: "Xóa tài khoản này? Hành động không thể hoàn tác.",
   SYSTEM_USER_USERNAME_REQUIRED: "Vui lòng nhập tên đăng nhập",

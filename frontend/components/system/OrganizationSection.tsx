@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AC } from "@/components/auth/account-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import { FormField, inputClassName } from "@/components/ui/CollapsibleSection";
 import { BT } from "@/lib/constants/ui-theme";
@@ -20,22 +21,32 @@ function normalizeYearInput(raw: string): string {
   return raw.replace(/\D/g, "").slice(0, 4);
 }
 
-export default function OrganizationSection() {
+type Props = {
+  variant?: "book" | "landing";
+};
+
+export default function OrganizationSection({ variant = "book" }: Props) {
+  const isLanding = variant === "landing";
   const { items, loading, error, create, update } = useOrganizations();
 
-  if (loading)
-    return <p className={`text-sm ${BT.mutedOnDark}`}>{UI.LOADING}</p>;
-  if (error) return <p className={BT.errorBg}>{error}</p>;
+  const loadingClass = isLanding ? AC.muted : BT.mutedOnDark;
+  const errorClass = isLanding
+    ? "rounded-lg bg-[#ffdad6] px-3 py-2 text-sm text-[#93000a]"
+    : BT.errorBg;
+  const listClass = isLanding
+    ? `divide-y divide-[#d4c3c1] ${AC.card}`
+    : `divide-y divide-amber-100 ${BT.panel}`;
+
+  if (loading) return <p className={`text-sm ${loadingClass}`}>{UI.LOADING}</p>;
+  if (error) return <p className={errorClass}>{error}</p>;
 
   return (
     <div className="space-y-4">
-      <OrganizationCreateForm onCreate={create} />
-
-      <DemoOrganizationSelect organizations={items} />
-
-      <ul className={`divide-y divide-amber-100 ${BT.panel}`}>
+      <OrganizationCreateForm variant={variant} onCreate={create} />
+      <DemoOrganizationSelect variant={variant} organizations={items} />
+      <ul className={listClass}>
         {items.map((org) => (
-          <OrgRow key={org.id} org={org} onSave={update} />
+          <OrgRow key={org.id} variant={variant} org={org} onSave={update} />
         ))}
       </ul>
     </div>
@@ -44,11 +55,16 @@ export default function OrganizationSection() {
 
 function OrgRow({
   org,
+  variant,
   onSave,
 }: {
   org: OrganizationWithAccess;
+  variant: "book" | "landing";
   onSave: (id: number, body: UpdateOrganizationInput) => Promise<void>;
 }) {
+  const isLanding = variant === "landing";
+  const fieldClass = isLanding ? AC.input : inputClassName;
+
   const [name, setName] = useState(org.name);
   const [establishedYear, setEstablishedYear] = useState(
     org.establishedYear ?? "",
@@ -90,31 +106,42 @@ function OrgRow({
   };
 
   return (
-    <li className="flex flex-col gap-3 p-3">
+    <li className="flex flex-col gap-3 p-4 md:p-5">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <input
-          className={`min-w-0 flex-1 ${inputClassName}`}
+          className={`min-w-0 flex-1 ${fieldClass}`}
           value={name}
           onChange={(e) => setName(e.target.value)}
           aria-label={UI.SYSTEM_ORG_NAME}
         />
         <div className="flex shrink-0 gap-1">
-          <IconRoundButton
-            icon="save"
-            variant="gold"
-            iconSize={16}
-            loading={saving}
-            disabled={!isDirty}
-            label={UI.SAVE}
-            onClick={() => void handleSave()}
-          />
+          {isLanding ? (
+            <button
+              type="button"
+              disabled={!isDirty || saving}
+              onClick={() => void handleSave()}
+              className="rounded-xl bg-[#944a00] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {UI.SAVE}
+            </button>
+          ) : (
+            <IconRoundButton
+              icon="save"
+              variant="gold"
+              iconSize={16}
+              loading={saving}
+              disabled={!isDirty}
+              label={UI.SAVE}
+              onClick={() => void handleSave()}
+            />
+          )}
         </div>
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">
         <FormField label={UI.ORG_BOOK_ESTABLISHED_YEAR_LABEL}>
           <input
-            className={inputClassName}
+            className={fieldClass}
             inputMode="numeric"
             maxLength={4}
             value={establishedYear}
@@ -125,14 +152,18 @@ function OrgRow({
         </FormField>
         <FormField label={UI.ORG_BOOK_CLAN_ADDRESS_LABEL}>
           <input
-            className={inputClassName}
+            className={fieldClass}
             value={clanAddress}
             onChange={(e) => setClanAddress(e.target.value)}
           />
         </FormField>
       </div>
 
-      <OrgPublicLinkRow name={org.name} publicAccessUrl={org.publicAccessUrl} />
+      <OrgPublicLinkRow
+        variant={variant}
+        name={org.name}
+        publicAccessUrl={org.publicAccessUrl}
+      />
     </li>
   );
 }

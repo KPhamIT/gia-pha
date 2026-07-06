@@ -37,8 +37,14 @@ export default function LandingHeroSection() {
               {UI.LANDING_CTA_BOOK}
             </Link>
             <Link
-              href="/huong-dan"
+              href="/cai-dat"
               className="rounded-full border border-[#321716] bg-white px-8 py-4 text-sm font-semibold text-[#321716] transition active:scale-95"
+            >
+              {UI.LANDING_CTA_INSTALL}
+            </Link>
+            <Link
+              href="/huong-dan"
+              className="rounded-full border border-[#d4c3c1] bg-[#f6f3ee] px-8 py-4 text-sm font-semibold text-[#504443] transition active:scale-95"
             >
               {UI.LANDING_CTA_GUIDE}
             </Link>
@@ -70,8 +76,14 @@ export default function LandingHeroSection() {
                 {UI.LANDING_CTA_BOOK}
               </Link>
               <Link
-                href="/huong-dan"
+                href="/cai-dat"
                 className="rounded-lg border border-[#e5e2dd] px-7 py-3 text-sm font-semibold text-[#f3f0eb] transition hover:bg-white/10"
+              >
+                {UI.LANDING_CTA_INSTALL}
+              </Link>
+              <Link
+                href="/huong-dan"
+                className="rounded-lg border border-[#e5e2dd]/60 px-7 py-3 text-sm font-semibold text-[#e5e2dd] transition hover:bg-white/10"
               >
                 {UI.LANDING_CTA_GUIDE}
               </Link>
