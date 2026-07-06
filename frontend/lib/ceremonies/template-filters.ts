@@ -1,6 +1,8 @@
 import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
 import { UI } from "@/lib/constants/ui-strings";
 
+export type CeremonyTemplateSourceFilterId = "system" | "personal";
+
 export type CeremonyTemplateFilterId =
   | "all"
   | "gio"
@@ -8,11 +10,29 @@ export type CeremonyTemplateFilterId =
   | "tho-cong"
   | "muc";
 
+export type CeremonyTemplateSourceFilter = {
+  id: CeremonyTemplateSourceFilterId;
+  label: string;
+};
+
 export type CeremonyTemplateFilter = {
   id: CeremonyTemplateFilterId;
   label: string;
   keywords: readonly string[];
 };
+
+export const CEREMONY_TEMPLATE_SOURCE_FILTERS: readonly CeremonyTemplateSourceFilter[] =
+  [
+    { id: "system", label: UI.CEREMONY_TEMPLATE_FILTER_SYSTEM },
+    { id: "personal", label: UI.CEREMONY_TEMPLATE_FILTER_PERSONAL },
+  ] as const;
+
+export function resolveDefaultSourceFilter(
+  templates: CeremonyTemplate[],
+): CeremonyTemplateSourceFilterId {
+  const hasPersonal = templates.some((template) => !template.isSystemTemplate);
+  return hasPersonal ? "personal" : "system";
+}
 
 export const CEREMONY_TEMPLATE_FILTERS: readonly CeremonyTemplateFilter[] = [
   { id: "all", label: UI.CEREMONY_TEMPLATE_FILTER_ALL, keywords: [] },
@@ -42,7 +62,19 @@ function normalizeSearchText(value: string): string {
   return value.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 }
 
-function matchesFilter(name: string, filter: CeremonyTemplateFilter): boolean {
+function matchesSourceFilter(
+  template: CeremonyTemplate,
+  sourceFilterId: CeremonyTemplateSourceFilterId,
+): boolean {
+  return sourceFilterId === "system"
+    ? template.isSystemTemplate
+    : !template.isSystemTemplate;
+}
+
+function matchesCategoryFilter(
+  name: string,
+  filter: CeremonyTemplateFilter,
+): boolean {
   if (filter.id === "all") return true;
   const normalized = normalizeSearchText(name);
   return filter.keywords.some((keyword) =>
@@ -53,15 +85,17 @@ function matchesFilter(name: string, filter: CeremonyTemplateFilter): boolean {
 export function filterCeremonyTemplates(
   templates: CeremonyTemplate[],
   query: string,
-  filterId: CeremonyTemplateFilterId,
+  sourceFilterId: CeremonyTemplateSourceFilterId,
+  categoryFilterId: CeremonyTemplateFilterId,
 ): CeremonyTemplate[] {
-  const filter =
-    CEREMONY_TEMPLATE_FILTERS.find((item) => item.id === filterId) ??
+  const categoryFilter =
+    CEREMONY_TEMPLATE_FILTERS.find((item) => item.id === categoryFilterId) ??
     CEREMONY_TEMPLATE_FILTERS[0];
   const normalizedQuery = normalizeSearchText(query.trim());
 
   return templates.filter((template) => {
-    if (!matchesFilter(template.name, filter)) return false;
+    if (!matchesSourceFilter(template, sourceFilterId)) return false;
+    if (!matchesCategoryFilter(template.name, categoryFilter)) return false;
     if (!normalizedQuery) return true;
     const haystack = normalizeSearchText(
       `${template.name} ${template.content} ${template.intro ?? ""}`,

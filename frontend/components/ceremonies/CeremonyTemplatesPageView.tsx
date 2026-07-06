@@ -12,7 +12,8 @@ import { UI } from "@/lib/constants/ui-strings";
 
 export default function CeremonyTemplatesPageView() {
   const { loaded, isLoggedIn } = useAuthBootstrap();
-  const canEdit = useAuthStore((state) => state.canMutate);
+  const isDemo = useAuthStore((state) => state.isDemo);
+  const canCreate = isLoggedIn && !isDemo;
   const openCreateRef = useRef<(() => void) | null>(null);
 
   const handleCreateRef = useCallback((openCreate: () => void) => {
@@ -42,7 +43,7 @@ export default function CeremonyTemplatesPageView() {
     );
   }
 
-  const fab = canEdit ? (
+  const fab = canCreate ? (
     <button
       type="button"
       onClick={() => openCreateRef.current?.()}

@@ -87,6 +87,10 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_TEMPLATE_VARIABLES_INSERT_HINT: "Chạm vào biến để chèn vào nội dung",
   CEREMONY_TEMPLATE_VARIABLES_SEARCH: "Tìm biến…",
   CEREMONY_TEMPLATE_VARIABLES_NONE: "Không tìm thấy biến phù hợp",
+  CEREMONY_TEMPLATE_PERSONAL_EMPTY:
+    "Bạn chưa tạo mẫu nào. Hãy tạo mẫu riêng — bạn và dòng họ có thể dùng chung.",
+  CEREMONY_TEMPLATE_FILTER_NONE:
+    "Không có mẫu phù hợp với bộ lọc hoặc từ khóa tìm kiếm.",
   CEREMONY_TEMPLATE_TAB_EDIT: "Soạn",
   CEREMONY_TEMPLATE_TAB_PREVIEW: "Xem trước",
   CEREMONY_TEMPLATE_PREVIEW_EMPTY: "Chưa có nội dung để xem trước",
@@ -96,7 +100,8 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_TEMPLATE_COPY_SUFFIX: " (sao chép)",
   CEREMONY_TEMPLATE_UNSAVED_CONFIRM: "Bỏ các thay đổi chưa lưu?",
   CEREMONY_TEMPLATE_READONLY_HINT:
-    "Chọn người đã mất để xem và in bài cúng. Chỉ quản trị viên mới sửa được mẫu.",
+    "Bạn có thể xem và in mẫu. Chỉ người tạo mẫu mới được sửa hoặc xóa; thành viên trong tổ chức có thể đặt mẫu mặc định cho tổ chức.",
+  CEREMONY_TEMPLATE_SYSTEM_BADGE: "Hệ thống",
   CEREMONY_TEMPLATE_DEMO_HINT:
     "Xem thử soạn mẫu bài cúng — có thể tạo, chỉnh và xem trước; không lưu lên hệ thống.",
   CEREMONY_TEMPLATE_DEMO_SAVED:
@@ -138,6 +143,10 @@ export const NOTIFICATION_STRINGS = {
     "Lưu giữ và quản lý các bài văn khấn truyền thống cho gia đình.",
   CEREMONY_TEMPLATE_SEARCH_PLACEHOLDER: "Tìm kiếm mẫu bài cúng...",
   CEREMONY_TEMPLATE_FILTER_ALL: "Tất cả",
+  CEREMONY_TEMPLATE_FILTER_SYSTEM: "Hệ thống",
+  CEREMONY_TEMPLATE_FILTER_PERSONAL: "Cá nhân",
+  CEREMONY_TEMPLATE_SOURCE_FILTER_LABEL: "Nguồn mẫu",
+  CEREMONY_TEMPLATE_CATEGORY_FILTER_LABEL: "Danh mục",
   CEREMONY_TEMPLATE_FILTER_GIO: "Giỗ chạp",
   CEREMONY_TEMPLATE_FILTER_TET: "Lễ tết",
   CEREMONY_TEMPLATE_FILTER_THO_CONG: "Thổ công",

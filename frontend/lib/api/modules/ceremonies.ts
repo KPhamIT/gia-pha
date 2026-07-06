@@ -23,6 +23,11 @@ export type CeremonyTemplate = {
   seoExcerpt?: string | null;
   seoKeywords?: string[];
   isDefault: boolean;
+  isSystemTemplate: boolean;
+  createdByUserId: number | null;
+  canEdit: boolean;
+  canDelete: boolean;
+  canSetDefault: boolean;
   createdAt: string;
   updatedAt: string;
 };

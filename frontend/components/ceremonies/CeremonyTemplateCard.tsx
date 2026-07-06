@@ -8,8 +8,7 @@ import { htmlToPreviewText } from "@/utils/html-preview";
 
 type Props = {
   template: CeremonyTemplate;
-  canEdit: boolean;
-  canPersist?: boolean;
+  canDuplicate?: boolean;
   onPrint: () => void;
   onSetDefault: () => void;
   onDuplicate: () => void;
@@ -19,8 +18,7 @@ type Props = {
 
 export default function CeremonyTemplateCard({
   template,
-  canEdit,
-  canPersist = true,
+  canDuplicate = false,
   onPrint,
   onSetDefault,
   onDuplicate,
@@ -29,6 +27,8 @@ export default function CeremonyTemplateCard({
 }: Props) {
   const preview = htmlToPreviewText(template.content);
   const isHtml = /<!DOCTYPE|<html[\s>]/i.test(template.content);
+  const showActions =
+    template.canEdit || template.canSetDefault || canDuplicate;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border border-amber-100/50 bg-white p-4 shadow-[0_2px_12px_rgba(69,26,3,0.06)] transition-shadow hover:shadow-md">
@@ -36,11 +36,18 @@ export default function CeremonyTemplateCard({
         <h3 className="flex-1 font-serif text-xl font-semibold leading-tight text-[#321716]">
           {template.name}
         </h3>
-        {template.isDefault ? (
-          <span className="shrink-0 rounded-lg border border-[#944a00]/20 bg-[#fef3c7] px-2 py-0.5 text-xs font-semibold text-[#944a00]">
-            {UI.CEREMONY_TEMPLATE_DEFAULT_BADGE}
-          </span>
-        ) : null}
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          {template.isSystemTemplate ? (
+            <span className="rounded-lg border border-[#4a2c2a]/15 bg-[#f6f3ee] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#4a2c2a]">
+              {UI.CEREMONY_TEMPLATE_SYSTEM_BADGE}
+            </span>
+          ) : null}
+          {template.isDefault ? (
+            <span className="rounded-lg border border-[#944a00]/20 bg-[#fef3c7] px-2 py-0.5 text-xs font-semibold text-[#944a00]">
+              {UI.CEREMONY_TEMPLATE_DEFAULT_BADGE}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <p
@@ -68,9 +75,9 @@ export default function CeremonyTemplateCard({
           {UI.CEREMONY_PRINT_OPEN}
         </button>
 
-        {canEdit ? (
+        {showActions ? (
           <div className="flex items-center gap-1">
-            {canPersist && !template.isDefault ? (
+            {template.canSetDefault && !template.isDefault ? (
               <IconActionButton
                 label={UI.CEREMONY_TEMPLATE_USE_DEFAULT}
                 onClick={onSetDefault}
@@ -85,38 +92,14 @@ export default function CeremonyTemplateCard({
                 />
               </IconActionButton>
             ) : null}
-            <IconActionButton
-              label={UI.CEREMONY_TEMPLATE_DUPLICATE}
-              onClick={onDuplicate}
-              className="hidden sm:inline-flex"
-            >
-              <Icon
-                path="userPlus"
-                size={20}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                pointer={false}
-              />
-            </IconActionButton>
-            <IconActionButton label={UI.BTN_EDIT} onClick={onEdit}>
-              <Icon
-                path="edit"
-                size={20}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                pointer={false}
-              />
-            </IconActionButton>
-            {canPersist ? (
+            {template.canEdit || canDuplicate ? (
               <IconActionButton
-                label={UI.DELETE_PERSON}
-                onClick={onDelete}
-                className="text-[#ba1a1a] hover:bg-[#ffdad6]/40"
+                label={UI.CEREMONY_TEMPLATE_DUPLICATE}
+                onClick={onDuplicate}
+                className="hidden sm:inline-flex"
               >
                 <Icon
-                  path="trash"
+                  path="userPlus"
                   size={20}
                   fill="none"
                   stroke="currentColor"
@@ -124,6 +107,34 @@ export default function CeremonyTemplateCard({
                   pointer={false}
                 />
               </IconActionButton>
+            ) : null}
+            {template.canEdit ? (
+              <>
+                <IconActionButton label={UI.BTN_EDIT} onClick={onEdit}>
+                  <Icon
+                    path="edit"
+                    size={20}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    pointer={false}
+                  />
+                </IconActionButton>
+                <IconActionButton
+                  label={UI.DELETE_PERSON}
+                  onClick={onDelete}
+                  className="text-[#ba1a1a] hover:bg-[#ffdad6]/40"
+                >
+                  <Icon
+                    path="trash"
+                    size={20}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    pointer={false}
+                  />
+                </IconActionButton>
+              </>
             ) : null}
           </div>
         ) : null}

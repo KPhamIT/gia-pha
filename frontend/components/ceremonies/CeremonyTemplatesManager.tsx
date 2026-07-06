@@ -13,7 +13,9 @@ import type {
 } from "@/components/types/family-tree-types";
 import {
   filterCeremonyTemplates,
+  resolveDefaultSourceFilter,
   type CeremonyTemplateFilterId,
+  type CeremonyTemplateSourceFilterId,
 } from "@/lib/ceremonies/template-filters";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
@@ -31,16 +33,20 @@ type CeremonyTemplatesManagerProps = {
 export default function CeremonyTemplatesManager({
   onCreateRef,
 }: CeremonyTemplatesManagerProps) {
-  const canMutate = useAuthStore((state) => state.canMutate);
-  const canEdit = canMutate;
-  const canPersist = canMutate;
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isDemo = useAuthStore((state) => state.isDemo);
+  const canCreate = isLoggedIn && !isDemo;
   const [templates, setTemplates] = useState<CeremonyTemplate[]>([]);
   const [variables, setVariables] = useState<CeremonyTemplateVariable[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
   const [relationships, setRelationships] = useState<Relationship[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
-  const [filterId, setFilterId] = useState<CeremonyTemplateFilterId>("all");
+  const [sourceFilterId, setSourceFilterId] =
+    useState<CeremonyTemplateSourceFilterId>("system");
+  const [sourceFilterReady, setSourceFilterReady] = useState(false);
+  const [categoryFilterId, setCategoryFilterId] =
+    useState<CeremonyTemplateFilterId>("all");
   const [target, setTarget] = useState<EditTarget | null>(null);
   const [printTemplate, setPrintTemplate] = useState<CeremonyTemplate | null>(
     null,
@@ -69,6 +75,12 @@ export default function CeremonyTemplatesManager({
     void reload();
   }, [reload]);
 
+  useEffect(() => {
+    if (loading || sourceFilterReady) return;
+    setSourceFilterId(resolveDefaultSourceFilter(templates));
+    setSourceFilterReady(true);
+  }, [loading, templates, sourceFilterReady]);
+
   const openCreate = useCallback(
     () => setTarget({ template: null, initial: EMPTY_FORM }),
     [],
@@ -85,9 +97,28 @@ export default function CeremonyTemplatesManager({
   );
 
   const filtered = useMemo(
-    () => filterCeremonyTemplates(sorted, query, filterId),
-    [sorted, query, filterId],
+    () =>
+      filterCeremonyTemplates(sorted, query, sourceFilterId, categoryFilterId),
+    [sorted, query, sourceFilterId, categoryFilterId],
   );
+
+  const hasPersonalTemplates = useMemo(
+    () => sorted.some((template) => !template.isSystemTemplate),
+    [sorted],
+  );
+
+  const emptyMessage = useMemo(() => {
+    if (sorted.length === 0) return UI.CEREMONY_TEMPLATE_EMPTY;
+    if (sourceFilterId === "personal" && !hasPersonalTemplates) {
+      return UI.CEREMONY_TEMPLATE_PERSONAL_EMPTY;
+    }
+    return UI.CEREMONY_TEMPLATE_FILTER_NONE;
+  }, [sorted.length, sourceFilterId, hasPersonalTemplates]);
+
+  const showCreateInEmpty =
+    canCreate &&
+    (sorted.length === 0 ||
+      (sourceFilterId === "personal" && !hasPersonalTemplates));
 
   const deceasedPersons = useMemo(
     () =>
@@ -118,7 +149,6 @@ export default function CeremonyTemplatesManager({
     });
 
   const handleSetDefault = async (id: number) => {
-    if (!canPersist) return;
     try {
       await api.ceremonies.setDefaultTemplate(id);
       notify.success(UI.CEREMONY_TEMPLATE_DEFAULT_SET);
@@ -129,7 +159,7 @@ export default function CeremonyTemplatesManager({
   };
 
   const handleDelete = async (template: CeremonyTemplate) => {
-    if (!canPersist) return;
+    if (!template.canDelete) return;
     if (!window.confirm(UI.CEREMONY_TEMPLATE_DELETE_CONFIRM)) return;
     try {
       await api.ceremonies.deleteTemplate(template.id);
@@ -155,7 +185,7 @@ export default function CeremonyTemplatesManager({
             {UI.CEREMONY_TEMPLATES_PAGE_DESC}
           </p>
         </div>
-        {canEdit ? (
+        {canCreate ? (
           <button
             type="button"
             onClick={openCreate}
@@ -174,7 +204,7 @@ export default function CeremonyTemplatesManager({
         ) : null}
       </header>
 
-      {!canEdit ? (
+      {!canCreate ? (
         <p className="rounded-xl border border-[#d4c3c1] bg-[#f6f3ee] px-4 py-3 text-sm text-[#504443]">
           {UI.CEREMONY_TEMPLATE_READONLY_HINT}
         </p>
@@ -183,20 +213,18 @@ export default function CeremonyTemplatesManager({
       <div className="mb-6 min-w-0 md:mb-8 md:rounded-xl md:border md:border-[#e5e1da] md:bg-[#f6f3ee] md:p-4">
         <TemplatesSearchFilters
           query={query}
-          filterId={filterId}
+          sourceFilterId={sourceFilterId}
+          categoryFilterId={categoryFilterId}
           onQueryChange={setQuery}
-          onFilterChange={setFilterId}
+          onSourceFilterChange={setSourceFilterId}
+          onCategoryFilterChange={setCategoryFilterId}
         />
       </div>
 
       {filtered.length === 0 ? (
         <div className="rounded-xl border border-[#d4c3c1] bg-white p-8 text-center shadow-sm">
-          <p className="text-sm text-[#504443]">
-            {sorted.length === 0
-              ? UI.CEREMONY_TEMPLATE_EMPTY
-              : UI.CEREMONY_TEMPLATE_VARIABLES_NONE}
-          </p>
-          {canEdit && sorted.length === 0 ? (
+          <p className="text-sm leading-relaxed text-[#504443]">{emptyMessage}</p>
+          {showCreateInEmpty ? (
             <button
               type="button"
               className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white"
@@ -220,8 +248,7 @@ export default function CeremonyTemplatesManager({
             <CeremonyTemplateCard
               key={template.id}
               template={template}
-              canEdit={canEdit}
-              canPersist={canPersist}
+              canDuplicate={canCreate}
               onPrint={() => setPrintTemplate(template)}
               onSetDefault={() => void handleSetDefault(template.id)}
               onDuplicate={() => openDuplicate(template)}
