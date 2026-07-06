@@ -141,7 +141,9 @@ export default function CeremonyTemplatesManager({
   };
 
   if (loading) {
-    return <p className="text-sm text-[#504443]">{UI.LOADING}</p>;
+    return (
+      <p className="text-sm text-[#504443]">{UI.CEREMONY_TEMPLATES_LOADING}</p>
+    );
   }
 
   return (

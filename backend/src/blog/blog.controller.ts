@@ -7,9 +7,17 @@ export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @Get()
-  list(@Query('category') category?: string) {
+  list(
+    @Query('category') category?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     const parsed = parseBlogCategory(category);
-    return this.blogService.list(parsed);
+    return this.blogService.listPaginated(
+      parsed,
+      parsePositiveInt(page, 1),
+      parsePositiveInt(limit, 12),
+    );
   }
 
   @Get('slugs')
@@ -28,4 +36,9 @@ function parseBlogCategory(value?: string): BlogCategory | undefined {
   return Object.values(BlogCategory).includes(value as BlogCategory)
     ? (value as BlogCategory)
     : undefined;
+}
+
+function parsePositiveInt(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseInt(value ?? '', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }

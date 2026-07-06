@@ -12,7 +12,7 @@ export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
 export const BLOG_UI = {
   BLOG_LIST_TITLE: "Kiến thức gia phả",
   BLOG_LIST_SUBTITLE:
-    "Tổng hợp bài viết về gia phả dòng họ, cây gia đình, SEO website và chiến lược content marketing",
+    "Tổng hợp bài viết về gia phả dòng họ, cây gia đình, văn hóa cội nguồn và chiến lược lưu giữ di sản cho thế hệ mai sau.",
   BLOG_ALL_CATEGORIES: "Tất cả chủ đề",
   BLOG_READ_MORE: "Đọc tiếp",
   BLOG_BACK_TO_LIST: "Danh sách bài viết",
@@ -23,6 +23,7 @@ export const BLOG_UI = {
     "Tạo gia phả online miễn phí — cây gia phả, sổ gia phả điện tử và chia sẻ cho cả họ hàng.",
   BLOG_RELATED_CTA_BUTTON: "Đăng ký dòng họ",
   BLOG_EMPTY: "Chưa có bài viết.",
+  BLOG_LOADING_MORE: "Đang tải thêm…",
   BLOG_ADMIN_TAB: "Bài viết",
   BLOG_ADMIN_CREATE: "Tạo bài viết",
   BLOG_ADMIN_EDIT: "Sửa",

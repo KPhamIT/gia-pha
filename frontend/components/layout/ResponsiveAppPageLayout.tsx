@@ -6,19 +6,18 @@ import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import LandingHeader from "@/components/public/landing/LandingHeader";
 import LandingScrollArea from "@/components/public/LandingScrollArea";
 import LandingSiteFooter from "@/components/public/landing/LandingSiteFooter";
-import MobileBottomNav from "@/components/navigation/MobileBottomNav";
 import { SITE } from "@/config/site";
 import { useBackNavigation } from "@/hooks/useBackNavigation";
-import type { MobileBottomNavId } from "@/lib/navigation/mobile-bottom-nav";
 import { UI } from "@/lib/constants/ui-strings";
 
 type ResponsiveAppPageLayoutProps = {
   title: string;
   backHref?: string;
-  activeNav?: MobileBottomNavId | null;
   fab?: ReactNode;
   /** Footer landing trên desktop (mặc định bật). */
   showDesktopFooter?: boolean;
+  /** Tuỳ chỉnh wrapper nội dung (mặc định padding trang app). */
+  contentClassName?: string;
   children: ReactNode;
 };
 
@@ -29,9 +28,9 @@ type ResponsiveAppPageLayoutProps = {
 export default function ResponsiveAppPageLayout({
   title,
   backHref = "/book",
-  activeNav,
   fab,
   showDesktopFooter = true,
+  contentClassName = "w-full px-4 pb-32 pt-20 md:px-10 md:pb-10 md:pt-8",
   children,
 }: ResponsiveAppPageLayoutProps) {
   const goBack = useBackNavigation(backHref);
@@ -69,12 +68,12 @@ export default function ResponsiveAppPageLayout({
 
       <div className="flex min-h-0 flex-1 flex-col">
         <LandingScrollArea>
-          <main className="w-full">
-            <div className="w-full px-4 pb-32 pt-20 md:px-10 md:pb-10 md:pt-8">
+          <main className="flex min-h-full w-full flex-col">
+            <div className={`min-h-0 flex-1 ${contentClassName}`}>
               {children}
             </div>
             {showDesktopFooter ? (
-              <div className="hidden md:block">
+              <div className="mt-auto hidden shrink-0 md:block">
                 <LandingSiteFooter />
               </div>
             ) : null}
@@ -83,7 +82,6 @@ export default function ResponsiveAppPageLayout({
       </div>
 
       {fab}
-      <MobileBottomNav activeId={activeNav} />
     </div>
   );
 }

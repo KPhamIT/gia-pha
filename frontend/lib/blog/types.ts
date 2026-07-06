@@ -48,3 +48,11 @@ export type BlogSlugEntry = {
   updatedAt: string;
   publishedAt: string;
 };
+
+export type BlogPostListResponse = {
+  items: BlogPostSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};

@@ -60,12 +60,12 @@ export default function BookPageShell({
         <AccountHeaderButton />
       </header>
 
-      <main className={`${LAYOUT.sheetBody} min-h-0 w-full flex-1`}>
+      <main className={`${LAYOUT.sheetBody} min-h-0 w-full flex-1 pb-24 md:pb-0`}>
         <div className="mx-auto w-full max-w-5xl">
           {tabs ? (
             <div className={`flex gap-2 ${BT.pagePad} pb-0`}>{tabs}</div>
           ) : null}
-          <div className={BT.pagePad}>{children}</div>
+          <div className={`${BT.pagePad} pb-28 md:pb-6`}>{children}</div>
         </div>
       </main>
 

@@ -20,7 +20,7 @@ export default function CeremonyTemplatesPageView() {
   }, []);
 
   if (!loaded) {
-    return <AuthPageLoading />;
+    return <AuthPageLoading message={UI.CEREMONY_TEMPLATES_LOADING} />;
   }
 
   if (!isLoggedIn) {
@@ -64,7 +64,6 @@ export default function CeremonyTemplatesPageView() {
     <ResponsiveAppPageLayout
       title={UI.CEREMONY_TEMPLATES_TITLE}
       backHref="/book"
-      activeNav="events"
       fab={fab}
     >
       <CeremonyTemplatesManager onCreateRef={handleCreateRef} />

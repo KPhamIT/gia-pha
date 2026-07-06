@@ -33,7 +33,7 @@ function FooterLinks({
 
 export default function LandingSiteFooter() {
   return (
-    <footer className="mt-10 w-full bg-[#321716] px-6 py-10 text-[#f3f0eb] md:px-10">
+    <footer className="mt-10 hidden w-full bg-[#321716] px-6 py-10 text-[#f3f0eb] md:block md:px-10">
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 md:grid-cols-4">
         <div className="space-y-4">
           <p className="font-serif text-2xl font-semibold text-white">
@@ -47,6 +47,7 @@ export default function LandingSiteFooter() {
           title={UI.LANDING_FOOTER_DISCOVER_TITLE}
           links={[
             { href: "/gioi-thieu", label: UI.PUBLIC_FOOTER_ABOUT },
+            { href: "/dich-vu", label: UI.LANDING_NAV_SERVICES },
             { href: "/book", label: UI.PUBLIC_FOOTER_BOOK },
             { href: "/family-tree", label: UI.LANDING_NAV_CLAN },
             { href: "/bai-viet", label: UI.LANDING_FOOTER_NEWS },

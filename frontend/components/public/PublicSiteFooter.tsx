@@ -16,7 +16,7 @@ export default function PublicSiteFooter() {
 
   return (
     <footer
-      className="mt-10 border-t border-[#d4c3c1] pt-6 text-[#504443]"
+      className="mt-10 hidden w-full border-t border-[#d4c3c1] pt-6 text-[#504443] md:block"
       aria-label={UI.PUBLIC_FOOTER_NAV_LABEL}
     >
       <p className="text-center text-sm font-medium text-[#321716]">

@@ -29,15 +29,36 @@ const adminListSelect = {
 export class BlogService {
   constructor(private readonly prisma: PrismaService) {}
 
-  list(category?: BlogCategory) {
-    return this.prisma.blogPost.findMany({
-      where: {
-        published: true,
-        ...(category ? { category } : {}),
-      },
-      select: listSelect,
-      orderBy: [{ publishedAt: 'desc' }, { id: 'asc' }],
-    });
+  async listPaginated(
+    category?: BlogCategory,
+    page = 1,
+    limit = 12,
+  ) {
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(50, Math.max(1, limit));
+    const where = {
+      published: true,
+      ...(category ? { category } : {}),
+    };
+
+    const [items, total] = await Promise.all([
+      this.prisma.blogPost.findMany({
+        where,
+        select: listSelect,
+        orderBy: [{ publishedAt: 'desc' }, { id: 'asc' }],
+        skip: (safePage - 1) * safeLimit,
+        take: safeLimit,
+      }),
+      this.prisma.blogPost.count({ where }),
+    ]);
+
+    return {
+      items,
+      total,
+      page: safePage,
+      pageSize: safeLimit,
+      totalPages: Math.max(1, Math.ceil(total / safeLimit)),
+    };
   }
 
   listSlugs() {

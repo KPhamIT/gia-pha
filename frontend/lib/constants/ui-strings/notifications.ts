@@ -72,6 +72,7 @@ export const NOTIFICATION_STRINGS = {
 
   // Ceremony templates (admin)
   CEREMONY_TEMPLATES_TITLE: "Mẫu bài cúng",
+  CEREMONY_TEMPLATES_LOADING: "Đang tải mẫu bài cúng…",
   CEREMONY_TEMPLATES_SUBTITLE: "Tạo và quản lý mẫu HTML bài cúng ngày giỗ",
   CEREMONY_TEMPLATE_CREATE: "Tạo mẫu",
   CEREMONY_TEMPLATE_EDIT: "Sửa mẫu",

@@ -12,6 +12,7 @@ const STATIC_PAGES: {
   { path: "/huong-dan", changeFrequency: "monthly", priority: 0.9 },
   { path: "/bai-viet", changeFrequency: "weekly", priority: 0.9 },
   { path: "/gioi-thieu", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/dich-vu", changeFrequency: "monthly", priority: 0.8 },
   { path: "/lien-he", changeFrequency: "monthly", priority: 0.7 },
   { path: "/bang-gia", changeFrequency: "monthly", priority: 0.8 },
   { path: "/chinh-sach-bao-mat", changeFrequency: "yearly", priority: 0.4 },
