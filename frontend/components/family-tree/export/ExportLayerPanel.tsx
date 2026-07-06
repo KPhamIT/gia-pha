@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  CALLIGRAPHY_FONTS,
-  EXPORT_NORMAL_FONT_ID,
-} from "@/components/family-tree/book/calligraphy-fonts";
+import { EXPORT_TEXT_FONTS } from "@/components/family-tree/book/calligraphy-fonts";
 import { UI } from "@/lib/constants/ui-strings";
 import type {
   ExportDecorationLayer,
@@ -131,11 +128,8 @@ export default function ExportLayerPanel({
               value={layer.fontId}
               onChange={(e) => onPatch({ fontId: e.target.value })}
             >
-              <option value={EXPORT_NORMAL_FONT_ID}>
-                {UI.EXPORT_TEXT_FONT_NORMAL}
-              </option>
-              {CALLIGRAPHY_FONTS.map((font) => (
-                <option key={font.id} value={font.id}>
+              {EXPORT_TEXT_FONTS.map((font) => (
+                <option key={font.id || "normal"} value={font.id}>
                   {font.label}
                 </option>
               ))}

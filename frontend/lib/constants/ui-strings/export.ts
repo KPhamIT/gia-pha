@@ -67,6 +67,8 @@ export const EXPORT_STRINGS = {
   EXPORT_TEXT_SIZE: "Cỡ chữ",
   EXPORT_TEXT_FONT: "Font chữ",
   EXPORT_TEXT_FONT_NORMAL: "Font thường",
+  EXPORT_TEXT_FONT_BE_VIETNAM: "Be Vietnam Pro",
+  EXPORT_TEXT_FONT_PLAYFAIR: "Playfair Display",
   EXPORT_TEXT_VERTICAL: "Chữ dọc",
   EXPORT_TEXT_CURVE: "Độ cong chữ",
   EXPORT_TEXT_CURVE_STRAIGHT: "thẳng",

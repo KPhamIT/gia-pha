@@ -1,6 +1,8 @@
 // Registry of Vietnamese calligraphy (thư pháp) fonts available for the book.
 // Each cssValue references an @font-face declared in app/globals.css.
 
+import { UI } from "@/lib/constants/ui-strings";
+
 export type CalligraphyFont = {
   id: string;
   label: string;
@@ -49,6 +51,62 @@ export const EXPORT_NORMAL_FONT_ID = "";
 export const NORMAL_TEXT_FONT_FAMILY =
   "'Times New Roman', 'Songti SC', serif";
 
+/** Font chèn chữ trên màn export. */
+export const EXPORT_TEXT_FONT_BE_VIETNAM_ID = "be-vietnam-pro";
+export const EXPORT_TEXT_FONT_PLAYFAIR_ID = "playfair-display";
+export const EXPORT_TEXT_FONT_THU_PHAP_THANH_CONG_ID = "thanhcong";
+
+export type ExportTextFont = {
+  id: string;
+  label: string;
+  cssValue: string;
+  embedFamily?: string;
+  embedFile?: string;
+};
+
+export const EXPORT_TEXT_FONTS: ExportTextFont[] = [
+  {
+    id: EXPORT_NORMAL_FONT_ID,
+    label: UI.EXPORT_TEXT_FONT_NORMAL,
+    cssValue: NORMAL_TEXT_FONT_FAMILY,
+  },
+  {
+    id: EXPORT_TEXT_FONT_BE_VIETNAM_ID,
+    label: UI.EXPORT_TEXT_FONT_BE_VIETNAM,
+    cssValue: '"Be Vietnam Pro", system-ui, sans-serif',
+    embedFamily: "Be Vietnam Pro",
+    embedFile:
+      "https://fonts.gstatic.com/s/bevietnampro/v11/QdVNSTSyLNBP8MEhGk24aaLT_gAA.woff2",
+  },
+  {
+    id: EXPORT_TEXT_FONT_PLAYFAIR_ID,
+    label: UI.EXPORT_TEXT_FONT_PLAYFAIR,
+    cssValue: '"Playfair Display", Georgia, serif',
+    embedFamily: "Playfair Display",
+    embedFile:
+      "https://fonts.gstatic.com/s/playfairdisplay/v37/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2",
+  },
+  {
+    id: EXPORT_TEXT_FONT_THU_PHAP_THANH_CONG_ID,
+    label: "Thư Pháp Thành Công",
+    cssValue: '"Thuphap-Thanh-Cong", serif',
+    embedFamily: "Thuphap-Thanh-Cong",
+    embedFile: "/fonts/THUPHAPTHANHCONG3a.woff2",
+  },
+];
+
+export function isExportTextFontId(fontId: string): boolean {
+  return EXPORT_TEXT_FONTS.some((font) => font.id === fontId);
+}
+
+export function getExportTextFontEmbed(
+  fontId: string,
+): { family: string; file: string } | null {
+  const font = EXPORT_TEXT_FONTS.find((item) => item.id === fontId);
+  if (!font?.embedFamily || !font.embedFile) return null;
+  return { family: font.embedFamily, file: font.embedFile };
+}
+
 export function isCalligraphyFontId(fontId: string): boolean {
   return CALLIGRAPHY_FONTS.some((font) => font.id === fontId);
 }
@@ -58,8 +116,9 @@ export function getCalligraphyFont(id: string): CalligraphyFont {
 }
 
 export function resolveExportTextFontFamily(fontId: string): string {
-  if (!fontId || !isCalligraphyFontId(fontId)) {
-    return NORMAL_TEXT_FONT_FAMILY;
-  }
-  return getCalligraphyFont(fontId).cssValue;
+  const exportFont = EXPORT_TEXT_FONTS.find((font) => font.id === fontId);
+  if (exportFont) return exportFont.cssValue;
+  if (!fontId) return NORMAL_TEXT_FONT_FAMILY;
+  if (isCalligraphyFontId(fontId)) return getCalligraphyFont(fontId).cssValue;
+  return NORMAL_TEXT_FONT_FAMILY;
 }

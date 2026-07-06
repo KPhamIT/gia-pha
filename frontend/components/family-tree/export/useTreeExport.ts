@@ -26,6 +26,7 @@ import {
 } from "@/components/family-tree/book/calligraphy-font-loader";
 import {
   EXPORT_NORMAL_FONT_ID,
+  getExportTextFontEmbed,
   isCalligraphyFontId,
 } from "@/components/family-tree/book/calligraphy-fonts";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
@@ -444,19 +445,30 @@ export function useTreeExport({
     setSelectedId(null);
     setContextMenu(null);
 
-    const fontIds = new Set(
-      [
-        settings.coupletFontId,
-        ...settings.layers
-          .filter((layer) => layer.type === "text")
-          .map((layer) => layer.fontId),
-      ].filter(isCalligraphyFontId),
-    );
+    const embedFonts = new Map<string, string>();
+
+    if (isCalligraphyFontId(settings.coupletFontId)) {
+      const coupletDef = getCalligraphyFontDef(settings.coupletFontId);
+      embedFonts.set(coupletDef.family, coupletDef.file);
+    }
+
+    for (const layer of settings.layers) {
+      if (layer.type !== "text") continue;
+      const exportEmbed = getExportTextFontEmbed(layer.fontId);
+      if (exportEmbed) {
+        embedFonts.set(exportEmbed.family, exportEmbed.file);
+        continue;
+      }
+      if (isCalligraphyFontId(layer.fontId)) {
+        const legacyDef = getCalligraphyFontDef(layer.fontId);
+        embedFonts.set(legacyDef.family, legacyDef.file);
+      }
+    }
+
     const fontFaces = await Promise.all(
-      [...fontIds].map(async (fontId) => {
-        const fontDef = getCalligraphyFontDef(fontId);
-        return buildEmbeddedFontFace(fontDef.family, fontDef.file);
-      }),
+      [...embedFonts.entries()].map(async ([family, file]) =>
+        buildEmbeddedFontFace(family, file),
+      ),
     );
 
     requestAnimationFrame(() => {

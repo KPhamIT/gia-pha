@@ -1,4 +1,7 @@
-import { isCalligraphyFontId } from "./calligraphy-fonts";
+import {
+  getExportTextFontEmbed,
+  isCalligraphyFontId,
+} from "./calligraphy-fonts";
 
 type FontDef = {
   family: string;
@@ -41,16 +44,22 @@ function injectFontFace(def: FontDef): void {
 
 /** Inject @font-face for one calligraphy font (idempotent). Bỏ qua font thường. */
 export function ensureCalligraphyFontLoaded(fontId: string): void {
+  const exportEmbed = getExportTextFontEmbed(fontId);
+  if (exportEmbed) {
+    injectFontFace(exportEmbed);
+    return;
+  }
   if (!isCalligraphyFontId(fontId)) return;
   injectFontFace(getCalligraphyFontDef(fontId));
 }
 
 /** Inject @font-face and wait until the browser can render the family. */
 export async function loadCalligraphyFont(fontId: string): Promise<void> {
-  if (!isCalligraphyFontId(fontId)) return;
   if (typeof document === "undefined") return;
 
-  const def = getCalligraphyFontDef(fontId);
+  const exportEmbed = getExportTextFontEmbed(fontId);
+  const def = exportEmbed ?? (isCalligraphyFontId(fontId) ? getCalligraphyFontDef(fontId) : null);
+  if (!def) return;
   injectFontFace(def);
 
   if (!("fonts" in document)) return;
