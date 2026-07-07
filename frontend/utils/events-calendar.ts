@@ -1,4 +1,6 @@
 import { Lunar } from "lunar-javascript";
+import { UI } from "@/lib/constants/ui-strings";
+import { formatLunarMonthName } from "@/utils/landing-lunar";
 import type { FamilyEvent } from "@/components/types/event-types";
 
 const WEEKDAY_LABELS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"] as const;
@@ -108,6 +110,12 @@ export function getLunarDayLabel(date: Date): string {
 
 export function formatLunarYearBadge(date: Date): string {
   return toVietnameseGanZhi(Lunar.fromDate(date).getYearInGanZhi());
+}
+
+/** Tháng âm lịch của một ngày cụ thể. */
+export function formatLunarMonthLabelForDate(date: Date): string {
+  const lunarMonth = Lunar.fromDate(date).getMonth();
+  return UI.EVENTS_CALENDAR_LUNAR_MONTH(formatLunarMonthName(lunarMonth));
 }
 
 export function formatEventDateWithLunar(iso?: string | null): string | null {

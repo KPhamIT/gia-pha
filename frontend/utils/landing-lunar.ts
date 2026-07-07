@@ -85,10 +85,14 @@ function toVietnameseGanZhi(ganZhi: string): string {
   return `${stem} ${branch}`;
 }
 
-function formatLunarMonth(month: number): string {
+export function formatLunarMonthName(month: number): string {
   const absMonth = Math.abs(month);
   const name = LUNAR_MONTHS[absMonth - 1] ?? String(absMonth);
   return month < 0 ? `Nhuận ${name}` : name;
+}
+
+function formatLunarMonth(month: number): string {
+  return formatLunarMonthName(month);
 }
 
 function getNearestSolarTerm(lunar: Lunar): string {

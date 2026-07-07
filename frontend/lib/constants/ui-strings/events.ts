@@ -29,6 +29,7 @@ export const EVENT_STRINGS = {
   EVENTS_MONTH_HIGHLIGHT: "Nổi bật trong tháng",
   EVENTS_DAY_EMPTY: "Không có sự kiện trong ngày này.",
   EVENTS_CLEAR_DAY_FILTER: "Xem cả tháng",
+  EVENTS_CALENDAR_LUNAR_MONTH: (name: string) => `Tháng ${name} âm lịch`,
   EVENT_ADD: "Thêm sự kiện",
   EVENT_EDIT: "Sửa sự kiện",
   EVENT_DELETE_CONFIRM: "Xóa sự kiện này? Dữ liệu đóng góp sẽ bị xóa theo.",

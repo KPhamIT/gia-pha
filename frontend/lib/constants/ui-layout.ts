@@ -13,10 +13,13 @@ export const LAYOUT = {
     "md:max-w-5xl md:max-h-[min(100%,52rem)] md:h-[min(100%,52rem)]",
   panelBook:
     "bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50",
+  /** Heritage Modernism — chocolate brown shell (đóng góp sự kiện, …). */
+  panelHeritage: "bg-[#3d2314] text-[#f3f0eb]",
   panelLight: "bg-white text-slate-900",
   sheetHeader:
     "flex shrink-0 items-center gap-3 border-b px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-6 md:py-4 md:pt-4",
   sheetHeaderBook: "border-amber-100/10",
+  sheetHeaderHeritage: "border-white/10",
   sheetHeaderLight: "border-slate-200",
   sheetBody: "sheet-scroll",
   pagePad: "p-4 md:p-6",

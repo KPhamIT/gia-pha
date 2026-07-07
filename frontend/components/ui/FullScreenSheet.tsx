@@ -7,14 +7,14 @@ import { UI } from "@/lib/constants/ui-strings";
 import { dismissOverlayFocus } from "@/hooks/useOverlayViewport";
 import OverlayPortal from "./OverlayPortal";
 
-type SheetTone = "light" | "book";
+type SheetTone = "light" | "book" | "heritage";
 
 type FullScreenSheetProps = {
   title?: string;
   onClose: () => void;
   children: ReactNode;
   headerRight?: ReactNode;
-  /** 'book' uses the genealogy-book amber gradient background. */
+  /** 'book' = amber gradient; 'heritage' = chocolate brown; 'light' = white. */
   tone?: SheetTone;
 };
 
@@ -26,15 +26,31 @@ export default function FullScreenSheet({
   tone = "book",
 }: FullScreenSheetProps) {
   const isBook = tone === "book";
-  const panelClass = isBook ? LAYOUT.panelBook : LAYOUT.panelLight;
-  const headerClass = isBook ? LAYOUT.sheetHeaderBook : LAYOUT.sheetHeaderLight;
-  const backBtnClass = isBook
-    ? "text-amber-50 active:bg-white/10 md:hover:bg-white/10"
-    : "text-slate-600 active:bg-slate-100 md:hover:bg-slate-100";
-  const titleClass = isBook ? "text-amber-50" : "text-slate-900";
-  const backdropClass = isBook
-    ? LAYOUT.overlayBackdropDark
-    : LAYOUT.overlayBackdropLight;
+  const isHeritage = tone === "heritage";
+  const panelClass = isHeritage
+    ? LAYOUT.panelHeritage
+    : isBook
+      ? LAYOUT.panelBook
+      : LAYOUT.panelLight;
+  const headerClass = isHeritage
+    ? LAYOUT.sheetHeaderHeritage
+    : isBook
+      ? LAYOUT.sheetHeaderBook
+      : LAYOUT.sheetHeaderLight;
+  const backBtnClass = isHeritage
+    ? "text-[#f3f0eb] active:bg-white/10 md:hover:bg-white/10"
+    : isBook
+      ? "text-amber-50 active:bg-white/10 md:hover:bg-white/10"
+      : "text-slate-600 active:bg-slate-100 md:hover:bg-slate-100";
+  const titleClass = isHeritage
+    ? "font-serif text-white"
+    : isBook
+      ? "text-amber-50"
+      : "text-slate-900";
+  const backdropClass =
+    isBook || isHeritage
+      ? LAYOUT.overlayBackdropDark
+      : LAYOUT.overlayBackdropLight;
 
   const handleClose = () => {
     dismissOverlayFocus();

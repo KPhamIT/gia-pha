@@ -9,6 +9,7 @@ import {
   buildMonthCalendar,
   dateKey,
   formatLunarYearBadge,
+  formatLunarMonthLabelForDate,
   formatMonthYearLabel,
   groupEventsByDate,
   sameCalendarDay,
@@ -58,14 +59,18 @@ export default function EventsMonthCalendar({
   const monthBadge = formatLunarYearBadge(
     new Date(displayYear, displayMonth, 1),
   );
+  const lunarMonthLabel = formatLunarMonthLabelForDate(selectedDate ?? today);
 
   return (
     <div className="overflow-hidden rounded-xl border border-[#d4c3c1] bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-[#d4c3c1] bg-[#FAF7F2] p-4 md:p-6">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="font-serif text-xl font-semibold text-[#321716] md:text-2xl">
-            {formatMonthYearLabel(displayYear, displayMonth)}
-          </h2>
+          <div className="min-w-0">
+            <h2 className="font-serif text-xl font-semibold text-[#321716] md:text-2xl">
+              {formatMonthYearLabel(displayYear, displayMonth)}
+            </h2>
+            <p className="mt-0.5 text-sm text-[#827472]">{lunarMonthLabel}</p>
+          </div>
           <span className="rounded-full bg-[#ffdcc5] px-3 py-1 text-sm font-semibold italic text-[#301400]">
             {monthBadge}
           </span>
