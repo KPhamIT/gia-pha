@@ -1,4 +1,5 @@
 export const BILLING_STRINGS = {
+  PRICING_PAGE_EYEBROW: "Dịch vụ",
   PRICING_PAGE_TITLE: "Bảng giá dịch vụ",
   PRICING_PAGE_SUBTITLE: "Gói theo quy mô dòng họ — thanh toán hàng năm",
   PRICING_INTRO:

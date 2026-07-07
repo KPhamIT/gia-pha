@@ -9,7 +9,7 @@ export default function LandingHeroSection() {
       <section className="relative flex min-h-[85vh] flex-col justify-end overflow-hidden px-4 pb-12 pt-8 md:hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/landing/hero-mobile.jpg"
+            src="/images/landing/hero-mobile.webp"
             alt=""
             fill
             priority

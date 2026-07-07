@@ -72,7 +72,7 @@ export class BillingService {
       billingEnabled: this.isBillingEnforced(),
       freeDownloadMaxNodes: this.getFreeDownloadMaxNodes(),
       orderExpireDays: this.getOrderExpireDays(),
-      qrImageUrl: this.config.get<string>('PAYMENT_QR_URL', '/images/payment-qr.png'),
+      qrImageUrl: this.config.get<string>('PAYMENT_QR_URL', '/images/payment-qr.webp'),
       accountName: this.config.get<string>('PAYMENT_ACCOUNT_NAME', ''),
       accountNumber: this.config.get<string>('PAYMENT_ACCOUNT_NUMBER', ''),
       bankName: this.config.get<string>('PAYMENT_BANK_NAME', ''),
@@ -544,7 +544,7 @@ export class BillingService {
 
   private bankDisplay() {
     return {
-      qrImageUrl: this.config.get<string>('PAYMENT_QR_URL', '/images/payment-qr.svg'),
+      qrImageUrl: this.config.get<string>('PAYMENT_QR_URL', '/images/payment-qr.webp'),
       accountName: this.config.get<string>('PAYMENT_ACCOUNT_NAME', ''),
       accountNumber: this.config.get<string>('PAYMENT_ACCOUNT_NUMBER', ''),
       bankName: this.config.get<string>('PAYMENT_BANK_NAME', ''),

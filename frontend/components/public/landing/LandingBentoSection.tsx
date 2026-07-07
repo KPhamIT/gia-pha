@@ -6,7 +6,7 @@ export default function LandingBentoSection() {
     <section className="bg-[#ebe8e3] py-20">
       <div className="mx-auto grid w-full max-w-6xl grid-cols-12 gap-6 px-4 md:px-6">
         <article className="relative col-span-12 h-[360px] overflow-hidden rounded-xl md:col-span-8">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/landing/bento-tree.jpg')" }} />
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/landing/bento-tree.webp')" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-[#321716]/80 to-transparent p-8">
             <div className="absolute bottom-8">
               <h3 className="font-serif text-3xl font-semibold text-white">{UI.LANDING_BENTO_TREE_TITLE}</h3>
@@ -23,7 +23,7 @@ export default function LandingBentoSection() {
           <span className="inline-flex w-fit rounded bg-[#4a2c2a] px-3 py-1 text-xs font-semibold">{UI.LANDING_BENTO_SECURITY_BADGE}</span>
         </article>
         <article className="relative col-span-12 h-[360px] overflow-hidden rounded-xl md:col-span-8">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/landing/bento-book.jpg')" }} />
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/images/landing/bento-book.webp')" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-[#321716]/80 to-transparent p-8">
             <div className="absolute bottom-8 right-8 text-right">
               <h3 className="font-serif text-3xl font-semibold text-white">{UI.LANDING_BENTO_ARCHIVE_TITLE}</h3>

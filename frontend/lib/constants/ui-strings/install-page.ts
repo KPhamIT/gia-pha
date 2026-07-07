@@ -98,6 +98,6 @@ export const INSTALL_BENEFITS: readonly InstallBenefit[] = [
 
 /** Ảnh minh họa — public/images/install/ */
 export const INSTALL_VISUAL_SRC: Record<InstallPlatform, string | null> = {
-  ios: "/images/install/ios.jpg",
-  android: "/images/install/android.jpg",
+  ios: "/images/install/ios.webp",
+  android: "/images/install/android.webp",
 };

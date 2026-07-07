@@ -70,7 +70,7 @@ export default function AboutPage() {
               <div className="aspect-[4/5] rotate-2 overflow-hidden rounded-2xl shadow-2xl">
                 <img
                   className="h-full w-full object-cover"
-                  src="/images/about/story-main.jpg"
+                  src="/images/about/story-main.webp"
                   alt=""
                 />
               </div>

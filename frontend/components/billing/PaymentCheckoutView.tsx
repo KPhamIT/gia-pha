@@ -151,7 +151,7 @@ export default function PaymentCheckoutView({
 
   const order = submittedOrder;
   const awaitingReview = order?.status === "AWAITING_REVIEW";
-  const qrUrl = quote.bankDisplay.qrImageUrl || "/images/payment-qr.svg";
+  const qrUrl = quote.bankDisplay.qrImageUrl || "/images/payment-qr.webp";
   const displayTier = order?.tier ?? quote.tier;
 
   return (

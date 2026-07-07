@@ -109,7 +109,7 @@ function EventsCard() {
       </div>
       <div className="order-1 h-32 w-32 overflow-hidden rounded-xl border-2 border-white shadow-md md:order-2 md:h-40 md:w-40">
         <img
-          src="/images/about/story-main.jpg"
+            src="/images/about/story-main.webp"
           alt={SERVICES_PAGE_UI.EVENTS_IMAGE_ALT}
           className="h-full w-full object-cover"
         />

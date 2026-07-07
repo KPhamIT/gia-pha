@@ -99,7 +99,7 @@ function TermsDisputeSection() {
         </div>
         <div className="h-48 w-full overflow-hidden rounded-xl bg-[#f0ede9] md:w-64">
           <img
-            src="/images/about/story-main.jpg"
+            src="/images/about/story-main.webp"
             alt={TERMS_PAGE_UI.DISPUTE_IMAGE_ALT}
             className="h-full w-full object-cover"
           />
