@@ -1,9 +1,9 @@
 import type { ConfigService } from '@nestjs/config';
 import { UserRole, type PrismaClient } from '../../generated/prisma/client.js';
 
-type NotifyScope = 'billing' | 'org-registration';
+type NotifyScope = 'billing' | 'org-registration' | 'contact';
 
-/** Email nhận thông báo vận hành (SYSTEM / billing / đăng ký dòng họ). */
+/** Email nhận thông báo vận hành (SYSTEM / billing / đăng ký dòng họ / liên hệ). */
 export async function resolveAdminNotifyEmail(
   prisma: PrismaClient,
   config: ConfigService,
@@ -12,6 +12,11 @@ export async function resolveAdminNotifyEmail(
   if (scope === 'billing') {
     const billingOverride = config.get<string>('BILLING_NOTIFY_EMAIL')?.trim();
     if (billingOverride) return billingOverride;
+  }
+
+  if (scope === 'contact') {
+    const contactOverride = config.get<string>('CONTACT_NOTIFY_EMAIL')?.trim();
+    if (contactOverride) return contactOverride;
   }
 
   const orgOverride = config

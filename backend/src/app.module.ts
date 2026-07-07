@@ -18,6 +18,7 @@ import { CeremoniesModule } from './ceremonies/ceremonies.module.js';
 import { BlogModule } from './blog/blog.module.js';
 import { MediaModule } from './media/media.module.js';
 import { BillingModule } from './billing/billing.module.js';
+import { ContactModule } from './contact/contact.module.js';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BillingModule } from './billing/billing.module.js';
     BlogModule,
     MediaModule,
     BillingModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

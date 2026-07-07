@@ -7,6 +7,7 @@ export type SendMailInput = {
   subject: string;
   html: string;
   text?: string;
+  replyTo?: string | string[];
 };
 
 @Injectable()
@@ -38,6 +39,7 @@ export class ResendMailService {
         subject: input.subject,
         html: input.html,
         text: input.text,
+        replyTo: input.replyTo,
       });
 
       if (error) {

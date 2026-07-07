@@ -69,6 +69,7 @@ export const API_ROUTES = {
   BILLING_ORDER_CANCEL: (id: number) => `/billing/orders/${id}/cancel`,
   BILLING_ORDER_BY_CODE: (code: string) =>
     `/billing/orders/by-code/${encodeURIComponent(code)}`,
+  CONTACT: "/contact",
   ORGANIZATION_SUBSCRIPTION: (id: number) => `/organizations/${id}/subscription`,
   ORGANIZATION_EXPORT_ELIGIBILITY: (id: number) =>
     `/organizations/${id}/export-download-eligibility`,

@@ -237,6 +237,10 @@ export const PUBLIC_STRINGS = {
   CONTACT_FORM_MESSAGE_PLACEHOLDER: "Viết tin nhắn của bạn tại đây...",
   CONTACT_FORM_SUBMIT: "Gửi lời nhắn",
   CONTACT_FORM_EMAIL_REQUIRED: "Vui lòng nhập email để chúng tôi phản hồi.",
+  CONTACT_FORM_MESSAGE_REQUIRED: "Vui lòng nhập lời nhắn (ít nhất 10 ký tự).",
+  CONTACT_FORM_SENDING: "Đang gửi…",
+  CONTACT_FORM_SUCCESS: "Đã gửi tin nhắn. Chúng tôi sẽ phản hồi sớm nhất có thể.",
+  CONTACT_FORM_ERROR: "Không gửi được tin nhắn. Vui lòng thử lại sau.",
   CONTACT_MAP_OFFICE: "Văn phòng Cội Nguồn",
   CONTACT_FAQ_TITLE: "Câu hỏi thường gặp",
   CONTACT_FAQ_ITEMS: [

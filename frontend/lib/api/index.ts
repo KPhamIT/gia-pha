@@ -12,6 +12,7 @@ import { ceremonies } from "./modules/ceremonies";
 import { blog } from "./modules/blog";
 import { media } from "./modules/media";
 import { billing } from "./modules/billing";
+import { contact } from "./modules/contact";
 
 export const api = {
   auth,
@@ -28,5 +29,6 @@ export const api = {
   blog,
   media,
   billing,
+  contact,
 };
 export type ApiType = typeof api;
