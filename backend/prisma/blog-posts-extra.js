@@ -50,6 +50,15 @@ export const BLOG_ENTRIES_EXTRA = [
   { title: 'Gia phả cho dòng họ ít người: bắt đầu từ đâu?', category: 'BASICS' },
   { title: 'Kể chuyện tổ tiên cho trẻ em qua cây gia đình tương tác', category: 'FAMILY_TREE' },
   { title: 'Hợp tác biên tập gia phả: nhiều người cùng cập nhật online', category: 'ONLINE' },
+  // Google "Mọi người cũng tìm kiếm" — cụm từ khóa chính
+  { title: 'Gia phả dòng tộc là gì? Vai trò của gia phả dòng tộc ngày nay', category: 'BASICS' },
+  { title: 'Gia phả dòng họ: khái niệm, cấu trúc và cách xây dựng', category: 'BASICS' },
+  { title: 'Phần mềm gia phả: nên chọn phần mềm gia phả nào cho dòng họ?', category: 'ONLINE' },
+  { title: 'Gia phả online là gì? Hướng dẫn dùng gia phả online hiệu quả', category: 'ONLINE' },
+  { title: 'Gia phả là gì? Giải thích gia phả đơn giản cho người mới bắt đầu', category: 'BASICS' },
+  { title: 'Phần mềm gia phả Excel: làm gia phả bằng Excel và hạn chế cần biết', category: 'HOWTO' },
+  { title: 'Website gia phả: tiêu chí chọn website gia phả cho dòng họ', category: 'ONLINE' },
+  { title: 'Sổ gia phả truyền thống và sổ gia phả điện tử — so sánh chi tiết', category: 'BASICS' },
 ];
 
 const SEO_TAGS = [

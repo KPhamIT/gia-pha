@@ -7,12 +7,24 @@ import {
   buildSeoMetaDescription,
   pickSeoTags,
 } from './blog-posts-extra.js';
+import {
+  buildKeywordContentBySlug,
+  getKeywordExcerptBySlug,
+  getKeywordMetaBySlug,
+  getKeywordTagsBySlug,
+} from './blog-posts-keyword-content.js';
 
 const CORE_KEYWORDS = [
   'gia phả',
   'gia phả dòng họ',
+  'gia phả dòng tộc',
   'gia phả online',
   'gia phả điện tử',
+  'gia phả là gì',
+  'phần mềm gia phả',
+  'phần mềm gia phả excel',
+  'website gia phả',
+  'sổ gia phả',
   'cây gia đình',
   'sơ đồ gia đình',
   'tổ tiên',
@@ -23,11 +35,30 @@ const CORE_KEYWORDS = [
 ];
 
 const CATEGORY_TAGS = {
-  BASICS: ['gia phả', 'gia phả dòng họ', 'tổ tiên', 'dòng họ', 'lịch sử dòng họ'],
-  HOWTO: ['gia phả', 'cách lập gia phả', 'gia phả điện tử', 'sơ đồ gia đình', 'dòng họ'],
+  BASICS: [
+    'gia phả',
+    'gia phả là gì',
+    'gia phả dòng họ',
+    'gia phả dòng tộc',
+    'sổ gia phả',
+    'tổ tiên',
+  ],
+  HOWTO: [
+    'gia phả',
+    'cách lập gia phả',
+    'phần mềm gia phả excel',
+    'gia phả điện tử',
+    'sơ đồ gia đình',
+  ],
   CULTURE: ['dòng họ', 'nhà thờ họ', 'họ tộc Việt Nam', 'tổ tiên', 'gia phả dòng họ'],
   FAMILY_TREE: ['cây gia đình', 'sơ đồ gia đình', 'gia phả', 'tổ tiên', 'dòng họ'],
-  ONLINE: ['gia phả online', 'gia phả điện tử', 'website gia phả', 'cây gia đình', 'dòng họ'],
+  ONLINE: [
+    'gia phả online',
+    'phần mềm gia phả',
+    'website gia phả',
+    'gia phả điện tử',
+    'cây gia đình',
+  ],
   SEO: ['SEO', 'content marketing', 'viết bài chuẩn SEO', 'đưa website lên top', 'từ khóa Google'],
 };
 
@@ -236,6 +267,8 @@ const SECTION_TEMPLATES = {
 
 function buildMetaDescription(title, category, slug) {
   if (category === 'SEO') return buildSeoMetaDescription(slug, title);
+  const keywordMeta = getKeywordMetaBySlug(slug);
+  if (keywordMeta) return keywordMeta;
   const suffix =
     ' Tìm hiểu gia phả dòng họ trên coinguon.io.vn — cây gia đình, sổ gia phả điện tử, nhắc ngày giỗ âm lịch.';
   const base = title.endsWith('?') ? title.slice(0, -1) : title;
@@ -245,6 +278,8 @@ function buildMetaDescription(title, category, slug) {
 
 function buildExcerpt(title, category, slug) {
   if (category === 'SEO') return buildSeoExcerpt(slug, title);
+  const keywordExcerpt = getKeywordExcerptBySlug(slug);
+  if (keywordExcerpt) return keywordExcerpt;
   const intro = CATEGORY_INTROS[category];
   return `${title}. ${intro} Khám phá kiến thức về tổ tiên, dòng họ và cách ứng dụng gia phả điện tử hiệu quả.`;
 }
@@ -253,6 +288,13 @@ function buildContentHtml(title, category, slug) {
   if (category === 'SEO') {
     return buildSeoContentHtml(slug, title, { p, h2, ul, escapeHtml });
   }
+  const keywordHtml = buildKeywordContentBySlug(slug, title, {
+    p,
+    h2,
+    ul,
+    escapeHtml,
+  });
+  if (keywordHtml) return keywordHtml;
   const sections = SECTION_TEMPLATES[category] ?? SECTION_TEMPLATES.BASICS;
   const parts = [
     p(`${title}. ${CATEGORY_INTROS[category]} Bài viết tổng hợp kiến thức thực tiễn về gia phả dòng họ, cây gia đình và lịch sử dòng họ cho người Việt.`),
@@ -294,8 +336,11 @@ function buildContentHtml(title, category, slug) {
 /** @param {{ title: string; category: BlogCategory }} entry */
 export function buildBlogPost(entry, index) {
   const slug = slugify(entry.title);
+  const keywordTags = getKeywordTagsBySlug(slug);
   const tags =
-    entry.category === 'SEO' ? pickSeoTags() : pickTags(entry.category);
+    entry.category === 'SEO'
+      ? pickSeoTags()
+      : keywordTags ?? pickTags(entry.category);
   const publishedAt = new Date(Date.UTC(2025, 0, 1 + index));
 
   return {
