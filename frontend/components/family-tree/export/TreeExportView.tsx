@@ -1,6 +1,10 @@
 "use client";
 
 import { useRef } from "react";
+import {
+  useOverlayPageRecovery,
+  useOverlayViewport,
+} from "@/hooks/useOverlayViewport";
 import type { FamilyTreeData } from "@/components/types/family-tree-types";
 import type { FamilyTreeLayoutConfig } from "@/components/family-tree/graph/layout";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
@@ -32,6 +36,8 @@ export default function TreeExportView({
   organizationId,
 }: TreeExportViewProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  useOverlayViewport();
+  useOverlayPageRecovery();
   const showDownload = BILLING_ENABLED || canDownloadExport;
   const exportState = useTreeExport({
     treeData,
@@ -110,16 +116,8 @@ export default function TreeExportView({
       >
         <div
           ref={viewportRef}
-          className="relative h-full w-full max-w-[min(100%,1400px)]"
+          className="relative z-0 h-full w-full max-w-[min(100%,1400px)]"
         >
-          <ExportLayerToolbar
-            onAddText={addTextLayer}
-            onOpenLibrary={() => setLibraryOpen(true)}
-            onZoomIn={zoomIn}
-            onZoomOut={zoomOut}
-            onResetTree={resetTreeTransform}
-            treeScale={treeZoom}
-          />
           <TreeExportSvg
             svgRef={svgRef}
             treeTransform={treeTransform}
@@ -137,6 +135,14 @@ export default function TreeExportView({
             beginTreePan={beginPan}
             moveTreePan={movePan}
             endTreePan={endPan}
+          />
+          <ExportLayerToolbar
+            onAddText={addTextLayer}
+            onOpenLibrary={() => setLibraryOpen(true)}
+            onZoomIn={zoomIn}
+            onZoomOut={zoomOut}
+            onResetTree={resetTreeTransform}
+            treeScale={treeZoom}
           />
         </div>
       </div>

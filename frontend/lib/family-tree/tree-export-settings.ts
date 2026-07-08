@@ -170,6 +170,7 @@ function normalizeLayers(
       if (layer.type === "text") {
         return {
           ...base,
+          bold: layer.bold ?? false,
           vertical: layer.vertical ?? false,
           textCurve: layer.textCurve ?? 0,
           textRotation: layer.textRotation ?? 0,

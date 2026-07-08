@@ -2,11 +2,18 @@ import type { Rect } from "@/lib/family-tree/export-tree-svg";
 
 export const TEXT_CURVE_MIN = -100;
 export const TEXT_CURVE_MAX = 100;
-export const TEXT_CURVE_STEP = 5;
+export const TEXT_CURVE_STEP = 1;
 
 export const TEXT_ROTATION_MIN = -180;
 export const TEXT_ROTATION_MAX = 180;
-export const TEXT_ROTATION_STEP = 5;
+export const TEXT_ROTATION_STEP = 1;
+
+/** Fallback khi chưa đo được trên canvas (SSR / thiếu context). */
+const FALLBACK_CHAR_WIDTH = 0.9;
+/** Đệm đường path để glyph cuối không bị dồn/méo. */
+const PATH_PAD_RATIO = 0.08;
+
+let measureCanvas: HTMLCanvasElement | null = null;
 
 export function clampTextCurve(value: number): number {
   const stepped = Math.round(value / TEXT_CURVE_STEP) * TEXT_CURVE_STEP;
@@ -21,31 +28,64 @@ export function clampTextRotation(value: number): number {
 export function estimateHorizontalTextWidth(
   text: string,
   fontSize: number,
+  fontFamily?: string,
+  bold = false,
 ): number {
-  return Math.max(text.length, 1) * fontSize * 0.55;
+  const fallback =
+    Math.max(text.length, 1) * fontSize * FALLBACK_CHAR_WIDTH * (bold ? 1.06 : 1);
+  if (typeof document === "undefined" || !fontFamily) return fallback;
+
+  measureCanvas ??= document.createElement("canvas");
+  const ctx = measureCanvas.getContext("2d");
+  if (!ctx) return fallback;
+
+  const weight = bold ? "700" : "400";
+  ctx.font = `${weight} ${fontSize}px ${fontFamily}`;
+  const measured = ctx.measureText(text).width;
+  // Font decor/thư pháp đôi khi đo hẹp hơn khi render SVG — lấy max + nhẹ.
+  return Math.max(measured * 1.02, fallback * 0.85, fontSize * 0.5);
 }
 
-/** Bán trục dọc của elip; curve ±100 → cung bầu dục rõ. */
-export function ellipseRy(curve: number, textWidth: number): number {
+/**
+ * Độ vồng (sagitta) của cung — đỉnh so với baseline.
+ * curve ±100 ≈ ~35% chiều chữ; giới hạn < nửa chord để không thành nửa vòng.
+ */
+export function curveSagitta(curve: number, textWidth: number): number {
   if (curve === 0) return 0;
-  return (Math.abs(curve) / 100) * textWidth * 0.45;
+  const half = textWidth / 2;
+  const raw = (Math.abs(curve) / 100) * textWidth * 0.35;
+  return Math.min(raw, half * 0.92);
 }
 
-/** Đường dẫn elip: chữ bám theo cung bầu dục (không phải parabol). */
+/** Alias bounds — dùng độ vồng cung tròn. */
+export function ellipseRy(curve: number, textWidth: number): number {
+  return curveSagitta(curve, textWidth);
+}
+
+/**
+ * Cung tròn nông qua chord + sagitta (không dùng nửa elip).
+ * Nửa elip với rx=nửa chord khiến tiếp tuyến đầu/cuối ~thẳng đứng → chữ méo.
+ * Cung tròn R = (chord²/4 + s²)/(2s) giữ tiếp tuyến gần ngang khi cong nhẹ.
+ * curve > 0: vồng lên; curve < 0: võng xuống.
+ */
 export function buildEllipticalTextPath(
   x: number,
   y: number,
   textWidth: number,
   curve: number,
 ): string {
-  const x2 = x + textWidth;
+  const endPad = textWidth * PATH_PAD_RATIO;
+  const pathWidth = textWidth + endPad;
+  const x1 = x + pathWidth;
   if (curve === 0) {
-    return `M ${x} ${y} L ${x2} ${y}`;
+    return `M ${x} ${y} L ${x1} ${y}`;
   }
-  const rx = textWidth / 2;
-  const ry = ellipseRy(curve, textWidth);
+  const half = pathWidth / 2;
+  const sagitta = curveSagitta(curve, pathWidth);
+  const radius = (half * half + sagitta * sagitta) / (2 * sagitta);
+  // SVG +y xuống: sweep=0 (CCW) từ trái→phải đi qua phía trên màn hình.
   const sweep = curve > 0 ? 0 : 1;
-  return `M ${x} ${y} A ${rx} ${ry} 0 0 ${sweep} ${x2} ${y}`;
+  return `M ${x} ${y} A ${radius} ${radius} 0 0 ${sweep} ${x1} ${y}`;
 }
 
 export function textPivot(
@@ -111,26 +151,27 @@ export function horizontalTextBoundsWithCurve(
   rotation = 0,
 ): Rect {
   const pad = fontSize * 0.15;
+  const endPad = textWidth * PATH_PAD_RATIO;
   const pivot = textPivot(x, y, textWidth, fontSize);
   let rect: Rect;
 
   if (curve === 0) {
     rect = { x, y: y - fontSize, width: textWidth, height: fontSize * 1.2 };
   } else {
-    const ry = ellipseRy(curve, textWidth);
+    const sag = curveSagitta(curve, textWidth + endPad);
     if (curve > 0) {
       rect = {
         x,
-        y: y - fontSize - ry - pad,
-        width: textWidth,
-        height: fontSize + ry + pad * 2,
+        y: y - fontSize - sag - pad,
+        width: textWidth + endPad,
+        height: fontSize + sag + pad * 2,
       };
     } else {
       rect = {
         x,
         y: y - fontSize,
-        width: textWidth,
-        height: fontSize + ry + pad * 2,
+        width: textWidth + endPad,
+        height: fontSize + sag + pad * 2,
       };
     }
   }

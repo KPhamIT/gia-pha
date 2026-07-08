@@ -136,6 +136,11 @@ export default function ExportLayerPanel({
             </select>
           </label>
           <Toggle
+            label={UI.EXPORT_TEXT_BOLD}
+            checked={layer.bold ?? false}
+            onChange={(bold) => onPatch({ bold })}
+          />
+          <Toggle
             label={UI.EXPORT_TEXT_VERTICAL}
             checked={layer.vertical}
             onChange={(vertical) => onPatch({ vertical })}

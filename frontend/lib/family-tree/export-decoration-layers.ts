@@ -33,6 +33,8 @@ export type ExportTextLayer = {
   fontId: string;
   color: string;
   fontSize: number;
+  /** In đậm (font-weight 700). */
+  bold: boolean;
   vertical: boolean;
   /** -100…100; 0 = thẳng. Cung elip, chỉ chữ ngang. */
   textCurve: number;

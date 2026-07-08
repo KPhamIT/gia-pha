@@ -341,6 +341,7 @@ export function useTreeExport({
       fontId: EXPORT_NORMAL_FONT_ID,
       color: settings.coupletColor,
       fontSize,
+      bold: false,
       vertical: false,
       textCurve: 0,
       textRotation: 0,

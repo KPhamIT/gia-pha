@@ -99,6 +99,7 @@ function ExportLayerText({
 }) {
   if (!layer.text.trim()) return null;
   const fontFamily = resolveExportTextFontFamily(layer.fontId);
+  const fontWeight = layer.bold ? 700 : 400;
   const bounds = textLayerBounds(layer);
 
   if (layer.vertical) {
@@ -112,6 +113,7 @@ function ExportLayerText({
           textAnchor="middle"
           fontFamily={fontFamily}
           fontSize={layer.fontSize}
+          fontWeight={fontWeight}
           fill={layer.color}
           style={{ pointerEvents: "none" }}
         >
@@ -140,7 +142,12 @@ function ExportLayerText({
 
   const curve = layer.textCurve ?? 0;
   const rotation = layer.textRotation ?? 0;
-  const textWidth = estimateHorizontalTextWidth(layer.text, layer.fontSize);
+  const textWidth = estimateHorizontalTextWidth(
+    layer.text,
+    layer.fontSize,
+    fontFamily,
+    layer.bold,
+  );
   const pivot = textPivot(layer.x, layer.y, textWidth, layer.fontSize);
   const rotateTransform = textRotationTransform(rotation, pivot.x, pivot.y);
   const dragRect = interactive ? (
@@ -169,12 +176,15 @@ function ExportLayerText({
         <text
           fontFamily={fontFamily}
           fontSize={layer.fontSize}
+          fontWeight={fontWeight}
           fill={layer.color}
           style={{ pointerEvents: "none" }}
         >
           <textPath
             href={`#${curvedTextPathId(layer.id)}`}
             xlinkHref={`#${curvedTextPathId(layer.id)}`}
+            spacing="exact"
+            method="align"
           >
             {layer.text}
           </textPath>
@@ -186,6 +196,7 @@ function ExportLayerText({
         y={layer.y}
         fontFamily={fontFamily}
         fontSize={layer.fontSize}
+        fontWeight={fontWeight}
         fill={layer.color}
         style={{ pointerEvents: "none" }}
       >

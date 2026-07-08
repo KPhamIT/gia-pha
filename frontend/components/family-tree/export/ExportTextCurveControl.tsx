@@ -7,45 +7,12 @@ import {
   TEXT_CURVE_STEP,
   clampTextCurve,
 } from "@/lib/family-tree/export-text-curve";
-import { fieldLabel, selectClass } from "./tree-export-control-bits";
+import { fieldLabel } from "./tree-export-control-bits";
 
-function ArcIcon({ direction }: { direction: "up" | "down" }) {
-  return (
-    <svg
-      width="20"
-      height="12"
-      viewBox="0 0 20 12"
-      className="shrink-0 text-slate-500"
-      aria-hidden
-    >
-      <path
-        d={direction === "up" ? "M2 10 Q10 0 18 10" : "M2 2 Q10 12 18 2"}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
-
-function StepButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-300/50 bg-white text-lg leading-none text-slate-700"
-    >
-      {label}
-    </button>
-  );
-}
+const stepBtnClass =
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-300/50 bg-white text-base font-semibold leading-none text-slate-700";
+const numInputClass =
+  "w-14 shrink-0 rounded-lg border border-amber-300/50 bg-amber-50/90 px-1.5 py-2 text-center text-sm text-amber-950 outline-none focus:border-amber-500";
 
 type Props = {
   value: number;
@@ -54,27 +21,41 @@ type Props = {
 
 export default function ExportTextCurveControl({ value, onChange }: Props) {
   const setValue = (next: number) => onChange(clampTextCurve(next));
-  const status =
-    value === 0 ? UI.EXPORT_TEXT_CURVE_STRAIGHT : String(value);
 
   return (
     <div className="mb-2">
       <span className={fieldLabel}>{UI.EXPORT_TEXT_CURVE}</span>
-      <div className="flex items-center gap-1.5">
-        <ArcIcon direction="up" />
-        <StepButton label="Giảm" onClick={() => setValue(value - TEXT_CURVE_STEP)} />
+      <div className="flex min-w-0 items-center gap-1.5">
+        <button
+          type="button"
+          aria-label={UI.EXPORT_TEXT_CURVE_DECREASE}
+          onClick={() => setValue(value - TEXT_CURVE_STEP)}
+          className={stepBtnClass}
+        >
+          −
+        </button>
         <input
           type="number"
           min={TEXT_CURVE_MIN}
           max={TEXT_CURVE_MAX}
           step={TEXT_CURVE_STEP}
-          className={`${selectClass} w-16 shrink-0 px-2 text-center`}
+          className={numInputClass}
           value={value}
           onChange={(e) => setValue(Number(e.target.value))}
         />
-        <StepButton label="Tăng" onClick={() => setValue(value + TEXT_CURVE_STEP)} />
-        <ArcIcon direction="down" />
-        <span className="ml-0.5 text-xs text-slate-500">{status}</span>
+        <button
+          type="button"
+          aria-label={UI.EXPORT_TEXT_CURVE_INCREASE}
+          onClick={() => setValue(value + TEXT_CURVE_STEP)}
+          className={stepBtnClass}
+        >
+          +
+        </button>
+        {value === 0 ? (
+          <span className="text-xs text-slate-500">
+            {UI.EXPORT_TEXT_CURVE_STRAIGHT}
+          </span>
+        ) : null}
       </div>
     </div>
   );

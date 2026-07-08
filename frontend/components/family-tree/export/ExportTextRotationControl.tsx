@@ -7,26 +7,12 @@ import {
   TEXT_ROTATION_STEP,
   clampTextRotation,
 } from "@/lib/family-tree/export-text-curve";
-import { fieldLabel, selectClass } from "./tree-export-control-bits";
+import { fieldLabel } from "./tree-export-control-bits";
 
-function StepButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-300/50 bg-white text-lg leading-none text-slate-700"
-    >
-      {label}
-    </button>
-  );
-}
+const stepBtnClass =
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-300/50 bg-white text-base font-semibold leading-none text-slate-700";
+const numInputClass =
+  "w-14 shrink-0 rounded-lg border border-amber-300/50 bg-amber-50/90 px-1.5 py-2 text-center text-sm text-amber-950 outline-none focus:border-amber-500";
 
 type Props = {
   value: number;
@@ -41,25 +27,33 @@ export default function ExportTextRotationControl({ value, onChange }: Props) {
   return (
     <div className="mb-2">
       <span className={fieldLabel}>{UI.EXPORT_TEXT_ROTATION}</span>
-      <div className="flex items-center gap-1.5">
-        <StepButton
-          label="Xoay trái"
+      <div className="flex min-w-0 items-center gap-1.5">
+        <button
+          type="button"
+          aria-label={UI.EXPORT_TEXT_ROTATION_LEFT}
           onClick={() => setValue(value - TEXT_ROTATION_STEP)}
-        />
+          className={stepBtnClass}
+        >
+          ↺
+        </button>
         <input
           type="number"
           min={TEXT_ROTATION_MIN}
           max={TEXT_ROTATION_MAX}
           step={TEXT_ROTATION_STEP}
-          className={`${selectClass} w-16 shrink-0 px-2 text-center`}
+          className={numInputClass}
           value={value}
           onChange={(e) => setValue(Number(e.target.value))}
         />
-        <StepButton
-          label="Xoay phải"
+        <button
+          type="button"
+          aria-label={UI.EXPORT_TEXT_ROTATION_RIGHT}
           onClick={() => setValue(value + TEXT_ROTATION_STEP)}
-        />
-        <span className="ml-0.5 text-xs text-slate-500">{status}</span>
+          className={stepBtnClass}
+        >
+          ↻
+        </button>
+        <span className="min-w-0 truncate text-xs text-slate-500">{status}</span>
       </div>
     </div>
   );

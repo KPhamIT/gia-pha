@@ -5,6 +5,7 @@ import {
   type ResolvedCouplet,
   type Rect,
 } from "@/lib/family-tree/export-tree-svg";
+import { resolveExportTextFontFamily } from "@/components/family-tree/book/calligraphy-fonts";
 import type { ExportTextLayer } from "@/lib/family-tree/export-decoration-layers";
 import {
   estimateHorizontalTextWidth,
@@ -69,7 +70,12 @@ export function textLayerBounds(layer: ExportTextLayer): Rect {
       height: height + layer.fontSize * 0.4,
     };
   }
-  const width = estimateHorizontalTextWidth(layer.text, layer.fontSize);
+  const width = estimateHorizontalTextWidth(
+    layer.text,
+    layer.fontSize,
+    resolveExportTextFontFamily(layer.fontId),
+    layer.bold,
+  );
   return horizontalTextBoundsWithCurve(
     layer.x,
     layer.y,
