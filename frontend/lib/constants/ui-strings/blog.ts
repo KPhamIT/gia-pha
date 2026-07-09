@@ -18,6 +18,10 @@ export const BLOG_UI = {
   BLOG_BACK_TO_LIST: "Danh sách bài viết",
   BLOG_TAGS_LABEL: "Từ khóa",
   BLOG_PUBLISHED_AT: "Đăng ngày",
+  BLOG_UPDATED_AT: "Cập nhật",
+  BLOG_RELATED_TITLE: "Bài viết liên quan",
+  BLOG_CATEGORY_MORE: "Xem thêm bài",
+  BLOG_GUIDE_LINK: "Hướng dẫn sử dụng",
   BLOG_RELATED_CTA_TITLE: "Bắt đầu gia phả cho dòng họ của bạn",
   BLOG_RELATED_CTA_BODY:
     "Tạo gia phả online miễn phí — cây gia phả, sổ gia phả điện tử và chia sẻ cho cả họ hàng.",

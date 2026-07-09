@@ -23,7 +23,8 @@ const STATIC_PAGES: {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
   const now = new Date();
-  const blogSlugs = (await fetchBlogSlugs()) ?? [];
+  // Fresh slugs for sitemap (keyword posts + updates); list pages keep longer ISR.
+  const blogSlugs = (await fetchBlogSlugs({ revalidate: 300 })) ?? [];
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PAGES.map(
     ({ path, changeFrequency, priority }) => ({
@@ -37,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((entry) => ({
     url: `${base}/bai-viet/${entry.slug}`,
     lastModified: new Date(entry.updatedAt),
-    changeFrequency: "monthly",
+    changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
 
