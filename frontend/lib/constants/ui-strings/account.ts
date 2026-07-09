@@ -204,6 +204,12 @@ export const ACCOUNT_STRINGS = {
   ORG_REGISTER_ALREADY_ADMIN: "Bạn đã quản lý một dòng họ.",
   ORG_REGISTER_GO_MANAGE: "Quản lý dòng họ",
   ORG_REGISTER_GO_SHARE: "Lấy liên kết chia sẻ",
+  ORG_REGISTER_JOIN_LINK: "Đã có liên kết truy cập? Tham gia dòng họ",
+  ORG_REGISTER_STEPS: [
+    "Đặt tên dòng họ / họ tộc",
+    "Tạo tài khoản quản trị (trưởng họ)",
+    "Mời họ hàng qua liên kết chia sẻ",
+  ] as const,
   ORG_SHARE_TITLE: "Liên kết xem gia phả",
   ORG_SHARE_HINT:
     "Gửi liên kết này cho người trong dòng họ để họ xem sổ gia phả mà không cần đăng nhập.",

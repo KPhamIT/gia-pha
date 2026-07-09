@@ -14,7 +14,7 @@ export default function BlogArticle({ post, relatedPosts = [] }: BlogArticleProp
   const categoryLabel = blogCategoryLabel(post.category);
 
   return (
-    <article className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full max-w-3xl">
       <div
         className="blog-prose"
         dangerouslySetInnerHTML={{ __html: post.content }}
@@ -22,9 +22,9 @@ export default function BlogArticle({ post, relatedPosts = [] }: BlogArticleProp
 
       {post.tags.length > 0 ? (
         <footer className="mt-10 border-t border-[#d4c3c1]/40 pt-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#4a2c2a]/60">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#4a2c2a]/60">
             {UI.BLOG_TAGS_LABEL}
-          </p>
+          </h2>
           <ul className="mt-3 flex flex-wrap gap-2">
             {post.tags.map((tag) => (
               <li key={tag}>
@@ -74,6 +74,6 @@ export default function BlogArticle({ post, relatedPosts = [] }: BlogArticleProp
           ← {UI.BLOG_BACK_TO_LIST}
         </Link>
       </p>
-    </article>
+    </div>
   );
 }

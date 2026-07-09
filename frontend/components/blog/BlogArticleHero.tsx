@@ -56,9 +56,9 @@ export default function BlogArticleHero({
             {lead}
           </p>
         ) : null}
-        <div className="mt-5 md:mt-6">
+        <footer className="mt-5 md:mt-6">
           <MetaRow post={post} />
-        </div>
+        </footer>
       </div>
     </header>
   );

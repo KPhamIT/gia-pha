@@ -16,6 +16,7 @@ export default function BlogArticlePageView({
     <ResponsiveAppPageLayout
       title={UI.BLOG_LIST_TITLE}
       backHref="/bai-viet"
+      mobileTitleAsHeading={false}
       contentClassName="w-full pb-32 pt-0 md:pb-0 md:pt-0"
     >
       {children}

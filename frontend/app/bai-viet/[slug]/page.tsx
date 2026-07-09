@@ -77,10 +77,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         keywords={post.tags}
         breadcrumbs={breadcrumbs}
       />
-      <BlogArticleHero post={post} breadcrumbs={breadcrumbs} />
-      <div className="bg-[#fcf9f4] px-4 py-8 md:-mt-6 md:rounded-t-[3rem] md:px-10 md:pb-16 md:pt-12 md:shadow-2xl">
-        <BlogArticle post={post} relatedPosts={relatedPosts} />
-      </div>
+      <article>
+        <BlogArticleHero post={post} breadcrumbs={breadcrumbs} />
+        <div className="bg-[#fcf9f4] px-4 py-8 md:-mt-6 md:rounded-t-[3rem] md:px-10 md:pb-16 md:pt-12 md:shadow-2xl">
+          <BlogArticle post={post} relatedPosts={relatedPosts} />
+        </div>
+      </article>
     </BlogArticlePageView>
   );
 }

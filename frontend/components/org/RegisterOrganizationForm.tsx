@@ -4,8 +4,6 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { inputClassName } from "@/components/ui/CollapsibleSection";
-import IconRoundButton from "@/components/ui/IconRoundButton";
 import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
 import { useAuthStore } from "@/store/authStore";
 import { setToken } from "@/lib/auth/session";
@@ -16,11 +14,24 @@ import {
 } from "@/lib/org/org-access";
 import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache";
 import { UI } from "@/lib/constants/ui-strings";
-import { BT } from "@/lib/constants/ui-theme";
 import { getErrorMessage } from "@/utils/errors";
 import AuthPageLoading from "@/components/ui/AuthPageLoading";
 
-const labelClass = "mb-1 block text-sm font-medium text-amber-100";
+const labelClass = "mb-1.5 block text-sm font-medium text-[#321716]";
+const inputClass =
+  "w-full rounded-lg border border-[#d4c3c1] bg-white px-3 py-2.5 text-base text-[#1c1c19] outline-none transition focus:border-[#4a2c2a] focus:ring-2 focus:ring-[#4a2c2a]/15 md:text-sm";
+const cardClass =
+  "rounded-2xl border border-[#d4c3c1] bg-white p-6 shadow-sm md:p-8";
+const errorClass =
+  "rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700";
+const btnPrimary =
+  "inline-flex min-h-11 items-center justify-center rounded-lg bg-[#321716] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4a2c2a] disabled:opacity-50";
+const btnOutline =
+  "inline-flex min-h-11 items-center justify-center rounded-lg border border-[#d4c3c1] bg-white px-5 py-2.5 text-sm font-semibold text-[#321716] transition hover:bg-[#f6f3ee]";
+
+function FormCard({ children }: { children: React.ReactNode }) {
+  return <div className={cardClass}>{children}</div>;
+}
 
 export default function RegisterOrganizationForm() {
   const router = useRouter();
@@ -108,33 +119,41 @@ export default function RegisterOrganizationForm() {
   );
 
   if (!loaded) {
-    return <AuthPageLoading />;
+    return (
+      <FormCard>
+        <AuthPageLoading />
+      </FormCard>
+    );
   }
 
   if (isAdmin) {
     return (
-      <div className="space-y-4">
-        <p className={`text-sm leading-relaxed ${BT.mutedOnDark}`}>{UI.ORG_REGISTER_ALREADY_ADMIN}</p>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/org-users" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnGold} inline-flex`}>
+      <FormCard>
+        <p className="text-sm leading-relaxed text-[#504443]">
+          {UI.ORG_REGISTER_ALREADY_ADMIN}
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link href="/org-users" className={btnPrimary}>
             {UI.ORG_REGISTER_GO_MANAGE}
           </Link>
-          <Link href="/account" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline} border-amber-200/40 text-amber-50`}>
+          <Link href="/account" className={btnOutline}>
             {UI.ORG_REGISTER_GO_SHARE}
           </Link>
         </div>
-      </div>
+      </FormCard>
     );
   }
 
   if (isLoggedIn && !isDemo) {
     return (
-      <form className={`${BT.card} space-y-4 p-4`} onSubmit={(e) => void handleLoggedInSubmit(e)}>
-        <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>{UI.ORG_REGISTER_LOGGED_IN_HINT}</p>
+      <form className={`${cardClass} space-y-5`} onSubmit={(e) => void handleLoggedInSubmit(e)}>
+        <p className="text-sm leading-relaxed text-[#504443]">
+          {UI.ORG_REGISTER_LOGGED_IN_HINT}
+        </p>
         <label className="block">
-          <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_NAME_LABEL}</span>
+          <span className={labelClass}>{UI.ORG_REGISTER_NAME_LABEL}</span>
           <input
-            className={inputClassName}
+            className={inputClass}
             value={orgName}
             onChange={(e) => setOrgName(e.target.value)}
             placeholder={UI.ORG_REGISTER_NAME_PLACEHOLDER}
@@ -142,17 +161,16 @@ export default function RegisterOrganizationForm() {
             required
           />
         </label>
-        {error ? <p className={BT.errorBgLight}>{error}</p> : null}
-        <div className="flex flex-wrap gap-3">
-          <IconRoundButton
-            type="submit"
-            icon="plus"
-            variant="gold"
-            loading={saving}
-            label={UI.ORG_REGISTER_SUBMIT}
-            compact={false}
-          />
-          <Link href="/" className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}>
+        {error ? (
+          <p className={errorClass} role="alert">
+            {error}
+          </p>
+        ) : null}
+        <div className="flex flex-wrap gap-3 pt-1">
+          <button type="submit" className={btnPrimary} disabled={saving}>
+            {saving ? UI.SAVING : UI.ORG_REGISTER_SUBMIT}
+          </button>
+          <Link href="/" className={btnOutline}>
             {UI.CONTACT_PAGE_BACK}
           </Link>
         </div>
@@ -161,15 +179,17 @@ export default function RegisterOrganizationForm() {
   }
 
   return (
-    <form className={`${BT.card} space-y-4 p-4`} onSubmit={(e) => void handleGuestSubmit(e)}>
-      <p className={`text-sm leading-relaxed ${BT.mutedOnLight}`}>
-        {isDemo ? UI.ORG_REGISTER_DEMO_HINT : UI.ORG_REGISTER_HINT}
-      </p>
+    <form className={`${cardClass} space-y-5`} onSubmit={(e) => void handleGuestSubmit(e)}>
+      {isDemo ? (
+        <p className="text-sm leading-relaxed text-[#504443]">
+          {UI.ORG_REGISTER_DEMO_HINT}
+        </p>
+      ) : null}
 
       <label className="block">
-        <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_NAME_LABEL}</span>
+        <span className={labelClass}>{UI.ORG_REGISTER_NAME_LABEL}</span>
         <input
-          className={inputClassName}
+          className={inputClass}
           value={orgName}
           onChange={(e) => setOrgName(e.target.value)}
           placeholder={UI.ORG_REGISTER_NAME_PLACEHOLDER}
@@ -179,9 +199,9 @@ export default function RegisterOrganizationForm() {
       </label>
 
       <label className="block">
-        <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_ADMIN_USERNAME}</span>
+        <span className={labelClass}>{UI.ORG_REGISTER_ADMIN_USERNAME}</span>
         <input
-          className={inputClassName}
+          className={inputClass}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder={UI.ORG_REGISTER_ADMIN_USERNAME_PLACEHOLDER}
@@ -192,10 +212,10 @@ export default function RegisterOrganizationForm() {
       </label>
 
       <label className="block">
-        <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_ADMIN_PASSWORD}</span>
+        <span className={labelClass}>{UI.ORG_REGISTER_ADMIN_PASSWORD}</span>
         <input
           type="password"
-          className={inputClassName}
+          className={inputClass}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="new-password"
@@ -205,10 +225,10 @@ export default function RegisterOrganizationForm() {
       </label>
 
       <label className="block">
-        <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_ADMIN_PASSWORD_CONFIRM}</span>
+        <span className={labelClass}>{UI.ORG_REGISTER_ADMIN_PASSWORD_CONFIRM}</span>
         <input
           type="password"
-          className={inputClassName}
+          className={inputClass}
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
           autoComplete="new-password"
@@ -218,30 +238,29 @@ export default function RegisterOrganizationForm() {
       </label>
 
       <label className="block">
-        <span className={`${labelClass} text-neutral-800`}>{UI.ORG_REGISTER_ADMIN_EMAIL}</span>
+        <span className={labelClass}>{UI.ORG_REGISTER_ADMIN_EMAIL}</span>
         <input
           type="email"
-          className={inputClassName}
+          className={inputClass}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
         />
       </label>
 
-      {error ? <p className={BT.errorBgLight}>{error}</p> : null}
+      {error ? (
+        <p className={errorClass} role="alert">
+          {error}
+        </p>
+      ) : null}
 
-      <div className="flex flex-wrap gap-3">
-        <IconRoundButton
-          type="submit"
-          icon="plus"
-          variant="gold"
-          loading={saving}
-          label={UI.ORG_REGISTER_SUBMIT}
-          compact={false}
-        />
+      <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap">
+        <button type="submit" className={`${btnPrimary} w-full sm:w-auto`} disabled={saving}>
+          {saving ? UI.SAVING : UI.ORG_REGISTER_SUBMIT}
+        </button>
         <Link
           href={isLoggedIn ? "/" : "/login?next=/tao-dong-ho"}
-          className={`${BT.btnBase} ${BT.btnSm} ${BT.btnOutline}`}
+          className={`${btnOutline} w-full sm:w-auto`}
         >
           {isLoggedIn ? UI.CONTACT_PAGE_BACK : UI.LOGIN_BUTTON}
         </Link>

@@ -18,6 +18,8 @@ type ResponsiveAppPageLayoutProps = {
   showDesktopFooter?: boolean;
   /** Tuỳ chỉnh wrapper nội dung (mặc định padding trang app). */
   contentClassName?: string;
+  /** false khi trang con đã có H1 riêng (vd. chi tiết bài viết). */
+  mobileTitleAsHeading?: boolean;
   children: ReactNode;
 };
 
@@ -31,9 +33,12 @@ export default function ResponsiveAppPageLayout({
   fab,
   showDesktopFooter = true,
   contentClassName = "w-full px-4 pb-32 pt-20 md:px-10 md:pb-10 md:pt-8",
+  mobileTitleAsHeading = true,
   children,
 }: ResponsiveAppPageLayoutProps) {
   const goBack = useBackNavigation(backHref);
+  const titleClassName =
+    "truncate font-serif text-xl font-semibold text-[#321716]";
 
   return (
     <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#fcf9f4] text-[#1c1c19]">
@@ -55,9 +60,11 @@ export default function ResponsiveAppPageLayout({
               className="text-[#321716]"
             />
           </button>
-          <h1 className="truncate font-serif text-xl font-semibold text-[#321716]">
-            {title}
-          </h1>
+          {mobileTitleAsHeading ? (
+            <h1 className={titleClassName}>{title}</h1>
+          ) : (
+            <p className={titleClassName}>{title}</p>
+          )}
         </div>
         <AccountHeaderButton />
       </header>
