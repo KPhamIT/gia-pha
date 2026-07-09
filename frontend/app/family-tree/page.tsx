@@ -18,7 +18,7 @@ import { useTheme } from "@/hooks/useTheme";
 import type { NodePositionOverrides } from "@/lib/family-tree/node-position-overrides";
 import type { FamilyTreeGraphApi } from "@/hooks/useFamilyTreeGraph";
 import NotificationOptInBanner from "@/components/notifications/NotificationOptInBanner";
-import { getPageShellClass } from "@/utils/theme";
+import { getFamilyTreeShellClass } from "@/utils/theme";
 import { UI } from "@/lib/constants/ui-strings";
 import { BILLING_ENABLED } from "@/lib/constants/billing";
 import { useTreeSettingsSync } from "./useTreeSettingsSync";
@@ -158,9 +158,7 @@ function FamilyTreePageContent() {
   }
 
   return (
-    <div
-      className={`min-h-screen overflow-x-hidden ${getPageShellClass(theme)}`}
-    >
+    <div className={`min-h-screen overflow-x-hidden ${getFamilyTreeShellClass()}`}>
       <TreeTopBar
         canEditSettings={canUseFeature("settings")}
         onOpenSettings={() => setShowSettings(true)}

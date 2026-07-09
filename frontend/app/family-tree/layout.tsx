@@ -12,6 +12,20 @@ export default function FamilyTreeLayout({
       <link rel="preconnect" href={API_ORIGIN} crossOrigin="anonymous" />
       <link
         rel="preload"
+        href="/images/bg-tree-mobile.webp"
+        as="image"
+        type="image/webp"
+        media="(max-width: 767px)"
+      />
+      <link
+        rel="preload"
+        href="/images/bg-tree-desktop.webp"
+        as="image"
+        type="image/webp"
+        media="(min-width: 768px)"
+      />
+      <link
+        rel="preload"
         href="/fonts/THUPHAPTHANHCONG3a.woff2"
         as="font"
         type="font/woff2"

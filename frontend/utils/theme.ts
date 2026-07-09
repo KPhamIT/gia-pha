@@ -20,6 +20,10 @@ export function applyTheme(theme: ThemeMode): void {
   localStorage.setItem(STORAGE_KEYS.THEME, theme);
 }
 
+export function getFamilyTreeShellClass(): string {
+  return "family-tree-shell text-slate-100";
+}
+
 export function getPageShellClass(theme: ThemeMode): string {
   return theme === "dark"
     ? "bg-slate-950 text-slate-100"

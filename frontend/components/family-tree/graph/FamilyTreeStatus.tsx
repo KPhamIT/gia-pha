@@ -1,6 +1,6 @@
 import type { ThemeMode } from "@/components/types/family-tree-types";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
-import { getMutedTextClass, getPageShellClass } from "@/utils/theme";
+import { getFamilyTreeShellClass, getMutedTextClass } from "@/utils/theme";
 import { LAYOUT } from "@/lib/constants/ui-layout";
 import { UI } from "@/lib/constants/ui-strings";
 
@@ -19,7 +19,7 @@ export default function FamilyTreeStatus({
   onRetry,
   onLogin,
 }: FamilyTreeStatusProps) {
-  const shellClass = `flex h-screen w-full items-center justify-center ${getPageShellClass(theme)}`;
+  const shellClass = `flex h-screen w-full items-center justify-center ${getFamilyTreeShellClass()}`;
 
   if (type === "loading") {
     return (

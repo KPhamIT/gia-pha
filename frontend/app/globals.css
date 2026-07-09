@@ -208,3 +208,27 @@ html {
   font-size: 0.9375rem;
   line-height: 1.65;
 }
+
+/* Family tree page — responsive heritage background */
+.family-tree-shell {
+  background-color: #1c1412;
+  background-image: url("/images/bg-tree-mobile.webp");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .family-tree-shell {
+    background-image: url("/images/bg-tree-desktop.webp");
+    background-position: center center;
+  }
+}
+
+.family-tree-shell .react-flow {
+  background: transparent !important;
+}
+
+.family-tree-shell .react-flow__pane {
+  background: transparent !important;
+}

@@ -3,7 +3,6 @@
 import {
   ReactFlow,
   ReactFlowProvider,
-  Background,
   Controls,
   NodeToolbar,
   Position,
@@ -89,7 +88,6 @@ function FamilyTreeGraphInner(props: FamilyTreeGraphProps) {
         onConnect={graph.onConnect}
         onConnectEnd={graph.onConnectEnd}
       >
-        <Background color="#f1f5f9" gap={16} />
         <Controls position="bottom-right" />
         <GraphViewportController
           focusNodeId={props.focusNodeId}
