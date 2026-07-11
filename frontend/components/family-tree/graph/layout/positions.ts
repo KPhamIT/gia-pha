@@ -1,9 +1,13 @@
 import type { Coordinates } from "./types";
+import type { SpouseSideExtras } from "./spouse-layout";
+import { coupleSpanWidth, widthForCenteredCouple } from "./spouse-layout";
 import { buildYMap, computeSubtreeWidth, shiftSubtree } from "./metrics";
 
 /**
  * Tidy-tree placement: each subtree is laid out left-to-right and centred over
  * its children. Disconnected people are appended to the right of the main tree.
+ * `skipPersonIds` are placed later (e.g. spouses beside partners).
+ * `spouseExtras` reserves horizontal room so siblings do not cover spouses.
  */
 export function computeCoordinates(
   generationMap: Map<number, number>,
@@ -13,6 +17,8 @@ export function computeCoordinates(
   horizontalGap: number,
   verticalStep: number,
   nodeWidthFor: (personId: number) => number,
+  skipPersonIds: Set<number> = new Set(),
+  spouseExtras: Map<number, SpouseSideExtras> = new Map(),
 ) {
   const yMap = buildYMap(generationMap, verticalStep);
   const coordinates: Coordinates = new Map();
@@ -26,20 +32,24 @@ export function computeCoordinates(
     horizontalGap,
     widthMemo: subtreeWidthMap,
     computing: new Set<number>(),
+    skipPersonIds,
+    spouseExtras,
   };
 
   const layoutNode = (personId: number, left: number): number => {
-    const selfWidth = nodeWidthFor(personId);
+    const selfWidth = coupleSpanWidth(personId, nodeWidthFor, spouseExtras);
+    const extras = spouseExtras.get(personId) ?? { left: 0, right: 0 };
     if (assigned.has(personId)) {
       const width = subtreeWidthMap.get(personId) ?? selfWidth;
       const oldX = coordinates.get(personId)?.x ?? 0;
-      if (oldX !== left) {
+      const desiredX = left + extras.left;
+      if (oldX !== desiredX) {
         shiftSubtree(
           coordinates,
           childMap,
           relevantPersonIds,
           personId,
-          left - oldX,
+          desiredX - oldX,
         );
       }
       return width;
@@ -49,12 +59,15 @@ export function computeCoordinates(
     }
 
     const children = Array.from(new Set(childMap.get(personId) ?? []))
-      .filter((childId) => relevantPersonIds.has(childId))
+      .filter(
+        (childId) =>
+          relevantPersonIds.has(childId) && !skipPersonIds.has(childId),
+      )
       .sort((a, b) => a - b);
     layoutComputing.add(personId);
     const y = yMap.get(personId) ?? 0;
     if (children.length === 0) {
-      coordinates.set(personId, { x: left, y });
+      coordinates.set(personId, { x: left + extras.left, y });
       assigned.add(personId);
       subtreeWidthMap.set(personId, selfWidth);
       layoutComputing.delete(personId);
@@ -63,7 +76,7 @@ export function computeCoordinates(
 
     let currentLeft = left;
     const childXPositions: number[] = [];
-    let subtreeWidth = 0;
+    let childrenSpan = 0;
     const childWidths = children.map((childId) =>
       computeSubtreeWidth(childId, widthCtx),
     );
@@ -72,29 +85,38 @@ export function computeCoordinates(
       const childId = children[i];
       const plannedWidth = childWidths[i];
       layoutNode(childId, currentLeft);
+      const childExtras = spouseExtras.get(childId) ?? { left: 0, right: 0 };
       const childX = coordinates.get(childId)?.x ?? currentLeft;
-
-      childXPositions.push(childX);
+      childXPositions.push(childX - childExtras.left);
       currentLeft += plannedWidth + horizontalGap;
-      subtreeWidth += plannedWidth;
+      childrenSpan += plannedWidth;
     }
 
     if (children.length > 1) {
-      subtreeWidth += horizontalGap * (children.length - 1);
+      childrenSpan += horizontalGap * (children.length - 1);
     }
 
     const minChildX = Math.min(...childXPositions);
-    const maxChildX =
-      Math.max(
-        ...children.map(
-          (childId) =>
-            (coordinates.get(childId)?.x ?? 0) + nodeWidthFor(childId),
-        ),
-      );
-    const x = minChildX + (maxChildX - minChildX) / 2 - selfWidth / 2;
+    const maxChildX = Math.max(
+      ...children.map((childId) => {
+        const childExtras = spouseExtras.get(childId) ?? { left: 0, right: 0 };
+        const childX = coordinates.get(childId)?.x ?? 0;
+        return childX + nodeWidthFor(childId) + childExtras.right;
+      }),
+    );
+    const nodeW = nodeWidthFor(personId);
+    let x = minChildX + (maxChildX - minChildX) / 2 - nodeW / 2;
+    if (x - extras.left < left) {
+      x = left + extras.left;
+    }
     coordinates.set(personId, { x, y });
     assigned.add(personId);
-    const width = Math.max(subtreeWidth, selfWidth);
+    const width = widthForCenteredCouple(
+      childrenSpan,
+      personId,
+      nodeWidthFor,
+      spouseExtras,
+    );
     subtreeWidthMap.set(personId, width);
     layoutComputing.delete(personId);
     return width;
@@ -104,10 +126,9 @@ export function computeCoordinates(
   let nextLeft = totalWidth + horizontalGap;
 
   Array.from(generationMap.keys()).forEach((personId) => {
-    if (!assigned.has(personId)) {
-      const width = layoutNode(personId, nextLeft);
-      nextLeft += width + horizontalGap;
-    }
+    if (assigned.has(personId) || skipPersonIds.has(personId)) return;
+    const width = layoutNode(personId, nextLeft);
+    nextLeft += width + horizontalGap;
   });
 
   return coordinates;

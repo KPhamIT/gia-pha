@@ -7,6 +7,7 @@ export const INITIAL_LAYOUT_CONFIG: LayoutConfig = {
   horizontalGap: DEFAULT_USER_SETTINGS.horizontalGap as number,
   verticalStep: DEFAULT_USER_SETTINGS.verticalStep as number,
   edgeColor: DEFAULT_USER_SETTINGS.edgeColor as string,
+  showSpouses: DEFAULT_USER_SETTINGS.showSpouses as boolean,
   nodeWidth: DEFAULT_USER_SETTINGS.nodeWidth as number,
   nodeHeight: DEFAULT_USER_SETTINGS.nodeHeight as number,
   nodeBgColor: DEFAULT_USER_SETTINGS.nodeBgColor as string,
@@ -35,6 +36,9 @@ export function layoutConfigFromUserSettings(
     }),
     ...(typeof settings.edgeColor === "string" && {
       edgeColor: settings.edgeColor,
+    }),
+    ...(typeof settings.showSpouses === "boolean" && {
+      showSpouses: settings.showSpouses,
     }),
     ...(typeof settings.nodeWidth === "number" && {
       nodeWidth: settings.nodeWidth,

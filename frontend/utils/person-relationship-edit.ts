@@ -151,14 +151,14 @@ export async function syncPersonRelationships(
   );
   removedIds.push(...spouseDeletes);
 
-  const needsSpouseCreate =
-    draft.spouseId != null &&
-    !hasSpousePartner(relationships, personId, draft.spouseId);
-
-  if (needsSpouseCreate) {
+  const nextSpouseId = draft.spouseId;
+  if (
+    nextSpouseId != null &&
+    !hasSpousePartner(relationships, personId, nextSpouseId)
+  ) {
     const rel = await createRelationship(
       personId,
-      draft.spouseId,
+      nextSpouseId,
       "SPOUSE" satisfies RelationshipType,
     );
     added.push(enrichRelationship(rel, persons));

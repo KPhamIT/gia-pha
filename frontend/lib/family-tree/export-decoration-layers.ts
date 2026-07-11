@@ -17,6 +17,8 @@ export type ExportImageLayer = {
   assetProvider: SystemAssetProvider;
   name: string;
   aspectRatio: number;
+  /** Khi true: không kéo / đổi kích thước trên canvas. */
+  locked: boolean;
 };
 
 export type ExportTextLayer = {
@@ -40,6 +42,8 @@ export type ExportTextLayer = {
   textCurve: number;
   /** Độ xoay quanh tâm chữ (-180…180). */
   textRotation: number;
+  /** Khi true: không kéo trên canvas. */
+  locked: boolean;
 };
 
 export type ExportDecorationLayer = ExportImageLayer | ExportTextLayer;

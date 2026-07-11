@@ -14,8 +14,13 @@ type PersonNodeData = {
   avatar?: string | null;
   gender?: string | null;
   birthDate?: string | null;
+  deathDate?: string | null;
   isRoot: boolean;
   personId?: number;
+  hasSpouseLeft?: boolean;
+  hasSpouseRight?: boolean;
+  hasChildSource?: boolean;
+  hasChildTarget?: boolean;
   nodeBgColor?: string;
   nodeTextColor?: string;
   nodeWidth?: number;
@@ -31,7 +36,7 @@ type FamilyTreeNodeProps = {
   selected?: boolean;
 };
 
-const birthDateFormatter = new Intl.DateTimeFormat("vi-VN");
+const dateFormatter = new Intl.DateTimeFormat("vi-VN");
 
 const FONT_WEIGHT_CLASS: Record<NodeFontWeight, string> = {
   normal: "font-normal",
@@ -39,9 +44,9 @@ const FONT_WEIGHT_CLASS: Record<NodeFontWeight, string> = {
   bold: "font-bold",
 };
 
-function formatBirthDate(birthDate?: string | null) {
-  if (!birthDate) return "";
-  return birthDateFormatter.format(new Date(birthDate));
+function formatPersonDate(value?: string | null) {
+  if (!value) return "";
+  return dateFormatter.format(new Date(value));
 }
 
 function PersonNameLabel({
@@ -88,12 +93,14 @@ function PersonNameLabel({
 }
 
 function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
-  const birthDate = formatBirthDate(data.birthDate);
+  const birthLabel = formatPersonDate(data.birthDate);
+  const deathLabel = formatPersonDate(data.deathDate);
   const fontSize = data.nodeFontSize ?? 18;
   const fontWeight = data.nodeFontWeight ?? "semibold";
   const textDirection =
     data.nodeTextDirection ?? DEFAULT_NODE_APPEARANCE.nodeTextDirection;
   const textCase = data.nodeTextCase ?? "none";
+  const dateFontSize = Math.max(10, fontSize - 6);
 
   return (
     <div
@@ -109,7 +116,25 @@ function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
           : "border-slate-200 shadow-sm hover:border-amber-400"
       }`}
     >
-      <Handle type="source" position={Position.Top} />
+      {data.hasChildTarget ? (
+        <Handle id="child-target" type="target" position={Position.Top} />
+      ) : null}
+      {data.hasSpouseLeft ? (
+        <Handle
+          id="spouse-left"
+          type="target"
+          position={Position.Left}
+          className="!bg-stone-400"
+        />
+      ) : null}
+      {data.hasSpouseRight ? (
+        <Handle
+          id="spouse-right"
+          type="source"
+          position={Position.Right}
+          className="!bg-stone-400"
+        />
+      ) : null}
       <div className="flex min-h-0 flex-1 items-center justify-center py-1">
         <PersonNameLabel
           fullName={data.fullName}
@@ -119,15 +144,22 @@ function FamilyTreeNode({ data, selected }: FamilyTreeNodeProps) {
           textCase={textCase}
         />
       </div>
-      {birthDate ? (
+      {birthLabel || deathLabel ? (
         <div
-          className="shrink-0 text-center opacity-70"
-          style={{ fontSize: Math.max(10, fontSize - 6) }}
+          className="shrink-0 text-center leading-tight"
+          style={{ fontSize: dateFontSize }}
         >
-          {birthDate}
+          {birthLabel ? (
+            <div className="font-semibold opacity-90">{birthLabel}</div>
+          ) : null}
+          {deathLabel ? (
+            <div className="font-normal opacity-60">{deathLabel}</div>
+          ) : null}
         </div>
       ) : null}
-      <Handle type="target" position={Position.Bottom} />
+      {data.hasChildSource ? (
+        <Handle id="child-source" type="source" position={Position.Bottom} />
+      ) : null}
     </div>
   );
 }

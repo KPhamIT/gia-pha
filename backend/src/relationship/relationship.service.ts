@@ -35,8 +35,12 @@ export class RelationshipService {
       },
     });
 
+  // Also return existing with from/to when duplicate
     if (existing) {
-      return existing;
+      return this.prisma.relationship.findUniqueOrThrow({
+        where: { id: existing.id },
+        include: { from: true, to: true },
+      });
     }
 
     console.log('Creating relationship', {
@@ -51,29 +55,8 @@ export class RelationshipService {
         toId: dto.toId,
         type: dto.type,
       },
+      include: { from: true, to: true },
     });
-
-    // const reverseType = this.getReverseType(dto.type, fromPerson, toPerson);
-
-    // if (reverseType) {
-    //   const reverseExist = await this.prisma.relationship.findFirst({
-    //     where: {
-    //       fromId: dto.toId,
-    //       toId: dto.fromId,
-    //       type: reverseType,
-    //     },
-    //   });
-
-    //   if (!reverseExist) {
-    //     await this.prisma.relationship.create({
-    //       data: {
-    //         fromId: dto.toId,
-    //         toId: dto.fromId,
-    //         type: reverseType,
-    //       },
-    //     });
-    //   }
-    // }
 
     return relationship;
   }

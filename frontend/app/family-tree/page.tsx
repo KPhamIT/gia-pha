@@ -82,6 +82,8 @@ function FamilyTreePageContent() {
     addPerson,
     removePerson,
     updatePerson,
+    addRelationship,
+    removeRelationship,
   });
 
   const [showSettings, setShowSettings] = useState(false);

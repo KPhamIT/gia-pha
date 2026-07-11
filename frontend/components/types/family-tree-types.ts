@@ -166,6 +166,8 @@ export type LayoutConfig = {
   verticalStep: number;
   /** Màu đường nối giữa các thẻ thành viên. */
   edgeColor: string;
+  /** Hiện node vợ/chồng cạnh chồng/vợ trên cây. */
+  showSpouses: boolean;
   nodeWidth: number;
   nodeHeight: number;
   nodeBgColor: string;

@@ -7,6 +7,8 @@ import { UI } from "@/lib/constants/ui-strings";
 type Props = {
   x: number;
   y: number;
+  locked: boolean;
+  onToggleLock: () => void;
   onBringForward: () => void;
   onSendBackward: () => void;
   onDelete: () => void;
@@ -16,6 +18,8 @@ type Props = {
 export default function ExportLayerContextMenu({
   x,
   y,
+  locked,
+  onToggleLock,
   onBringForward,
   onSendBackward,
   onDelete,
@@ -37,6 +41,17 @@ export default function ExportLayerContextMenu({
       className="pointer-events-auto fixed z-[60] min-w-[11rem] overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-xl"
       style={{ left: x, top: y }}
     >
+      <button
+        type="button"
+        onClick={() => {
+          onToggleLock();
+          onClose();
+        }}
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
+      >
+        <Icon path="lock" size={16} stroke="#b45309" pointer={false} />
+        {locked ? UI.EXPORT_LAYER_UNLOCK : UI.EXPORT_LAYER_LOCK}
+      </button>
       <button
         type="button"
         onClick={onBringForward}

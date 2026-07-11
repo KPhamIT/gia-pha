@@ -115,10 +115,13 @@ export default function FamilyTreeSheets({
       {sheets.viewMode === "edit" && sheets.selectedPersonId != null ? (
         <EditPersonSheet
           detail={sheets.detail}
+          persons={treeData.persons}
+          relationships={treeData.relationships}
           loading={sheets.detailLoading}
           saving={sheets.actionLoading}
           onClose={sheets.backToDetail}
           onSave={sheets.handleSavePerson}
+          onPersonCreated={sheets.handleRelatedPersonCreated}
         />
       ) : null}
 

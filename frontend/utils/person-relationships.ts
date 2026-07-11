@@ -13,6 +13,14 @@ function uniquePersons(persons: Person[]): Person[] {
   });
 }
 
+function isMale(person: Person): boolean {
+  return person.gender?.trim() === "Nam";
+}
+
+function isFemale(person: Person): boolean {
+  return person.gender?.trim() === "Nữ";
+}
+
 export function extractPersonRelationships(
   personId: number,
   relationships: Relationship[],
@@ -27,6 +35,15 @@ export function extractPersonRelationships(
       father = rel.from;
     } else if (rel.toId === personId && rel.type === "MOTHER") {
       mother = rel.from;
+    } else if (rel.fromId === personId && rel.type === "CHILD") {
+      // Add-child flow stores CHILD(child → parent); map parent by gender.
+      const parent = rel.to;
+      if (parent) {
+        if (!father && isMale(parent)) father = parent;
+        else if (!mother && isFemale(parent)) mother = parent;
+        else if (!father) father = parent;
+        else if (!mother && parent.id !== father.id) mother = parent;
+      }
     } else if (
       rel.fromId === personId &&
       (rel.type === "FATHER" || rel.type === "MOTHER")

@@ -122,6 +122,19 @@ function buildConnectors(
   return connectors;
 }
 
+/** Horizontal spouse links: right edge of left partner → left edge of right. */
+function buildSpouseConnectors(
+  pairs: Array<{ left: ExportNode; right: ExportNode }>,
+): string[] {
+  return pairs.map(({ left, right }) => {
+    const leftSize = nodeSize(left);
+    const y = left.y + leftSize.height / 2;
+    const x1 = left.x + leftSize.width;
+    const x2 = right.x;
+    return `M ${x1} ${y} L ${x2} ${y}`;
+  });
+}
+
 /**
  * Export-only: move the root (first ancestor) to the horizontal centre of the
  * tree extent. No other node coordinates are changed — layout algorithm untouched.
@@ -163,12 +176,22 @@ export function buildExportModel(
 
   const posById = new Map(exportNodes.map((n) => [n.id, n]));
 
-  // Group children by their parent (the upper node of each vertical edge).
+  // Group children by parent; collect same-row spouse links separately.
   const childrenByParent = new Map<number, number[]>();
+  const spousePairs: Array<{ left: ExportNode; right: ExportNode }> = [];
+  const seenSpouse = new Set<string>();
   for (const edge of edges) {
     const a = posById.get(Number(edge.source));
     const b = posById.get(Number(edge.target));
-    if (!a || !b || a.y === b.y) continue; // skip spouse / same-generation links
+    if (!a || !b) continue;
+    if (a.y === b.y) {
+      const [left, right] = a.x <= b.x ? [a, b] : [b, a];
+      const key = `${left.id}-${right.id}`;
+      if (seenSpouse.has(key)) continue;
+      seenSpouse.add(key);
+      spousePairs.push({ left, right });
+      continue;
+    }
     const [parent, child] = a.y < b.y ? [a, b] : [b, a];
     const list = childrenByParent.get(parent.id) ?? [];
     list.push(child.id);
@@ -183,7 +206,10 @@ export function buildExportModel(
   }
 
   const bounds = computeNodeBounds(exportNodes);
-  const connectors = buildConnectors(childrenByParent, posById);
+  const connectors = [
+    ...buildConnectors(childrenByParent, posById),
+    ...buildSpouseConnectors(spousePairs),
+  ];
   const rootCenterX = root
     ? root.x + nodeSize(root).width / 2
     : bounds.x + bounds.width / 2;

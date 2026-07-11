@@ -26,6 +26,7 @@ type TreeExportControlsProps = {
   onPatch: (patch: Partial<TreeExportSettings>) => void;
   onPatchImage: (key: ImageKey, patch: Partial<ExportImageCfg>) => void;
   onPatchCouplet: (key: CoupletKey, patch: Partial<ExportCoupletCfg>) => void;
+  onSelectLayer: (id: string) => void;
   onPatchLayer: (patch: Partial<ExportDecorationLayer>) => void;
   onDeleteLayer: () => void;
   onBringLayerForward: () => void;
@@ -49,6 +50,7 @@ export default function TreeExportControls({
   onPatch,
   onPatchImage,
   onPatchCouplet,
+  onSelectLayer,
   onPatchLayer,
   onDeleteLayer,
   onBringLayerForward,
@@ -107,7 +109,9 @@ export default function TreeExportControls({
             </p>
 
             <ExportLayerPanel
+              layers={settings.layers}
               layer={selectedLayer}
+              onSelectLayer={onSelectLayer}
               onPatch={onPatchLayer}
               onDelete={onDeleteLayer}
               onBringForward={onBringLayerForward}

@@ -91,6 +91,28 @@ export default function FamilyTreeSettingsFields({
         </div>
       </label>
 
+      <label
+        className={`${labelClass} flex items-center justify-between gap-3 rounded-xl border border-amber-200/80 bg-amber-50/40 px-3 py-2.5`}
+      >
+        <span>
+          <span className="block">{UI.SHOW_SPOUSES_LABEL}</span>
+          <span className="mt-0.5 block text-xs font-normal text-neutral-500">
+            {UI.SHOW_SPOUSES_HINT}
+          </span>
+        </span>
+        <input
+          type="checkbox"
+          checked={layoutConfig.showSpouses}
+          onChange={(event) =>
+            setLayoutConfig((prev) => ({
+              ...prev,
+              showSpouses: event.target.checked,
+            }))
+          }
+          className="h-4 w-4 shrink-0 accent-amber-700"
+        />
+      </label>
+
       <p className="text-xs text-neutral-500">{UI.TREE_SETTINGS_NODE_HINT}</p>
     </div>
   );

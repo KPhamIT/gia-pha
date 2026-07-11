@@ -159,6 +159,7 @@ export default function TreeExportView({
         onPatch={patch}
         onPatchImage={patchImage}
         onPatchCouplet={patchCouplet}
+        onSelectLayer={setSelectedId}
         onPatchLayer={patchLayer}
         onDeleteLayer={deleteSelectedLayer}
         onBringLayerForward={bringSelectedForward}
@@ -191,6 +192,10 @@ export default function TreeExportView({
         <ExportLayerContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
+          locked={Boolean(selectedLayer?.locked)}
+          onToggleLock={() =>
+            patchLayer({ locked: !selectedLayer?.locked })
+          }
           onBringForward={bringSelectedForward}
           onSendBackward={sendSelectedBackward}
           onDelete={deleteSelectedLayer}

@@ -166,6 +166,7 @@ function normalizeLayers(
         ...layer,
         order: layer.order ?? 0,
         tier: (layer.tier ?? "above-tree") as ExportLayerTier,
+        locked: layer.locked ?? false,
       };
       if (layer.type === "text") {
         return {
@@ -215,6 +216,7 @@ function migrateLegacyDecorations(
       assetProvider: "static",
       name,
       aspectRatio,
+      locked: false,
     });
   };
 

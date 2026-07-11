@@ -1,4 +1,6 @@
 import type { Coordinates } from "./types";
+import type { SpouseSideExtras } from "./spouse-layout";
+import { coupleSpanWidth, widthForCenteredCouple } from "./spouse-layout";
 
 /** Move a person and all descendants horizontally by `dx`. */
 export function shiftSubtree(
@@ -44,6 +46,10 @@ export type SubtreeWidthCtx = {
   widthMemo: Map<number, number>;
   /** Guards against cycles during recursion. */
   computing: Set<number>;
+  /** Laid out beside a partner, not as tidy-tree children. */
+  skipPersonIds?: Set<number>;
+  /** Reserved space for spouses beside each anchor. */
+  spouseExtras?: Map<number, SpouseSideExtras>;
 };
 
 /** Horizontal space a person's subtree needs, memoised and cycle-safe. */
@@ -58,8 +64,9 @@ export function computeSubtreeWidth(
     horizontalGap,
     widthMemo,
     computing,
+    spouseExtras = new Map(),
   } = ctx;
-  const selfWidth = nodeWidthFor(personId);
+  const selfWidth = coupleSpanWidth(personId, nodeWidthFor, spouseExtras);
   if (widthMemo.has(personId)) return widthMemo.get(personId)!;
 
   if (computing.has(personId)) {
@@ -67,8 +74,11 @@ export function computeSubtreeWidth(
     return selfWidth;
   }
 
+  const skip = ctx.skipPersonIds;
   const children = Array.from(new Set(childMap.get(personId) ?? []))
-    .filter((id) => relevantPersonIds.has(id))
+    .filter(
+      (id) => relevantPersonIds.has(id) && !(skip?.has(id) ?? false),
+    )
     .sort((a, b) => a - b);
   computing.add(personId);
   if (children.length === 0) {
@@ -82,7 +92,12 @@ export function computeSubtreeWidth(
     total += computeSubtreeWidth(child, ctx);
   }
   if (children.length > 1) total += horizontalGap * (children.length - 1);
-  const width = Math.max(total, selfWidth);
+  const width = widthForCenteredCouple(
+    total,
+    personId,
+    nodeWidthFor,
+    spouseExtras,
+  );
   widthMemo.set(personId, width);
   computing.delete(personId);
   return width;

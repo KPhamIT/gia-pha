@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import type {
   FamilyTreeData,
   Person,
-  UpdatePersonDetailInput,
+  Relationship,
 } from "@/components/types/family-tree-types";
 import type { StandardFeatureKey } from "@/lib/auth/standard-features";
 import { usePersonActions } from "@/hooks/usePersonActions";
@@ -15,6 +15,8 @@ import {
   createStandalonePerson,
   updatePersonDetail,
 } from "@/lib/family-tree/mutations";
+import { syncPersonRelations } from "@/utils/person-edit-relations";
+import type { EditPersonSavePayload } from "@/components/family-tree/person/EditPersonSheet";
 import { UI } from "@/lib/constants/ui-strings";
 
 export type ViewMode =
@@ -30,6 +32,8 @@ type Args = {
   addPerson: (person: Person) => void;
   removePerson: (personId: number) => void;
   updatePerson: (person: Person) => void;
+  addRelationship: (relationship: Relationship) => void;
+  removeRelationship: (relationshipId: number) => void;
 };
 
 /** Owns person selection, the detail/edit/add/delete sheet state machine, and search. */
@@ -39,6 +43,8 @@ export function usePersonSheets({
   addPerson,
   removePerson,
   updatePerson,
+  addRelationship,
+  removeRelationship,
 }: Args) {
   const [selectedPersonId, setSelectedPersonId] = useState<number | null>(null);
   const [selectedNode, setSelectedNode] = useState<Person | null>(null);
@@ -127,14 +133,26 @@ export function usePersonSheets({
   );
 
   const handleSavePerson = useCallback(
-    async (data: UpdatePersonDetailInput) => {
+    async (payload: EditPersonSavePayload) => {
       if (!selectedPersonId || !requireFeature("editTree")) return;
       await runAction(
         async () => {
-          const updated = await updatePersonDetail(selectedPersonId, data);
+          const relSnapshot = treeData?.relationships ?? [];
+          await syncPersonRelations({
+            personId: selectedPersonId,
+            draft: payload.relations,
+            relationships: relSnapshot,
+            onRemoved: removeRelationship,
+            onAdded: addRelationship,
+          });
+          const updated = await updatePersonDetail(
+            selectedPersonId,
+            payload.detail,
+          );
           updatePerson(updated.person);
           setSelectedNode(updated.person);
           storeUpdateDetail(selectedPersonId, updated);
+          await reloadDetail();
           setViewMode("detail");
         },
         UI.ERR_UPDATE_PERSON,
@@ -142,12 +160,24 @@ export function usePersonSheets({
       );
     },
     [
+      addRelationship,
+      reloadDetail,
+      removeRelationship,
       requireFeature,
       runAction,
       selectedPersonId,
       storeUpdateDetail,
+      treeData?.relationships,
       updatePerson,
     ],
+  );
+
+  const handleRelatedPersonCreated = useCallback(
+    (person: Person, relationship: Relationship) => {
+      addPerson(person);
+      addRelationship(relationship);
+    },
+    [addPerson, addRelationship],
   );
 
   const handleAddStandalonePerson = useCallback(
@@ -206,6 +236,7 @@ export function usePersonSheets({
     backToDetail: useCallback(() => setViewMode("detail"), []),
     handleCreateChild,
     handleSavePerson,
+    handleRelatedPersonCreated,
     handleAddStandalonePerson,
     handleDeleteConfirm,
   };

@@ -13,6 +13,7 @@ export type UserSettings = {
   horizontalGap?: number;
   verticalStep?: number;
   edgeColor?: string;
+  showSpouses?: boolean;
   nodeWidth?: number;
   nodeHeight?: number;
   nodeBgColor?: string;

@@ -56,6 +56,8 @@ export const CORE_STRINGS = {
   H_GAP_LABEL: "Khoảng cách tối thiểu giữa node (px)",
   EDGE_COLOR_LABEL: "Màu đường nối giữa các thẻ",
   V_GAP_LABEL: "Khoảng cách dọc giữa thế hệ (px)",
+  SHOW_SPOUSES_LABEL: "Hiện vợ/chồng trên cây",
+  SHOW_SPOUSES_HINT: "Tắt để ẩn người hôn phối đặt cạnh chồng/vợ.",
 
   // Node appearance
   NODE_WIDTH_LABEL: "Chiều rộng thẻ (px)",
@@ -131,6 +133,13 @@ export const CORE_STRINGS = {
   ERR_UPDATE_PERSON: "Lỗi khi cập nhật thông tin",
   PERSON_INFO: "Thông tin",
   RELATIONSHIPS: "Quan hệ",
+  RELATION_SEARCH_PLACEHOLDER: "Tìm theo tên…",
+  RELATION_CLEAR: "Bỏ chọn",
+  RELATION_ADD_FATHER: "Thêm cha",
+  RELATION_ADD_MOTHER: "Thêm mẹ",
+  RELATION_ADD_SPOUSE: "Thêm vợ/chồng",
+  RELATION_ADD_WIFE: "Thêm vợ",
+  RELATION_ADD_HUSBAND: "Thêm chồng",
   BIOGRAPHY: "Tiểu sử",
   GRAVE_INFO: "Mộ phần",
   FATHER: "Cha",

@@ -25,6 +25,7 @@ export const DEFAULT_USER_SETTINGS = {
   verticalStep: 220,
   horizontalGap: 15,
   edgeColor: "#94a3b8",
+  showSpouses: true,
   nodeTextColor: "#d4f005",
   nodeFontSize: 18,
   nodeFontWeight: "semibold",

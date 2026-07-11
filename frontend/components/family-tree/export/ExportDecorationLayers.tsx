@@ -66,6 +66,7 @@ function ExportLayerImage({
     width: layer.width,
     height: layer.height,
   };
+  const locked = Boolean(layer.locked);
   return (
     <image
       href={href}
@@ -75,12 +76,16 @@ function ExportLayerImage({
       width={box.width}
       height={box.height}
       preserveAspectRatio="none"
-      style={{ cursor: interactive ? "move" : "default" }}
-      onPointerDown={(e) =>
-        beginDrag(e, layer.id, "move", { x: box.x, y: box.y })
-      }
+      style={{
+        cursor: interactive && !locked ? "move" : "default",
+        pointerEvents: locked ? "none" : undefined,
+      }}
+      onPointerDown={(e) => {
+        if (!interactive || locked) return;
+        beginDrag(e, layer.id, "move", { x: box.x, y: box.y });
+      }}
       onContextMenu={(e) => {
-        if (!interactive || !onLayerContextMenu) return;
+        if (!interactive || !onLayerContextMenu || locked) return;
         e.preventDefault();
         onLayerContextMenu(layer.id, e.clientX, e.clientY);
       }}
@@ -101,6 +106,8 @@ function ExportLayerText({
   const fontFamily = resolveExportTextFontFamily(layer.fontId);
   const fontWeight = layer.bold ? 700 : 400;
   const bounds = textLayerBounds(layer);
+  const locked = Boolean(layer.locked);
+  const canDrag = interactive && !locked;
 
   if (layer.vertical) {
     const cells = coupletSyllables(layer.text);
@@ -123,7 +130,7 @@ function ExportLayerText({
             </tspan>
           ))}
         </text>
-        {interactive ? (
+        {canDrag ? (
           <rect
             x={bounds.x}
             y={bounds.y}
@@ -150,7 +157,7 @@ function ExportLayerText({
   );
   const pivot = textPivot(layer.x, layer.y, textWidth, layer.fontSize);
   const rotateTransform = textRotationTransform(rotation, pivot.x, pivot.y);
-  const dragRect = interactive ? (
+  const dragRect = canDrag ? (
     <rect
       x={bounds.x}
       y={bounds.y}
@@ -277,6 +284,7 @@ function SelectionOverlay({
         ? textLayerBounds(layer)
         : imageLayerBounds(layer, layout);
     const isImage = layer.type === "image";
+    const locked = Boolean(layer.locked);
     return (
       <g data-export-ignore>
         <rect
@@ -285,11 +293,11 @@ function SelectionOverlay({
           width={bounds.width}
           height={bounds.height}
           fill="none"
-          stroke="#2563eb"
+          stroke={locked ? "#94a3b8" : "#2563eb"}
           strokeWidth={2}
           strokeDasharray="8 6"
         />
-        {isImage ? (
+        {isImage && !locked ? (
           <rect
             x={bounds.x + bounds.width - 11}
             y={bounds.y + bounds.height - 11}

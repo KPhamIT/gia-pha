@@ -279,9 +279,11 @@ export function useTreeExport({
         patchCouplet(id, p);
         return;
       }
+      const layer = settings.layers.find((item) => item.id === id);
+      if (layer?.locked) return;
       patchLayerById(id, p as Partial<ExportDecorationLayer>);
     },
-    [patchCouplet, patchLayerById],
+    [patchCouplet, patchLayerById, settings.layers],
   );
 
   const addImageFromAsset = useCallback(
@@ -315,6 +317,7 @@ export function useTreeExport({
         assetProvider: asset.provider,
         name: asset.name,
         aspectRatio: aspect,
+        locked: isBackground,
       };
       patchLayers((layers) => [...layers, layer]);
       setSelectedId(layer.id);
@@ -345,6 +348,7 @@ export function useTreeExport({
       vertical: false,
       textCurve: 0,
       textRotation: 0,
+      locked: false,
     };
     patchLayers((layers) => [...layers, layer]);
     setSelectedId(layer.id);
