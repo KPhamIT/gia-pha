@@ -23,6 +23,11 @@ import {
   DEFAULT_FORM_STYLE_ID,
   isFormStyleId,
 } from "./page-form-styles";
+import {
+  DEFAULT_PAGE_BACKGROUND_ID,
+  clampPageBackgroundWash,
+  isPageBackgroundId,
+} from "./page-backgrounds";
 import { type BookPageConfig, normalizePageConfig } from "./book-page-config";
 
 /** Key under which book settings live inside the user's settings JSON blob. */
@@ -46,6 +51,10 @@ export type BookSettings = {
   prefaceSignature: string;
   borderStyleId: string;
   formStyleId: string;
+  /** Paper page texture id (`page-backgrounds.ts`). */
+  pageBackgroundId: string;
+  /** Cream wash opacity over patterned background (0–90). */
+  pageBackgroundWash: number;
   /** Per-person visibility / ordering overrides for the book pages. */
   pageConfig: BookPageConfig;
 };
@@ -127,6 +136,11 @@ function buildDefaultBookSettings(): BookSettings {
     raw.formStyleId && isFormStyleId(raw.formStyleId)
       ? raw.formStyleId
       : DEFAULT_FORM_STYLE_ID;
+  const pageBackgroundId =
+    raw.pageBackgroundId && isPageBackgroundId(raw.pageBackgroundId)
+      ? raw.pageBackgroundId
+      : DEFAULT_PAGE_BACKGROUND_ID;
+  const pageBackgroundWash = clampPageBackgroundWash(raw.pageBackgroundWash);
 
   return {
     coverTitle: raw.coverTitle ?? "",
@@ -140,6 +154,8 @@ function buildDefaultBookSettings(): BookSettings {
     prefaceSignature: raw.prefaceSignature ?? "",
     borderStyleId,
     formStyleId,
+    pageBackgroundId,
+    pageBackgroundWash,
     pageConfig: normalizePageConfig(raw.pageConfig),
   };
 }
@@ -166,6 +182,9 @@ export function normalizeBookSettings(
   if (!isBorderStyleId(merged.borderStyleId))
     merged.borderStyleId = defaults.borderStyleId;
   if (!isFormStyleId(merged.formStyleId)) merged.formStyleId = defaults.formStyleId;
+  if (!isPageBackgroundId(merged.pageBackgroundId))
+    merged.pageBackgroundId = defaults.pageBackgroundId;
+  merged.pageBackgroundWash = clampPageBackgroundWash(merged.pageBackgroundWash);
   merged.pageConfig = normalizePageConfig(merged.pageConfig);
   return merged;
 }

@@ -8,6 +8,10 @@ import GenealogyBookPage, { type BookPageDraft } from "./GenealogyBookPage";
 import BookCoverPage from "./BookCoverPage";
 import BookPrefacePage from "./BookPrefacePage";
 import { getBorderStyle } from "./page-border-styles";
+import {
+  getPageBackground,
+  pageBackgroundStyle,
+} from "./page-backgrounds";
 import type { BookSettings } from "./book-settings";
 import type { Leaf } from "./book-leaves";
 import type { OrgBookContext } from "@/lib/settings/default-user-settings";
@@ -60,8 +64,19 @@ export default function BookLeaf({
 
   if (leaf.kind === "preface") {
     const Border = getBorderStyle(ctx.settings.borderStyleId).Component;
+    const hasBg = Boolean(
+      getPageBackground(ctx.settings.pageBackgroundId).url,
+    );
     return (
-      <div className={`${styles.paper} relative`} data-genealogy-paper>
+      <div
+        className={`${styles.paper} relative ${hasBg ? styles.paperWithImage : ""}`}
+        style={pageBackgroundStyle(
+          ctx.settings.pageBackgroundId,
+          ctx.settings.pageBackgroundWash,
+        )}
+        data-genealogy-paper
+        data-paper-bg={hasBg ? "1" : undefined}
+      >
         <Border>
           <BookPrefacePage
             settings={ctx.settings}
@@ -82,6 +97,8 @@ export default function BookLeaf({
       draft={ctx.getPersonDraft(leaf.person)}
       borderStyleId={ctx.settings.borderStyleId}
       formStyleId={ctx.settings.formStyleId}
+      pageBackgroundId={ctx.settings.pageBackgroundId}
+      pageBackgroundWash={ctx.settings.pageBackgroundWash}
       readOnly
     />
   );

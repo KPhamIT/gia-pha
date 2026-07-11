@@ -248,6 +248,65 @@
   box-sizing: border-box;
 }
 
+.paperWithImage {
+  background-color: #fffef9;
+  isolation: isolate;
+}
+
+/* Soften patterned backgrounds so body text stays readable. */
+.paperWithImage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(255 254 249 / var(--paper-bg-wash, 0.55)) 0%,
+    rgb(255 254 249 / var(--paper-bg-wash, 0.55)) 45%,
+    rgb(255 254 249 / var(--paper-bg-wash, 0.55)) 100%
+  );
+}
+
+.paperWithImage > *:not([aria-hidden="true"]) {
+  position: relative;
+  z-index: 1;
+}
+
+.paperWithImage .bookFieldLabel,
+.paperWithImage .bookRelationsHeading {
+  color: rgb(78 32 12 / 0.95);
+  text-shadow:
+    0 0 3px rgb(255 254 249 / 0.95),
+    0 0 8px rgb(255 254 249 / 0.8);
+}
+
+.paperWithImage .bookFieldValue,
+.paperWithImage .paperHeaderName,
+.paperWithImage .paperHeaderMeta,
+.paperWithImage .paperHeaderBadge,
+.paperWithImage .paperFooter {
+  text-shadow:
+    0 0 4px rgb(255 254 249 / 0.9),
+    0 1px 0 rgb(255 254 249 / 0.75);
+}
+
+.paperWithImage .paperHeaderBadge {
+  color: rgb(78 32 12 / 0.78);
+}
+
+.paperWithImage .paperHeaderMeta {
+  color: rgb(68 40 20 / 0.88);
+}
+
+.paperWithImage .paperFooter {
+  color: rgb(68 40 20 / 0.7);
+}
+
+.paperWithImage .bookField {
+  border-bottom-color: rgb(120 53 15 / 0.35);
+}
+
 .paper::before {
   content: "";
   position: absolute;
@@ -760,8 +819,24 @@
     transform: none !important;
     width: 100% !important;
     margin-bottom: 0 !important;
-    background: #fffef9 !important;
+    background-color: #fffef9 !important;
     color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .paper:not(.paperWithImage) {
+    background: #fffef9 !important;
+  }
+
+  .paperWithImage {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+  }
+
+  .paperWithImage::after {
+    background: rgb(255 254 249 / var(--paper-bg-wash, 0.55)) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

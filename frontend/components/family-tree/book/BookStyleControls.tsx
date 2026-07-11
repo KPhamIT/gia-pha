@@ -8,6 +8,12 @@ import { CALLIGRAPHY_FONTS } from "./calligraphy-fonts";
 import { ensureCalligraphyFontLoaded } from "./calligraphy-font-loader";
 import { PAGE_BORDER_STYLES } from "./page-border-styles";
 import { PAGE_FORM_STYLES } from "./page-form-styles";
+import {
+  getPageBackground,
+  PAGE_BACKGROUNDS,
+  PAGE_BACKGROUND_WASH_MAX,
+  PAGE_BACKGROUND_WASH_MIN,
+} from "./page-backgrounds";
 
 type BookStyleControlsProps = {
   settings: BookSettings;
@@ -24,6 +30,10 @@ export default function BookStyleControls({
   onChange,
   onClose,
 }: BookStyleControlsProps) {
+  const hasPatternedBg = Boolean(
+    getPageBackground(settings.pageBackgroundId).url,
+  );
+
   return (
     <div className="overlay-viewport z-40 flex items-end justify-center md:items-center md:bg-black/40 md:p-6">
       <button
@@ -55,6 +65,46 @@ export default function BookStyleControls({
             />
           </button>
         </div>
+
+        <label className="mb-3 block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">
+            {UI.BOOK_PAGE_BACKGROUND_LABEL}
+          </span>
+          <select
+            className={selectClass}
+            value={settings.pageBackgroundId}
+            onChange={(e) => onChange({ pageBackgroundId: e.target.value })}
+          >
+            {PAGE_BACKGROUNDS.map((bg) => (
+              <option key={bg.id} value={bg.id}>
+                {bg.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {hasPatternedBg ? (
+          <label className="mb-3 block">
+            <span className="mb-1 block text-xs font-medium text-slate-500">
+              {UI.BOOK_PAGE_BACKGROUND_WASH_LABEL}: {settings.pageBackgroundWash}
+              %
+            </span>
+            <input
+              type="range"
+              min={PAGE_BACKGROUND_WASH_MIN}
+              max={PAGE_BACKGROUND_WASH_MAX}
+              step={5}
+              value={settings.pageBackgroundWash}
+              onChange={(e) =>
+                onChange({ pageBackgroundWash: Number(e.target.value) })
+              }
+              className="w-full accent-amber-700"
+            />
+            <span className="mt-1 block text-[11px] text-slate-400">
+              {UI.BOOK_PAGE_BACKGROUND_WASH_HINT}
+            </span>
+          </label>
+        ) : null}
 
         <label className="mb-3 block">
           <span className="mb-1 block text-xs font-medium text-slate-500">

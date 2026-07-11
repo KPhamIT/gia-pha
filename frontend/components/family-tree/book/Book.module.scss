@@ -687,6 +687,43 @@ $book-paper-bg: #fffef9;
   }
 }
 
+/* Readable preface text when paper has a patterned background. */
+:global([data-genealogy-paper][data-paper-bg="1"]) {
+  .prefaceTitle {
+    text-shadow:
+      0 0 6px rgb(255 254 249 / 0.95),
+      0 1px 0 rgb(255 254 249 / 0.85);
+  }
+
+  .prefaceBody,
+  .prefaceSignature {
+    text-shadow:
+      0 0 4px rgb(255 254 249 / 0.9),
+      0 1px 0 rgb(255 254 249 / 0.75);
+  }
+
+  .prefaceOrnament {
+    color: channel($burgundy-deep, 0.75);
+  }
+
+  .elegantLabel {
+    color: channel($burgundy-deep, 0.95);
+    text-shadow:
+      0 0 3px rgb(255 254 249 / 0.95),
+      0 0 8px rgb(255 254 249 / 0.8);
+  }
+
+  .elegantValue {
+    text-shadow:
+      0 0 4px rgb(255 254 249 / 0.9),
+      0 1px 0 rgb(255 254 249 / 0.75);
+  }
+
+  .elegantField {
+    border-bottom-color: channel($burgundy-deep, 0.35);
+  }
+}
+
 .prefaceSignature {
   flex-shrink: 0;
   margin-top: 1rem;

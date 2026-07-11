@@ -13,6 +13,8 @@ export const DEFAULT_USER_SETTINGS = {
     coverClanAddress: "Việt Nam",
     prefaceTitle: "Lời Mở Đầu",
     borderStyleId: "modern",
+    pageBackgroundId: "bg-1",
+    pageBackgroundWash: 55,
     coverSubtitle: "",
     prefaceSignature: " ",
   },

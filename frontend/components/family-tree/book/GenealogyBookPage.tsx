@@ -12,6 +12,12 @@ import {
 import BookPageHeader from "./BookPageHeader";
 import { getBorderStyle, DEFAULT_BORDER_STYLE_ID } from "./page-border-styles";
 import { getFormStyle, DEFAULT_FORM_STYLE_ID } from "./page-form-styles";
+import {
+  getPageBackground,
+  pageBackgroundStyle,
+  DEFAULT_PAGE_BACKGROUND_ID,
+  DEFAULT_PAGE_BACKGROUND_WASH,
+} from "./page-backgrounds";
 import styles from "./GenealogyBook.module.css";
 
 // Re-exported so existing imports keep working.
@@ -26,6 +32,8 @@ type GenealogyBookPageProps = {
   draft: BookPageDraft;
   borderStyleId?: string;
   formStyleId?: string;
+  pageBackgroundId?: string;
+  pageBackgroundWash?: number;
   readOnly?: boolean;
 };
 
@@ -37,6 +45,8 @@ export default function GenealogyBookPage({
   draft,
   borderStyleId = DEFAULT_BORDER_STYLE_ID,
   formStyleId = DEFAULT_FORM_STYLE_ID,
+  pageBackgroundId = DEFAULT_PAGE_BACKGROUND_ID,
+  pageBackgroundWash = DEFAULT_PAGE_BACKGROUND_WASH,
   readOnly = true,
 }: GenealogyBookPageProps) {
   const relations = detail
@@ -44,9 +54,15 @@ export default function GenealogyBookPage({
     : null;
   const Border = getBorderStyle(borderStyleId).Component;
   const Form = getFormStyle(formStyleId).Component;
+  const hasBg = Boolean(getPageBackground(pageBackgroundId).url);
 
   return (
-    <div className={`${styles.paper} relative`} data-genealogy-paper>
+    <div
+      className={`${styles.paper} relative ${hasBg ? styles.paperWithImage : ""}`}
+      style={pageBackgroundStyle(pageBackgroundId, pageBackgroundWash)}
+      data-genealogy-paper
+      data-paper-bg={hasBg ? "1" : undefined}
+    >
       <Border>
         <BookPageHeader draft={draft} readOnly={readOnly} onChange={() => {}} />
 

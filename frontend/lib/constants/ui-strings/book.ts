@@ -41,6 +41,10 @@ export const BOOK_STRINGS = {
 
   // Book style controls
   BOOK_STYLE_TITLE: "Kiểu trình bày",
+  BOOK_PAGE_BACKGROUND_LABEL: "Nền trang",
+  BOOK_PAGE_BACKGROUND_WASH_LABEL: "Độ phủ chữ",
+  BOOK_PAGE_BACKGROUND_WASH_HINT:
+    "Cao hơn = chữ dễ đọc hơn; thấp hơn = nền họa tiết rõ hơn.",
   BOOK_BORDER_STYLE_LABEL: "Khung viền",
   BOOK_FORM_STYLE_LABEL: "Kiểu trang thông tin",
   BOOK_COVER_FONT_LABEL: "Font thư pháp",
