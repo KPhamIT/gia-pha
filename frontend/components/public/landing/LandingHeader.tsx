@@ -9,7 +9,7 @@ type LandingHeaderProps = {
 
 export default function LandingHeader({ brandName }: LandingHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 shrink-0 border-b border-[#d4c3c1] bg-[#fcf9f4]/95 backdrop-blur">
+    <header className="sticky top-0 z-40 shrink-0 border-b border-[#d4c3c1] bg-[#fcf9f4]/95 pt-[env(safe-area-inset-top)] backdrop-blur">
       <div className="flex h-20 w-full items-center justify-between px-4 md:px-10">
         <div className="flex items-center gap-8">
           <Link href="/" className="font-serif text-2xl font-bold text-[#321716]">

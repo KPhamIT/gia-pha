@@ -106,7 +106,7 @@ export default function TreeFab({
         />
       ) : null}
 
-      <div className="fixed bottom-6 left-4 z-[100] flex flex-col items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
+      <div className="fixed bottom-24 left-4 z-[100] flex flex-col items-start gap-2 pb-[env(safe-area-inset-bottom)] md:bottom-8 md:left-6">
         {open ? (
           <div className="flex min-w-[9.25rem] flex-col gap-1 rounded-2xl border border-amber-200/70 bg-white/95 p-1.5 shadow-2xl backdrop-blur-sm">
             {actions.map((action) => (
