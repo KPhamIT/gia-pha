@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const DELTA_MIN = 8;
 const TOP_ALWAYS_SHOW = 40;
+const MD_QUERY = "(min-width: 768px)";
 
 function readScrollTop(target: EventTarget | null): number | null {
   if (
@@ -32,11 +33,17 @@ function isPageScroller(target: EventTarget | null): boolean {
   return target instanceof Element && target.classList.contains("sheet-scroll");
 }
 
+type Options = {
+  /** Desktop (md+) không ẩn — tránh giật layout khi spacer/header đổi. */
+  mobileOnly?: boolean;
+};
+
 /**
  * Facebook-style: hide chrome when scrolling down, show when scrolling up.
  * Capture + filter so only the main page scroller drives the nav.
  */
-export function useHideOnScrollDown() {
+export function useHideOnScrollDown(options?: Options) {
+  const mobileOnly = options?.mobileOnly ?? false;
   const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
 
@@ -46,8 +53,22 @@ export function useHideOnScrollDown() {
 
   useEffect(() => {
     let lastY = window.scrollY || 0;
+    let desktop = false;
+
+    const mq =
+      mobileOnly && typeof window.matchMedia === "function"
+        ? window.matchMedia(MD_QUERY)
+        : null;
+
+    const syncDesktop = () => {
+      desktop = mq?.matches ?? false;
+      if (desktop) setHidden(false);
+    };
+    syncDesktop();
+    mq?.addEventListener("change", syncDesktop);
 
     const onScroll = (event: Event) => {
+      if (desktop) return;
       if (!isPageScroller(event.target)) return;
 
       const y = readScrollTop(event.target);
@@ -71,9 +92,10 @@ export function useHideOnScrollDown() {
       passive: true,
     });
     return () => {
+      mq?.removeEventListener("change", syncDesktop);
       document.removeEventListener("scroll", onScroll, true);
     };
-  }, []);
+  }, [mobileOnly]);
 
   return hidden;
 }

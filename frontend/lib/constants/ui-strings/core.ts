@@ -1,8 +1,10 @@
 /** Page chrome, status, generic errors, forms, node + settings, person detail. */
+import { BRAND_NAME } from "@/config/site";
+
 export const CORE_STRINGS = {
-  // Page metadata / brand (in-app chrome)
-  PAGE_TITLE: "Cội Nguồn",
-  PAGE_DESCRIPTION: "Cội Nguồn - Gia phả điện tử",
+  // Page metadata / brand (in-app chrome) — đồng bộ `BRAND_NAME` trong config/site.ts
+  PAGE_TITLE: BRAND_NAME,
+  PAGE_DESCRIPTION: `${BRAND_NAME} - Gia phả điện tử`,
 
   // Status messages
   LOADING: "Đang tải cây gia đình...",
@@ -113,7 +115,6 @@ export const CORE_STRINGS = {
 
   // Mobile menu (Facebook-style sheet)
   MOBILE_MENU_OPEN: "Mở menu",
-  MOBILE_MENU_TITLE: "Menu",
   MOBILE_MENU_SHORTCUTS: "Lối tắt",
   MOBILE_MENU_SEE_MORE: "Xem thêm",
   MOBILE_MENU_SEE_LESS: "Thu gọn",

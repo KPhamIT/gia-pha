@@ -3,6 +3,15 @@
  * Do not hardcode brand, site name, or canonical URL elsewhere.
  */
 
+/** Đổi tên thương hiệu tại đây — toàn app dùng `BRAND_NAME` / `SITE.brandName`. */
+export const BRAND_NAME = "Cội Nguồn";
+
+/** Chữ thương hiệu trên nền sáng. */
+export const BRAND_TEXT_CLASS = "text-[#fc8f34]";
+
+/** Chữ thương hiệu trên nền tối. */
+export const BRAND_TEXT_ON_DARK_CLASS = "text-[#fc8f34]";
+
 const DEFAULT_SITE_URL = "https://www.coinguon.io.vn";
 
 function normalizeSiteUrl(raw: string): string {
@@ -26,15 +35,13 @@ export function getSiteUrl(): string {
 }
 
 export const SITE = {
-  brandName: "Cội Nguồn",
-  siteName: "Cội Nguồn - Gia phả điện tử",
+  brandName: BRAND_NAME,
+  siteName: `${BRAND_NAME} - Gia phả điện tử`,
   url: DEFAULT_SITE_URL,
   language: "vi",
   locale: "vi_VN",
-  title:
-    "Cội Nguồn - Gia phả điện tử cho gia đình và dòng họ",
-  description:
-    "Cội Nguồn là nền tảng gia phả điện tử giúp tạo cây gia phả, quản lý thành viên dòng họ, lưu trữ gia phả, tra cứu ngày giỗ, sự kiện và kết nối các thế hệ trên mọi thiết bị.",
+  title: `${BRAND_NAME} - Gia phả điện tử cho gia đình và dòng họ`,
+  description: `${BRAND_NAME} là nền tảng gia phả điện tử giúp tạo cây gia phả, quản lý thành viên dòng họ, lưu trữ gia phả, tra cứu ngày giỗ, sự kiện và kết nối các thế hệ trên mọi thiết bị.`,
   keywords: [
     "gia phả",
     "gia phả điện tử",
@@ -46,7 +53,7 @@ export const SITE = {
     "nhà thờ họ",
     "ngày giỗ",
     "gia tiên",
-    "Cội Nguồn",
+    BRAND_NAME,
   ] as const,
   /** Highest-resolution brand logo for schema.org (512×512 PNG route). */
   logoPath: "/icons/pwa-512",
@@ -59,7 +66,7 @@ export const SITE = {
     site: "@coinguon",
   },
   software: {
-    name: "Cội Nguồn",
+    name: BRAND_NAME,
     category: "Genealogy Software",
     operatingSystem: "Web",
     offers: "Free",

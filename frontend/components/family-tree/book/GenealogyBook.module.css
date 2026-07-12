@@ -292,7 +292,7 @@
 }
 
 .paperWithImage .paperHeaderBadge {
-  color: rgb(78 32 12 / 0.78);
+  color: #fc8f34;
 }
 
 .paperWithImage .paperHeaderMeta {
@@ -477,7 +477,7 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgb(120 53 15 / 0.5);
+  color: #fc8f34;
 }
 
 .paperHeaderName {

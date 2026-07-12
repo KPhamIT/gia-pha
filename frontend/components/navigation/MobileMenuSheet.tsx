@@ -15,6 +15,7 @@ import {
   MOBILE_MENU_SHORTCUTS,
   type MobileMenuLink,
 } from "@/lib/navigation/mobile-menu";
+import { BRAND_NAME, BRAND_TEXT_CLASS } from "@/config/site";
 import { UI } from "@/lib/constants/ui-strings";
 import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
 import { useSwipeLeftDismiss } from "@/hooks/useSwipeLeftDismiss";
@@ -54,7 +55,7 @@ export default function MobileMenuSheet() {
         className="overlay-viewport z-[60] flex flex-col bg-[#f2efe9] md:hidden"
         role="dialog"
         aria-modal
-        aria-label={UI.MOBILE_MENU_TITLE}
+        aria-label={BRAND_NAME}
         style={{
           transform: `translateX(${swipe.offsetX}px)`,
           transition: swipe.dismissing
@@ -70,8 +71,8 @@ export default function MobileMenuSheet() {
         onTouchCancel={swipe.onTouchCancel}
       >
         <header className="flex shrink-0 items-center justify-between border-b border-[#d4c3c1]/50 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-          <h2 className="font-serif text-2xl font-bold text-[#321716]">
-            {UI.MOBILE_MENU_TITLE}
+          <h2 className={`font-serif text-2xl font-bold ${BRAND_TEXT_CLASS}`}>
+            {BRAND_NAME}
           </h2>
           <button
             type="button"

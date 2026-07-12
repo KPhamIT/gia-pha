@@ -4,6 +4,7 @@ import Link from "next/link";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import Icon from "@/components/icons/Icon";
 import MobileMenuButton from "@/components/navigation/MobileMenuButton";
+import { BRAND_TEXT_CLASS } from "@/config/site";
 import { useHideOnScrollDown } from "@/hooks/useHideOnScrollDown";
 import { UI } from "@/lib/constants/ui-strings";
 
@@ -15,7 +16,8 @@ const HEADER_OFFSET =
   "h-[calc(5rem+env(safe-area-inset-top))]";
 
 export default function LandingHeader({ brandName }: LandingHeaderProps) {
-  const hidden = useHideOnScrollDown();
+  // Chỉ ẩn trên mobile; desktop giữ cố định để khỏi giật khi scroll.
+  const hidden = useHideOnScrollDown({ mobileOnly: true });
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
           <div className="flex items-center gap-8">
             <Link
               href="/"
-              className="font-serif text-2xl font-bold text-[#321716]"
+              className={`font-serif text-2xl font-bold ${BRAND_TEXT_CLASS}`}
             >
               {brandName}
             </Link>
@@ -90,13 +92,8 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
           </div>
         </div>
       </header>
-      {/* Giữ chỗ khi header fixed; thu về 0 khi ẩn để hết khoảng trống. */}
-      <div
-        aria-hidden
-        className={`shrink-0 transition-[height] duration-300 ease-out ${
-          hidden ? "h-0" : HEADER_OFFSET
-        }`}
-      />
+      {/* Luôn giữ chiều cao — không thu khi ẩn (tránh giật scroll). */}
+      <div aria-hidden className={`shrink-0 ${HEADER_OFFSET}`} />
     </>
   );
 }
