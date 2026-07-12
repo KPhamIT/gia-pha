@@ -5,26 +5,30 @@ import CollapsibleSection, {
   inputClassName,
   textareaClassName,
 } from "@/components/ui/CollapsibleSection";
+import LunarDatePicker from "@/components/ui/LunarDatePicker";
 import { BRANCH_OPTIONS } from "@/lib/constants/branches";
 import { UI } from "@/lib/constants/ui-strings";
 import type { PersonDraft } from "@/utils/person-detail-form";
+import { solarYmdToLunarDayMonth } from "@/utils/lunar-date";
 import { PERSON_FORM_SECTIONS, type Field } from "./person-form-sections";
 
 function FieldControl({
   field,
-  value,
+  draft,
   disabled,
   onChange,
 }: {
   field: Field;
-  value: string;
+  draft: PersonDraft;
   disabled: boolean;
-  onChange: (value: string) => void;
+  onChange: (field: keyof PersonDraft, value: string) => void;
 }) {
+  const value = draft[field.key];
   const common = {
     value,
     disabled,
-    onChange: (e: { target: { value: string } }) => onChange(e.target.value),
+    onChange: (e: { target: { value: string } }) =>
+      onChange(field.key, e.target.value),
   };
 
   if (field.type === "checkbox") {
@@ -34,13 +38,28 @@ function FieldControl({
           type="checkbox"
           checked={value === "1"}
           disabled={disabled}
-          onChange={(e) => onChange(e.target.checked ? "1" : "")}
+          onChange={(e) => onChange(field.key, e.target.checked ? "1" : "")}
           className="h-5 w-5 cursor-pointer accent-amber-600"
         />
         <span>{UI.DECEASED_CHECKBOX}</span>
       </label>
     );
   }
+
+  if (field.type === "lunar-date") {
+    return (
+      <LunarDatePicker
+        day={draft.deathLunarDay}
+        month={draft.deathLunarMonth}
+        disabled={disabled}
+        onChange={({ day, month }) => {
+          onChange("deathLunarDay", day);
+          onChange("deathLunarMonth", month);
+        }}
+      />
+    );
+  }
+
   if (field.type === "textarea") {
     return <textarea {...common} className={textareaClassName} />;
   }
@@ -66,6 +85,26 @@ function FieldControl({
       </select>
     );
   }
+
+  if (field.type === "date" && field.key === "deathDate") {
+    return (
+      <input
+        type="date"
+        value={value}
+        disabled={disabled}
+        className={inputClassName}
+        onChange={(e) => {
+          const next = e.target.value;
+          onChange("deathDate", next);
+          const lunar = solarYmdToLunarDayMonth(next);
+          if (!lunar) return;
+          onChange("deathLunarDay", String(lunar.day));
+          onChange("deathLunarMonth", String(lunar.month));
+        }}
+      />
+    );
+  }
+
   return (
     <input
       type={
@@ -112,9 +151,9 @@ export default function PersonDetailFields({
               <FormField key={field.key} label={field.label}>
                 <FieldControl
                   field={field}
-                  value={draft[field.key]}
+                  draft={draft}
                   disabled={saving}
-                  onChange={(value) => onChange(field.key, value)}
+                  onChange={onChange}
                 />
               </FormField>
             ))}

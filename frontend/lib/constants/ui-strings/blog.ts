@@ -38,7 +38,12 @@ export const BLOG_UI = {
   BLOG_ADMIN_TITLE: "Tiêu đề",
   BLOG_ADMIN_SLUG: "Slug (URL)",
   BLOG_ADMIN_EXCERPT: "Tóm tắt",
-  BLOG_ADMIN_CONTENT: "Nội dung (HTML)",
+  BLOG_ADMIN_CONTENT: "Nội dung",
+  BLOG_ADMIN_IMPORT_HTML: "Dán HTML",
+  BLOG_ADMIN_IMPORT_HTML_TITLE: "Nhập nội dung HTML",
+  BLOG_ADMIN_IMPORT_HTML_HINT:
+    "Dán mã HTML vào đây rồi bấm Áp dụng. Không dán trực tiếp vào khung soạn thảo (sẽ bị hiện thành chữ).",
+  BLOG_ADMIN_IMPORT_HTML_APPLY: "Áp dụng HTML",
   BLOG_ADMIN_META: "Meta description (SEO)",
   BLOG_ADMIN_CATEGORY: "Chủ đề",
   BLOG_ADMIN_TAGS: "Từ khóa (phân cách bằng dấu phẩy)",

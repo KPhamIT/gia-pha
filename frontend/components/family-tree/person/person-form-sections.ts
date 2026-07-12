@@ -4,6 +4,7 @@ import type { PersonDraft } from "@/utils/person-detail-form";
 export type FieldType =
   | "text"
   | "date"
+  | "lunar-date"
   | "number"
   | "textarea"
   | "select"
@@ -44,21 +45,16 @@ export const PERSON_FORM_SECTIONS: Section[] = [
       },
       { key: "birthDate", label: UI.BIRTH_DATE, type: "date" },
       { key: "deceased", label: UI.DECEASED_STATUS, type: "checkbox" },
-      { key: "deathDate", label: UI.DEATH_DATE, type: "date", deceasedOnly: true },
       {
         key: "deathLunarDay",
-        label: UI.DEATH_LUNAR_DAY,
-        type: "number",
-        min: 1,
-        max: 30,
+        label: UI.DEATH_LUNAR_DATE,
+        type: "lunar-date",
         deceasedOnly: true,
       },
       {
-        key: "deathLunarMonth",
-        label: UI.DEATH_LUNAR_MONTH,
-        type: "number",
-        min: 1,
-        max: 12,
+        key: "deathDate",
+        label: UI.DEATH_DATE_SOLAR,
+        type: "date",
         deceasedOnly: true,
       },
     ],

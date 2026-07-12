@@ -28,6 +28,7 @@ Bộ nội dung dùng cho fanpage / nhóm Facebook, Zalo OA, hoặc tin nhắn g
 | 4 | [04-su-kien-cong-duc.md](./04-su-kien-cong-duc.md) | Sự kiện, đóng góp, công đức | Ban họ, thư ký |
 | 5 | [05-lien-ket-dong-ho.md](./05-lien-ket-dong-ho.md) | Một link — cả dòng họ cùng xem | Admin / người muốn lan tỏa |
 | 6 | [06-danh-cho-ban-quan-tri.md](./06-danh-cho-ban-quan-tri.md) | Lợi ích cho thư ký / trưởng tộc | Người quyết định triển khai |
+| 7 | [07-5-buoc-tao-va-in-gia-pha-coi-nguon.md](./07-5-buoc-tao-va-in-gia-pha-coi-nguon.md) | SEO: 5 bước tạo & in gia phả (blog) | Google / blog `/bai-viet` |
 
 ## Quy ước trong từng file
 

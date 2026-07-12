@@ -10,6 +10,10 @@ import { api } from "@/lib/api";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
 import type { UploadedImage } from "@/lib/api/modules/media";
+import {
+  normalizeBlogHtml,
+  prepareHtmlForTipTap,
+} from "@/utils/blog-html";
 
 type BlogContentEditorProps = {
   value: string;
@@ -144,7 +148,10 @@ export default function BlogContentEditor({
   imageAltBase,
 }: BlogContentEditorProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const lastExternalValue = useRef<string | null>(null);
   const [imageBusy, setImageBusy] = useState(false);
+  const [htmlPanelOpen, setHtmlPanelOpen] = useState(false);
+  const [htmlDraft, setHtmlDraft] = useState("");
   const [selectedImageSize, setSelectedImageSize] = useState<{
     width: string;
     height: string;
@@ -162,12 +169,22 @@ export default function BlogContentEditor({
         placeholder: "Nhập nội dung bài viết...",
       }),
     ],
-    content: value,
+    content: prepareHtmlForTipTap(value || ""),
     immediatelyRender: false,
     onUpdate({ editor: current }) {
       onChange(current.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+    if (lastExternalValue.current === value) return;
+    lastExternalValue.current = value;
+    const prepared = prepareHtmlForTipTap(value || "");
+    const current = editor.getHTML();
+    if (normalizeBlogHtml(current) === normalizeBlogHtml(prepared)) return;
+    editor.commands.setContent(prepared, { emitUpdate: false });
+  }, [editor, value]);
 
   useEffect(() => {
     if (!editor) return;
@@ -196,6 +213,19 @@ export default function BlogContentEditor({
   }, [editor]);
 
   if (!editor) return null;
+
+  const applyImportedHtml = () => {
+    const prepared = prepareHtmlForTipTap(htmlDraft);
+    editor.commands.setContent(prepared, { emitUpdate: true });
+    lastExternalValue.current = editor.getHTML();
+    onChange(editor.getHTML());
+    setHtmlPanelOpen(false);
+  };
+
+  const openHtmlPanel = () => {
+    setHtmlDraft(normalizeBlogHtml(value || editor.getHTML()));
+    setHtmlPanelOpen(true);
+  };
 
   const openImagePicker = () => {
     if (imageBusy) return;
@@ -347,11 +377,35 @@ export default function BlogContentEditor({
           label={imageBusy ? "Đang xử lý..." : "Ảnh"}
           onClick={openImagePicker}
         />
+        <ToolbarButton label={UI.BLOG_ADMIN_IMPORT_HTML} onClick={openHtmlPanel} />
         <ToolbarButton
           label="Clear"
           onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
         />
       </div>
+
+      {htmlPanelOpen ? (
+        <div className="space-y-2 border-b border-amber-200/60 bg-amber-50/50 p-3">
+          <p className="text-xs text-neutral-600">{UI.BLOG_ADMIN_IMPORT_HTML_HINT}</p>
+          <textarea
+            value={htmlDraft}
+            onChange={(e) => setHtmlDraft(e.target.value)}
+            rows={12}
+            className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 font-mono text-xs text-neutral-800 outline-none focus:border-amber-500"
+            spellCheck={false}
+          />
+          <div className="flex flex-wrap gap-2">
+            <ToolbarButton
+              label={UI.BLOG_ADMIN_IMPORT_HTML_APPLY}
+              onClick={applyImportedHtml}
+            />
+            <ToolbarButton
+              label={UI.CANCEL}
+              onClick={() => setHtmlPanelOpen(false)}
+            />
+          </div>
+        </div>
+      ) : null}
 
       {selectedImageSize ? (
         <div className="flex flex-wrap items-center gap-2 border-b border-amber-200/60 bg-amber-50/40 p-2">

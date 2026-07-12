@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BlogPost, BlogPostSummary } from "@/lib/blog/types";
 import { blogCategoryLabel } from "@/lib/blog/format";
 import { UI } from "@/lib/constants/ui-strings";
+import { normalizeBlogHtml } from "@/utils/blog-html";
 import BlogRelatedPosts from "./BlogRelatedPosts";
 
 type BlogArticleProps = {
@@ -12,12 +13,13 @@ type BlogArticleProps = {
 export default function BlogArticle({ post, relatedPosts = [] }: BlogArticleProps) {
   const categoryHref = `/bai-viet?category=${post.category}`;
   const categoryLabel = blogCategoryLabel(post.category);
+  const html = normalizeBlogHtml(post.content);
 
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div
         className="blog-prose"
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: html }}
       />
 
       {post.tags.length > 0 ? (

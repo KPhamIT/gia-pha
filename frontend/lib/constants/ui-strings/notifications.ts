@@ -48,6 +48,11 @@ export const NOTIFICATION_STRINGS = {
   // Death anniversary / ceremonies
   DEATH_LUNAR_DAY: "Ngày mất (âm lịch)",
   DEATH_LUNAR_MONTH: "Tháng mất (âm lịch)",
+  DEATH_LUNAR_DATE: "Ngày mất (âm lịch)",
+  DEATH_DATE_SOLAR: "Ngày mất (dương lịch)",
+  LUNAR_DAY_PLACEHOLDER: "Ngày",
+  LUNAR_MONTH_PLACEHOLDER: "Tháng",
+  LUNAR_DAY_OPTION: (day: number) => `Ngày ${day}`,
   CEREMONIES_UPCOMING_TITLE: "Ngày giỗ sắp tới",
   CEREMONIES_UPCOMING_PAGE_EYEBROW: "Âm lịch & Lễ nghi",
   CEREMONIES_UPCOMING_SUBTITLE:
