@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,6 +14,7 @@ import {
 } from '../auth/org-access.js';
 import { createCeremonyShareToken } from '../ceremonies/ceremony-share-token.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { OrganizationService } from '../organization/organization.service.js';
 import { OneSignalService } from './onesignal.service.js';
 import { UpdateNotificationSettingsDto } from './dto/update-notification-settings.dto.js';
 import {
@@ -61,6 +61,7 @@ export class NotificationsService {
     private readonly prisma: PrismaService,
     private readonly oneSignal: OneSignalService,
     private readonly config: ConfigService,
+    private readonly organizationService: OrganizationService,
   ) {}
 
   async getSettings(user: User) {
@@ -176,18 +177,21 @@ export class NotificationsService {
 
   async listUpcomingCeremonies(
     user: User,
-    options?: { maxDays?: number; limit?: number },
+    options?: { maxDays?: number; limit?: number; orgToken?: string },
   ) {
-    if (user.organizationId == null) {
-      throw new ForbiddenException('User is not assigned to an organization');
-    }
+    const organizationId =
+      await this.organizationService.resolveDefaultOrganizationId(
+        user,
+        undefined,
+        options?.orgToken,
+      );
 
     const maxDays = options?.maxDays ?? 3;
     const limit = options?.limit;
 
     const persons = await this.prisma.person.findMany({
       where: {
-        organizationId: user.organizationId,
+        organizationId,
         OR: [{ deceased: true }, { deathDate: { not: null } }],
         deathLunarDay: { not: null },
         deathLunarMonth: { not: null },

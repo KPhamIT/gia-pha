@@ -406,6 +406,15 @@ export class OrganizationService {
         });
         return requestedOrgId;
       }
+      if (orgAccessToken) {
+        const orgId = this.decodeAccessToken(orgAccessToken);
+        if (orgId != null) {
+          await this.prisma.organization.findUniqueOrThrow({
+            where: { id: orgId },
+          });
+          return orgId;
+        }
+      }
       return (await this.getOrCreateDefaultOrganization()).id;
     }
 

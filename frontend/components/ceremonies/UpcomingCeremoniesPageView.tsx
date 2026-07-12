@@ -10,7 +10,8 @@ import UpcomingCeremoniesPageHero from "@/components/ceremonies/UpcomingCeremoni
 import UpcomingCeremoniesQuickLinks from "@/components/ceremonies/UpcomingCeremoniesQuickLinks";
 import ResponsiveAppPageLayout from "@/components/layout/ResponsiveAppPageLayout";
 import AuthPageLoading from "@/components/ui/AuthPageLoading";
-import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
+import { useRequireOrgAccess } from "@/hooks/useRequireOrgAccess";
+import { useAuthStore } from "@/store/authStore";
 import { api } from "@/lib/api";
 import { UI } from "@/lib/constants/ui-strings";
 import type {
@@ -25,19 +26,20 @@ export default function UpcomingCeremoniesPageView() {
   const viewCeremony = searchParams.get("view") === "ceremony";
   const personId = personIdParam ? Number(personIdParam) : null;
 
-  const { loaded, isLoggedIn } = useAuthBootstrap();
+  const { ready: orgReady, authLoaded } = useRequireOrgAccess();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [persons, setPersons] = useState<Person[]>([]);
   const [relationships, setRelationships] = useState<Relationship[]>([]);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!orgReady || !isLoggedIn) return;
     void Promise.all([api.person.list(), api.relationship.list()]).then(
       ([p, r]) => {
         setPersons(p);
         setRelationships(r);
       },
     );
-  }, [isLoggedIn]);
+  }, [orgReady, isLoggedIn]);
 
   const showCeremony =
     viewCeremony && personId != null && !Number.isNaN(personId);
@@ -51,7 +53,7 @@ export default function UpcomingCeremoniesPageView() {
     return raw ? Number(raw) : null;
   }, [searchParams]);
 
-  if (!loaded) {
+  if (!authLoaded || !orgReady) {
     return <AuthPageLoading message={UI.CEREMONIES_UPCOMING_LOADING} />;
   }
 

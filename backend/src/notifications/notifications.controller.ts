@@ -60,12 +60,14 @@ export class NotificationsController {
     @Request() req: { user: User },
     @Query('maxDays') maxDaysRaw?: string,
     @Query('limit') limitRaw?: string,
+    @Query('orgToken') orgToken?: string,
   ) {
     const maxDays = maxDaysRaw != null ? Number(maxDaysRaw) : undefined;
     const limit = limitRaw != null ? Number(limitRaw) : undefined;
     return this.notificationsService.listUpcomingCeremonies(req.user, {
       ...(Number.isFinite(maxDays) ? { maxDays } : {}),
       ...(Number.isFinite(limit) ? { limit } : {}),
+      ...(orgToken ? { orgToken } : {}),
     });
   }
 

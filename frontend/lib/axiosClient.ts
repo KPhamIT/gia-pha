@@ -12,11 +12,11 @@ axiosClient.interceptors.request.use((config) => {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else {
-      const orgToken = getStoredOrgAccessToken();
-      if (orgToken) {
-        config.params = { ...config.params, orgToken };
-      }
+    }
+    // Luôn gửi orgToken khi có (kể cả đã JWT) — SYSTEM / user chưa gán org.
+    const orgToken = getStoredOrgAccessToken();
+    if (orgToken) {
+      config.params = { ...config.params, orgToken };
     }
   }
   return config;
