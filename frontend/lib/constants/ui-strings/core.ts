@@ -106,6 +106,7 @@ export const CORE_STRINGS = {
 
   // Mobile bottom navigation
   MOBILE_NAV_HOME: "Trang chủ",
+  MOBILE_NAV_BOOK: "Sổ gia phả",
   MOBILE_NAV_FAMILY: "Gia tộc",
   MOBILE_NAV_EVENTS: "Sự kiện",
   MOBILE_NAV_PROFILE: "Tài khoản",

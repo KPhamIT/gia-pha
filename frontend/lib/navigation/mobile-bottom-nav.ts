@@ -1,6 +1,11 @@
 import { UI } from "@/lib/constants/ui-strings";
 
-export type MobileBottomNavId = "home" | "family" | "events" | "profile";
+export type MobileBottomNavId =
+  | "home"
+  | "book"
+  | "family"
+  | "events"
+  | "profile";
 
 export type MobileBottomNavItem = {
   id: MobileBottomNavId;
@@ -13,8 +18,14 @@ export const MOBILE_BOTTOM_NAV_ITEMS: readonly MobileBottomNavItem[] = [
   {
     id: "home",
     label: UI.MOBILE_NAV_HOME,
+    href: "/",
+    match: (pathname) => pathname === "/",
+  },
+  {
+    id: "book",
+    label: UI.MOBILE_NAV_BOOK,
     href: "/book",
-    match: (pathname) => pathname === "/book" || pathname === "/",
+    match: (pathname) => pathname.startsWith("/book"),
   },
   {
     id: "family",
@@ -37,7 +48,9 @@ export const MOBILE_BOTTOM_NAV_ITEMS: readonly MobileBottomNavItem[] = [
   },
 ] as const;
 
-export function resolveMobileBottomNavId(pathname: string): MobileBottomNavId | null {
+export function resolveMobileBottomNavId(
+  pathname: string,
+): MobileBottomNavId | null {
   const item = MOBILE_BOTTOM_NAV_ITEMS.find((entry) => entry.match(pathname));
   return item?.id ?? null;
 }
