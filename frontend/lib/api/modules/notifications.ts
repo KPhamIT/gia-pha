@@ -29,6 +29,8 @@ export type UpcomingCeremonyItem = {
   lunarDateLabel: string;
   daysUntil: number;
   message: string;
+  branch?: number | null;
+  generation?: number | null;
 };
 
 export type NotificationStats = {
@@ -59,9 +61,11 @@ export const notifications = {
       .get<NotificationLogItem[]>(API_ROUTES.NOTIFICATIONS)
       .then((r) => r.data),
 
-  upcoming: () =>
+  upcoming: (params?: { maxDays?: number; limit?: number }) =>
     axiosClient
-      .get<UpcomingCeremonyItem[]>(API_ROUTES.NOTIFICATIONS_UPCOMING)
+      .get<UpcomingCeremonyItem[]>(API_ROUTES.NOTIFICATIONS_UPCOMING, {
+        params,
+      })
       .then((r) => r.data),
 
   stats: () =>

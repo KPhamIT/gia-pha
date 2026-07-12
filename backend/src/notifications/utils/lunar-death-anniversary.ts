@@ -1,7 +1,10 @@
 import { Lunar } from 'lunar-javascript';
 
-/** Days until the next lunar death anniversary (0 = today, 1–3 = upcoming). */
-export function daysUntilDeathAnniversary(
+/**
+ * Days until the next lunar death anniversary (0 = today).
+ * Unbounded horizon (next occurrence this or next lunar year).
+ */
+export function daysUntilNextDeathAnniversary(
   deathLunarMonth: number,
   deathLunarDay: number,
   referenceDate = new Date(),
@@ -19,11 +22,25 @@ export function daysUntilDeathAnniversary(
   if (anniversaryKey < todayKey) {
     anniversary = Lunar.fromYmd(lunarYear + 1, deathLunarMonth, deathLunarDay);
     anniversarySolar = anniversary.getSolar().toYmd();
-    anniversaryKey = solarYmdToNumber(anniversarySolar);
   }
 
-  const diff = anniversaryKey - todayKey;
-  if (diff < 0 || diff > 3) return null;
+  const diff = calendarDaysBetween(todaySolar, anniversarySolar);
+  if (diff < 0) return null;
+  return diff;
+}
+
+/** Days until anniversary when within 0–3 days (notifications window). */
+export function daysUntilDeathAnniversary(
+  deathLunarMonth: number,
+  deathLunarDay: number,
+  referenceDate = new Date(),
+): number | null {
+  const diff = daysUntilNextDeathAnniversary(
+    deathLunarMonth,
+    deathLunarDay,
+    referenceDate,
+  );
+  if (diff == null || diff > 3) return null;
   return diff;
 }
 
@@ -56,7 +73,19 @@ export function getCurrentLunarDate(referenceDate = new Date()) {
   };
 }
 
+/** YYYY-MM-DD → sortable int (ordering only, not day math). */
 function solarYmdToNumber(ymd: string): number {
   const [y, m, d] = ymd.split('-').map(Number);
   return y * 10000 + m * 100 + d;
+}
+
+function calendarDaysBetween(fromYmd: string, toYmd: string): number {
+  const from = parseSolarYmdUtc(fromYmd);
+  const to = parseSolarYmdUtc(toYmd);
+  return Math.round((to.getTime() - from.getTime()) / 86_400_000);
+}
+
+function parseSolarYmdUtc(ymd: string): Date {
+  const [y, m, d] = ymd.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
 }

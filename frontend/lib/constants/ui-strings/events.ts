@@ -15,6 +15,15 @@ export const EVENT_STRINGS = {
   EVENTS_READONLY_HINT:
     "Bạn đang xem ở chế độ chỉ đọc. Liên hệ ban quản trị để được cấp quyền chỉnh sửa.",
   EVENTS_UPCOMING_TITLE: "Sắp diễn ra",
+  EVENTS_UPCOMING_CEREMONIES_TITLE: "Giỗ sắp tới",
+  EVENTS_UPCOMING_CEREMONIES_EMPTY: "Chưa có ngày giỗ sắp tới.",
+  EVENTS_UPCOMING_CEREMONIES_VIEW_ALL: "Xem tất cả ngày giỗ",
+  EVENTS_CEREMONY_META: (branch: number | null, generation: number | null) => {
+    const parts: string[] = [];
+    if (branch != null) parts.push(`Nhánh ${branch}`);
+    if (generation != null) parts.push(`Đời ${generation}`);
+    return parts.join(" · ");
+  },
   EVENTS_VIEW_ALL: "Xem tất cả sự kiện",
   EVENTS_DONATION_PROMO_TITLE: "Góp sức xây dựng",
   EVENTS_DONATION_PROMO_DESC:

@@ -3,3 +3,7 @@ node_modules/
 dist/
 build/
 .env
+*.dump
+
+# Tài liệu / secrets chỉ dùng máy local (không push)
+docs/private/

@@ -5,6 +5,7 @@ import {
   Post,
   Body,
   Param,
+  Query,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -55,8 +56,17 @@ export class NotificationsController {
 
   @Get('upcoming')
   @UseGuards(JwtRequiredGuard)
-  upcoming(@Request() req: { user: User }) {
-    return this.notificationsService.listUpcomingCeremonies(req.user);
+  upcoming(
+    @Request() req: { user: User },
+    @Query('maxDays') maxDaysRaw?: string,
+    @Query('limit') limitRaw?: string,
+  ) {
+    const maxDays = maxDaysRaw != null ? Number(maxDaysRaw) : undefined;
+    const limit = limitRaw != null ? Number(limitRaw) : undefined;
+    return this.notificationsService.listUpcomingCeremonies(req.user, {
+      ...(Number.isFinite(maxDays) ? { maxDays } : {}),
+      ...(Number.isFinite(limit) ? { limit } : {}),
+    });
   }
 
   @Get('upcoming/:personId')

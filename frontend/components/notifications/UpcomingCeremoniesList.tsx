@@ -25,6 +25,9 @@ const LUNAR_MONTHS_SHORT = [
   "T12",
 ] as const;
 
+const UPCOMING_LIMIT = 10;
+const UPCOMING_MAX_DAYS = 366;
+
 type UpcomingCeremoniesListProps = {
   highlightPersonId?: number | null;
   variant?: "book" | "landing";
@@ -47,7 +50,7 @@ export default function UpcomingCeremoniesList({
 
   useEffect(() => {
     api.notifications
-      .upcoming()
+      .upcoming({ maxDays: UPCOMING_MAX_DAYS, limit: UPCOMING_LIMIT })
       .then(setItems)
       .catch(() => setError(UI.ERR_FETCH_DATA))
       .finally(() => setLoading(false));

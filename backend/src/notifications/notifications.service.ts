@@ -19,6 +19,7 @@ import { OneSignalService } from './onesignal.service.js';
 import { UpdateNotificationSettingsDto } from './dto/update-notification-settings.dto.js';
 import {
   daysUntilDeathAnniversary,
+  daysUntilNextDeathAnniversary,
   formatLunarDeathDate,
   isPastDeathAnniversaryThisCycle,
 } from './utils/lunar-death-anniversary.js';
@@ -33,18 +34,11 @@ export function buildDeathAnniversaryMessage(
   fullName: string,
   daysUntil: number,
 ): DeathAnniversaryMessage {
-  if (daysUntil === 3) {
+  if (daysUntil === 0) {
     return {
-      daysUntil,
-      title: 'Sắp đến ngày giỗ',
-      body: `Còn 3 ngày nữa là ngày giỗ của cụ ${fullName}.`,
-    };
-  }
-  if (daysUntil === 2) {
-    return {
-      daysUntil,
-      title: 'Sắp đến ngày giỗ',
-      body: `Còn 2 ngày nữa là ngày giỗ của cụ ${fullName}.`,
+      daysUntil: 0,
+      title: 'Ngày giỗ hôm nay',
+      body: `Hôm nay là ngày giỗ của cụ ${fullName}.\nNhấn để xem bài cúng.`,
     };
   }
   if (daysUntil === 1) {
@@ -55,9 +49,9 @@ export function buildDeathAnniversaryMessage(
     };
   }
   return {
-    daysUntil: 0,
-    title: 'Ngày giỗ hôm nay',
-    body: `Hôm nay là ngày giỗ của cụ ${fullName}.\nNhấn để xem bài cúng.`,
+    daysUntil,
+    title: 'Sắp đến ngày giỗ',
+    body: `Còn ${daysUntil} ngày nữa là ngày giỗ của cụ ${fullName}.`,
   };
 }
 
@@ -180,10 +174,16 @@ export class NotificationsService {
     };
   }
 
-  async listUpcomingCeremonies(user: User) {
+  async listUpcomingCeremonies(
+    user: User,
+    options?: { maxDays?: number; limit?: number },
+  ) {
     if (user.organizationId == null) {
       throw new ForbiddenException('User is not assigned to an organization');
     }
+
+    const maxDays = options?.maxDays ?? 3;
+    const limit = options?.limit;
 
     const persons = await this.prisma.person.findMany({
       where: {
@@ -195,13 +195,13 @@ export class NotificationsService {
       orderBy: { fullName: 'asc' },
     });
 
-    return persons
+    const items = persons
       .map((person) => {
-        const daysUntil = daysUntilDeathAnniversary(
+        const daysUntil = daysUntilNextDeathAnniversary(
           person.deathLunarMonth!,
           person.deathLunarDay!,
         );
-        if (daysUntil == null) return null;
+        if (daysUntil == null || daysUntil > maxDays) return null;
         return {
           personId: person.id,
           fullName: person.fullName,
@@ -212,12 +212,20 @@ export class NotificationsService {
             person.deathLunarDay!,
           ),
           daysUntil,
+          branch: person.branch,
+          generation: person.generation,
           message: buildDeathAnniversaryMessage(person.fullName, daysUntil)
             .body,
         };
       })
       .filter((item): item is NonNullable<typeof item> => item != null)
-      .sort((a, b) => a.daysUntil - b.daysUntil);
+      .sort(
+        (a, b) =>
+          a.daysUntil - b.daysUntil ||
+          a.fullName.localeCompare(b.fullName, 'vi'),
+      );
+
+    return limit != null ? items.slice(0, limit) : items;
   }
 
   async getUpcomingCeremony(user: User, personId: number) {

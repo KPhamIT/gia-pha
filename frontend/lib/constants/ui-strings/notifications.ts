@@ -51,10 +51,10 @@ export const NOTIFICATION_STRINGS = {
   CEREMONIES_UPCOMING_TITLE: "Ngày giỗ sắp tới",
   CEREMONIES_UPCOMING_PAGE_EYEBROW: "Âm lịch & Lễ nghi",
   CEREMONIES_UPCOMING_SUBTITLE:
-    "Theo dõi ngày giỗ trong vài ngày tới, xem bài cúng và chia sẻ với con cháu trong dòng họ.",
+    "Theo dõi các ngày giỗ sắp tới, xem bài cúng và chia sẻ với con cháu trong dòng họ.",
   CEREMONIES_UPCOMING_LOADING: "Đang tải ngày giỗ sắp tới…",
   CEREMONIES_UPCOMING_QUICK_LINKS: "Truy cập nhanh",
-  CEREMONIES_EMPTY: "Không có ngày giỗ sắp tới trong 3 ngày tới.",
+  CEREMONIES_EMPTY: "Chưa có ngày giỗ sắp tới.",
   CEREMONIES_DAYS_UNTIL: (days: number) =>
     days === 0 ? "Hôm nay" : `Còn ${days} ngày`,
   CEREMONIES_VIEW: "Xem bài cúng",

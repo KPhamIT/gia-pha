@@ -18,7 +18,7 @@ export default function AccountHeaderButton() {
     return (
       <Link
         href="/login"
-        className="inline-flex items-center rounded-lg border border-[#d4c3c1] bg-white px-4 py-2 text-sm font-semibold text-[#321716] transition hover:bg-[#f6f3ee]"
+        className="hidden items-center rounded-lg border border-[#d4c3c1] bg-white px-4 py-2 text-sm font-semibold text-[#321716] transition hover:bg-[#f6f3ee] md:inline-flex"
       >
         {UI.LANDING_CTA_LOGIN}
       </Link>
