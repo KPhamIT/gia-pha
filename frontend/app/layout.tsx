@@ -6,7 +6,6 @@ import { createRootMetadata } from "@/lib/seo";
 import { themeInitScript } from "@/utils/theme";
 import AppToaster from "@/components/ui/AppToaster";
 import GlobalMobileChrome from "@/components/navigation/GlobalMobileChrome";
-import LandingScrollManager from "@/components/public/LandingScrollManager";
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -45,7 +44,6 @@ export default function RootLayout({
         </Script>
         {children}
         <GlobalMobileChrome />
-        <LandingScrollManager />
         <AppToaster />
       </body>
     </html>

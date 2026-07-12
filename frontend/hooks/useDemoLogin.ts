@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { setToken } from "@/lib/auth/session";
-import { saveLandingScrollFromDocument } from "@/lib/landing-scroll";
 import { useAuthStore } from "@/store/authStore";
 import { notify } from "@/lib/notify";
 import { UI } from "@/lib/constants/ui-strings";
@@ -28,7 +27,6 @@ export function useDemoLogin() {
         const result = await api.auth.login(DEMO_USERNAME, DEMO_PASSWORD);
         setToken(result.accessToken);
         await refreshAuth();
-        saveLandingScrollFromDocument();
         router.push(path);
       } catch {
         notify.error(null, UI.LANDING_DEMO_UNAVAILABLE);

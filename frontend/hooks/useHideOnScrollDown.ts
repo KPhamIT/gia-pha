@@ -7,7 +7,11 @@ const DELTA_MIN = 8;
 const TOP_ALWAYS_SHOW = 40;
 
 function readScrollTop(target: EventTarget | null): number | null {
-  if (target === document || target === document.documentElement) {
+  if (
+    target === document ||
+    target === document.documentElement ||
+    target === document.body
+  ) {
     return window.scrollY || document.documentElement.scrollTop || 0;
   }
   if (target instanceof Element) {
@@ -16,9 +20,21 @@ function readScrollTop(target: EventTarget | null): number | null {
   return null;
 }
 
+/** Chỉ scroller trang (window / `.sheet-scroll`), bỏ qua carousel & scroll lồng nhau. */
+function isPageScroller(target: EventTarget | null): boolean {
+  if (
+    target === document ||
+    target === document.documentElement ||
+    target === document.body
+  ) {
+    return true;
+  }
+  return target instanceof Element && target.classList.contains("sheet-scroll");
+}
+
 /**
  * Facebook-style: hide chrome when scrolling down, show when scrolling up.
- * Uses capture so nested `overflow` scrollers also drive the nav.
+ * Capture + filter so only the main page scroller drives the nav.
  */
 export function useHideOnScrollDown() {
   const pathname = usePathname();
@@ -30,17 +46,12 @@ export function useHideOnScrollDown() {
 
   useEffect(() => {
     let lastY = window.scrollY || 0;
-    let lastTarget: EventTarget | null = null;
 
     const onScroll = (event: Event) => {
+      if (!isPageScroller(event.target)) return;
+
       const y = readScrollTop(event.target);
       if (y == null) return;
-
-      if (event.target !== lastTarget) {
-        lastTarget = event.target;
-        lastY = y;
-        return;
-      }
 
       const delta = y - lastY;
       if (Math.abs(delta) < DELTA_MIN) return;

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import Icon from "@/components/icons/Icon";
+import MobileMenuButton from "@/components/navigation/MobileMenuButton";
 import { useHideOnScrollDown } from "@/hooks/useHideOnScrollDown";
 import { UI } from "@/lib/constants/ui-strings";
 
@@ -67,7 +68,7 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
               </Link>
             </nav>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <Link
               href="/book"
               aria-label={UI.LANDING_NAV_SEARCH_ARIA}
@@ -85,6 +86,7 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
               />
             </Link>
             <AccountHeaderButton />
+            <MobileMenuButton />
           </div>
         </div>
       </header>

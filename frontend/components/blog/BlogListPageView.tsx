@@ -13,7 +13,7 @@ export default function BlogListPageView({ children }: BlogListPageViewProps) {
     <ResponsiveAppPageLayout
       title={UI.BLOG_LIST_TITLE}
       backHref="/"
-      contentClassName="w-full pb-32 pt-20 md:pb-0 md:pt-0"
+      contentClassName="w-full pb-32 pt-[calc(5rem+env(safe-area-inset-top))] md:pb-0 md:pt-0"
     >
       {children}
     </ResponsiveAppPageLayout>

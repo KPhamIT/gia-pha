@@ -111,6 +111,18 @@ export const CORE_STRINGS = {
   MOBILE_NAV_EVENTS: "Sự kiện",
   MOBILE_NAV_PROFILE: "Tài khoản",
 
+  // Mobile menu (Facebook-style sheet)
+  MOBILE_MENU_OPEN: "Mở menu",
+  MOBILE_MENU_TITLE: "Menu",
+  MOBILE_MENU_SHORTCUTS: "Lối tắt",
+  MOBILE_MENU_SEE_MORE: "Xem thêm",
+  MOBILE_MENU_SEE_LESS: "Thu gọn",
+  MOBILE_MENU_HELP: "Trợ giúp & hỗ trợ",
+  MOBILE_MENU_SETTINGS: "Cài đặt & quyền riêng tư",
+  MOBILE_MENU_GUEST_NAME: "Khách",
+  MOBILE_MENU_VIEW_PROFILE: "Xem tài khoản",
+  MOBILE_MENU_LOGIN: "Đăng nhập",
+
   // Person generation (đời thứ N)
   GENERATION_ORDINAL: (n: number) => `Đời thứ ${n}`,
   PERSON_LAST_EDITED_BY: (name: string, when: string) =>

@@ -7,5 +7,4 @@ export const STORAGE_KEYS = {
   BRANCH_WELCOME_DONE: "family-tree-branch-welcome-done",
   TREE_EXPORT_SETTINGS: "family-tree-export-settings",
   CEREMONY_FONT_SCALE_INDEX: "family-tree-ceremony-font-scale-index",
-  LANDING_SCROLL_Y: "family-tree-landing-scroll-y",
 } as const;
