@@ -17,10 +17,21 @@ type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+/** `true`/`1` → SSG toàn bộ slug lúc build; mặc định ISR on-demand. */
+function blogSsgAtBuildEnabled() {
+  const value = process.env.BLOG_SSG_AT_BUILD?.trim().toLowerCase();
+  return value === "1" || value === "true" || value === "yes";
+}
+
 export async function generateStaticParams() {
+  if (!blogSsgAtBuildEnabled()) return [];
+
   const slugs = await fetchBlogSlugs();
   return (slugs ?? []).map((entry) => ({ slug: entry.slug }));
 }
+
+/** Cho phép sinh trang khi slug chưa có trong generateStaticParams (ISR). */
+export const dynamicParams = true;
 
 export async function generateMetadata({
   params,

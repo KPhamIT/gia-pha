@@ -1,6 +1,7 @@
 declare module "lunar-javascript" {
   export class Lunar {
     static fromDate(date: Date): Lunar;
+    static fromYmd(year: number, month: number, day: number): Lunar;
     getDay(): number;
     getMonth(): number;
     getYear(): number;
@@ -9,6 +10,15 @@ declare module "lunar-javascript" {
     getJieQi(): string;
     getNextJieQi(): JieQi;
     getPrevJieQi(): JieQi;
+    getSolar(): Solar;
+  }
+
+  export class Solar {
+    static fromYmd(year: number, month: number, day: number): Solar;
+    getYear(): number;
+    getMonth(): number;
+    getDay(): number;
+    toYmd(): string;
   }
 
   export class LunarTime {

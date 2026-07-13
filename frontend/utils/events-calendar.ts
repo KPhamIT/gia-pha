@@ -118,13 +118,17 @@ export function formatLunarMonthLabelForDate(date: Date): string {
   return UI.EVENTS_CALENDAR_LUNAR_MONTH(formatLunarMonthName(lunarMonth));
 }
 
-export function formatEventDateWithLunar(iso?: string | null): string | null {
+export function formatEventDateWithLunar(
+  iso?: string | null,
+  isLunar = false,
+): string | null {
   const date = parseEventDate(iso);
   if (!date) return null;
   const solar = date.toLocaleDateString("vi-VN");
   const lunar = Lunar.fromDate(date);
-  const lunarPart = `${lunar.getDay()}/${Math.abs(lunar.getMonth())} Âm lịch`;
-  return `${solar} (${lunarPart})`;
+  const lunarPart = `${lunar.getDay()}/${Math.abs(lunar.getMonth())}/${lunar.getYear()} Âm lịch`;
+  if (isLunar) return `${lunarPart} (${solar} Dương lịch)`;
+  return `${solar} (${lunar.getDay()}/${Math.abs(lunar.getMonth())} Âm lịch)`;
 }
 
 export function formatMonthYearLabel(year: number, month: number): string {

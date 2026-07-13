@@ -18,7 +18,7 @@ export function useSystemAccess() {
   useEffect(() => {
     if (!loaded) return;
     if (!isSystem) {
-      router.replace("/book");
+      router.replace("/");
     }
   }, [isSystem, loaded, router]);
 

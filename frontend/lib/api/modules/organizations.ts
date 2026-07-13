@@ -11,6 +11,7 @@ export type OrganizationAccessLink = {
   createdAt: string;
   establishedYear?: string | null;
   clanAddress?: string | null;
+  clanMapEmbedUrl?: string | null;
   accessToken: string;
   publicAccessUrl: string;
 };
@@ -24,6 +25,7 @@ export type UpdateOrganizationInput = {
   name: string;
   establishedYear?: string;
   clanAddress?: string;
+  clanMapEmbedUrl?: string;
 };
 
 export type DemoOrganization = {
@@ -31,6 +33,7 @@ export type DemoOrganization = {
   name: string;
   establishedYear?: string | null;
   clanAddress?: string | null;
+  clanMapEmbedUrl?: string | null;
   accessToken: string;
   publicAccessUrl: string;
 };
@@ -84,6 +87,7 @@ export const organizations = {
         createdAt: string;
         establishedYear?: string | null;
         clanAddress?: string | null;
+        clanMapEmbedUrl?: string | null;
       }>(API_ROUTES.ORGANIZATION_BOOK_CONTEXT)
       .then((r) => r.data),
   getDemo: () =>

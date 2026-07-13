@@ -22,4 +22,10 @@ export class UpdateOrganizationDto {
   @IsString()
   @MaxLength(200)
   clanAddress?: string;
+
+  /** Google Maps iframe src (Share → Embed a map → copy src). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  clanMapEmbedUrl?: string;
 }

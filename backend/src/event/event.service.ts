@@ -78,6 +78,7 @@ export class EventService {
         description: dto.description,
         type: dto.type ?? 'INFO',
         eventDate: dto.eventDate ? new Date(dto.eventDate) : undefined,
+        isLunar: dto.isLunar ?? false,
         amountPerPerson: dto.amountPerPerson ?? 0,
         maleOnly: dto.maleOnly ?? false,
         organizationId:
@@ -149,6 +150,7 @@ export class EventService {
             : dto.eventDate
               ? new Date(dto.eventDate)
               : null,
+        isLunar: dto.isLunar,
         amountPerPerson: dto.amountPerPerson,
         maleOnly: dto.maleOnly,
       },

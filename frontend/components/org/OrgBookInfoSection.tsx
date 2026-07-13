@@ -25,12 +25,14 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
 
   const [establishedYear, setEstablishedYear] = useState("");
   const [clanAddress, setClanAddress] = useState("");
+  const [clanMapEmbedUrl, setClanMapEmbedUrl] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!org) return;
     setEstablishedYear(org.establishedYear ?? "");
     setClanAddress(org.clanAddress ?? "");
+    setClanMapEmbedUrl(org.clanMapEmbedUrl ?? "");
   }, [org]);
 
   const isDirty = useMemo(() => {
@@ -38,9 +40,10 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
     return (
       normalizeYearInput(establishedYear) !==
         normalizeYearInput(org.establishedYear ?? "") ||
-      clanAddress.trim() !== (org.clanAddress ?? "").trim()
+      clanAddress.trim() !== (org.clanAddress ?? "").trim() ||
+      clanMapEmbedUrl.trim() !== (org.clanMapEmbedUrl ?? "").trim()
     );
-  }, [org, establishedYear, clanAddress]);
+  }, [org, establishedYear, clanAddress, clanMapEmbedUrl]);
 
   const handleSave = async () => {
     if (!org || !isDirty) return;
@@ -50,6 +53,7 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
         name: org.name,
         establishedYear: normalizeYearInput(establishedYear),
         clanAddress: clanAddress.trim(),
+        clanMapEmbedUrl: clanMapEmbedUrl.trim(),
       });
       invalidateUserSettingsCache();
       invalidateOrgBookContext();
@@ -114,6 +118,18 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
           placeholder={UI.ORG_BOOK_CLAN_ADDRESS_PLACEHOLDER}
           onChange={(e) => setClanAddress(e.target.value)}
         />
+      </FormField>
+
+      <FormField label={UI.ORG_BOOK_MAP_EMBED_LABEL}>
+        <textarea
+          className={`${fieldInputClass} min-h-[5.5rem]`}
+          value={clanMapEmbedUrl}
+          placeholder={UI.ORG_BOOK_MAP_EMBED_PLACEHOLDER}
+          onChange={(e) => setClanMapEmbedUrl(e.target.value)}
+        />
+        <p className={`mt-1.5 text-xs ${isLanding ? AC.muted : BT.mutedOnLight}`}>
+          {UI.ORG_BOOK_MAP_EMBED_HINT}
+        </p>
       </FormField>
 
       <div className="flex justify-end">

@@ -70,12 +70,16 @@ function OrgRow({
     org.establishedYear ?? "",
   );
   const [clanAddress, setClanAddress] = useState(org.clanAddress ?? "");
+  const [clanMapEmbedUrl, setClanMapEmbedUrl] = useState(
+    org.clanMapEmbedUrl ?? "",
+  );
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setName(org.name);
     setEstablishedYear(org.establishedYear ?? "");
     setClanAddress(org.clanAddress ?? "");
+    setClanMapEmbedUrl(org.clanMapEmbedUrl ?? "");
   }, [org]);
 
   const isDirty = useMemo(
@@ -83,8 +87,9 @@ function OrgRow({
       name.trim() !== org.name ||
       normalizeYearInput(establishedYear) !==
         normalizeYearInput(org.establishedYear ?? "") ||
-      clanAddress.trim() !== (org.clanAddress ?? "").trim(),
-    [org, name, establishedYear, clanAddress],
+      clanAddress.trim() !== (org.clanAddress ?? "").trim() ||
+      clanMapEmbedUrl.trim() !== (org.clanMapEmbedUrl ?? "").trim(),
+    [org, name, establishedYear, clanAddress, clanMapEmbedUrl],
   );
 
   const handleSave = async () => {
@@ -95,6 +100,7 @@ function OrgRow({
         name: name.trim(),
         establishedYear: normalizeYearInput(establishedYear),
         clanAddress: clanAddress.trim(),
+        clanMapEmbedUrl: clanMapEmbedUrl.trim(),
       });
       invalidateUserSettingsCache();
       invalidateOrgBookContext();
@@ -158,6 +164,18 @@ function OrgRow({
           />
         </FormField>
       </div>
+
+      <FormField label={UI.ORG_BOOK_MAP_EMBED_LABEL}>
+        <textarea
+          className={`${fieldClass} min-h-[4.5rem]`}
+          value={clanMapEmbedUrl}
+          placeholder={UI.ORG_BOOK_MAP_EMBED_PLACEHOLDER}
+          onChange={(e) => setClanMapEmbedUrl(e.target.value)}
+        />
+        <p className={`mt-1 text-xs ${isLanding ? AC.muted : BT.mutedOnLight}`}>
+          {UI.ORG_BOOK_MAP_EMBED_HINT}
+        </p>
+      </FormField>
 
       <OrgPublicLinkRow
         variant={variant}

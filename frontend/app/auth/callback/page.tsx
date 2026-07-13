@@ -27,7 +27,7 @@ export default function AuthCallbackPage() {
         window.history.replaceState(null, "", window.location.pathname);
         await refreshAuth();
         await rebindPushAfterLogin();
-        router.replace("/book");
+        router.replace("/");
         return;
       }
 

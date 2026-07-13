@@ -22,7 +22,7 @@ type FacebookLoginButtonProps = {
 };
 
 export default function FacebookLoginButton({
-  redirectTo = "/book",
+  redirectTo = "/",
 }: FacebookLoginButtonProps) {
   const router = useRouter();
   const refreshAuth = useAuthStore((state) => state.refresh);

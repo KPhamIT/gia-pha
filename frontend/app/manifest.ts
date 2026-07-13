@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: SITE.siteName,
     short_name: SITE.brandName,
     description: SITE.description,
-    start_url: "/book",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     display_override: ["standalone", "fullscreen"],

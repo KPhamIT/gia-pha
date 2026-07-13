@@ -10,6 +10,8 @@ export type FamilyEvent = {
   description?: string | null;
   type: EventType;
   eventDate?: string | null;
+  /** true = ngày nhập theo âm lịch (eventDate vẫn là dương tương ứng). */
+  isLunar?: boolean;
   amountPerPerson: number;
   maleOnly: boolean;
   paidCount: number;
@@ -63,6 +65,7 @@ export type CreateEventInput = {
   description?: string;
   type: EventType;
   eventDate?: string;
+  isLunar?: boolean;
   amountPerPerson?: number;
   maleOnly?: boolean;
 };

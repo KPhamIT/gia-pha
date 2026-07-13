@@ -174,6 +174,10 @@ export const ACCOUNT_STRINGS = {
   ORG_BOOK_ESTABLISHED_YEAR_PLACEHOLDER: "Ví dụ: 2026",
   ORG_BOOK_CLAN_ADDRESS_LABEL: "Địa chỉ dòng họ",
   ORG_BOOK_CLAN_ADDRESS_PLACEHOLDER: "Ví dụ: Việt Nam",
+  ORG_BOOK_MAP_EMBED_LABEL: "Bản đồ Google Maps (embed)",
+  ORG_BOOK_MAP_EMBED_PLACEHOLDER: "Dán URL src của iframe từ Google Maps",
+  ORG_BOOK_MAP_EMBED_HINT:
+    "Google Maps → tìm địa điểm → Chia sẻ → Nhúng bản đồ → sao chép thuộc tính src trong thẻ iframe. Để trống sẽ tự tạo bản đồ từ địa chỉ dòng họ.",
   BTN_FEATURES: "Quyền",
 
   // Org public access link

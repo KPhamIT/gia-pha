@@ -14,6 +14,7 @@ const EMPTY_ORG_CONTEXT: OrgBookContext = {
   createdAt: null,
   establishedYear: null,
   clanAddress: null,
+  clanMapEmbedUrl: null,
 };
 
 function scopeKey(): string {
@@ -53,6 +54,7 @@ export async function fetchOrgBookContext(
         createdAt: org.createdAt,
         establishedYear: org.establishedYear ?? null,
         clanAddress: org.clanAddress ?? null,
+        clanMapEmbedUrl: org.clanMapEmbedUrl ?? null,
       };
       cacheScope = scope;
       return cache;

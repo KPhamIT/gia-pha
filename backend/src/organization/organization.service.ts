@@ -188,6 +188,9 @@ export class OrganizationService {
         ...(dto.clanAddress !== undefined && {
           clanAddress: trimOptional(dto.clanAddress),
         }),
+        ...(dto.clanMapEmbedUrl !== undefined && {
+          clanMapEmbedUrl: trimOptional(dto.clanMapEmbedUrl),
+        }),
       },
     });
     return this.withPublicAccess(org);
@@ -248,6 +251,7 @@ export class OrganizationService {
       name: org.name,
       establishedYear: org.establishedYear,
       clanAddress: org.clanAddress,
+      clanMapEmbedUrl: org.clanMapEmbedUrl,
       ...this.buildAccessFields(org.id),
     };
   }
@@ -330,6 +334,7 @@ export class OrganizationService {
       createdAt: org.createdAt.toISOString(),
       establishedYear: org.establishedYear,
       clanAddress: org.clanAddress,
+      clanMapEmbedUrl: org.clanMapEmbedUrl,
       accessToken: token,
       publicAccessUrl: this.buildPublicAccessUrl(org.id),
     };
@@ -340,12 +345,14 @@ export class OrganizationService {
     createdAt: Date;
     establishedYear: string | null;
     clanAddress: string | null;
+    clanMapEmbedUrl: string | null;
   }) {
     return {
       name: org.name,
       createdAt: org.createdAt.toISOString(),
       establishedYear: org.establishedYear,
       clanAddress: org.clanAddress,
+      clanMapEmbedUrl: org.clanMapEmbedUrl,
     };
   }
 
@@ -390,6 +397,7 @@ export class OrganizationService {
       name: org.name,
       establishedYear: org.establishedYear,
       clanAddress: org.clanAddress,
+      clanMapEmbedUrl: org.clanMapEmbedUrl,
       ...this.buildAccessFields(org.id),
     };
   }

@@ -40,6 +40,7 @@ export type OrgBookContext = {
   createdAt?: string | null;
   establishedYear?: string | null;
   clanAddress?: string | null;
+  clanMapEmbedUrl?: string | null;
 };
 
 export function resolveOrgClanAddress(org?: OrgBookContext | null): string {

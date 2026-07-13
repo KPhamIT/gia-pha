@@ -5,7 +5,8 @@ import Icon from "@/components/icons/Icon";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import { UI } from "@/lib/constants/ui-strings";
 import type { FamilyEvent } from "@/components/types/event-types";
-import { formatEventDate, formatVnd } from "./event-format";
+import { formatVnd } from "./event-format";
+import { formatEventDateWithLunar } from "@/utils/events-calendar";
 import { ET } from "./event-theme";
 
 type Props = {
@@ -27,7 +28,7 @@ export default function EventCard({
   onViewContribution,
   onViewDonation,
 }: Props) {
-  const date = formatEventDate(event.eventDate);
+  const date = formatEventDateWithLunar(event.eventDate, event.isLunar);
   const isContribution = event.type === "CONTRIBUTION";
 
   if (variant === "landing") {

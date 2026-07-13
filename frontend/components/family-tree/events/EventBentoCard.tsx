@@ -21,7 +21,7 @@ export default function EventBentoCard({
   onEdit,
 }: Props) {
   const isContribution = event.type === "CONTRIBUTION";
-  const dateLabel = formatEventDateWithLunar(event.eventDate);
+  const dateLabel = formatEventDateWithLunar(event.eventDate, event.isLunar);
   const locationHint = event.description?.trim().split("\n")[0] ?? null;
 
   return (

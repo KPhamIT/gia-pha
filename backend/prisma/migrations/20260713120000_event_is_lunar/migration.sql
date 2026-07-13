@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Event" ADD COLUMN "isLunar" BOOLEAN NOT NULL DEFAULT false;

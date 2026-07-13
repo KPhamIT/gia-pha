@@ -113,6 +113,7 @@ export type Organization = {
   name: string;
   establishedYear?: string | null;
   clanAddress?: string | null;
+  clanMapEmbedUrl?: string | null;
   createdAt?: string;
 };
 

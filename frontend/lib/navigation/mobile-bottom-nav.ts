@@ -54,3 +54,8 @@ export function resolveMobileBottomNavId(
   const item = MOBILE_BOTTOM_NAV_ITEMS.find((entry) => entry.match(pathname));
   return item?.id ?? null;
 }
+
+/** Sổ gia phả fullscreen — không hiện bottom nav. */
+export function shouldShowMobileBottomNav(pathname: string): boolean {
+  return !pathname.startsWith("/book");
+}

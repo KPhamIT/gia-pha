@@ -28,6 +28,10 @@ export class CreateEventDto {
   eventDate?: string;
 
   @IsOptional()
+  @IsBoolean()
+  isLunar?: boolean;
+
+  @IsOptional()
   @IsInt()
   @Min(0)
   amountPerPerson?: number;
