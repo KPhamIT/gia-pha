@@ -73,4 +73,10 @@ export const API_ROUTES = {
   ORGANIZATION_SUBSCRIPTION: (id: number) => `/organizations/${id}/subscription`,
   ORGANIZATION_EXPORT_ELIGIBILITY: (id: number) =>
     `/organizations/${id}/export-download-eligibility`,
+  APP_FUND: "/app-fund",
+  APP_FUND_SUBMIT_PAID: "/app-fund/submit-paid",
+  APP_FUND_ITEM: (id: number) => `/app-fund/${id}`,
+  APP_FUND_ADMIN: "/app-fund/admin",
+  APP_FUND_ADMIN_CONFIRM: (id: number) => `/app-fund/admin/${id}/confirm`,
+  APP_FUND_ADMIN_REJECT: (id: number) => `/app-fund/admin/${id}/reject`,
 };

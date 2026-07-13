@@ -13,6 +13,7 @@ import { blog } from "./modules/blog";
 import { media } from "./modules/media";
 import { billing } from "./modules/billing";
 import { contact } from "./modules/contact";
+import { appFund } from "./modules/app-fund";
 
 export const api = {
   auth,
@@ -30,5 +31,6 @@ export const api = {
   media,
   billing,
   contact,
+  appFund,
 };
 export type ApiType = typeof api;

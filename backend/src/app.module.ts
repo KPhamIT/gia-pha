@@ -19,6 +19,7 @@ import { BlogModule } from './blog/blog.module.js';
 import { MediaModule } from './media/media.module.js';
 import { BillingModule } from './billing/billing.module.js';
 import { ContactModule } from './contact/contact.module.js';
+import { AppFundModule } from './app-fund/app-fund.module.js';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ContactModule } from './contact/contact.module.js';
     MediaModule,
     BillingModule,
     ContactModule,
+    AppFundModule,
   ],
   controllers: [AppController],
   providers: [AppService],

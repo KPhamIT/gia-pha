@@ -39,6 +39,17 @@ export type CalendarDayCell = {
   isToday: boolean;
   lunarDayLabel: string;
   events: FamilyEvent[];
+  ceremonies: CalendarCeremonyMark[];
+};
+
+export type CalendarCeremonyMark = {
+  personId: number;
+  fullName: string;
+  lunarDateLabel: string;
+  deathLunarDay: number;
+  deathLunarMonth: number;
+  branch?: number | null;
+  generation?: number | null;
 };
 
 function toVietnameseGanZhi(ganZhi: string): string {
@@ -101,6 +112,14 @@ export function getEventsOnDate(
   });
 }
 
+export function getCeremoniesOnDate(
+  ceremonies: CalendarCeremonyMark[],
+  date: Date,
+): CalendarCeremonyMark[] {
+  const day = startOfDay(date);
+  return groupCeremoniesBySolarDate(ceremonies, day, day).get(dateKey(day)) ?? [];
+}
+
 export function getLunarDayLabel(date: Date): string {
   const lunar = Lunar.fromDate(date);
   const day = lunar.getDay();
@@ -139,12 +158,48 @@ export function formatMonthYearLabel(year: number, month: number): string {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+/** Ví dụ: "29 tháng 7 năm 2026". */
+export function formatSolarDayMonthYearLabel(date: Date): string {
+  return `${date.getDate()} tháng ${date.getMonth() + 1} năm ${date.getFullYear()}`;
+}
+
+/** Ví dụ: "13 tháng Sáu âm lịch". */
+export function formatLunarDayMonthFullLabel(date: Date): string {
+  const lunar = Lunar.fromDate(date);
+  const monthName = formatLunarMonthName(lunar.getMonth());
+  return `${lunar.getDay()} tháng ${monthName} âm lịch`;
+}
+
 export function formatShortMonthDay(date: Date): { month: string; day: string } {
   const month = date
     .toLocaleDateString("vi-VN", { month: "short" })
     .replace(".", "");
   const day = String(date.getDate()).padStart(2, "0");
   return { month, day };
+}
+
+/** Nhãn ngắn ngày/tháng âm, ví dụ "13/7 Âm lịch". */
+export function formatLunarDayMonthLabel(date: Date): string {
+  const lunar = Lunar.fromDate(date);
+  return `${lunar.getDay()}/${Math.abs(lunar.getMonth())} Âm lịch`;
+}
+
+/** Ngày dương của giỗ sắp tới: hôm nay + daysUntil. */
+export function solarDateFromDaysUntil(daysUntil: number, today = new Date()): Date {
+  const date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  date.setDate(date.getDate() + daysUntil);
+  return date;
+}
+
+/** Khoảng 42 ô lịch (CN→T7) của tháng dương. */
+export function monthGridRange(year: number, month: number): {
+  start: Date;
+  end: Date;
+} {
+  const firstOfMonth = new Date(year, month, 1);
+  const start = new Date(year, month, 1 - firstOfMonth.getDay());
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 41);
+  return { start, end };
 }
 
 export function groupEventsByDate(events: FamilyEvent[]): Map<string, FamilyEvent[]> {
@@ -160,10 +215,84 @@ export function groupEventsByDate(events: FamilyEvent[]): Map<string, FamilyEven
   return map;
 }
 
+type CeremonyDateInput = {
+  personId: number;
+  fullName: string;
+  lunarDateLabel: string;
+  deathLunarDay: number;
+  deathLunarMonth: number;
+  branch?: number | null;
+  generation?: number | null;
+};
+
+/** Gắn ngày giỗ (âm) vào các ngày dương trong khoảng lịch. */
+export function groupCeremoniesBySolarDate(
+  ceremonies: CeremonyDateInput[],
+  rangeStart: Date,
+  rangeEnd: Date,
+): Map<string, CalendarCeremonyMark[]> {
+  const map = new Map<string, CalendarCeremonyMark[]>();
+  const start = startOfDay(rangeStart).getTime();
+  const end = startOfDay(rangeEnd).getTime();
+  const lunarYears = lunarYearsOverlappingRange(rangeStart, rangeEnd);
+
+  for (const item of ceremonies) {
+    for (const lunarYear of lunarYears) {
+      const solar = lunarAnniversaryToSolar(
+        lunarYear,
+        item.deathLunarMonth,
+        item.deathLunarDay,
+      );
+      if (!solar) continue;
+      const time = solar.getTime();
+      if (time < start || time > end) continue;
+      const key = dateKey(solar);
+      const list = map.get(key) ?? [];
+      if (list.some((c) => c.personId === item.personId)) continue;
+      list.push({
+        personId: item.personId,
+        fullName: item.fullName,
+        lunarDateLabel: item.lunarDateLabel,
+        deathLunarDay: item.deathLunarDay,
+        deathLunarMonth: item.deathLunarMonth,
+        branch: item.branch ?? null,
+        generation: item.generation ?? null,
+      });
+      map.set(key, list);
+    }
+  }
+  return map;
+}
+
+function lunarYearsOverlappingRange(rangeStart: Date, rangeEnd: Date): number[] {
+  const startYear = Lunar.fromDate(rangeStart).getYear();
+  const endYear = Lunar.fromDate(rangeEnd).getYear();
+  const years = new Set<number>([startYear - 1, startYear, endYear, endYear + 1]);
+  return [...years].sort((a, b) => a - b);
+}
+
+function lunarAnniversaryToSolar(
+  lunarYear: number,
+  deathLunarMonth: number,
+  deathLunarDay: number,
+): Date | null {
+  try {
+    const solar = Lunar.fromYmd(
+      lunarYear,
+      deathLunarMonth,
+      deathLunarDay,
+    ).getSolar();
+    return new Date(solar.getYear(), solar.getMonth() - 1, solar.getDay());
+  } catch {
+    return null;
+  }
+}
+
 export function buildMonthCalendar(
   year: number,
   month: number,
   eventsByDate: Map<string, FamilyEvent[]>,
+  ceremoniesByDate: Map<string, CalendarCeremonyMark[]> = new Map(),
   today = new Date(),
 ): CalendarDayCell[] {
   const firstOfMonth = new Date(year, month, 1);
@@ -184,6 +313,7 @@ export function buildMonthCalendar(
       isToday: sameDay(date, today),
       lunarDayLabel: getLunarDayLabel(date),
       events: eventsByDate.get(key) ?? [],
+      ceremonies: ceremoniesByDate.get(key) ?? [],
     });
   }
 

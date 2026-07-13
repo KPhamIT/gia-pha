@@ -58,6 +58,13 @@ enum BillingOrderStatus {
   EXPIRED
 }
 
+enum AppFundContributionStatus {
+  AWAITING_REVIEW
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   email        String?  @unique
@@ -92,6 +99,8 @@ model User {
   ceremonyTemplates CeremonyTemplate[]
   reviewedBillingOrders BillingOrder[] @relation("BillingOrderReviewer")
   activatedSubscriptions OrganizationSubscription[] @relation("SubscriptionActivator")
+  appFundContributions OrgAppFundContribution[] @relation("AppFundCreator")
+  reviewedAppFundContributions OrgAppFundContribution[] @relation("AppFundReviewer")
 
   createdAt DateTime @default(now())
 
@@ -194,10 +203,39 @@ model Organization {
 
   billingOrders BillingOrder[]
   subscriptions OrganizationSubscription[]
+  appFundContributions OrgAppFundContribution[]
 
   createdAt DateTime @default(now())
 }
 
+/// Quyên góp phí dùng app cho dòng họ (chuyển khoản → SYSTEM duyệt).
+model OrgAppFundContribution {
+  id             Int     @id @default(autoincrement())
+  organizationId Int
+  personId       Int?
+  donorName      String
+  amount         Int     @default(0)
+  note           String? @db.Text
+  contactEmail   String?
+  createdByUserId Int?
+
+  status       AppFundContributionStatus @default(AWAITING_REVIEW)
+  transferCode String?                   @unique
+  reviewedAt   DateTime?
+  reviewedByUserId Int?
+  reviewNote   String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  person       Person?      @relation(fields: [personId], references: [id], onDelete: SetNull)
+  createdBy    User?        @relation("AppFundCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  reviewedBy   User?        @relation("AppFundReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, status, createdAt])
+  @@index([status, createdAt])
+}
 model BillingOrder {
   id             Int                @id @default(autoincrement())
   organizationId Int
@@ -445,6 +483,8 @@ model Person {
   contributions EventContribution[]
 
   donations EventDonation[]
+
+  appFundContributions OrgAppFundContribution[]
 
   notificationLogs NotificationLog[]
 

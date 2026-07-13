@@ -2,6 +2,7 @@
 
 import SystemSubpageShell from "@/components/system/SystemSubpageShell";
 import BillingOrdersSection from "@/components/system/BillingOrdersSection";
+import AppFundAdminSection from "@/components/system/AppFundAdminSection";
 import { UI } from "@/lib/constants/ui-strings";
 
 export default function SystemBillingPageView() {
@@ -12,6 +13,7 @@ export default function SystemBillingPageView() {
       subtitle={UI.BILLING_ADMIN_SUBTITLE}
     >
       <BillingOrdersSection variant="landing" />
+      <AppFundAdminSection />
     </SystemSubpageShell>
   );
 }

@@ -1,20 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/icons/Icon";
-import { api } from "@/lib/api";
 import type { UpcomingCeremonyItem } from "@/lib/api/modules/notifications";
 import { UI } from "@/lib/constants/ui-strings";
 import type { FamilyEvent } from "@/components/types/event-types";
-import { useAuthStore } from "@/store/authStore";
-import { formatShortMonthDay } from "@/utils/events-calendar";
+import {
+  formatLunarDayMonthLabel,
+  formatShortMonthDay,
+  parseEventDate,
+  solarDateFromDaysUntil,
+} from "@/utils/events-calendar";
 
-const UPCOMING_CEREMONY_LIMIT = 3;
-const UPCOMING_CEREMONY_MAX_DAYS = 366;
+const LIST_CEREMONY_LIMIT = 3;
 
 type Props = {
   events: FamilyEvent[];
+  ceremonies: UpcomingCeremonyItem[];
+  isLoggedIn: boolean;
   highlightEventId?: number | null;
   onSelectEvent: (event: FamilyEvent) => void;
   onViewAll: () => void;
@@ -22,35 +25,13 @@ type Props = {
 
 export default function EventsUpcomingList({
   events,
+  ceremonies,
+  isLoggedIn,
   highlightEventId,
   onSelectEvent,
   onViewAll,
 }: Props) {
-  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
-  const authLoaded = useAuthStore((s) => s.loaded);
-  const [ceremonies, setCeremonies] = useState<UpcomingCeremonyItem[]>([]);
-
-  useEffect(() => {
-    if (!authLoaded || !isLoggedIn) {
-      setCeremonies([]);
-      return;
-    }
-    let cancelled = false;
-    api.notifications
-      .upcoming({
-        maxDays: UPCOMING_CEREMONY_MAX_DAYS,
-        limit: UPCOMING_CEREMONY_LIMIT,
-      })
-      .then((items) => {
-        if (!cancelled) setCeremonies(items);
-      })
-      .catch(() => {
-        if (!cancelled) setCeremonies([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [authLoaded, isLoggedIn]);
+  const listCeremonies = ceremonies.slice(0, LIST_CEREMONY_LIMIT);
 
   return (
     <div className="rounded-xl border border-[#d4c3c1] bg-[#f6f3ee] p-5 md:p-6">
@@ -99,7 +80,7 @@ export default function EventsUpcomingList({
       </button>
 
       {isLoggedIn ? (
-        <UpcomingCeremoniesSection ceremonies={ceremonies} />
+        <UpcomingCeremoniesSection ceremonies={listCeremonies} />
       ) : null}
     </div>
   );
@@ -159,13 +140,15 @@ function UpcomingRow({
   showDivider: boolean;
   onSelect: () => void;
 }) {
-  const date = event.eventDate ? new Date(event.eventDate) : null;
+  const date = parseEventDate(event.eventDate);
   const dateParts = date ? formatShortMonthDay(date) : null;
-  const subtitle =
+  const lunarLabel = date ? formatLunarDayMonthLabel(date) : null;
+  const baseSubtitle =
     event.description?.trim().split("\n")[0] ??
     (event.type === "CONTRIBUTION"
       ? UI.EVENT_BADGE_CONTRIBUTION
       : UI.EVENT_BADGE_INFO);
+  const subtitle = [lunarLabel, baseSubtitle].filter(Boolean).join(" · ");
 
   return (
     <button
@@ -208,10 +191,9 @@ function CeremonyRow({
     item.branch ?? null,
     item.generation ?? null,
   );
-  const day = String(Math.abs(item.deathLunarDay)).padStart(2, "0");
-  const monthAbs = Math.abs(item.deathLunarMonth);
-  const monthLabel =
-    item.deathLunarMonth < 0 ? `N${monthAbs}` : `T${monthAbs}`;
+  const solarParts = formatShortMonthDay(
+    solarDateFromDaysUntil(item.daysUntil),
+  );
 
   return (
     <Link
@@ -222,9 +204,9 @@ function CeremonyRow({
     >
       <div className="flex h-12 min-w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-[#ebe8e3] px-1.5 font-bold text-[#504443]">
         <span className="text-[10px] font-semibold uppercase leading-tight">
-          {monthLabel}
+          {solarParts.month}
         </span>
-        <span className="text-lg leading-none">{day}</span>
+        <span className="text-lg leading-none">{solarParts.day}</span>
       </div>
       <div className="min-w-0">
         <h4 className="truncate text-sm font-semibold text-[#321716]">

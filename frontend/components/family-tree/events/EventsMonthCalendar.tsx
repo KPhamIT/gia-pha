@@ -3,20 +3,24 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Icon from "@/components/icons/Icon";
 import { UI } from "@/lib/constants/ui-strings";
+import type { UpcomingCeremonyItem } from "@/lib/api/modules/notifications";
 import type { FamilyEvent } from "@/components/types/event-types";
 import {
   WEEKDAY_LABELS,
   buildMonthCalendar,
   dateKey,
+  formatLunarDayMonthFullLabel,
   formatLunarYearBadge,
-  formatLunarMonthLabelForDate,
-  formatMonthYearLabel,
+  formatSolarDayMonthYearLabel,
+  groupCeremoniesBySolarDate,
   groupEventsByDate,
+  monthGridRange,
   sameCalendarDay,
 } from "@/utils/events-calendar";
 
 type Props = {
   events: FamilyEvent[];
+  ceremonies?: UpcomingCeremonyItem[];
   selectedDate: Date | null;
   onSelectDate: (date: Date) => void;
   viewMonth?: Date;
@@ -24,6 +28,7 @@ type Props = {
 
 export default function EventsMonthCalendar({
   events,
+  ceremonies = [],
   selectedDate,
   onSelectDate,
   viewMonth: viewMonthProp,
@@ -39,14 +44,28 @@ export default function EventsMonthCalendar({
 
   useEffect(() => {
     if (!viewMonthProp) return;
-    setViewDate(new Date(viewMonthProp.getFullYear(), viewMonthProp.getMonth(), 1));
+    setViewDate(
+      new Date(viewMonthProp.getFullYear(), viewMonthProp.getMonth(), 1),
+    );
   }, [viewMonthProp]);
 
   const eventsByDate = useMemo(() => groupEventsByDate(events), [events]);
+
+  const ceremoniesByDate = useMemo(() => {
+    const { start, end } = monthGridRange(displayYear, displayMonth);
+    return groupCeremoniesBySolarDate(ceremonies, start, end);
+  }, [ceremonies, displayYear, displayMonth]);
+
   const cells = useMemo(
     () =>
-      buildMonthCalendar(displayYear, displayMonth, eventsByDate, today),
-    [displayYear, displayMonth, eventsByDate, today],
+      buildMonthCalendar(
+        displayYear,
+        displayMonth,
+        eventsByDate,
+        ceremoniesByDate,
+        today,
+      ),
+    [displayYear, displayMonth, eventsByDate, ceremoniesByDate, today],
   );
 
   const shiftMonth = (delta: number) => {
@@ -59,7 +78,9 @@ export default function EventsMonthCalendar({
   const monthBadge = formatLunarYearBadge(
     new Date(displayYear, displayMonth, 1),
   );
-  const lunarMonthLabel = formatLunarMonthLabelForDate(selectedDate ?? today);
+  const focusDate = selectedDate ?? today;
+  const solarDayLabel = formatSolarDayMonthYearLabel(focusDate);
+  const lunarDayLabel = formatLunarDayMonthFullLabel(focusDate);
 
   return (
     <div className="overflow-hidden rounded-xl border border-[#d4c3c1] bg-white shadow-sm">
@@ -67,9 +88,9 @@ export default function EventsMonthCalendar({
         <div className="flex flex-wrap items-center gap-3">
           <div className="min-w-0">
             <h2 className="font-serif text-xl font-semibold text-[#321716] md:text-2xl">
-              {formatMonthYearLabel(displayYear, displayMonth)}
+              {solarDayLabel}
             </h2>
-            <p className="mt-0.5 text-sm text-[#827472]">{lunarMonthLabel}</p>
+            <p className="mt-0.5 text-sm text-[#827472]">{lunarDayLabel}</p>
           </div>
           <span className="rounded-full bg-[#ffdcc5] px-3 py-1 text-sm font-semibold italic text-[#301400]">
             {monthBadge}
@@ -114,9 +135,11 @@ export default function EventsMonthCalendar({
         <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-[#d4c3c1] bg-[#d4c3c1]">
           {cells.map((cell) => {
             const hasEvents = cell.events.length > 0;
+            const hasCeremonies = cell.ceremonies.length > 0;
             const isSelected =
               selectedDate != null && sameCalendarDay(cell.date, selectedDate);
             const primaryEvent = cell.events[0];
+            const primaryCeremony = cell.ceremonies[0];
 
             return (
               <button
@@ -149,13 +172,25 @@ export default function EventsMonthCalendar({
                     {cell.lunarDayLabel}
                   </span>
                 </div>
+                {primaryCeremony ? (
+                  <div className="mt-1 truncate rounded border border-[#7f1d1d]/25 bg-[#7f1d1d]/10 p-0.5 text-[10px] font-semibold text-[#7f1d1d]">
+                    {UI.EVENTS_CALENDAR_CEREMONY_MARK} {primaryCeremony.fullName}
+                  </div>
+                ) : null}
                 {primaryEvent ? (
                   <div className="mt-1 truncate rounded border border-[#944a00]/20 bg-[#944a00]/10 p-0.5 text-[10px] font-semibold text-[#944a00]">
                     {primaryEvent.title}
                   </div>
                 ) : null}
-                {hasEvents ? (
-                  <span className="absolute bottom-1 right-1 h-1.5 w-1.5 rounded-full bg-[#944a00]" />
+                {hasEvents || hasCeremonies ? (
+                  <span className="absolute bottom-1 right-1 flex gap-0.5">
+                    {hasCeremonies ? (
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#7f1d1d]" />
+                    ) : null}
+                    {hasEvents ? (
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#944a00]" />
+                    ) : null}
+                  </span>
                 ) : null}
               </button>
             );

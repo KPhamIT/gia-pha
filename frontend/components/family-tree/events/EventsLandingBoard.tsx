@@ -6,6 +6,7 @@ import { UI } from "@/lib/constants/ui-strings";
 import type { FamilyEvent } from "@/components/types/event-types";
 import {
   formatSelectedDayLabel,
+  getCeremoniesOnDate,
   getEventsInMonth,
   getEventsOnDate,
   getUpcomingEvents,
@@ -15,10 +16,13 @@ import {
 import EventsPageHero from "./EventsPageHero";
 import EventsMonthCalendar from "./EventsMonthCalendar";
 import EventBentoCard from "./EventBentoCard";
+import CeremonyDayCard from "./CeremonyDayCard";
 import EventsUpcomingList from "./EventsUpcomingList";
 import EventsDonationPromo from "./EventsDonationPromo";
+import EventsAppFundPromo from "./EventsAppFundPromo";
 import EventsLocationCard from "./EventsLocationCard";
 import EventCard from "./EventCard";
+import { useUpcomingCeremonies } from "@/hooks/useUpcomingCeremonies";
 
 type Props = {
   events: FamilyEvent[];
@@ -31,6 +35,8 @@ type Props = {
   onDelete: (event: FamilyEvent) => void;
   onViewContribution: (event: FamilyEvent) => void;
   onViewDonation: (event: FamilyEvent) => void;
+  onOpenAppFund?: (mode: "donate" | "donors") => void;
+  appFundDisabled?: boolean;
 };
 
 export default function EventsLandingBoard({
@@ -44,12 +50,15 @@ export default function EventsLandingBoard({
   onDelete,
   onViewContribution,
   onViewDonation,
+  onOpenAppFund,
+  appFundDisabled,
 }: Props) {
   const allEventsRef = useRef<HTMLDivElement>(null);
   const featuredSectionRef = useRef<HTMLDivElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showAllEvents, setShowAllEvents] = useState(false);
   const [focusEventId, setFocusEventId] = useState<number | null>(null);
+  const { ceremonies, isLoggedIn } = useUpcomingCeremonies();
 
   const today = useMemo(() => new Date(), []);
   const viewMonth = selectedDate ?? today;
@@ -68,6 +77,14 @@ export default function EventsLandingBoard({
     if (selectedDate) return getEventsOnDate(events, selectedDate);
     return monthEvents.slice(0, 2);
   }, [events, monthEvents, selectedDate]);
+
+  const featuredCeremonies = useMemo(() => {
+    if (!selectedDate) return [];
+    return getCeremoniesOnDate(ceremonies, selectedDate);
+  }, [ceremonies, selectedDate]);
+
+  const hasFeaturedContent =
+    featuredEvents.length > 0 || featuredCeremonies.length > 0;
 
   const upcomingEvents = useMemo(
     () => getUpcomingEvents(events, 3, today),
@@ -153,6 +170,7 @@ export default function EventsLandingBoard({
           <div className="space-y-6 lg:col-span-8">
             <EventsMonthCalendar
               events={events}
+              ceremonies={ceremonies}
               selectedDate={selectedDate}
               onSelectDate={handleSelectDate}
             />
@@ -175,23 +193,46 @@ export default function EventsLandingBoard({
                 ) : null}
               </div>
 
-              {featuredEvents.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {featuredEvents.map((event) => (
-                    <EventBentoCard
-                      key={event.id}
-                      event={event}
-                      canEdit={canEdit}
-                      onEdit={() => onEdit(event)}
-                      onViewContribution={() => onViewContribution(event)}
-                      onViewDonation={() => onViewDonation(event)}
-                    />
-                  ))}
+              {hasFeaturedContent ? (
+                <div className="space-y-4">
+                  {featuredCeremonies.length > 0 ? (
+                    <div className="space-y-3">
+                      {selectedDate ? (
+                        <h3 className="text-sm font-semibold uppercase tracking-wide text-[#7f1d1d]">
+                          {UI.EVENTS_DAY_CEREMONIES_TITLE}
+                        </h3>
+                      ) : null}
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {featuredCeremonies.map((ceremony) => (
+                          <CeremonyDayCard
+                            key={ceremony.personId}
+                            ceremony={ceremony}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                  {featuredEvents.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      {featuredEvents.map((event) => (
+                        <EventBentoCard
+                          key={event.id}
+                          event={event}
+                          canEdit={canEdit}
+                          onEdit={() => onEdit(event)}
+                          onViewContribution={() => onViewContribution(event)}
+                          onViewDonation={() => onViewDonation(event)}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className="rounded-xl border border-[#d4c3c1] bg-white p-6 text-center shadow-sm">
                   <p className="text-sm text-[#504443]">
-                    {selectedDate ? UI.EVENTS_DAY_EMPTY : UI.EVENTS_EMPTY}
+                    {selectedDate
+                      ? UI.EVENTS_DAY_EMPTY_BOTH
+                      : UI.EVENTS_EMPTY}
                   </p>
                   {selectedDate && canEdit ? (
                     <button
@@ -210,6 +251,8 @@ export default function EventsLandingBoard({
           <aside className="space-y-6 lg:col-span-4">
             <EventsUpcomingList
               events={upcomingEvents}
+              ceremonies={ceremonies}
+              isLoggedIn={isLoggedIn}
               highlightEventId={focusEventId}
               onSelectEvent={focusEvent}
               onViewAll={scrollToAllEvents}
@@ -220,6 +263,12 @@ export default function EventsLandingBoard({
                 if (donationTarget) onViewDonation(donationTarget);
               }}
             />
+            {onOpenAppFund ? (
+              <EventsAppFundPromo
+                onOpen={onOpenAppFund}
+                disabled={appFundDisabled}
+              />
+            ) : null}
             <EventsLocationCard />
           </aside>
         </div>

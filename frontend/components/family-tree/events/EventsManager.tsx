@@ -20,7 +20,10 @@ import EventContributionView from "./EventContributionView";
 import EventDonationsView from "./EventDonationsView";
 import EventCard from "./EventCard";
 import EventsLandingBoard from "./EventsLandingBoard";
+import AppFundSheet from "./AppFundSheet";
 import { ET } from "./event-theme";
+import { useAuthStore } from "@/store/authStore";
+import { useAuthGateStore } from "@/store/authGateStore";
 
 type Props = {
   persons: Person[];
@@ -55,6 +58,11 @@ export default function EventsManager({
   const [contributionEvent, setContributionEvent] =
     useState<FamilyEvent | null>(null);
   const [donationEvent, setDonationEvent] = useState<FamilyEvent | null>(null);
+  const [appFundOpen, setAppFundOpen] = useState(false);
+  const [appFundMode, setAppFundMode] = useState<"donate" | "donors">("donate");
+  const organizationId = useAuthStore((s) => s.user?.organizationId ?? null);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const openAuthGate = useAuthGateStore((s) => s.open);
 
   const openCreate = useCallback(() => {
     setEditing(null);
@@ -152,6 +160,16 @@ export default function EventsManager({
           onDelete={(event) => void handleDelete(event)}
           onViewContribution={setContributionEvent}
           onViewDonation={setDonationEvent}
+          onOpenAppFund={(mode) => {
+            if (!isLoggedIn) {
+              openAuthGate("login");
+              return;
+            }
+            if (organizationId == null) return;
+            setAppFundMode(mode);
+            setAppFundOpen(true);
+          }}
+          appFundDisabled={!isLoggedIn || organizationId == null}
         />
       ) : (
         <FullScreenSheet
@@ -194,6 +212,14 @@ export default function EventsManager({
           canEdit={canEdit}
           onClose={() => setDonationEvent(null)}
           onEventPatched={(patch) => patchEvent(donationEvent.id, patch)}
+        />
+      ) : null}
+
+      {appFundOpen && organizationId != null ? (
+        <AppFundSheet
+          organizationId={organizationId}
+          initialMode={appFundMode}
+          onClose={() => setAppFundOpen(false)}
         />
       ) : null}
     </>
