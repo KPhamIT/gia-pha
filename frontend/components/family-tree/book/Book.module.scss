@@ -49,9 +49,14 @@ $text-placeholder: #a8a29e;
 }
 
 // ---------- Page border frames (decorative, overlay only) ----------
+// inset = lề giấy → đường border (override bằng --page-edge-* trên .paper)
 .frame {
   position: absolute;
-  inset: 10px;
+  inset:
+    var(--page-edge-top, 10px)
+    var(--page-edge-right, 10px)
+    var(--page-edge-bottom, 10px)
+    var(--page-edge-left, 10px);
   z-index: 6;
   pointer-events: none;
   border-radius: 3px;
@@ -141,7 +146,11 @@ $text-placeholder: #a8a29e;
 }
 
 .frameCloud {
-  inset: 12px;
+  inset:
+    var(--page-edge-top, 12px)
+    var(--page-edge-right, 12px)
+    var(--page-edge-bottom, 12px)
+    var(--page-edge-left, 12px);
   border-radius: 14px;
   border: 1.5px solid channel($stone, 0.4);
   box-shadow: 0 0 0 4px rgb(255 255 255 / 0.35) inset;
@@ -157,7 +166,11 @@ $text-placeholder: #a8a29e;
 
 .frameModern {
   border: none;
-  inset: 12px;
+  inset:
+    var(--page-edge-top, 12px)
+    var(--page-edge-right, 12px)
+    var(--page-edge-bottom, 12px)
+    var(--page-edge-left, 12px);
 
   &::before,
   &::after {

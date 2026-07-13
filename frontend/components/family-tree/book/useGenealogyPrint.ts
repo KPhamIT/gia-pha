@@ -38,10 +38,11 @@ async function waitForPrintStack(
 /**
  * Handles printing the book: a single fitted current page, or an expanded
  * stack of every page. `onBeforePrintAll` caches unsaved edits first.
+ * `printPageCount` = số trang PDF thật (đã tính duplex nếu có).
  */
 export function useGenealogyPrint(
   onBeforePrintAll: () => void,
-  pageCount: number,
+  printPageCount: number,
   coverFontId: string,
 ) {
   const viewerRootRef = useRef<HTMLDivElement>(null);
@@ -69,7 +70,7 @@ export function useGenealogyPrint(
 
       if (printAll) {
         resetGenealogyPrintFit(root);
-        await waitForPrintStack(root, pageCount);
+        await waitForPrintStack(root, printPageCount);
         fitGenealogyPagesForPrint(root, PRINT_STACK_SELECTOR);
       } else {
         resetGenealogyPrintFit(root);
@@ -79,7 +80,7 @@ export function useGenealogyPrint(
       await nextFrame();
       window.print();
     },
-    [coverFontId, pageCount],
+    [coverFontId, printPageCount],
   );
 
   const handlePrint = useCallback(() => {

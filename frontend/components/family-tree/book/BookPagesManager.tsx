@@ -8,7 +8,12 @@ import { LAYOUT } from "@/lib/constants/ui-layout";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
 import type { Person } from "@/components/types/family-tree-types";
+import { toRomanNumeral } from "@/utils/roman-numeral";
 import type { BookPageConfig } from "./book-page-config";
+import {
+  applyGenerationVisibility,
+  listPersonGenerations,
+} from "./book-page-generation";
 import BookPageRow from "./BookPageRow";
 
 type Props = {
@@ -39,6 +44,11 @@ export default function BookPagesManager({
   onClose,
 }: Props) {
   const [draft, setDraft] = useState<BookPageConfig>(pageConfig);
+  const generations = useMemo(() => listPersonGenerations(persons), [persons]);
+  const [fromGen, setFromGen] = useState(() => generations[0] ?? 0);
+  const [toGen, setToGen] = useState(
+    () => generations[generations.length - 1] ?? 0,
+  );
 
   const isDirty = useMemo(
     () => JSON.stringify(draft) !== JSON.stringify(pageConfig),
@@ -77,6 +87,16 @@ export default function BookPagesManager({
       }
       return next;
     });
+    if (generations.length > 0) {
+      setFromGen(generations[0]);
+      setToGen(generations[generations.length - 1]);
+    }
+  };
+
+  const applyGenerationRange = () => {
+    setDraft((prev) =>
+      applyGenerationVisibility(persons, prev, fromGen, toGen),
+    );
   };
 
   const resetOrder = () => {
@@ -102,6 +122,9 @@ export default function BookPagesManager({
     if (isDirty && !window.confirm(UI.BOOK_PAGES_DISCARD_CONFIRM)) return;
     onClose();
   };
+
+  const genSelectClass =
+    "rounded-lg border border-white/20 bg-white/10 px-2 py-1.5 text-xs font-medium text-amber-50 outline-none";
 
   return (
     <BookShell zClass="z-[60]">
@@ -140,20 +163,75 @@ export default function BookPagesManager({
 
       <div className={`${LAYOUT.sheetBody} px-3 md:px-6`}>
         <div className="mx-auto max-w-2xl pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-6">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <p className="text-xs text-amber-100/70">{UI.BOOK_PAGES_HINT}</p>
-            <div className="flex shrink-0 gap-2">
-              <button type="button" onClick={showAll} className={BT.pillOnDark}>
-                {UI.BOOK_PAGES_SHOW_ALL}
-              </button>
-              <button
-                type="button"
-                onClick={resetOrder}
-                className={BT.pillOnDark}
-              >
-                {UI.BOOK_PAGES_RESET_ORDER}
-              </button>
+          <div className="mb-3 flex flex-col gap-3">
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-xs text-amber-100/70">{UI.BOOK_PAGES_HINT}</p>
+              <div className="flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={showAll}
+                  className={BT.pillOnDark}
+                >
+                  {UI.BOOK_PAGES_SHOW_ALL}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetOrder}
+                  className={BT.pillOnDark}
+                >
+                  {UI.BOOK_PAGES_RESET_ORDER}
+                </button>
+              </div>
             </div>
+
+            {generations.length > 0 ? (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <div className="flex flex-wrap items-end gap-2">
+                  <label className="min-w-[5.5rem] flex-1">
+                    <span className="mb-1 block text-[11px] text-amber-100/70">
+                      {UI.BOOK_PAGES_GEN_FROM}
+                    </span>
+                    <select
+                      className={`${genSelectClass} w-full`}
+                      value={fromGen}
+                      onChange={(e) => setFromGen(Number(e.target.value))}
+                    >
+                      {generations.map((g) => (
+                        <option key={g} value={g} className="text-slate-900">
+                          {UI.BOOK_GENERATION} {toRomanNumeral(g)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="min-w-[5.5rem] flex-1">
+                    <span className="mb-1 block text-[11px] text-amber-100/70">
+                      {UI.BOOK_PAGES_GEN_TO}
+                    </span>
+                    <select
+                      className={`${genSelectClass} w-full`}
+                      value={toGen}
+                      onChange={(e) => setToGen(Number(e.target.value))}
+                    >
+                      {generations.map((g) => (
+                        <option key={g} value={g} className="text-slate-900">
+                          {UI.BOOK_GENERATION} {toRomanNumeral(g)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={applyGenerationRange}
+                    className={BT.pillOnDark}
+                  >
+                    {UI.BOOK_PAGES_GEN_APPLY}
+                  </button>
+                </div>
+                <p className="mt-2 text-[11px] text-amber-100/55">
+                  {UI.BOOK_PAGES_GEN_HINT}
+                </p>
+              </div>
+            ) : null}
           </div>
 
           {persons.length === 0 ? (

@@ -242,7 +242,17 @@
   display: flex;
   flex-direction: column;
   font-family: var(--font-noto-serif), serif;
-  padding: 5mm 7mm;
+  /* --page-edge-*: mép giấy → đường border; padding = edge + khoảng chữ trong khung */
+  --page-edge-top: 2.5mm;
+  --page-edge-right: 4mm;
+  --page-edge-bottom: 2.5mm;
+  --page-edge-left: 6mm;
+  --page-content-gap: 2.5mm;
+  padding:
+    calc(var(--page-edge-top) + var(--page-content-gap))
+    calc(var(--page-edge-right) + var(--page-content-gap))
+    calc(var(--page-edge-bottom) + var(--page-content-gap))
+    calc(var(--page-edge-left) + var(--page-content-gap));
   font-size: 9.5pt;
   line-height: 1.5;
   box-sizing: border-box;
@@ -529,10 +539,27 @@
   height: 297mm !important;
   max-height: 297mm !important;
   min-height: 297mm !important;
-  padding: 10mm 12mm !important;
+  /* Lề in = mép giấy → đường border */
+  --page-edge-top: 15mm;
+  --page-edge-right: 15mm; /* outside */
+  --page-edge-bottom: 18mm;
+  --page-edge-left: 25mm; /* inside / gáy */
+  --page-content-gap: 3mm;
+  padding:
+    calc(var(--page-edge-top) + var(--page-content-gap))
+    calc(var(--page-edge-right) + var(--page-content-gap))
+    calc(var(--page-edge-bottom) + var(--page-content-gap))
+    calc(var(--page-edge-left) + var(--page-content-gap)) !important;
   font-size: 9.5pt;
   line-height: 1.25;
   box-sizing: border-box !important;
+}
+
+.viewerRoot.printPreparing .paper[data-genealogy-print-back],
+.viewerRoot.printAllMode .printAllStack .paper[data-genealogy-print-back] {
+  /* Mặt sau: gáy bên phải khi lật tờ */
+  --page-edge-right: 25mm;
+  --page-edge-left: 15mm;
 }
 
 .viewerRoot.printPreparing .paperContent,
@@ -731,9 +758,9 @@
     display: block !important;
     width: 210mm !important;
     max-width: 210mm !important;
-    height: 297mm !important;
-    max-height: 297mm !important;
-    overflow: hidden !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -749,6 +776,11 @@
     break-inside: avoid !important;
     margin: 0 !important;
     box-sizing: border-box !important;
+  }
+
+  .viewerRoot:not(.printAllMode) .printSinglePage + .printSinglePage {
+    page-break-before: always !important;
+    break-before: page !important;
   }
 
   .viewerRoot:not(.printAllMode) [data-genealogy-cover] {
@@ -848,7 +880,17 @@
     overflow: hidden !important;
     break-inside: avoid;
     page-break-inside: avoid;
-    padding: 10mm 12mm !important;
+    /* Lề in = mép giấy → đường border */
+    --page-edge-top: 15mm;
+    --page-edge-right: 15mm;
+    --page-edge-bottom: 18mm;
+    --page-edge-left: 25mm;
+    --page-content-gap: 3mm;
+    padding:
+      calc(var(--page-edge-top) + var(--page-content-gap))
+      calc(var(--page-edge-right) + var(--page-content-gap))
+      calc(var(--page-edge-bottom) + var(--page-content-gap))
+      calc(var(--page-edge-left) + var(--page-content-gap)) !important;
     font-size: 9.5pt;
     line-height: 1.25;
     transform: none !important;
@@ -861,6 +903,12 @@
     color: #000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  /* Mặt sau (duplex): gáy bên phải khi lật tờ */
+  .paper[data-genealogy-print-back] {
+    --page-edge-right: 25mm;
+    --page-edge-left: 15mm;
   }
 
   .paper:not(.paperWithImage) {

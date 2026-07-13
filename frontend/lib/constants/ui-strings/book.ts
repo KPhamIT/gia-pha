@@ -53,6 +53,11 @@ export const BOOK_STRINGS = {
   BOOK_SHOW_PAGE_NUMBERS_OFF: "Ẩn số trang — hiện tên dòng họ",
   BOOK_SHOW_PAGE_NUMBERS_HINT:
     "Ẩn khi muốn tự đánh số / sắp xếp lại sau khi in. Chân trang sẽ hiện tên dòng họ.",
+  BOOK_PRINT_SIDES_LABEL: "Cách in trang người",
+  BOOK_PRINT_SIDES_SIMPLEX: "Một mặt — chỉ thông tin",
+  BOOK_PRINT_SIDES_DUPLEX: "Hai mặt — mặt sau là nền",
+  BOOK_PRINT_SIDES_HINT:
+    "Hai mặt: sau mỗi người thêm một trang nền. Khi in, bật In hai mặt trên máy in (lật cạnh dài).",
   BOOK_OPEN_STYLE: "Tùy chỉnh kiểu trình bày",
   BOOK_SAVED_HINT: "Tự động lưu vào tài khoản",
 
@@ -69,6 +74,11 @@ export const BOOK_STRINGS = {
     `Hiển thị ${visible} / ${total} người`,
   BOOK_PAGES_SHOW_ALL: "Hiện hết",
   BOOK_PAGES_RESET_ORDER: "Đặt lại",
+  BOOK_PAGES_GEN_FROM: "Từ đời",
+  BOOK_PAGES_GEN_TO: "Đến đời",
+  BOOK_PAGES_GEN_APPLY: "Áp dụng đời",
+  BOOK_PAGES_GEN_HINT:
+    "Ẩn người ngoài khoảng đời đã chọn (người chưa có đời vẫn hiện).",
   BOOK_PAGES_EMPTY: "Chưa có người nào trong gia phả.",
   BOOK_PAGES_SAVE: "Lưu thay đổi",
   BOOK_PAGES_SAVED: "Đã lưu",

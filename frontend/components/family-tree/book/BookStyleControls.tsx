@@ -161,7 +161,7 @@ export default function BookStyleControls({
           </select>
         </label>
 
-        <label className="block">
+        <label className="mb-3 block">
           <span className="mb-1 block text-xs font-medium text-slate-500">
             {UI.BOOK_SHOW_PAGE_NUMBERS_LABEL}
           </span>
@@ -177,6 +177,28 @@ export default function BookStyleControls({
           </select>
           <span className="mt-1 block text-[11px] text-slate-400">
             {UI.BOOK_SHOW_PAGE_NUMBERS_HINT}
+          </span>
+        </label>
+
+        <label className="mt-3 block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">
+            {UI.BOOK_PRINT_SIDES_LABEL}
+          </span>
+          <select
+            className={selectClass}
+            value={settings.printSides}
+            onChange={(e) =>
+              onChange({
+                printSides:
+                  e.target.value === "duplex" ? "duplex" : "simplex",
+              })
+            }
+          >
+            <option value="simplex">{UI.BOOK_PRINT_SIDES_SIMPLEX}</option>
+            <option value="duplex">{UI.BOOK_PRINT_SIDES_DUPLEX}</option>
+          </select>
+          <span className="mt-1 block text-[11px] text-slate-400">
+            {UI.BOOK_PRINT_SIDES_HINT}
           </span>
         </label>
 

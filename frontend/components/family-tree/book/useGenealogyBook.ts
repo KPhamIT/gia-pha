@@ -12,6 +12,7 @@ import { useBookSettings } from "./useBookSettings";
 import { useBookFlip } from "./useBookFlip";
 import { useGenealogyPrint } from "./useGenealogyPrint";
 import { loadCalligraphyFont } from "./calligraphy-font-loader";
+import { countPrintAllPages } from "./print-sides";
 
 function deferPersonDetailsLoad(loadAll: () => Promise<void>): void {
   if (typeof requestIdleCallback === "function") {
@@ -48,11 +49,15 @@ export function useGenealogyBook(persons: Person[]) {
   const leaves = useMemo(() => buildLeaves(visiblePersons), [visiblePersons]);
   const totalLeaves = leaves.length;
   const personCount = visiblePersons.length;
+  const printPageCount = useMemo(
+    () => countPrintAllPages(leaves, settings.printSides),
+    [leaves, settings.printSides],
+  );
 
   const flipApi = useBookFlip(totalLeaves, () => {});
   const printApi = useGenealogyPrint(
     () => {},
-    totalLeaves,
+    printPageCount,
     settings.coverFontId,
   );
 

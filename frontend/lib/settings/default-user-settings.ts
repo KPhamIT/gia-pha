@@ -16,6 +16,7 @@ export const DEFAULT_USER_SETTINGS = {
     pageBackgroundId: "bg-1",
     pageBackgroundWash: 55,
     showPageNumbers: true,
+    printSides: "simplex",
     coverSubtitle: "",
     prefaceSignature: " ",
   },

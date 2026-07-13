@@ -29,6 +29,10 @@ import {
   isPageBackgroundId,
 } from "./page-backgrounds";
 import { type BookPageConfig, normalizePageConfig } from "./book-page-config";
+import {
+  normalizeBookPrintSides,
+  type BookPrintSides,
+} from "./print-sides";
 
 /** Key under which book settings live inside the user's settings JSON blob. */
 const BOOK_SETTINGS_KEY = "book";
@@ -60,6 +64,11 @@ export type BookSettings = {
    * `false` → thay bằng tên dòng họ (để tự sắp xếp sau khi in).
    */
   showPageNumbers: boolean;
+  /**
+   * In person: `simplex` chỉ mặt trước; `duplex` thêm trang nền sau mỗi person
+   * (dùng với In hai mặt trên máy in).
+   */
+  printSides: BookPrintSides;
   /** Per-person visibility / ordering overrides for the book pages. */
   pageConfig: BookPageConfig;
 };
@@ -162,6 +171,7 @@ function buildDefaultBookSettings(): BookSettings {
     pageBackgroundId,
     pageBackgroundWash,
     showPageNumbers: raw.showPageNumbers !== false,
+    printSides: normalizeBookPrintSides(raw.printSides),
     pageConfig: normalizePageConfig(raw.pageConfig),
   };
 }
@@ -192,6 +202,7 @@ export function normalizeBookSettings(
     merged.pageBackgroundId = defaults.pageBackgroundId;
   merged.pageBackgroundWash = clampPageBackgroundWash(merged.pageBackgroundWash);
   merged.showPageNumbers = merged.showPageNumbers !== false;
+  merged.printSides = normalizeBookPrintSides(merged.printSides);
   merged.pageConfig = normalizePageConfig(merged.pageConfig);
   return merged;
 }

@@ -4,6 +4,7 @@ import Icon from "@/components/icons/Icon";
 import { UI } from "@/lib/constants/ui-strings";
 import BookLeaf, { type BookLeafCtx } from "./BookLeaf";
 import FlipBackFace from "./FlipBackFace";
+import PrintBackPage from "./PrintBackPage";
 import { leafKey, type Leaf } from "./book-leaves";
 import styles from "./GenealogyBook.module.css";
 
@@ -25,6 +26,29 @@ type Props = {
   onTouchEnd: (e: React.TouchEvent) => void;
 };
 
+function printLeafWithOptionalBack(
+  leaf: Leaf,
+  leafIndex: number,
+  ctx: BookLeafCtx,
+  duplex: boolean,
+) {
+  const front = (
+    <div key={leafKey(leaf)} className={styles.printAllPage}>
+      <BookLeaf index={leafIndex} ctx={ctx} />
+    </div>
+  );
+  if (!duplex || leaf.kind !== "person") return [front];
+  return [
+    front,
+    <div
+      key={`${leafKey(leaf)}-back`}
+      className={styles.printAllPage}
+    >
+      <PrintBackPage settings={ctx.settings} />
+    </div>,
+  ];
+}
+
 export default function BookStage({
   ctx,
   leaves,
@@ -38,6 +62,11 @@ export default function BookStage({
   onTouchStart,
   onTouchEnd,
 }: Props) {
+  const duplex = ctx.settings.printSides === "duplex";
+  const currentLeaf = leaves[flip ? baseIndex : pageIndex];
+  const printSingleWithBack =
+    duplex && currentLeaf?.kind === "person";
+
   return (
     <>
       {!isPrintAllLayout ? (
@@ -115,13 +144,20 @@ export default function BookStage({
         data-print-single-stack
       >
         {!isPrintAllLayout ? (
-          <div className={styles.printSinglePage}>
-            <BookLeaf
-              index={flip ? baseIndex : pageIndex}
-              live={!flip}
-              ctx={ctx}
-            />
-          </div>
+          <>
+            <div className={styles.printSinglePage}>
+              <BookLeaf
+                index={flip ? baseIndex : pageIndex}
+                live={!flip}
+                ctx={ctx}
+              />
+            </div>
+            {printSingleWithBack ? (
+              <div className={styles.printSinglePage}>
+                <PrintBackPage settings={ctx.settings} />
+              </div>
+            ) : null}
+          </>
         ) : null}
       </div>
 
@@ -131,11 +167,9 @@ export default function BookStage({
         data-print-all-stack
       >
         {isPrintAllLayout
-          ? leaves.map((leaf, index) => (
-              <div key={leafKey(leaf)} className={styles.printAllPage}>
-                <BookLeaf index={index} ctx={ctx} />
-              </div>
-            ))
+          ? leaves.flatMap((leaf, index) =>
+              printLeafWithOptionalBack(leaf, index, ctx, duplex),
+            )
           : null}
       </div>
     </>
