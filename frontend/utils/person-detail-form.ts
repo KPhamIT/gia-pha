@@ -16,6 +16,8 @@ export type PersonDraft = {
   deceased: string;
   generation: string;
   branch: string;
+  /** URL/path ảnh chân dung (chỉ hiển thị trên sổ; không sửa qua form sổ). */
+  avatar: string;
   birthPlace: string;
   currentLocation: string;
   education: string;
@@ -65,6 +67,7 @@ export function buildPersonDraft(
     deceased: person?.deceased ? "1" : "",
     generation: person?.generation != null ? String(person.generation) : "",
     branch: person?.branch != null ? String(person.branch) : branchFallback,
+    avatar: person?.avatar ?? "",
     birthPlace: person?.birthPlace ?? "",
     currentLocation: person?.currentLocation ?? "",
     education: person?.education ?? "",

@@ -44,8 +44,7 @@ export default function RelationsBlock({
 
   if (variant === "elegant") {
     return (
-      <div className={`${styles.bookRelations} ${bookStyles.elegantRelations}`}>
-        <p className={bookStyles.elegantRelationsHeading}>{UI.RELATIONSHIPS}</p>
+      <div className={bookStyles.elegantRelations}>
         {rows.map((row) => {
           const empty = !row.value.trim();
           return (

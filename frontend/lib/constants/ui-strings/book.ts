@@ -11,6 +11,8 @@ export const BOOK_STRINGS = {
   BOOK_BRANCH: "Nhánh",
   BOOK_GENERATION: "Đời",
   BOOK_EMPTY_FIELD: "...",
+  BOOK_PHOTO_3X4: "Ảnh 3×4",
+  BOOK_PHOTO_ALT: "Ảnh chân dung",
   BOOK_SAVE_PAGE: "Lưu trang",
   BOOK_SAVING: "Đang lưu...",
   BOOK_PREV_PAGE: "Trang trước",

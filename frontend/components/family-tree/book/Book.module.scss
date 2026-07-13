@@ -206,24 +206,66 @@ $book-paper-bg: #fffef9;
   column-gap: 1rem;
 }
 
-.elegantField {
+.elegantIntro {
   display: flex;
+  align-items: flex-start;
+  gap: 3.5mm;
+  margin-bottom: 1mm;
+}
+
+.elegantIntroFields {
+  flex: 1;
+  min-width: 0;
+}
+
+.elegantPhotoFrame {
+  flex: 0 0 auto;
+  width: 28mm;
+  aspect-ratio: 3 / 4;
+  border: 1px solid channel($gold, 0.55);
+  box-shadow: 0 0 0 1.5px channel($gold-muted, 0.25);
+  background: rgb(255 252 245 / 0.65);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+.elegantPhotoPlaceholder {
+  padding: 2mm;
+  text-align: center;
+  font-size: 6.5pt;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: channel($burgundy-deep, 0.4);
+}
+
+.elegantField {
+  display: grid;
+  grid-template-columns: var(--elegant-label-w, 34mm) minmax(0, 1fr);
+  column-gap: 0.5rem;
   align-items: baseline;
-  gap: 0.5rem;
   padding: 1.1mm 0;
   border-bottom: 1px dotted channel($gold, 0.4);
   line-height: 1.5;
 }
 
 .elegantLabel {
-  flex: 0 0 32%;
   font-size: 7pt;
   font-weight: 600;
   color: channel($burgundy-deep, 0.8);
 }
 
 .elegantValue {
-  flex: 1;
   min-width: 0;
   font-size: 8.5pt;
   line-height: 1.5;
@@ -279,7 +321,7 @@ $book-paper-bg: #fffef9;
 }
 
 .elegantRelations {
-  margin-top: 4mm;
+  margin-top: 0;
 }
 
 .elegantRelationsHeading {
@@ -775,6 +817,15 @@ $book-paper-bg: #fffef9;
 
 :global(.viewerRoot.printPreparing),
 :global(.viewerRoot.printAllMode) {
+  .elegantIntro {
+    gap: 3.5mm !important;
+    margin-bottom: 1mm !important;
+  }
+
+  .elegantPhotoFrame {
+    width: 28mm !important;
+  }
+
   .elegantField {
     padding: 1.1mm 0 !important;
     line-height: 1.5 !important;
@@ -782,7 +833,6 @@ $book-paper-bg: #fffef9;
 
   .elegantLabel {
     font-size: 7pt !important;
-    flex: 0 0 32% !important;
     line-height: 1.5 !important;
   }
 
@@ -792,7 +842,7 @@ $book-paper-bg: #fffef9;
   }
 
   .elegantRelations {
-    margin-top: 4mm !important;
+    margin-top: 0 !important;
   }
 
   .elegantFieldLong {
@@ -811,6 +861,17 @@ $book-paper-bg: #fffef9;
 }
 
 @media print {
+  .elegantIntro {
+    gap: 3.5mm !important;
+    margin-bottom: 1mm !important;
+  }
+
+  .elegantPhotoFrame {
+    width: 28mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   .elegantField {
     padding: 1.1mm 0 !important;
     line-height: 1.5 !important;
@@ -820,7 +881,6 @@ $book-paper-bg: #fffef9;
 
   .elegantLabel {
     font-size: 7pt !important;
-    flex: 0 0 32% !important;
     line-height: 1.5 !important;
   }
 
@@ -830,7 +890,7 @@ $book-paper-bg: #fffef9;
   }
 
   .elegantRelations {
-    margin-top: 4mm !important;
+    margin-top: 0 !important;
   }
 
   .elegantFieldLong {

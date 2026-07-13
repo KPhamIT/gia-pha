@@ -65,7 +65,21 @@ function Row({
   );
 }
 
-/** Refined single-column rows with label on the left, value on the right. */
+function PhotoFrame({ src }: { src: string }) {
+  return (
+    <div className={bookStyles.elegantPhotoFrame} aria-label={UI.BOOK_PHOTO_ALT}>
+      {src.trim() ? (
+        // Avatar URL may be absolute or relative; next/image domains vary.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={UI.BOOK_PHOTO_ALT} />
+      ) : (
+        <span className={bookStyles.elegantPhotoPlaceholder}>{UI.BOOK_PHOTO_3X4}</span>
+      )}
+    </div>
+  );
+}
+
+/** Refined rows; top block pairs bio fields with a 3×4 portrait frame. */
 const ElegantForm: PageFormComponent = ({
   draft,
   relations,
@@ -74,27 +88,47 @@ const ElegantForm: PageFormComponent = ({
   onStartEdit,
 }) => (
   <>
-    <Row
-      label={UI.GENDER}
-      value={draft.gender}
-      onChange={(v) => onChange("gender", v)}
-      readOnly={readOnly}
-      onStartEdit={onStartEdit}
-    />
-    <Row
-      label={UI.BIRTH_DATE}
-      value={readOnly ? formatDate(draft.birthDate) : draft.birthDate}
-      onChange={(v) => onChange("birthDate", v)}
-      readOnly={readOnly}
-      onStartEdit={onStartEdit}
-    />
-    <Row
-      label={UI.DEATH_DATE}
-      value={readOnly ? formatDate(draft.deathDate) : draft.deathDate}
-      onChange={(v) => onChange("deathDate", v)}
-      readOnly={readOnly}
-      onStartEdit={onStartEdit}
-    />
+    <div className={bookStyles.elegantIntro}>
+      <div className={bookStyles.elegantIntroFields}>
+        <Row
+          label={UI.GENDER}
+          value={draft.gender}
+          onChange={(v) => onChange("gender", v)}
+          readOnly={readOnly}
+          onStartEdit={onStartEdit}
+        />
+        <Row
+          label={UI.BIRTH_DATE}
+          value={readOnly ? formatDate(draft.birthDate) : draft.birthDate}
+          onChange={(v) => onChange("birthDate", v)}
+          readOnly={readOnly}
+          onStartEdit={onStartEdit}
+        />
+        <Row
+          label={UI.DEATH_DATE}
+          value={readOnly ? formatDate(draft.deathDate) : draft.deathDate}
+          onChange={(v) => onChange("deathDate", v)}
+          readOnly={readOnly}
+          onStartEdit={onStartEdit}
+        />
+        <Row
+          label={UI.EDUCATION}
+          value={draft.education}
+          onChange={(v) => onChange("education", v)}
+          readOnly={readOnly}
+          onStartEdit={onStartEdit}
+        />
+        <Row
+          label={UI.OCCUPATION}
+          value={draft.occupation}
+          onChange={(v) => onChange("occupation", v)}
+          readOnly={readOnly}
+          onStartEdit={onStartEdit}
+        />
+      </div>
+      <PhotoFrame src={draft.avatar} />
+    </div>
+
     <Row
       label={UI.BIRTH_PLACE}
       value={draft.birthPlace}
@@ -106,20 +140,6 @@ const ElegantForm: PageFormComponent = ({
       label={UI.CURRENT_LOCATION}
       value={draft.currentLocation}
       onChange={(v) => onChange("currentLocation", v)}
-      readOnly={readOnly}
-      onStartEdit={onStartEdit}
-    />
-    <Row
-      label={UI.EDUCATION}
-      value={draft.education}
-      onChange={(v) => onChange("education", v)}
-      readOnly={readOnly}
-      onStartEdit={onStartEdit}
-    />
-    <Row
-      label={UI.OCCUPATION}
-      value={draft.occupation}
-      onChange={(v) => onChange("occupation", v)}
       readOnly={readOnly}
       onStartEdit={onStartEdit}
     />
