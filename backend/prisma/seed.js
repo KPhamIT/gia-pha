@@ -180,129 +180,139 @@ function buildExportPresets() {
   ];
 }
 
-async function main() {
-  console.log('Starting seed...');
-
-  let organization = await prisma.organization.findFirst({
-    where: {
-      name: 'Họ Phạm',
-    },
+async function ensureOrganization() {
+  const existing = await prisma.organization.findFirst({
+    where: { name: 'Họ Phạm' },
   });
+  if (existing) return existing;
 
-  if (!organization) {
-    organization = await prisma.organization.create({
-      data: {
-        name: 'Họ Phạm',
-      },
-    });
+  const organization = await prisma.organization.create({
+    data: { name: 'Họ Phạm' },
+  });
+  console.log('Created organization:', organization.name);
+  return organization;
+}
 
-    console.log('Created organization:', organization.name);
+function ceremonyTemplateData(organizationId, template, isDefault) {
+  return {
+    organizationId,
+    name: template.name,
+    content: template.content,
+    intro: template.intro,
+    meaning: template.meaning,
+    preparation: template.preparation,
+    sourceBookTitle: template.sourceBookTitle,
+    seoSlug: template.seoSlug,
+    seoTitle: template.seoTitle,
+    seoDescription: template.seoDescription,
+    seoExcerpt: template.seoExcerpt,
+    seoKeywords: template.seoKeywords,
+    isDefault,
+    isSystemTemplate: true,
+  };
+}
+
+async function upsertCeremonyTemplate(existing, data) {
+  if (existing) {
+    await prisma.ceremonyTemplate.update({ where: { id: existing.id }, data });
+    return;
   }
+  await prisma.ceremonyTemplate.create({ data });
+}
 
-  const existingCeremonyTemplates = await prisma.ceremonyTemplate.findMany({
-    where: { organizationId: organization.id },
+async function seedCeremonyTemplates(organizationId) {
+  const existingTemplates = await prisma.ceremonyTemplate.findMany({
+    where: { organizationId },
     select: { id: true, name: true, isDefault: true },
   });
   const templatesFromBook = await loadCeremonyTemplatesFromPdf();
-  let seededCeremonyCount = 0;
+  let seededCount = 0;
+
   for (let i = 0; i < templatesFromBook.length; i += 1) {
     const template = templatesFromBook[i];
-    const existing = existingCeremonyTemplates.find(
+    const existing = existingTemplates.find(
       (item) => item.name === template.name,
     );
     const isDefault =
-      existingCeremonyTemplates.length === 0 && i === 0
+      existingTemplates.length === 0 && i === 0
         ? true
         : (existing?.isDefault ?? false);
-
-    const data = {
-      organizationId: organization.id,
-      name: template.name,
-      content: template.content,
-      intro: template.intro,
-      meaning: template.meaning,
-      preparation: template.preparation,
-      sourceBookTitle: template.sourceBookTitle,
-      seoSlug: template.seoSlug,
-      seoTitle: template.seoTitle,
-      seoDescription: template.seoDescription,
-      seoExcerpt: template.seoExcerpt,
-      seoKeywords: template.seoKeywords,
-      isDefault,
-      isSystemTemplate: true,
-    };
-
-    if (existing) {
-      await prisma.ceremonyTemplate.update({
-        where: { id: existing.id },
-        data,
-      });
-      seededCeremonyCount += 1;
-      continue;
-    }
-
-    await prisma.ceremonyTemplate.create({ data });
-    seededCeremonyCount += 1;
+    await upsertCeremonyTemplate(
+      existing,
+      ceremonyTemplateData(organizationId, template, isDefault),
+    );
+    seededCount += 1;
   }
-  console.log(`Seeded ${seededCeremonyCount} ceremony templates from PDF`);
 
-  const hasDefaultTemplate = await prisma.ceremonyTemplate.findFirst({
-    where: { organizationId: organization.id, isDefault: true },
+  console.log(`Seeded ${seededCount} ceremony templates from PDF`);
+}
+
+async function ensureDefaultCeremonyTemplate(organizationId) {
+  const hasDefault = await prisma.ceremonyTemplate.findFirst({
+    where: { organizationId, isDefault: true },
     select: { id: true },
   });
-  if (!hasDefaultTemplate) {
-    const fallback = await prisma.ceremonyTemplate.findFirst({
-      where: { organizationId: organization.id },
-      orderBy: { id: 'asc' },
-      select: { id: true },
-    });
-    if (fallback) {
-      await prisma.ceremonyTemplate.update({
-        where: { id: fallback.id },
-        data: { isDefault: true },
-      });
-    }
+  if (hasDefault) return;
+
+  const fallback = await prisma.ceremonyTemplate.findFirst({
+    where: { organizationId },
+    orderBy: { id: 'asc' },
+    select: { id: true },
+  });
+  if (!fallback) return;
+
+  await prisma.ceremonyTemplate.update({
+    where: { id: fallback.id },
+    data: { isDefault: true },
+  });
+}
+
+async function seedRootPerson(organizationId) {
+  const existingRoot = await prisma.person.findFirst({
+    where: { organizationId, fullName: 'Thủy Tổ' },
+  });
+  if (existingRoot) {
+    console.log('Root person already exists');
+    return;
   }
 
-  const existingRoot = await prisma.person.findFirst({
-    where: {
-      organizationId: organization.id,
+  const rootPerson = await prisma.person.create({
+    data: {
+      organizationId,
       fullName: 'Thủy Tổ',
+      gender: 'male',
+      generation: 0,
+      branch: 1,
     },
   });
+  console.log('Created root person:', rootPerson.fullName);
+}
 
-  if (!existingRoot) {
-    const rootPerson = await prisma.person.create({
-      data: {
-        organizationId: organization.id,
-        fullName: 'Thủy Tổ',
-        gender: 'male',
-        generation: 0,
-        branch: 1,
-      },
-    });
-
-    console.log('Created root person:', rootPerson.fullName);
-  } else {
-    console.log('Root person already exists');
-  }
-
-  let devUser = await prisma.user.findFirst({
+async function ensureDevUser() {
+  const existing = await prisma.user.findFirst({
     where: { provider: 'dev', providerId: 'dev-local' },
   });
-  if (!devUser) {
-    devUser = await prisma.user.create({
-      data: { provider: 'dev', providerId: 'dev-local', role: 'STANDARD' },
-    });
-    console.log('Created dev user for settings seeding');
-  }
+  if (existing) return existing;
 
+  const devUser = await prisma.user.create({
+    data: { provider: 'dev', providerId: 'dev-local', role: 'STANDARD' },
+  });
+  console.log('Created dev user for settings seeding');
+  return devUser;
+}
+
+async function resolvePrimaryOrg(fallbackOrg) {
+  return (
+    (await prisma.organization.findFirst({ where: { name: 'Family Tree' } })) ??
+    fallbackOrg
+  );
+}
+
+async function seedAdminUser(fallbackOrg) {
   const adminPassword = process.env.ADMIN_PASSWORD ?? 'admin123';
   const adminHash = await bcrypt.hash(adminPassword, 10);
-  const primaryOrg =
-    (await prisma.organization.findFirst({
-      where: { name: 'Family Tree' },
-    })) ?? organization;
+  const primaryOrg = await resolvePrimaryOrg(fallbackOrg);
+
   await prisma.user.upsert({
     where: { providerId: 'local:admin' },
     create: {
@@ -322,21 +332,26 @@ async function main() {
     },
   });
   console.log(`Seeded admin user (username: admin) → org ${primaryOrg.name}`);
+}
 
+async function seedAdminSettings() {
   const adminUser = await prisma.user.findUnique({
     where: { providerId: 'local:admin' },
   });
-  if (adminUser) {
-    await prisma.userSettings.upsert({
-      where: { userId: adminUser.id },
-      create: { userId: adminUser.id, data: {} },
-      update: {},
-    });
-    console.log('Seeded default user settings for admin');
-  }
+  if (!adminUser) return;
 
+  await prisma.userSettings.upsert({
+    where: { userId: adminUser.id },
+    create: { userId: adminUser.id, data: {} },
+    update: {},
+  });
+  console.log('Seeded default user settings for admin');
+}
+
+async function seedSystemUser() {
   const systemPassword = process.env.SYSTEM_PASSWORD ?? 'system123';
   const systemHash = await bcrypt.hash(systemPassword, 10);
+
   await prisma.user.upsert({
     where: { providerId: 'local:system' },
     create: {
@@ -356,24 +371,28 @@ async function main() {
     },
   });
   console.log('Seeded system user (username: system)');
+}
 
+async function linkSystemTemplatesToSystemUser() {
   const systemUser = await prisma.user.findUnique({
     where: { providerId: 'local:system' },
     select: { id: true },
   });
-  if (systemUser) {
-    await prisma.ceremonyTemplate.updateMany({
-      where: { isSystemTemplate: true, createdByUserId: null },
-      data: { createdByUserId: systemUser.id },
-    });
-  }
+  if (!systemUser) return;
 
+  await prisma.ceremonyTemplate.updateMany({
+    where: { isSystemTemplate: true, createdByUserId: null },
+    data: { createdByUserId: systemUser.id },
+  });
+}
+
+async function seedExportPresets(devUserId) {
   const presets = buildExportPresets();
   await prisma.$transaction([
-    prisma.exportPreset.deleteMany({ where: { userId: devUser.id } }),
+    prisma.exportPreset.deleteMany({ where: { userId: devUserId } }),
     prisma.exportPreset.createMany({
       data: presets.map((preset, index) => ({
-        userId: devUser.id,
+        userId: devUserId,
         key: preset.id,
         label: preset.label,
         sortOrder: index,
@@ -382,12 +401,14 @@ async function main() {
     }),
   ]);
   await prisma.userSettings.upsert({
-    where: { userId: devUser.id },
-    create: { userId: devUser.id, data: {} },
+    where: { userId: devUserId },
+    create: { userId: devUserId, data: {} },
     update: {},
   });
   console.log(`Seeded ${presets.length} export presets to export_preset table`);
+}
 
+async function seedStandardFeatureDefaults() {
   await prisma.appConfig.upsert({
     where: { key: 'standard_features_default' },
     create: {
@@ -408,7 +429,9 @@ async function main() {
     update: {},
   });
   console.log('Seeded standard feature defaults');
+}
 
+async function seedBlogPosts() {
   const { buildAllBlogPosts } = await import('./blog-posts-data.js');
   const blogPosts = buildAllBlogPosts();
   for (const post of blogPosts) {
@@ -427,6 +450,24 @@ async function main() {
     });
   }
   console.log(`Seeded ${blogPosts.length} blog posts`);
+}
+
+async function main() {
+  console.log('Starting seed...');
+
+  // const organization = await ensureOrganization();
+  // await seedCeremonyTemplates(organization.id);
+  // await ensureDefaultCeremonyTemplate(organization.id);
+  // await seedRootPerson(organization.id);
+
+  // const devUser = await ensureDevUser();
+  // await seedAdminUser(organization);
+  // await seedAdminSettings();
+  // await seedSystemUser();
+  // await linkSystemTemplatesToSystemUser();
+  // await seedExportPresets(devUser.id);
+  // await seedStandardFeatureDefaults();
+  // await seedBlogPosts();
 
   console.log('Seed completed');
 }

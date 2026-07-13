@@ -13,6 +13,7 @@ import {
   getKeywordMetaBySlug,
   getKeywordTagsBySlug,
 } from './blog-posts-keyword-content.js';
+import { buildMarketingBlogPosts } from './blog-posts-marketing.js';
 
 const CORE_KEYWORDS = [
   'gia phả',
@@ -357,5 +358,7 @@ export function buildBlogPost(entry, index) {
 }
 
 export function buildAllBlogPosts() {
-  return BLOG_ENTRIES.map((entry, index) => buildBlogPost(entry, index));
+  const generated = BLOG_ENTRIES.map((entry, index) => buildBlogPost(entry, index));
+  const marketing = buildMarketingBlogPosts(generated.length);
+  return [...generated, ...marketing];
 }
