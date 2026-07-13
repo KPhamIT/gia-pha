@@ -506,29 +506,33 @@
 
 /* Mirror print layout on screen so scale-to-fit measures correctly (single page only) */
 .viewerRoot.printPreparing:not(.printAllMode) .printCurrentArea .sheet {
-  height: 281mm;
-  max-height: 281mm;
+  height: 297mm;
+  max-height: 297mm;
   overflow: hidden;
 }
 
 .viewerRoot.printPreparing:not(.printAllMode) .scene {
-  height: 281mm;
-  max-height: 281mm;
+  height: 297mm;
+  max-height: 297mm;
   overflow: hidden;
 }
 
 .viewerRoot.printPreparing:not(.printAllMode) .sheet,
 .viewerRoot.printPreparing:not(.printAllMode) .page {
   height: 100% !important;
-  max-height: 281mm !important;
+  max-height: 297mm !important;
   overflow: hidden;
 }
 
 .viewerRoot.printPreparing .paper,
 .viewerRoot.printAllMode .printAllStack .paper {
-  padding: 5mm 7mm !important;
+  height: 297mm !important;
+  max-height: 297mm !important;
+  min-height: 297mm !important;
+  padding: 10mm 12mm !important;
   font-size: 9.5pt;
   line-height: 1.25;
+  box-sizing: border-box !important;
 }
 
 .viewerRoot.printPreparing .paperContent,
@@ -662,9 +666,16 @@
 }
 
 @media print {
+  /* margin 0: nền giấy full trang; chữ cách mép nhờ padding .paper */
   @page {
     size: A4 portrait;
-    margin: 8mm;
+    margin: 0;
+  }
+
+  :global(html),
+  :global(body) {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   :global(body > *:not([data-print-root="true"])) {
@@ -681,10 +692,14 @@
     inset: auto !important;
     z-index: auto !important;
     display: block !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
     height: auto !important;
     min-height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
     background: #fffef9 !important;
     color: #000 !important;
   }
@@ -714,55 +729,69 @@
 
   .viewerRoot:not(.printAllMode) .printSingleStack {
     display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
     overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .viewerRoot:not(.printAllMode) .printSinglePage {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-    min-height: 0 !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
     overflow: hidden !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .viewerRoot:not(.printAllMode) [data-genealogy-cover] {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-    min-height: 0 !important;
-    aspect-ratio: 210 / 297 !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
+    aspect-ratio: auto !important;
+    overflow: hidden !important;
     transform: none !important;
     margin: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .viewerRoot.printAllMode .printAllStack {
     position: static !important;
     left: auto !important;
     top: auto !important;
-    width: 100% !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
     height: auto !important;
     overflow: visible !important;
     visibility: visible !important;
     opacity: 1 !important;
     z-index: auto !important;
     display: block !important;
+    margin: 0 !important;
     break-before: avoid-page;
     page-break-before: auto;
   }
 
   .printAllPage,
   .printCurrentArea .sheet {
-    height: 281mm;
-    max-height: 281mm;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    height: 297mm;
+    max-height: 297mm;
     overflow: hidden;
     page-break-inside: avoid;
     break-inside: avoid;
     box-sizing: border-box;
+    margin: 0 !important;
   }
 
   .printAllPage {
@@ -786,43 +815,52 @@
   .scene {
     perspective: none;
     display: block;
-    height: 281mm;
-    max-height: 281mm;
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
     padding: 0;
     overflow: hidden;
   }
 
   .sheet,
   .page {
-    width: 100% !important;
-    max-width: none !important;
-    height: auto !important;
-    max-height: none !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
     aspect-ratio: auto !important;
     transform: none !important;
     animation: none !important;
-    overflow: visible !important;
+    overflow: hidden !important;
+    margin: 0 !important;
   }
 
   .paper {
     box-shadow: none;
     border: none;
     border-radius: 0;
-    height: 100% !important;
-    max-height: 100% !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
     overflow: hidden !important;
     break-inside: avoid;
     page-break-inside: avoid;
-    padding: 5mm 7mm !important;
+    padding: 10mm 12mm !important;
     font-size: 9.5pt;
     line-height: 1.25;
     transform: none !important;
-    width: 100% !important;
-    margin-bottom: 0 !important;
+    margin: 0 !important;
     background-color: #fffef9 !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    box-sizing: border-box !important;
     color: #000 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .paper:not(.paperWithImage) {
@@ -836,9 +874,10 @@
   }
 
   .paperWithImage::after {
+    inset: 0 !important;
     background: rgb(255 254 249 / var(--paper-bg-wash, 0.55)) !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .paper::before {

@@ -1,33 +1,37 @@
 const A4_HEIGHT_MM = 297;
-const PRINT_MARGIN_MM = 8;
-const PRINTABLE_HEIGHT_MM = A4_HEIGHT_MM - PRINT_MARGIN_MM * 2;
 
 function mmToPx(mm: number): number {
   return (mm * 96) / 25.4;
 }
 
+/**
+ * Thu nhỏ trang khi nội dung cao hơn A4.
+ * Paper được CSS khóa 297mm + transform:none khi in — hàm này chủ yếu
+ * hỗ trợ đo trước print; không co nền khi trang ngắn hơn A4.
+ */
 export function fitGenealogyPagesForPrint(
   container: HTMLElement | null,
   scopeSelector = "[data-genealogy-paper]",
 ): void {
   if (!container) return;
 
-  const maxHeight = mmToPx(PRINTABLE_HEIGHT_MM);
+  const maxHeight = mmToPx(A4_HEIGHT_MM);
   const papers = container.querySelectorAll<HTMLElement>(scopeSelector);
 
   papers.forEach((paper) => {
     paper.style.transform = "";
     paper.style.width = "";
     paper.style.marginBottom = "";
+    paper.style.transformOrigin = "";
 
     const contentHeight =
-      paper.getBoundingClientRect().height || paper.scrollHeight;
-    if (contentHeight <= maxHeight) return;
+      paper.scrollHeight || paper.getBoundingClientRect().height;
+    if (contentHeight <= maxHeight + 1) return;
 
     const scale = maxHeight / contentHeight;
-    paper.style.transform = `scale(${scale})`;
-    paper.style.transformOrigin = "top center";
+    paper.style.transformOrigin = "top left";
     paper.style.width = `${100 / scale}%`;
+    paper.style.transform = `scale(${scale})`;
     paper.style.marginBottom = `${contentHeight * (scale - 1)}px`;
   });
 }
@@ -41,5 +45,6 @@ export function resetGenealogyPrintFit(container: HTMLElement | null): void {
       paper.style.transform = "";
       paper.style.width = "";
       paper.style.marginBottom = "";
+      paper.style.transformOrigin = "";
     });
 }
