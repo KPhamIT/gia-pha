@@ -1,0 +1,66 @@
+/** Studio thiết kế bìa trước / bìa sau (in có bleed) — tách khỏi sổ gia phả. */
+export const COVER_STUDIO_STRINGS = {
+  COVER_STUDIO_TITLE: "Thiết kế bìa sách",
+  COVER_STUDIO_SUBTITLE:
+    "Tạo nhiều mẫu bìa trước và bìa sau, kèm lề bleed để in đóng quyển.",
+  COVER_STUDIO_PAGE_DESC:
+    "Studio tạo bìa trước, bìa sau gia phả với nhiều mẫu và bleed in ấn.",
+  COVER_STUDIO_LOADING: "Đang tải studio bìa…",
+  COVER_STUDIO_OPEN: "Thiết kế bìa",
+  COVER_STUDIO_BACK_TO_LIST: "Danh sách mẫu",
+  COVER_STUDIO_CREATE: "Tạo mẫu mới",
+  COVER_STUDIO_EDIT: "Chỉnh sửa",
+  COVER_STUDIO_DUPLICATE: "Nhân bản",
+  COVER_STUDIO_DELETE: "Xóa mẫu",
+  COVER_STUDIO_DELETE_CONFIRM: (name: string) => `Xóa mẫu «${name}»?`,
+  COVER_STUDIO_EMPTY: "Chưa có mẫu bìa nào. Tạo mẫu đầu tiên để bắt đầu.",
+  COVER_STUDIO_NAME_LABEL: "Tên mẫu",
+  COVER_STUDIO_NAME_PLACEHOLDER: "Ví dụ: Bìa cứng 2026",
+  COVER_STUDIO_DEFAULT_NAME: "Mẫu bìa mới",
+  COVER_STUDIO_TEMPLATE_LABEL: "Kiểu mẫu",
+  COVER_STUDIO_STYLE_LABEL: "Loại bố cục",
+  COVER_STUDIO_PALETTE_LABEL: "Màu sắc",
+  COVER_STUDIO_STYLE_ORNATE: "Khung cổ điển",
+  COVER_STUDIO_STYLE_SCROLL: "Cuốn thư",
+  COVER_STUDIO_SECTION_STYLE: "Kiểu",
+  COVER_STUDIO_SECTION_CONTENT: "Nội dung",
+  COVER_STUDIO_SECTION_PRINT: "In",
+  COVER_STUDIO_BACK_SHORT: "Danh sách",
+  COVER_STUDIO_FONT_LABEL: "Font thư pháp",
+  COVER_STUDIO_SIDE_FRONT: "Bìa trước",
+  COVER_STUDIO_SIDE_BACK: "Bìa sau",
+  COVER_STUDIO_BLEED_LABEL: "Bleed (mm)",
+  COVER_STUDIO_BLEED_HINT:
+    "Mở rộng nền ra ngoài đường cắt để in đóng quyển không bị hở mép.",
+  COVER_STUDIO_CROP_MARKS: "Hiện dấu cắt",
+  COVER_STUDIO_SAFE_GUIDE: "Hiện vùng an toàn",
+  COVER_STUDIO_PRINT_FRONT: "In bìa trước",
+  COVER_STUDIO_PRINT_BACK: "In bìa sau",
+  COVER_STUDIO_PRINT_BOTH: "In cả hai mặt",
+  COVER_STUDIO_SAVE: "Lưu mẫu",
+  COVER_STUDIO_SAVED: "Đã lưu",
+  COVER_STUDIO_DISCARD_CONFIRM: "Bạn có thay đổi chưa lưu. Thoát và bỏ thay đổi?",
+  COVER_STUDIO_FRONT_TITLE: "Tiêu đề",
+  COVER_STUDIO_FRONT_SUBTITLE: "Tên dòng họ",
+  COVER_STUDIO_FRONT_LINEAGE: "Lời đề từ",
+  COVER_STUDIO_FRONT_YEAR: "Năm lập",
+  COVER_STUDIO_FRONT_ADDRESS: "Địa chỉ",
+  COVER_STUDIO_BACK_TITLE: "Tiêu đề bìa sau",
+  COVER_STUDIO_BACK_BODY: "Nội dung bìa sau",
+  COVER_STUDIO_BACK_SEAL: "Chữ ấn",
+  COVER_STUDIO_BACK_FOOTER: "Dòng chân",
+  COVER_STUDIO_TEMPLATE_CLASSIC: "Cổ điển đỏ",
+  COVER_STUDIO_TEMPLATE_ELEGANT: "Thanh nhã đen",
+  COVER_STUDIO_TEMPLATE_IVORY: "Ngà vàng",
+  COVER_STUDIO_TEMPLATE_JADE: "Ngọc bích",
+  COVER_STUDIO_TEMPLATE_HERITAGE: "Cuốn thư cam",
+  COVER_STUDIO_TEMPLATE_IMPERIAL: "Rồng thiếp vàng",
+  COVER_STUDIO_PREVIEW_HINT: "Xem trước theo khổ A4 + bleed",
+  COVER_STUDIO_UPDATED: (iso: string) => {
+    try {
+      return `Cập nhật ${new Date(iso).toLocaleString("vi-VN")}`;
+    } catch {
+      return "";
+    }
+  },
+} as const;

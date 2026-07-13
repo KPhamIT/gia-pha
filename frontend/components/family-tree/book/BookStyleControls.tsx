@@ -140,7 +140,7 @@ export default function BookStyleControls({
           </select>
         </label>
 
-        <label className="block">
+        <label className="mb-3 block">
           <span className="mb-1 block text-xs font-medium text-slate-500">
             {UI.BOOK_COVER_FONT_LABEL}
           </span>
@@ -159,6 +159,25 @@ export default function BookStyleControls({
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-slate-500">
+            {UI.BOOK_SHOW_PAGE_NUMBERS_LABEL}
+          </span>
+          <select
+            className={selectClass}
+            value={settings.showPageNumbers ? "on" : "off"}
+            onChange={(e) =>
+              onChange({ showPageNumbers: e.target.value === "on" })
+            }
+          >
+            <option value="on">{UI.BOOK_SHOW_PAGE_NUMBERS_ON}</option>
+            <option value="off">{UI.BOOK_SHOW_PAGE_NUMBERS_OFF}</option>
+          </select>
+          <span className="mt-1 block text-[11px] text-slate-400">
+            {UI.BOOK_SHOW_PAGE_NUMBERS_HINT}
+          </span>
         </label>
 
         <p className="mt-3 text-[11px] text-slate-400">{UI.BOOK_SAVED_HINT}</p>

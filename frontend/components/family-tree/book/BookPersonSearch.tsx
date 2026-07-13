@@ -9,6 +9,7 @@ import { LAYOUT } from "@/lib/constants/ui-layout";
 import { UI } from "@/lib/constants/ui-strings";
 import type { Person } from "@/components/types/family-tree-types";
 import { filterPersonsByName } from "@/utils/person-search";
+import { toRomanNumeral } from "@/utils/roman-numeral";
 
 type Props = {
   persons: Person[];
@@ -19,7 +20,7 @@ type Props = {
 function personSubtitle(person: Person): string | null {
   const parts = [
     person.generation != null
-      ? `${UI.BOOK_GENERATION} ${person.generation}`
+      ? `${UI.BOOK_GENERATION} ${toRomanNumeral(person.generation)}`
       : null,
     person.branch != null ? getBranchLabel(person.branch) : null,
   ].filter(Boolean);

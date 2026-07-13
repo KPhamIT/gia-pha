@@ -55,6 +55,11 @@ export type BookSettings = {
   pageBackgroundId: string;
   /** Cream wash opacity over patterned background (0–90). */
   pageBackgroundWash: number;
+  /**
+   * Hiện số trang ở chân trang người.
+   * `false` → thay bằng tên dòng họ (để tự sắp xếp sau khi in).
+   */
+  showPageNumbers: boolean;
   /** Per-person visibility / ordering overrides for the book pages. */
   pageConfig: BookPageConfig;
 };
@@ -156,6 +161,7 @@ function buildDefaultBookSettings(): BookSettings {
     formStyleId,
     pageBackgroundId,
     pageBackgroundWash,
+    showPageNumbers: raw.showPageNumbers !== false,
     pageConfig: normalizePageConfig(raw.pageConfig),
   };
 }
@@ -185,6 +191,7 @@ export function normalizeBookSettings(
   if (!isPageBackgroundId(merged.pageBackgroundId))
     merged.pageBackgroundId = defaults.pageBackgroundId;
   merged.pageBackgroundWash = clampPageBackgroundWash(merged.pageBackgroundWash);
+  merged.showPageNumbers = merged.showPageNumbers !== false;
   merged.pageConfig = normalizePageConfig(merged.pageConfig);
   return merged;
 }

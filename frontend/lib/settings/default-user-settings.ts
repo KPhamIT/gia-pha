@@ -15,6 +15,7 @@ export const DEFAULT_USER_SETTINGS = {
     borderStyleId: "modern",
     pageBackgroundId: "bg-1",
     pageBackgroundWash: 55,
+    showPageNumbers: true,
     coverSubtitle: "",
     prefaceSignature: " ",
   },

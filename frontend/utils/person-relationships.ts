@@ -68,10 +68,17 @@ export function extractPersonRelationships(
   };
 }
 
+/** Hiển thị ngày theo thứ tự ngày-tháng-năm (VD: 17/05/1995). An toàn với YYYY-MM-DD. */
 export function formatDate(date?: string | null): string {
   if (!date) return "";
-  const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return "";
+  const trimmed = date.trim();
+  const ymd = /^(\d{4})-(\d{2})-(\d{2})/.exec(trimmed);
+  if (ymd) {
+    const [, year, month, day] = ymd;
+    return `${day}/${month}/${year}`;
+  }
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return trimmed;
   return parsed.toLocaleDateString("vi-VN");
 }
 

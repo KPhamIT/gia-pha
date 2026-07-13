@@ -1,0 +1,507 @@
+// Cover studio — visual templates + bleed sheet (independent of GenealogyBook).
+
+$gold: #e8c56a;
+$gold-light: #f5e6b8;
+$ink-dark: #1a1208;
+
+@function channel($color, $alpha) {
+  @return rgb(from #{$color} r g b / #{$alpha});
+}
+
+.sheet {
+  position: relative;
+  box-sizing: border-box;
+  background: #f5f0e6;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.trimArea {
+  position: absolute;
+  inset: var(--cover-bleed, 3mm);
+  overflow: hidden;
+}
+
+.bleedFill {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.safeGuide {
+  position: absolute;
+  inset: calc(var(--cover-bleed, 3mm) + var(--cover-safe, 5mm));
+  border: 1px dashed rgb(0 150 255 / 0.45);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.cropMarks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.cropMark {
+  position: absolute;
+  background: #111;
+}
+
+.cropH {
+  width: var(--cover-bleed, 3mm);
+  height: 0.35pt;
+}
+
+.cropV {
+  width: 0.35pt;
+  height: var(--cover-bleed, 3mm);
+}
+
+.face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  container-type: size;
+}
+
+.frame {
+  position: absolute;
+  inset: clamp(10px, 3.5cqmin, 24px);
+  z-index: 1;
+  pointer-events: none;
+  border: 2px solid channel($gold-light, 0.65);
+  box-shadow:
+    0 0 0 6px channel($gold-light, 0.18) inset,
+    0 0 30px rgb(0 0 0 / 0.35) inset;
+  border-radius: 4px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid channel($gold-light, 0.4);
+    border-radius: 2px;
+  }
+}
+
+.frameCorner {
+  position: absolute;
+  z-index: 2;
+  width: clamp(18px, 5cqmin, 28px);
+  height: clamp(18px, 5cqmin, 28px);
+  border: 2px solid channel($gold, 0.85);
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 3;
+  padding: clamp(0.75rem, 5cqh, 2rem);
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.65rem, 2.8cqh, 1.5rem);
+}
+
+.badge {
+  letter-spacing: 0.35em;
+  font-size: clamp(0.7rem, 2.2cqh, 1rem);
+  opacity: 0.9;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.8rem, 7.5cqh, 3.4rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  max-width: 92%;
+}
+
+.divider {
+  font-size: clamp(0.85rem, 2.2cqh, 1.1rem);
+  opacity: 0.85;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: clamp(1rem, 3.6cqh, 1.65rem);
+  letter-spacing: 0.08em;
+  max-width: 90%;
+}
+
+.seal {
+  font-size: clamp(2.2rem, 9cqh, 4rem);
+  line-height: 1;
+  opacity: 0.92;
+}
+
+.lineage,
+.body {
+  margin: 0;
+  font-size: clamp(0.75rem, 2.4cqh, 1.05rem);
+  line-height: 1.45;
+  max-width: 88%;
+  white-space: pre-wrap;
+  opacity: 0.92;
+}
+
+.footer {
+  margin: 0;
+  font-size: clamp(0.7rem, 2.1cqh, 0.95rem);
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  max-width: 90%;
+}
+
+.verticalCol {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15em;
+  writing-mode: horizontal-tb;
+  font-size: clamp(0.72rem, 2.4cqh, 1.05rem);
+  letter-spacing: 0.05em;
+  line-height: 1.15;
+  max-height: 42%;
+  overflow: hidden;
+}
+
+.verticalTopLeft {
+  top: clamp(28px, 8cqh, 48px);
+  left: clamp(18px, 4.5cqw, 36px);
+}
+
+.verticalBottomRight {
+  bottom: clamp(28px, 8cqh, 48px);
+  right: clamp(18px, 4.5cqw, 36px);
+}
+
+.verticalChar {
+  display: block;
+}
+
+.verticalOrnament {
+  opacity: 0.7;
+  font-size: 0.75em;
+}
+
+.verticalAddress {
+  font-size: clamp(0.55rem, 1.8cqh, 0.78rem);
+  max-height: 48%;
+}
+
+// ---------- Template themes ----------
+
+.themeClassic {
+  color: #fdf2d0;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgb(180 60 40 / 0.35), transparent 60%),
+    radial-gradient(140% 100% at 50% 120%, rgb(60 8 8 / 0.6), transparent 55%),
+    linear-gradient(160deg, #7a1410 0%, #5c0d0d 45%, #420808 100%);
+}
+
+.themeElegant {
+  color: #f3e7c8;
+  background:
+    radial-gradient(100% 70% at 50% 0%, rgb(80 70 40 / 0.25), transparent 55%),
+    linear-gradient(165deg, #222 0%, #111 50%, #050505 100%);
+
+  .frame {
+    border-color: channel($gold, 0.55);
+  }
+}
+
+.themeIvory {
+  color: $ink-dark;
+  background:
+    radial-gradient(120% 80% at 50% 10%, rgb(255 250 235 / 0.9), transparent 60%),
+    linear-gradient(160deg, #f7edd6 0%, #e8d4b0 55%, #dcc49a 100%);
+
+  .frame {
+    border-color: rgb(120 80 30 / 0.55);
+    box-shadow:
+      0 0 0 6px rgb(120 80 30 / 0.12) inset,
+      0 0 20px rgb(80 50 20 / 0.12) inset;
+  }
+
+  .frameCorner {
+    border-color: rgb(120 80 30 / 0.7);
+  }
+
+  .seal {
+    color: #8b1e1e;
+  }
+}
+
+.themeJade {
+  color: #e8f5e9;
+  background:
+    radial-gradient(110% 80% at 50% 0%, rgb(40 120 80 / 0.35), transparent 55%),
+    linear-gradient(160deg, #145239 0%, #0c3526 50%, #062218 100%);
+
+  .frame {
+    border-color: channel($gold-light, 0.55);
+  }
+
+  .seal {
+    color: #f0d78c;
+  }
+}
+
+.themeImperial {
+  color: #fdf2d0;
+  background:
+    radial-gradient(100% 70% at 50% 0%, rgb(180 40 30 / 0.35), transparent 55%),
+    linear-gradient(160deg, #8b1510 0%, #5c0d0d 50%, #2a0606 100%);
+
+  .frame {
+    border-color: channel($gold, 0.7);
+  }
+}
+
+// ---------- Scroll palettes (cuốn thư) ----------
+
+@mixin scrollPalette(
+  $face-bg,
+  $scallop,
+  $panel,
+  $title,
+  $subtitle,
+  $meta,
+  $ink
+) {
+  color: $ink;
+  background: $face-bg;
+  --scroll-scallop: #{$scallop};
+  --scroll-panel: #{$panel};
+  --scroll-title: #{$title};
+  --scroll-subtitle: #{$subtitle};
+  --scroll-meta: #{$meta};
+  --scroll-ink: #{$ink};
+}
+
+.themeScrollClassic {
+  @include scrollPalette(
+    linear-gradient(165deg, #e8923a 0%, #d97828 40%, #c45e1a 100%),
+    #b84a14,
+    linear-gradient(180deg, #ef9a45 0%, #e07828 55%, #d06820 100%),
+    #7a1208,
+    #8b1e1e,
+    #6b3010,
+    #7a1208
+  );
+}
+
+.themeScrollElegant {
+  @include scrollPalette(
+    linear-gradient(165deg, #2a2a2a 0%, #141414 55%, #080808 100%),
+    #3a3a3a,
+    linear-gradient(180deg, #333 0%, #1c1c1c 55%, #101010 100%),
+    #f3e7c8,
+    #e8c56a,
+    #c9b896,
+    #f3e7c8
+  );
+}
+
+.themeScrollIvory {
+  @include scrollPalette(
+    linear-gradient(165deg, #f7edd6 0%, #e8d4b0 55%, #dcc49a 100%),
+    #c4a574,
+    linear-gradient(180deg, #fbf3e4 0%, #f0e0c4 55%, #e6d2ae 100%),
+    #3d2a14,
+    #6b4423,
+    #7a5530,
+    #1a1208
+  );
+}
+
+.themeScrollJade {
+  @include scrollPalette(
+    linear-gradient(165deg, #145239 0%, #0c3526 50%, #062218 100%),
+    #0a4a32,
+    linear-gradient(180deg, #1a6548 0%, #0f3d2e 55%, #082820 100%),
+    #e8f5e9,
+    #f0d78c,
+    #b7d4bc,
+    #e8f5e9
+  );
+}
+
+.themeScrollImperial {
+  @include scrollPalette(
+    linear-gradient(165deg, #8b1510 0%, #5c0d0d 50%, #2a0606 100%),
+    #6b1010,
+    linear-gradient(180deg, #a31c14 0%, #701010 55%, #3d0808 100%),
+    #fdf2d0,
+    #e8c56a,
+    #d4b896,
+    #fdf2d0
+  );
+}
+
+// ---------- Heritage layout pieces ----------
+
+.heritageScallop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8px 0, var(--scroll-scallop, #b84a14) 7px, transparent 8px)
+      0 0 / 16px 12px,
+    radial-gradient(
+        circle at 8px 12px,
+        var(--scroll-scallop, #b84a14) 7px,
+        transparent 8px
+      )
+      8px 6px / 16px 12px,
+    var(--scroll-panel, linear-gradient(165deg, #e8923a, #c45e1a));
+  opacity: 0.95;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: clamp(10px, 3.2cqmin, 18px);
+}
+
+.heritagePanel {
+  position: absolute;
+  inset: clamp(14px, 4.2cqmin, 26px);
+  z-index: 1;
+  background: var(
+    --scroll-panel,
+    linear-gradient(180deg, #ef9a45 0%, #e07828 55%, #d06820 100%)
+  );
+  box-shadow: inset 0 0 40px rgb(0 0 0 / 0.18);
+}
+
+.heritageGoldFrame {
+  position: absolute;
+  inset: clamp(8px, 2.4cqmin, 14px);
+  border: 2px solid #d4af37;
+  box-shadow:
+    0 0 0 1px #f5e6b8,
+    0 0 0 5px rgb(212 175 55 / 0.35),
+    inset 0 0 0 1px rgb(245 230 184 / 0.55);
+  pointer-events: none;
+}
+
+.heritageFiligree {
+  position: absolute;
+  z-index: 2;
+  width: clamp(28px, 8cqmin, 44px);
+  height: clamp(28px, 8cqmin, 44px);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 30%, #f5e6b8 0 18%, transparent 19%),
+    radial-gradient(circle at 70% 30%, #d4af37 0 14%, transparent 15%),
+    radial-gradient(circle at 30% 70%, #d4af37 0 14%, transparent 15%),
+    radial-gradient(circle at 70% 70%, #f5e6b8 0 18%, transparent 19%),
+    conic-gradient(from 0deg, transparent 0 20%, #c9a227 0 28%, transparent 0 100%);
+  opacity: 0.9;
+}
+
+.filigreeTL {
+  top: clamp(12px, 3.5cqmin, 20px);
+  left: clamp(12px, 3.5cqmin, 20px);
+}
+
+.filigreeTR {
+  top: clamp(12px, 3.5cqmin, 20px);
+  right: clamp(12px, 3.5cqmin, 20px);
+  transform: scaleX(-1);
+}
+
+.filigreeBL {
+  bottom: clamp(12px, 3.5cqmin, 20px);
+  left: clamp(12px, 3.5cqmin, 20px);
+  transform: scaleY(-1);
+}
+
+.filigreeBR {
+  bottom: clamp(12px, 3.5cqmin, 20px);
+  right: clamp(12px, 3.5cqmin, 20px);
+  transform: scale(-1);
+}
+
+.heritageStack {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.4rem, 1.8cqh, 0.9rem);
+  padding: clamp(1.2rem, 5cqh, 2.2rem) clamp(0.8rem, 4cqw, 1.5rem);
+}
+
+.heritageTitle {
+  margin: 0;
+  font-size: clamp(1.8rem, 7.5cqh, 3.4rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  max-width: 90%;
+  color: var(--scroll-title, #7a1208);
+}
+
+.heritageSubtitle {
+  margin: 0;
+  font-size: clamp(1rem, 3.6cqh, 1.65rem);
+  letter-spacing: 0.08em;
+  max-width: 90%;
+  color: var(--scroll-subtitle, #8b1e1e);
+}
+
+.heritageCenser {
+  width: clamp(88px, 28cqw, 130px);
+  height: auto;
+  margin-top: 0.15rem;
+  filter: drop-shadow(0 6px 8px rgb(60 20 5 / 0.3));
+}
+
+.heritageLineage {
+  margin: 0;
+  max-width: 85%;
+  text-align: center;
+  font-size: clamp(0.7rem, 2.1cqh, 0.95rem);
+  line-height: 1.4;
+  color: var(--scroll-ink, #5c2208);
+  opacity: 0.92;
+}
+
+.heritageMeta {
+  margin: 0;
+  font-size: clamp(0.62rem, 1.8cqh, 0.82rem);
+  color: var(--scroll-meta, #6b3010);
+  letter-spacing: 0.04em;
+  max-width: 88%;
+  text-align: center;
+}
+
+// ---------- Print ----------
+
+@media print {
+  .safeGuide {
+    display: none !important;
+  }
+
+  .sheet {
+    box-shadow: none !important;
+  }
+}

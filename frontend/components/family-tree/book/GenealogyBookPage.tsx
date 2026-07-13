@@ -34,6 +34,8 @@ type GenealogyBookPageProps = {
   formStyleId?: string;
   pageBackgroundId?: string;
   pageBackgroundWash?: number;
+  showPageNumbers?: boolean;
+  clanFooterLabel?: string;
   readOnly?: boolean;
 };
 
@@ -47,6 +49,8 @@ export default function GenealogyBookPage({
   formStyleId = DEFAULT_FORM_STYLE_ID,
   pageBackgroundId = DEFAULT_PAGE_BACKGROUND_ID,
   pageBackgroundWash = DEFAULT_PAGE_BACKGROUND_WASH,
+  showPageNumbers = true,
+  clanFooterLabel = "",
   readOnly = true,
 }: GenealogyBookPageProps) {
   const relations = detail
@@ -55,6 +59,9 @@ export default function GenealogyBookPage({
   const Border = getBorderStyle(borderStyleId).Component;
   const Form = getFormStyle(formStyleId).Component;
   const hasBg = Boolean(getPageBackground(pageBackgroundId).url);
+  const footerText = showPageNumbers
+    ? UI.BOOK_PAGE_OF(pageNumber, totalPages)
+    : clanFooterLabel || UI.BOOK_COVER_SUBTITLE_PREFIX;
 
   return (
     <div
@@ -82,7 +89,7 @@ export default function GenealogyBookPage({
         )}
 
         <p className={styles.paperFooter}>
-          {UI.BOOK_PAGE_OF(pageNumber, totalPages)}
+          {footerText}
         </p>
       </Border>
     </div>

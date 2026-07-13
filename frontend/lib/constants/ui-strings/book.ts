@@ -48,6 +48,11 @@ export const BOOK_STRINGS = {
   BOOK_BORDER_STYLE_LABEL: "Khung viền",
   BOOK_FORM_STYLE_LABEL: "Kiểu trang thông tin",
   BOOK_COVER_FONT_LABEL: "Font thư pháp",
+  BOOK_SHOW_PAGE_NUMBERS_LABEL: "Số trang chân trang",
+  BOOK_SHOW_PAGE_NUMBERS_ON: "Hiện số trang (Trang x / y)",
+  BOOK_SHOW_PAGE_NUMBERS_OFF: "Ẩn số trang — hiện tên dòng họ",
+  BOOK_SHOW_PAGE_NUMBERS_HINT:
+    "Ẩn khi muốn tự đánh số / sắp xếp lại sau khi in. Chân trang sẽ hiện tên dòng họ.",
   BOOK_OPEN_STYLE: "Tùy chỉnh kiểu trình bày",
   BOOK_SAVED_HINT: "Tự động lưu vào tài khoản",
 

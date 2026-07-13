@@ -3,6 +3,7 @@
 import { getBranchLabel } from "@/lib/constants/branches";
 import { UI } from "@/lib/constants/ui-strings";
 import type { Person } from "@/components/types/family-tree-types";
+import { toRomanNumeral } from "@/utils/roman-numeral";
 
 type Props = {
   person: Person;
@@ -24,7 +25,7 @@ export default function BookPageRow({
   const meta = [
     person.branch != null ? getBranchLabel(person.branch) : null,
     person.generation != null
-      ? `${UI.BOOK_GENERATION} ${person.generation}`
+      ? `${UI.BOOK_GENERATION} ${toRomanNumeral(person.generation)}`
       : null,
   ]
     .filter(Boolean)

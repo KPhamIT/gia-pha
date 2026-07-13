@@ -1,4 +1,5 @@
 import { UI } from "@/lib/constants/ui-strings";
+import { formatDate } from "@/utils/person-relationships";
 import styles from "../GenealogyBook.module.css";
 import BookField from "../BookField";
 import { BOOK_PRINT_LINES } from "../book-print-lines";
@@ -24,14 +25,14 @@ const CompactForm: PageFormComponent = ({
       />
       <BookField
         label={UI.BIRTH_DATE}
-        value={draft.birthDate}
+        value={readOnly ? formatDate(draft.birthDate) : draft.birthDate}
         onChange={(v) => onChange("birthDate", v)}
         readOnly={readOnly}
         onStartEdit={onStartEdit}
       />
       <BookField
         label={UI.DEATH_DATE}
-        value={draft.deathDate}
+        value={readOnly ? formatDate(draft.deathDate) : draft.deathDate}
         onChange={(v) => onChange("deathDate", v)}
         readOnly={readOnly}
         onStartEdit={onStartEdit}

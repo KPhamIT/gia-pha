@@ -77,6 +77,11 @@ export const MOBILE_MENU_SETTINGS: readonly MobileMenuLink[] = [
     icon: "settings",
   },
   {
+    href: "/book/covers",
+    label: UI.COVER_STUDIO_OPEN,
+    icon: "book",
+  },
+  {
     href: "/ceremonies/templates",
     label: UI.CEREMONY_TEMPLATES_OPEN,
     icon: "edit",

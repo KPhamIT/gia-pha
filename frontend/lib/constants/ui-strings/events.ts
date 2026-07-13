@@ -29,20 +29,21 @@ export const EVENT_STRINGS = {
   EVENTS_DONATION_PROMO_DESC:
     "Mọi đóng góp của con cháu xa gần đều là nén tâm nhang hướng về cội nguồn, giúp duy trì và tôn tạo từ đường dòng họ.",
   EVENTS_DONATION_PROMO_CTA: "Đóng góp công đức",
-  EVENTS_APP_FUND_PROMO_TITLE: "Duy trì ứng dụng gia phả",
+  EVENTS_APP_FUND_PROMO_TITLE: "Giúp dòng họ duy trì sử dụng ứng dụng gia phả",
   EVENTS_APP_FUND_PROMO_DESC:
     "Con cháu chuyển khoản tùy tâm qua QR; sau khi hệ thống xác nhận, số tiền được cộng vào quỹ phí app của dòng họ.",
-  EVENTS_APP_FUND_PROMO_CTA: "Quyên góp phí app",
-  EVENTS_APP_FUND_PROMO_VIEW: "Xem đã quyên góp",
+  EVENTS_APP_FUND_PROMO_CTA: "Quyên góp sử dụng",
+  EVENTS_APP_FUND_PROMO_VIEW: "Xem ai đã quyên góp",
   EVENTS_APP_FUND_SHEET_TITLE: "Quỹ phí dùng app",
-  EVENTS_APP_FUND_SHEET_DONORS_TITLE: "Danh sách quyên góp",
+  EVENTS_APP_FUND_SHEET_DONORS_TITLE: "Danh sách cá nhân đã quyên góp",
   EVENTS_APP_FUND_DONATE_AGAIN: "Quyên góp thêm",
   EVENTS_APP_FUND_TOTAL: "Đã quyên góp",
   EVENTS_APP_FUND_REQUIRED: "Phí gói cần đóng",
   EVENTS_APP_FUND_SHORTFALL: "Còn thiếu",
   EVENTS_APP_FUND_COVERED: "Đã đủ tiền gia hạn gói",
   EVENTS_APP_FUND_EXPIRES: (date: string) => `Gói hiện tại hết hạn: ${date}`,
-  EVENTS_APP_FUND_DAYS_LEFT: (days: number) => `Còn ${days} ngày đến hạn gia hạn`,
+  EVENTS_APP_FUND_DAYS_LEFT: (days: number) =>
+    `Còn ${days} ngày đến hạn gia hạn`,
   EVENTS_APP_FUND_EXPIRED: "Gói đã hết hạn hoặc chưa kích hoạt",
   EVENTS_APP_FUND_ADMIN_HINT:
     "Chỉ khoản đã được hệ thống xác nhận mới tính vào tổng quỹ. Khi đến hạn, đối chiếu với phí gói; nếu còn thiếu, admin nộp thêm qua trang thanh toán.",

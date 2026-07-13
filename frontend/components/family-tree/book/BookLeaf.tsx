@@ -15,6 +15,7 @@ import {
 import type { BookSettings } from "./book-settings";
 import type { Leaf } from "./book-leaves";
 import type { OrgBookContext } from "@/lib/settings/default-user-settings";
+import { formatCoverSubtitle, resolveCoverSubtitleClanName } from "./book-cover-subtitle";
 import styles from "./GenealogyBook.module.css";
 
 export type BookLeafCtx = {
@@ -99,6 +100,13 @@ export default function BookLeaf({
       formStyleId={ctx.settings.formStyleId}
       pageBackgroundId={ctx.settings.pageBackgroundId}
       pageBackgroundWash={ctx.settings.pageBackgroundWash}
+      showPageNumbers={ctx.settings.showPageNumbers !== false}
+      clanFooterLabel={formatCoverSubtitle(
+        resolveCoverSubtitleClanName(
+          ctx.settings.coverSubtitle,
+          ctx.orgContext,
+        ),
+      )}
       readOnly
     />
   );

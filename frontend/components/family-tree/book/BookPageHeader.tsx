@@ -2,6 +2,7 @@
 
 import { BRANCH_OPTIONS, getBranchLabel } from "@/lib/constants/branches";
 import { UI } from "@/lib/constants/ui-strings";
+import { toRomanNumeral } from "@/utils/roman-numeral";
 import type { BookPageDraft } from "./book-page-draft";
 import { displayValue } from "./BookField";
 import styles from "./GenealogyBook.module.css";
@@ -49,18 +50,24 @@ function InlineNumberField({
   value,
   readOnly,
   onChange,
+  displayAsRoman,
 }: {
   label: string;
   field: keyof BookPageDraft;
   value: string;
   readOnly: boolean;
   onChange: Update;
+  displayAsRoman?: boolean;
 }) {
+  const display = displayAsRoman
+    ? toRomanNumeral(value) || UI.BOOK_EMPTY_FIELD
+    : displayValue(value);
+
   return (
     <span className="inline-flex items-center gap-1">
       {label}
       {readOnly ? (
-        <span>{displayValue(value)}</span>
+        <span>{display}</span>
       ) : (
         <input
           type="text"
@@ -121,6 +128,7 @@ export default function BookPageHeader({
           value={draft.generation}
           readOnly={readOnly}
           onChange={onChange}
+          displayAsRoman
         />
       </div>
     </div>
