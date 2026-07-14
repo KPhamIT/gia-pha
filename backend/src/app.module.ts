@@ -20,6 +20,7 @@ import { MediaModule } from './media/media.module.js';
 import { BillingModule } from './billing/billing.module.js';
 import { ContactModule } from './contact/contact.module.js';
 import { AppFundModule } from './app-fund/app-fund.module.js';
+import { WeatherModule } from './weather/weather.module.js';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { AppFundModule } from './app-fund/app-fund.module.js';
     BillingModule,
     ContactModule,
     AppFundModule,
+    WeatherModule,
   ],
   controllers: [AppController],
   providers: [AppService],

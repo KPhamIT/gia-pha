@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Organization" ADD COLUMN "clanLat" DOUBLE PRECISION,
+ADD COLUMN "clanLng" DOUBLE PRECISION;

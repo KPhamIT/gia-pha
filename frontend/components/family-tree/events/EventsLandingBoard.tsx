@@ -21,6 +21,7 @@ import EventsUpcomingList from "./EventsUpcomingList";
 import EventsDonationPromo from "./EventsDonationPromo";
 import EventsAppFundPromo from "./EventsAppFundPromo";
 import EventsLocationCard from "./EventsLocationCard";
+import EventsWeatherCard from "./EventsWeatherCard";
 import EventCard from "./EventCard";
 import { useUpcomingCeremonies } from "@/hooks/useUpcomingCeremonies";
 
@@ -269,6 +270,7 @@ export default function EventsLandingBoard({
                 disabled={appFundDisabled}
               />
             ) : null}
+            <EventsWeatherCard />
             <EventsLocationCard />
           </aside>
         </div>

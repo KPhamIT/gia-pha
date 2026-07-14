@@ -79,4 +79,5 @@ export const API_ROUTES = {
   APP_FUND_ADMIN: "/app-fund/admin",
   APP_FUND_ADMIN_CONFIRM: (id: number) => `/app-fund/admin/${id}/confirm`,
   APP_FUND_ADMIN_REJECT: (id: number) => `/app-fund/admin/${id}/reject`,
+  WEATHER_CLAN: "/weather/clan",
 };

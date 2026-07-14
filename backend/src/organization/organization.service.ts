@@ -23,6 +23,7 @@ import {
 import { createRootPersonForOrg } from './create-root-person.js';
 import { AuthService } from '../auth/auth.service.js';
 import { OrgRegistrationMailService } from '../mail/org-registration-mail.service.js';
+import { geocodeClanAddress } from './geocode-clan-address.js';
 
 export type OrganizationPublicAccess = {
   accessToken: string;
@@ -178,6 +179,27 @@ export class OrganizationService {
 
   async update(id: number, user: User, dto: UpdateOrganizationDto) {
     await this.findAccessible(id, user);
+
+    let clanLat: number | null | undefined;
+    let clanLng: number | null | undefined;
+
+    if (dto.clanLat !== undefined || dto.clanLng !== undefined) {
+      clanLat = dto.clanLat === undefined ? undefined : dto.clanLat;
+      clanLng = dto.clanLng === undefined ? undefined : dto.clanLng;
+    } else if (dto.clanAddress !== undefined) {
+      const address = trimOptional(dto.clanAddress);
+      if (!address) {
+        clanLat = null;
+        clanLng = null;
+      } else {
+        const geo = await geocodeClanAddress(address);
+        if (geo) {
+          clanLat = geo.lat;
+          clanLng = geo.lng;
+        }
+      }
+    }
+
     const org = await this.prisma.organization.update({
       where: { id },
       data: {
@@ -191,9 +213,49 @@ export class OrganizationService {
         ...(dto.clanMapEmbedUrl !== undefined && {
           clanMapEmbedUrl: trimOptional(dto.clanMapEmbedUrl),
         }),
+        ...(clanLat !== undefined && { clanLat }),
+        ...(clanLng !== undefined && { clanLng }),
       },
     });
     return this.withPublicAccess(org);
+  }
+
+  /**
+   * Org hiện tại + tọa độ từ đường cho thời tiết.
+   * Geocode + persist nếu có địa chỉ nhưng chưa có lat/lng.
+   */
+  async resolveClanWeatherLocation(
+    user: User | null | undefined,
+    orgAccessToken?: string,
+  ) {
+    const orgId = await this.resolveOrgIdForBookContext(user, orgAccessToken);
+    let org = await this.prisma.organization.findUnique({
+      where: { id: orgId },
+    });
+    if (!org) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    if (
+      org.clanAddress?.trim() &&
+      (org.clanLat == null || org.clanLng == null)
+    ) {
+      const geo = await geocodeClanAddress(org.clanAddress);
+      if (geo) {
+        org = await this.prisma.organization.update({
+          where: { id: org.id },
+          data: { clanLat: geo.lat, clanLng: geo.lng },
+        });
+      }
+    }
+
+    return {
+      orgId: org.id,
+      name: org.name,
+      clanAddress: org.clanAddress,
+      lat: org.clanLat,
+      lng: org.clanLng,
+    };
   }
 
   async remove(id: number) {

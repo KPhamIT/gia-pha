@@ -174,6 +174,11 @@ export const ACCOUNT_STRINGS = {
   ORG_BOOK_ESTABLISHED_YEAR_PLACEHOLDER: "Ví dụ: 2026",
   ORG_BOOK_CLAN_ADDRESS_LABEL: "Địa chỉ dòng họ",
   ORG_BOOK_CLAN_ADDRESS_PLACEHOLDER: "Ví dụ: Việt Nam",
+  ORG_BOOK_CLAN_LAT_LABEL: "Vĩ độ (lat)",
+  ORG_BOOK_CLAN_LNG_LABEL: "Kinh độ (lng)",
+  ORG_BOOK_CLAN_COORDS_HINT:
+    "Dùng cho dự báo thời tiết tại từ đường. Lấy từ Google Maps (chuột phải → tọa độ) hoặc để trống.",
+  ORG_BOOK_CLAN_COORDS_INVALID: "Vĩ độ/kinh độ không hợp lệ.",
   ORG_BOOK_MAP_EMBED_LABEL: "Bản đồ Google Maps (embed)",
   ORG_BOOK_MAP_EMBED_PLACEHOLDER: "Dán URL src của iframe từ Google Maps",
   ORG_BOOK_MAP_EMBED_HINT:

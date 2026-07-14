@@ -1,9 +1,13 @@
 import {
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Matches,
+  Max,
   MaxLength,
+  Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateOrganizationDto {
@@ -28,4 +32,20 @@ export class UpdateOrganizationDto {
   @IsString()
   @MaxLength(2000)
   clanMapEmbedUrl?: string;
+
+  /** Vĩ độ từ đường (−90…90). null = xóa. */
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  clanLat?: number | null;
+
+  /** Kinh độ từ đường (−180…180). null = xóa. */
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  clanLng?: number | null;
 }

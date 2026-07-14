@@ -9,6 +9,11 @@ import { UI } from "@/lib/constants/ui-strings";
 import { useOrganizations } from "@/hooks/useOrganizations";
 import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache";
 import { invalidateOrgBookContext } from "@/lib/org/org-book-context";
+import {
+  formatCoordInput,
+  parseCoordPair,
+} from "@/utils/clan-coords";
+import { notify } from "@/lib/notify";
 
 function normalizeYearInput(raw: string): string {
   return raw.replace(/\D/g, "").slice(0, 4);
@@ -25,6 +30,8 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
 
   const [establishedYear, setEstablishedYear] = useState("");
   const [clanAddress, setClanAddress] = useState("");
+  const [clanLat, setClanLat] = useState("");
+  const [clanLng, setClanLng] = useState("");
   const [clanMapEmbedUrl, setClanMapEmbedUrl] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -32,6 +39,8 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
     if (!org) return;
     setEstablishedYear(org.establishedYear ?? "");
     setClanAddress(org.clanAddress ?? "");
+    setClanLat(formatCoordInput(org.clanLat));
+    setClanLng(formatCoordInput(org.clanLng));
     setClanMapEmbedUrl(org.clanMapEmbedUrl ?? "");
   }, [org]);
 
@@ -41,12 +50,19 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
       normalizeYearInput(establishedYear) !==
         normalizeYearInput(org.establishedYear ?? "") ||
       clanAddress.trim() !== (org.clanAddress ?? "").trim() ||
-      clanMapEmbedUrl.trim() !== (org.clanMapEmbedUrl ?? "").trim()
+      clanMapEmbedUrl.trim() !== (org.clanMapEmbedUrl ?? "").trim() ||
+      clanLat.trim() !== formatCoordInput(org.clanLat) ||
+      clanLng.trim() !== formatCoordInput(org.clanLng)
     );
-  }, [org, establishedYear, clanAddress, clanMapEmbedUrl]);
+  }, [org, establishedYear, clanAddress, clanLat, clanLng, clanMapEmbedUrl]);
 
   const handleSave = async () => {
     if (!org || !isDirty) return;
+    const coords = parseCoordPair(clanLat, clanLng);
+    if (!coords) {
+      notify.error(null, UI.ORG_BOOK_CLAN_COORDS_INVALID);
+      return;
+    }
     setSaving(true);
     try {
       await update(org.id, {
@@ -54,6 +70,8 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
         establishedYear: normalizeYearInput(establishedYear),
         clanAddress: clanAddress.trim(),
         clanMapEmbedUrl: clanMapEmbedUrl.trim(),
+        clanLat: coords.lat,
+        clanLng: coords.lng,
       });
       invalidateUserSettingsCache();
       invalidateOrgBookContext();
@@ -70,6 +88,7 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
     : BT.errorBg;
   const panelClass = isLanding ? AC.cardPaper : BT.panel;
   const fieldInputClass = isLanding ? AC.input : inputClassName;
+  const hintClass = isLanding ? AC.muted : BT.mutedOnLight;
 
   if (loading) {
     return <p className={`text-sm ${loadingClass}`}>{UI.LOADING}</p>;
@@ -95,9 +114,7 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
         >
           {UI.ORG_BOOK_INFO_TITLE}
         </h2>
-        <p className={`mt-1 text-sm ${isLanding ? AC.muted : BT.mutedOnLight}`}>
-          {UI.ORG_BOOK_INFO_HINT}
-        </p>
+        <p className={`mt-1 text-sm ${hintClass}`}>{UI.ORG_BOOK_INFO_HINT}</p>
       </div>
 
       <FormField label={UI.ORG_BOOK_ESTABLISHED_YEAR_LABEL}>
@@ -120,6 +137,30 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
         />
       </FormField>
 
+      <div className="grid gap-3 sm:grid-cols-2">
+        <FormField label={UI.ORG_BOOK_CLAN_LAT_LABEL}>
+          <input
+            className={fieldInputClass}
+            inputMode="decimal"
+            value={clanLat}
+            placeholder="21.0285"
+            onChange={(e) => setClanLat(e.target.value)}
+          />
+        </FormField>
+        <FormField label={UI.ORG_BOOK_CLAN_LNG_LABEL}>
+          <input
+            className={fieldInputClass}
+            inputMode="decimal"
+            value={clanLng}
+            placeholder="105.8542"
+            onChange={(e) => setClanLng(e.target.value)}
+          />
+        </FormField>
+      </div>
+      <p className={`-mt-2 text-xs ${hintClass}`}>
+        {UI.ORG_BOOK_CLAN_COORDS_HINT}
+      </p>
+
       <FormField label={UI.ORG_BOOK_MAP_EMBED_LABEL}>
         <textarea
           className={`${fieldInputClass} min-h-[5.5rem]`}
@@ -127,7 +168,7 @@ export default function OrgBookInfoSection({ variant = "book" }: Props) {
           placeholder={UI.ORG_BOOK_MAP_EMBED_PLACEHOLDER}
           onChange={(e) => setClanMapEmbedUrl(e.target.value)}
         />
-        <p className={`mt-1.5 text-xs ${isLanding ? AC.muted : BT.mutedOnLight}`}>
+        <p className={`mt-1.5 text-xs ${hintClass}`}>
           {UI.ORG_BOOK_MAP_EMBED_HINT}
         </p>
       </FormField>

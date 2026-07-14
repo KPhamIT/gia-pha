@@ -114,6 +114,8 @@ export type Organization = {
   establishedYear?: string | null;
   clanAddress?: string | null;
   clanMapEmbedUrl?: string | null;
+  clanLat?: number | null;
+  clanLng?: number | null;
   createdAt?: string;
 };
 

@@ -16,6 +16,11 @@ import type {
 } from "@/lib/api/modules/organizations";
 import { invalidateUserSettingsCache } from "@/lib/settings/user-settings-cache";
 import { invalidateOrgBookContext } from "@/lib/org/org-book-context";
+import {
+  formatCoordInput,
+  parseCoordPair,
+} from "@/utils/clan-coords";
+import { notify } from "@/lib/notify";
 
 function normalizeYearInput(raw: string): string {
   return raw.replace(/\D/g, "").slice(0, 4);
@@ -64,12 +69,15 @@ function OrgRow({
 }) {
   const isLanding = variant === "landing";
   const fieldClass = isLanding ? AC.input : inputClassName;
+  const hintClass = isLanding ? AC.muted : BT.mutedOnLight;
 
   const [name, setName] = useState(org.name);
   const [establishedYear, setEstablishedYear] = useState(
     org.establishedYear ?? "",
   );
   const [clanAddress, setClanAddress] = useState(org.clanAddress ?? "");
+  const [clanLat, setClanLat] = useState(formatCoordInput(org.clanLat));
+  const [clanLng, setClanLng] = useState(formatCoordInput(org.clanLng));
   const [clanMapEmbedUrl, setClanMapEmbedUrl] = useState(
     org.clanMapEmbedUrl ?? "",
   );
@@ -79,21 +87,30 @@ function OrgRow({
     setName(org.name);
     setEstablishedYear(org.establishedYear ?? "");
     setClanAddress(org.clanAddress ?? "");
+    setClanLat(formatCoordInput(org.clanLat));
+    setClanLng(formatCoordInput(org.clanLng));
     setClanMapEmbedUrl(org.clanMapEmbedUrl ?? "");
   }, [org]);
 
-  const isDirty = useMemo(
-    () =>
+  const isDirty = useMemo(() => {
+    return (
       name.trim() !== org.name ||
       normalizeYearInput(establishedYear) !==
         normalizeYearInput(org.establishedYear ?? "") ||
       clanAddress.trim() !== (org.clanAddress ?? "").trim() ||
-      clanMapEmbedUrl.trim() !== (org.clanMapEmbedUrl ?? "").trim(),
-    [org, name, establishedYear, clanAddress, clanMapEmbedUrl],
-  );
+      clanMapEmbedUrl.trim() !== (org.clanMapEmbedUrl ?? "").trim() ||
+      clanLat.trim() !== formatCoordInput(org.clanLat) ||
+      clanLng.trim() !== formatCoordInput(org.clanLng)
+    );
+  }, [org, name, establishedYear, clanAddress, clanLat, clanLng, clanMapEmbedUrl]);
 
   const handleSave = async () => {
     if (!isDirty) return;
+    const coords = parseCoordPair(clanLat, clanLng);
+    if (!coords) {
+      notify.error(null, UI.ORG_BOOK_CLAN_COORDS_INVALID);
+      return;
+    }
     setSaving(true);
     try {
       await onSave(org.id, {
@@ -101,6 +118,8 @@ function OrgRow({
         establishedYear: normalizeYearInput(establishedYear),
         clanAddress: clanAddress.trim(),
         clanMapEmbedUrl: clanMapEmbedUrl.trim(),
+        clanLat: coords.lat,
+        clanLng: coords.lng,
       });
       invalidateUserSettingsCache();
       invalidateOrgBookContext();
@@ -165,6 +184,28 @@ function OrgRow({
         </FormField>
       </div>
 
+      <div className="grid gap-2 sm:grid-cols-2">
+        <FormField label={UI.ORG_BOOK_CLAN_LAT_LABEL}>
+          <input
+            className={fieldClass}
+            inputMode="decimal"
+            value={clanLat}
+            placeholder="21.0285"
+            onChange={(e) => setClanLat(e.target.value)}
+          />
+        </FormField>
+        <FormField label={UI.ORG_BOOK_CLAN_LNG_LABEL}>
+          <input
+            className={fieldClass}
+            inputMode="decimal"
+            value={clanLng}
+            placeholder="105.8542"
+            onChange={(e) => setClanLng(e.target.value)}
+          />
+        </FormField>
+      </div>
+      <p className={`-mt-1 text-xs ${hintClass}`}>{UI.ORG_BOOK_CLAN_COORDS_HINT}</p>
+
       <FormField label={UI.ORG_BOOK_MAP_EMBED_LABEL}>
         <textarea
           className={`${fieldClass} min-h-[4.5rem]`}
@@ -172,7 +213,7 @@ function OrgRow({
           placeholder={UI.ORG_BOOK_MAP_EMBED_PLACEHOLDER}
           onChange={(e) => setClanMapEmbedUrl(e.target.value)}
         />
-        <p className={`mt-1 text-xs ${isLanding ? AC.muted : BT.mutedOnLight}`}>
+        <p className={`mt-1 text-xs ${hintClass}`}>
           {UI.ORG_BOOK_MAP_EMBED_HINT}
         </p>
       </FormField>

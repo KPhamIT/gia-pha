@@ -26,6 +26,8 @@ export type UpdateOrganizationInput = {
   establishedYear?: string;
   clanAddress?: string;
   clanMapEmbedUrl?: string;
+  clanLat?: number | null;
+  clanLng?: number | null;
 };
 
 export type DemoOrganization = {

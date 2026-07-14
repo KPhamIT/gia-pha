@@ -188,6 +188,9 @@ model Organization {
   clanAddress     String?
   /// URL embed Google Maps (iframe src) — khung bản đồ trang sự kiện.
   clanMapEmbedUrl String? @db.Text
+  /// Tọa độ từ đường (dùng dự báo thời tiết; geocode từ clanAddress).
+  clanLat         Float?
+  clanLng         Float?
 
   /// Per-org overrides for STANDARD user feature flags (merged over system defaults).
   standardFeatures Json?
