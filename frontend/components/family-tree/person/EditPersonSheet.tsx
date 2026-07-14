@@ -64,6 +64,9 @@ export default function EditPersonSheet({
   );
 
   useEffect(() => {
+    // Chỉ reset khi đổi người / reload detail. Không phụ thuộc `relationships`
+    // của cây — thêm cha/mẹ/vợ trong form cập nhật cây ngay; nếu rebuild từ
+    // detail.relationships cũ sẽ xóa ID vừa chọn và lần Lưu sẽ gỡ liên kết.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDraft(buildPersonDraft(detail, "1"));
     if (detail?.person.id != null) {
@@ -76,7 +79,8 @@ export default function EditPersonSheet({
         ),
       );
     }
-  }, [detail, relationships]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- xem ghi chú trên
+  }, [detail]);
 
   const update = (field: keyof PersonDraft, value: string) => {
     setDraft((prev) => {
