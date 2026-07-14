@@ -4,6 +4,7 @@ import { Be_Vietnam_Pro, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { createRootMetadata } from "@/lib/seo";
 import { themeInitScript } from "@/utils/theme";
+import AnalyticsScripts from "@/components/analytics/AnalyticsScripts";
 import AppToaster from "@/components/ui/AppToaster";
 import GlobalMobileChrome from "@/components/navigation/GlobalMobileChrome";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
         {children}
         <GlobalMobileChrome />
         <AppToaster />
+        <AnalyticsScripts />
       </body>
     </html>
   );
