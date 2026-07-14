@@ -118,6 +118,13 @@ export const EVENT_STRINGS = {
   EVENTS_DAY_CEREMONIES_TITLE: "Ngày giỗ",
   EVENTS_CLEAR_DAY_FILTER: "Xem cả tháng",
   EVENTS_CALENDAR_LUNAR_MONTH: (name: string) => `Tháng ${name} âm lịch`,
+  EVENTS_CALENDAR_PILLAR_HOUR: "Giờ",
+  EVENTS_CALENDAR_PILLAR_DAY: "Ngày",
+  EVENTS_CALENDAR_PILLAR_MONTH: "Tháng",
+  EVENTS_CALENDAR_PILLAR_YEAR: "Năm",
+  /** Ví dụ: "Giờ Nhâm Dần, ngày Kỷ Sửu, tháng Ất Mùi". */
+  EVENTS_CALENDAR_GAN_ZHI_LINE: (hour: string, day: string, month: string) =>
+    `Giờ ${hour}, ngày ${day}, tháng ${month}`,
   EVENTS_CALENDAR_CEREMONY_MARK: "Giỗ",
   EVENT_ADD: "Thêm sự kiện",
   EVENT_EDIT: "Sửa sự kiện",

@@ -170,6 +170,57 @@ export function formatLunarDayMonthFullLabel(date: Date): string {
   return `${lunar.getDay()} tháng ${monthName} âm lịch`;
 }
 
+export type LunarFourPillarsInfo = {
+  hourValue: string;
+  hourGanZhi: string;
+  dayValue: string;
+  dayGanZhi: string;
+  monthValue: string;
+  monthGanZhi: string;
+  yearValue: string;
+  yearGanZhi: string;
+};
+
+/** Ghép ngày focus với giờ đồng hồ hiện tại (để lấy can chi giờ đúng). */
+function withCurrentClock(date: Date, now = new Date()): Date {
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+  );
+}
+
+/** Giờ/ngày/tháng/năm âm kèm can chi — dùng card tứ trụ. */
+export function getLunarFourPillars(date = new Date()): LunarFourPillarsInfo {
+  const at = withCurrentClock(date);
+  const lunar = Lunar.fromDate(at);
+  const hours = String(at.getHours()).padStart(2, "0");
+  const minutes = String(at.getMinutes()).padStart(2, "0");
+  return {
+    hourValue: `${hours}:${minutes}`,
+    hourGanZhi: toVietnameseGanZhi(lunar.getTimeInGanZhi()),
+    dayValue: String(lunar.getDay()),
+    dayGanZhi: toVietnameseGanZhi(lunar.getDayInGanZhi()),
+    monthValue: String(Math.abs(lunar.getMonth())),
+    monthGanZhi: toVietnameseGanZhi(lunar.getMonthInGanZhi()),
+    yearValue: String(lunar.getYear()),
+    yearGanZhi: toVietnameseGanZhi(lunar.getYearInGanZhi()),
+  };
+}
+
+/** Ví dụ: "Giờ Nhâm Dần, ngày Kỷ Sửu, tháng Ất Mùi". */
+export function formatLunarGanZhiHourDayMonthLabel(date = new Date()): string {
+  const pillars = getLunarFourPillars(date);
+  return UI.EVENTS_CALENDAR_GAN_ZHI_LINE(
+    pillars.hourGanZhi,
+    pillars.dayGanZhi,
+    pillars.monthGanZhi,
+  );
+}
+
 export function formatShortMonthDay(date: Date): { month: string; day: string } {
   const month = date
     .toLocaleDateString("vi-VN", { month: "short" })

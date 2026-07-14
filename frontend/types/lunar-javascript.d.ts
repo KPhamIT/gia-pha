@@ -6,6 +6,9 @@ declare module "lunar-javascript" {
     getMonth(): number;
     getYear(): number;
     getYearInGanZhi(): string;
+    getMonthInGanZhi(): string;
+    getDayInGanZhi(): string;
+    getTimeInGanZhi(): string;
     getTimes(): LunarTime[];
     getJieQi(): string;
     getNextJieQi(): JieQi;

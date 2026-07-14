@@ -10,6 +10,7 @@ import {
   buildMonthCalendar,
   dateKey,
   formatLunarDayMonthFullLabel,
+  formatLunarGanZhiHourDayMonthLabel,
   formatLunarYearBadge,
   formatSolarDayMonthYearLabel,
   groupCeremoniesBySolarDate,
@@ -81,6 +82,7 @@ export default function EventsMonthCalendar({
   const focusDate = selectedDate ?? today;
   const solarDayLabel = formatSolarDayMonthYearLabel(focusDate);
   const lunarDayLabel = formatLunarDayMonthFullLabel(focusDate);
+  const ganZhiLabel = formatLunarGanZhiHourDayMonthLabel(focusDate);
 
   return (
     <div className="overflow-hidden rounded-xl border border-[#d4c3c1] bg-white shadow-sm">
@@ -91,6 +93,7 @@ export default function EventsMonthCalendar({
               {solarDayLabel}
             </h2>
             <p className="mt-0.5 text-sm text-[#827472]">{lunarDayLabel}</p>
+            <p className="mt-0.5 text-sm text-[#827472]">{ganZhiLabel}</p>
           </div>
           <span className="rounded-full bg-[#ffdcc5] px-3 py-1 text-sm font-semibold italic text-[#301400]">
             {monthBadge}
