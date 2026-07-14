@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useClanWeather } from "@/hooks/useClanWeather";
+import type { ClanWeather } from "@/lib/api/modules/weather";
 import { UI } from "@/lib/constants/ui-strings";
 import {
+  filterHoursForDate,
+  formatDayLong,
   formatHourLabel,
   formatTempC,
   formatWeekdayShort,
+  isSameCalendarDay,
+  localDateKey,
 } from "@/utils/weather-display";
 import { WeatherGlyph } from "./WeatherGlyph";
 
@@ -49,43 +54,38 @@ function WeatherBody({
   tab,
   onTabChange,
 }: {
-  data: NonNullable<ReturnType<typeof useClanWeather>["data"]>;
+  data: ClanWeather;
   tab: ChartTab;
   onTabChange: (t: ChartTab) => void;
 }) {
   const { current, hourly, daily } = data;
-  const chartHours = hourly.slice(0, 12);
+  const days = daily.slice(0, 7);
+  const todayKey = localDateKey();
+  const defaultDay =
+    days.find((d) => d.date === todayKey)?.date ?? days[0]?.date ?? todayKey;
+
+  const [selectedDate, setSelectedDate] = useState(defaultDay);
+  const selectedDay =
+    days.find((d) => d.date === selectedDate) ?? days[0] ?? null;
+  const isToday = selectedDay ? isSameCalendarDay(selectedDay.date) : true;
+
+  const dayHours = useMemo(() => {
+    if (!selectedDay) return [];
+    const forDay = filterHoursForDate(hourly, selectedDay.date);
+    if (!isToday) return forDay;
+    const now = Date.now() - 30 * 60 * 1000;
+    return forDay.filter((h) => Date.parse(h.time) >= now);
+  }, [hourly, selectedDay, isToday]);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fff1e8] text-[#944a00]">
-          <WeatherGlyph kind={current.icon} className="h-7 w-7" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-3xl font-semibold text-[#321716]">
-              {formatTempC(current.temperatureC)}
-            </span>
-            <span className="truncate text-xs text-[#504443]">
-              {current.label}
-            </span>
-          </div>
-          <p className="mt-1 text-[11px] text-[#6b5a59]">
-            {[
-              UI.EVENTS_WEATHER_HUMIDITY(Math.round(current.humidity)),
-              UI.EVENTS_WEATHER_WIND(Math.round(current.windKmh)),
-              current.precipitationProbability != null
-                ? UI.EVENTS_WEATHER_RAIN_CHANCE(
-                    Math.round(current.precipitationProbability),
-                  )
-                : null,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-        </div>
-      </div>
+      {selectedDay ? (
+        <DaySummary
+          current={current}
+          day={selectedDay}
+          showCurrent={isToday}
+        />
+      ) : null}
 
       <div className="flex gap-1 rounded-lg bg-[#f6f1ef] p-1">
         {(
@@ -110,28 +110,114 @@ function WeatherBody({
         ))}
       </div>
 
-      <HourlyStrip hours={chartHours} tab={tab} />
+      <HourlyStrip hours={dayHours} tab={tab} />
 
-      <div className="-mx-1 flex gap-1 overflow-x-auto pb-1">
-        {daily.slice(0, 7).map((day) => (
-          <div
-            key={day.date}
-            className="flex min-w-[3.25rem] flex-col items-center gap-1 rounded-lg px-1.5 py-1.5 text-center"
-          >
-            <span className="text-[10px] font-medium text-[#6b5a59]">
-              {formatWeekdayShort(day.date)}
-            </span>
-            <span className="text-[#944a00]">
-              <WeatherGlyph kind={day.icon} className="h-4 w-4" />
-            </span>
-            <span className="text-[10px] font-semibold text-[#321716]">
-              {formatTempC(day.temperatureMaxC)}
-            </span>
-            <span className="text-[10px] text-[#8a7775]">
-              {formatTempC(day.temperatureMinC)}
-            </span>
-          </div>
-        ))}
+      <div
+        className="-mx-1 flex gap-1 overflow-x-auto pb-1"
+        role="listbox"
+        aria-label={UI.EVENTS_WEATHER_SELECT_DAY}
+      >
+        {days.map((day) => {
+          const selected = day.date === selectedDate;
+          return (
+            <button
+              key={day.date}
+              type="button"
+              role="option"
+              aria-selected={selected}
+              onClick={() => setSelectedDate(day.date)}
+              className={`flex min-w-[3.25rem] flex-col items-center gap-1 rounded-lg px-1.5 py-1.5 text-center transition ${
+                selected
+                  ? "bg-[#fff1e8] ring-1 ring-[#fc8f34]/70"
+                  : "hover:bg-[#f6f1ef]"
+              }`}
+            >
+              <span className="text-[10px] font-medium text-[#6b5a59]">
+                {formatWeekdayShort(day.date)}
+              </span>
+              <span className="text-[#944a00]">
+                <WeatherGlyph kind={day.icon} className="h-4 w-4" />
+              </span>
+              <span className="text-[10px] font-semibold text-[#321716]">
+                {formatTempC(day.temperatureMaxC)}
+              </span>
+              <span className="text-[10px] text-[#8a7775]">
+                {formatTempC(day.temperatureMinC)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DaySummary({
+  current,
+  day,
+  showCurrent,
+}: {
+  current: ClanWeather["current"];
+  day: ClanWeather["daily"][number];
+  showCurrent: boolean;
+}) {
+  const icon = showCurrent ? current.icon : day.icon;
+  const label = showCurrent ? current.label : day.label;
+  const title = formatDayLong(day.date);
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fff1e8] text-[#944a00]">
+        <WeatherGlyph kind={icon} className="h-7 w-7" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-medium capitalize text-[#6b5a59]">
+          {title}
+        </p>
+        {showCurrent ? (
+          <>
+            <div className="flex items-baseline gap-2">
+              <span className="font-serif text-3xl font-semibold text-[#321716]">
+                {formatTempC(current.temperatureC)}
+              </span>
+              <span className="truncate text-xs text-[#504443]">{label}</span>
+            </div>
+            <p className="mt-1 text-[11px] text-[#6b5a59]">
+              {[
+                UI.EVENTS_WEATHER_DAY_RANGE(
+                  formatTempC(day.temperatureMinC),
+                  formatTempC(day.temperatureMaxC),
+                ),
+                UI.EVENTS_WEATHER_HUMIDITY(Math.round(current.humidity)),
+                UI.EVENTS_WEATHER_WIND(Math.round(current.windKmh)),
+                current.precipitationProbability != null
+                  ? UI.EVENTS_WEATHER_RAIN_CHANCE(
+                      Math.round(current.precipitationProbability),
+                    )
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="flex items-baseline gap-2">
+              <span className="font-serif text-3xl font-semibold text-[#321716]">
+                {UI.EVENTS_WEATHER_DAY_RANGE(
+                  formatTempC(day.temperatureMinC),
+                  formatTempC(day.temperatureMaxC),
+                )}
+              </span>
+              <span className="truncate text-xs text-[#504443]">{label}</span>
+            </div>
+            <p className="mt-1 text-[11px] text-[#6b5a59]">
+              {UI.EVENTS_WEATHER_RAIN_CHANCE(
+                Math.round(day.precipitationProbabilityMax),
+              )}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -141,10 +227,14 @@ function HourlyStrip({
   hours,
   tab,
 }: {
-  hours: NonNullable<ReturnType<typeof useClanWeather>["data"]>["hourly"];
+  hours: ClanWeather["hourly"];
   tab: ChartTab;
 }) {
-  if (hours.length === 0) return null;
+  if (hours.length === 0) {
+    return (
+      <p className="text-[11px] text-[#8a7775]">{UI.EVENTS_WEATHER_HOUR_EMPTY}</p>
+    );
+  }
 
   const values = hours.map((h) => {
     if (tab === "rain") return h.precipitationProbability;

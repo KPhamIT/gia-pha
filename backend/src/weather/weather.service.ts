@@ -187,8 +187,9 @@ function mapOpenMeteo(
   const hourly: ClanWeatherDto['hourly'] = [];
   for (let i = 0; i < hourlyTimes.length; i += 1) {
     const t = Date.parse(hourlyTimes[i] ?? '');
+    // Giữ cả khung ngày kế tiếp (chọn ngày trên FE), bỏ giờ quá cũ.
     if (!Number.isFinite(t) || t < now - 60 * 60 * 1000) continue;
-    if (hourly.length >= 24) break;
+    if (hourly.length >= 24 * 8) break;
     const hc = Number(data.hourly?.weather_code?.[i] ?? 0);
     hourly.push({
       time: hourlyTimes[i]!,
