@@ -38,6 +38,8 @@ export const API_ROUTES = {
   NOTIFICATIONS_SETTINGS: "/notifications/settings",
   NOTIFICATIONS_UPCOMING: "/notifications/upcoming",
   NOTIFICATIONS_STATS: "/notifications/stats",
+  DAY_NOTES: "/day-notes",
+  DAY_NOTE: (date: string) => `/day-notes/${encodeURIComponent(date)}`,
   CEREMONY_HTML: (personId: number) => `/ceremonies/${personId}/html`,
   CEREMONY_SHARE_TOKEN: (personId: number) =>
     `/ceremonies/${personId}/share-token`,

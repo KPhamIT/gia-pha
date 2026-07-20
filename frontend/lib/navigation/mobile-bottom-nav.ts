@@ -5,6 +5,7 @@ export type MobileBottomNavId =
   | "book"
   | "family"
   | "events"
+  | "notes"
   | "profile";
 
 export type MobileBottomNavItem = {
@@ -39,6 +40,12 @@ export const MOBILE_BOTTOM_NAV_ITEMS: readonly MobileBottomNavItem[] = [
     href: "/events",
     match: (pathname) =>
       pathname.startsWith("/events") || pathname.startsWith("/ceremonies"),
+  },
+  {
+    id: "notes",
+    label: UI.MOBILE_NAV_NOTES,
+    href: "/notes",
+    match: (pathname) => pathname.startsWith("/notes"),
   },
   {
     id: "profile",

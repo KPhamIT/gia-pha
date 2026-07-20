@@ -12,6 +12,7 @@ import { PUBLIC_STRINGS } from "./ui-strings/public";
 import { BLOG_UI } from "./ui-strings/blog";
 import { BILLING_STRINGS } from "./ui-strings/billing";
 import { PAGINATION_STRINGS } from "./ui-strings/pagination";
+import { NOTES_STRINGS } from "./ui-strings/notes";
 
 /**
  * App-wide Vietnamese UI strings, merged from per-domain modules under
@@ -31,6 +32,7 @@ export const UI = {
   ...BLOG_UI,
   ...BILLING_STRINGS,
   ...PAGINATION_STRINGS,
+  ...NOTES_STRINGS,
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

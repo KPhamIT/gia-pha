@@ -101,11 +101,26 @@ model User {
   activatedSubscriptions OrganizationSubscription[] @relation("SubscriptionActivator")
   appFundContributions OrgAppFundContribution[] @relation("AppFundCreator")
   reviewedAppFundContributions OrgAppFundContribution[] @relation("AppFundReviewer")
+  dayNotes DayNote[]
 
   createdAt DateTime @default(now())
 
   @@index([organizationId, role])
   @@index([notificationDeathAnniversaryEnabled, isActive])
+}
+
+/// Ghi chú cá nhân theo từng ngày dương lịch (theo user, không theo org).
+model DayNote {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  noteDate DateTime @db.Date
+  body     String   @db.Text
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, noteDate])
+  @@index([userId, noteDate])
 }
 
 /// One row per browser/device — user có thể nhận push trên nhiều thiết bị.

@@ -21,6 +21,7 @@ import { BillingModule } from './billing/billing.module.js';
 import { ContactModule } from './contact/contact.module.js';
 import { AppFundModule } from './app-fund/app-fund.module.js';
 import { WeatherModule } from './weather/weather.module.js';
+import { DayNotesModule } from './day-notes/day-notes.module.js';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { WeatherModule } from './weather/weather.module.js';
     ContactModule,
     AppFundModule,
     WeatherModule,
+    DayNotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

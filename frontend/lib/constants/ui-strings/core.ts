@@ -111,6 +111,7 @@ export const CORE_STRINGS = {
   MOBILE_NAV_BOOK: "Sổ gia phả",
   MOBILE_NAV_FAMILY: "Gia tộc",
   MOBILE_NAV_EVENTS: "Sự kiện",
+  MOBILE_NAV_NOTES: "Ghi chú",
   MOBILE_NAV_PROFILE: "Tài khoản",
 
   // Mobile menu (Facebook-style sheet)

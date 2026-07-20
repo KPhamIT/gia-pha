@@ -29,6 +29,12 @@ export const MOBILE_MENU_SHORTCUTS: readonly MobileMenuLink[] = [
     tone: "bg-[#dce8f5] text-[#1e3a5f]",
   },
   {
+    href: "/notes",
+    label: UI.MOBILE_NAV_NOTES,
+    icon: "edit",
+    tone: "bg-[#e8e0f5] text-[#3b2a5c]",
+  },
+  {
     href: "/ceremonies/upcoming",
     label: UI.NOTIF_OPEN_UPCOMING,
     icon: "calendar",
@@ -47,6 +53,7 @@ export const MOBILE_MENU_PRIMARY: readonly MobileMenuLink[] = [
   { href: "/family-tree", label: UI.LANDING_NAV_CLAN, icon: "tree" },
   { href: "/book", label: UI.MOBILE_NAV_BOOK, icon: "book" },
   { href: "/events", label: UI.LANDING_NAV_EVENTS, icon: "calendar" },
+  { href: "/notes", label: UI.MOBILE_NAV_NOTES, icon: "edit" },
   {
     href: "/ceremonies/upcoming",
     label: UI.NOTIF_OPEN_UPCOMING,

@@ -15,6 +15,7 @@ import { billing } from "./modules/billing";
 import { contact } from "./modules/contact";
 import { appFund } from "./modules/app-fund";
 import { weather } from "./modules/weather";
+import { dayNotes } from "./modules/day-notes";
 
 export const api = {
   auth,
@@ -34,5 +35,6 @@ export const api = {
   contact,
   appFund,
   weather,
+  dayNotes,
 };
 export type ApiType = typeof api;
