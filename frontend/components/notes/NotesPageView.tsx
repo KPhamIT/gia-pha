@@ -94,7 +94,7 @@ export default function NotesPageView() {
     }
     const trimmed = draft.trim();
     if (!trimmed) {
-      notify.error(UI.NOTES_ERR_SAVE);
+      notify.error(null, UI.NOTES_ERR_SAVE);
       return;
     }
     setSaving(true);
