@@ -5,7 +5,7 @@ import { UI } from "@/lib/constants/ui-strings";
 export default function LandingBottomSection() {
   return (
     <section>
-      <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 pt-10 md:px-6 md:pt-16">
         <div className="mb-6 overflow-hidden rounded-2xl border border-[#fc8f34]/40 bg-gradient-to-br from-[#fff8f0] via-[#faf7f2] to-[#ffdcc5]/50 px-6 py-10 text-center md:mb-8 md:px-12 md:py-12">
           <span className="inline-flex rounded-full bg-[#ffdcc5] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#663100]">
             {UI.LANDING_DEMO_NOTICE_BADGE}

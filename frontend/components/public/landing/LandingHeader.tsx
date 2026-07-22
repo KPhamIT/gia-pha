@@ -92,8 +92,13 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
           </div>
         </div>
       </header>
-      {/* Luôn giữ chiều cao — không thu khi ẩn (tránh giật scroll). */}
-      <div aria-hidden className={`shrink-0 ${HEADER_OFFSET}`} />
+      {/* Đồng bộ với header: thu chiều cao khi ẩn để hết khoảng trống phía trên. */}
+      <div
+        aria-hidden
+        className={`shrink-0 overflow-hidden transition-[height] duration-300 ease-out ${
+          hidden ? "h-0" : HEADER_OFFSET
+        }`}
+      />
     </>
   );
 }
