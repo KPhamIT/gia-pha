@@ -1,5 +1,6 @@
 Với việc sử dụng gia phả cội nguồn (coinguon.io.vn) bạn được lợi ích gì hãy chúng cùng mình xem thử nha.
 Chỉ cần nhập thông tin một lần bạn có thể 
+
 1. Xem cây gia phả dòng họ hoặc gia đình.
 2. Tạo sách gia phả với đầy đủ thông tin bạn có thể chọn nhiều mẫu bìa và kiểu hiển thị sách khác nhau.
 3. Thông báo giỗ chạp của các bậc tổ tiên hoặc những người bạn quan tâm.
@@ -15,3 +16,5 @@ từ giỗ, lễ tết, ngày rằm ...
 6. Thông báo thời tiết tại từ đường để bạn chuẩn bị những đồ dùng cần thiết nếu ngày mưa ngày nắng.
 7. Tạo sự kiện cho dòng họ qua đó bạn có thể cho mọi người biết về ai đã đóng tiền họ ai chưa - cũng như thông tin về những người đã đóng góp 
 công đức cho từng sự kiện. Dễ dàng quản lý thống kê - minh bạch cho tất cả mọi người.
+8. tạo ghi chú theo từng ngày trên lịch. ví dụ chọn ngày cần thêm ghi chú viết ghi chú cho ngày đó bạn có thể xem lại khi cần.
+

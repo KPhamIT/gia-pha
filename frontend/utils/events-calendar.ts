@@ -101,6 +101,11 @@ export function formatSelectedDayLabel(date: Date): string {
   });
 }
 
+/** Ví dụ: "Thứ Hai", "Chủ Nhật". */
+export function formatWeekdayLabel(date: Date): string {
+  return date.toLocaleDateString("vi-VN", { weekday: "long" });
+}
+
 export function getEventsOnDate(
   events: FamilyEvent[],
   date: Date,

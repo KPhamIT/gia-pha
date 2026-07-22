@@ -83,13 +83,23 @@ export default function EventsMonthCalendar({
   const solarDayLabel = formatSolarDayMonthYearLabel(focusDate);
   const lunarDayLabel = formatLunarDayMonthFullLabel(focusDate);
   const ganZhiLabel = formatLunarGanZhiHourDayMonthLabel(focusDate);
+  const isFocusToday = sameCalendarDay(focusDate, today);
 
   return (
     <div className="overflow-hidden rounded-xl border border-[#d4c3c1] bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-[#d4c3c1] bg-[#FAF7F2] p-4 md:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <div className="min-w-0">
-            <h2 className="font-serif text-xl font-semibold text-[#321716] md:text-2xl">
+            {isFocusToday ? (
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#944a00]">
+                {UI.EVENTS_CALENDAR_TODAY}
+              </p>
+            ) : null}
+            <h2
+              className={`font-serif text-xl font-semibold text-[#321716] md:text-2xl ${
+                isFocusToday ? "mt-0.5" : ""
+              }`}
+            >
               {solarDayLabel}
             </h2>
             <p className="mt-0.5 text-sm text-[#827472]">{lunarDayLabel}</p>

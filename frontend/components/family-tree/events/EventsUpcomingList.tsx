@@ -8,6 +8,7 @@ import type { FamilyEvent } from "@/components/types/event-types";
 import {
   formatLunarDayMonthLabel,
   formatShortMonthDay,
+  formatWeekdayLabel,
   parseEventDate,
   solarDateFromDaysUntil,
 } from "@/utils/events-calendar";
@@ -142,13 +143,16 @@ function UpcomingRow({
 }) {
   const date = parseEventDate(event.eventDate);
   const dateParts = date ? formatShortMonthDay(date) : null;
+  const weekdayLabel = date ? formatWeekdayLabel(date) : null;
   const lunarLabel = date ? formatLunarDayMonthLabel(date) : null;
   const baseSubtitle =
     event.description?.trim().split("\n")[0] ??
     (event.type === "CONTRIBUTION"
       ? UI.EVENT_BADGE_CONTRIBUTION
       : UI.EVENT_BADGE_INFO);
-  const subtitle = [lunarLabel, baseSubtitle].filter(Boolean).join(" · ");
+  const subtitle = [weekdayLabel, lunarLabel, baseSubtitle]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <button
@@ -191,9 +195,9 @@ function CeremonyRow({
     item.branch ?? null,
     item.generation ?? null,
   );
-  const solarParts = formatShortMonthDay(
-    solarDateFromDaysUntil(item.daysUntil),
-  );
+  const solarDate = solarDateFromDaysUntil(item.daysUntil);
+  const solarParts = formatShortMonthDay(solarDate);
+  const weekdayLabel = formatWeekdayLabel(solarDate);
 
   return (
     <Link
@@ -213,8 +217,7 @@ function CeremonyRow({
           {item.fullName}
         </h4>
         <p className="mt-0.5 text-xs text-[#504443]">
-          {meta ? `${meta} · ` : ""}
-          {item.lunarDateLabel}
+          {[meta, weekdayLabel, item.lunarDateLabel].filter(Boolean).join(" · ")}
         </p>
         <p className="mt-0.5 text-xs font-medium text-[#944a00]">
           {UI.CEREMONIES_DAYS_UNTIL(item.daysUntil)}

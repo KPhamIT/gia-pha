@@ -141,9 +141,16 @@ export const PUBLIC_STRINGS = {
   LANDING_BENTO_ARCHIVE_TITLE: "Lưu trữ số hóa tài liệu cổ",
   LANDING_BENTO_ARCHIVE_DESC:
     "Số hóa tư liệu gia phả, lưu giữ lâu dài và dễ dàng tra cứu cho con cháu đời sau.",
-  LANDING_FINAL_CTA_TITLE: "Bắt đầu lưu giữ lịch sử dòng họ ngay hôm nay",
+  LANDING_DEMO_NOTICE_BADGE: "Dữ liệu mẫu",
+  LANDING_DEMO_NOTICE_TITLE:
+    "Bạn đang xem gia phả minh họa — hãy tạo dòng họ thật của mình",
+  LANDING_DEMO_NOTICE_BODY:
+    "Mọi thông tin trên trang hiện tại chỉ là dữ liệu mẫu để bạn trải nghiệm. Đăng ký dòng họ mới để nhập người thân, ngày giỗ và sự kiện theo đúng gia đình bạn — riêng tư, đầy đủ, sẵn sàng truyền lại cho con cháu.",
+  LANDING_DEMO_NOTICE_CTA: "Tạo dòng họ của tôi ngay",
+  LANDING_FINAL_CTA_TITLE: "Chỉ vài phút để dòng họ có chỗ đứng trên Cội Nguồn",
   LANDING_FINAL_CTA_BODY:
-    "\"Cây có gốc mới nở cành xanh ngọn, nước có nguồn mới bể rộng sông sâu.\" Hãy để Cội Nguồn đồng hành cùng gia đình bạn trên hành trình tìm về nguồn cội.",
+    "\"Cây có gốc mới nở cành xanh ngọn, nước có nguồn mới bể rộng sông sâu.\" Đừng để lịch sử gia đình chỉ còn trong trí nhớ — tạo dòng họ hôm nay để lưu giữ, kết nối và gìn giữ cội nguồn cho nhiều đời sau.",
+  LANDING_FINAL_CTA_CREATE: "Đăng ký dòng họ mới",
   LANDING_FOOTER_ABOUT:
     "Nền tảng công nghệ giúp lưu giữ gia phả, kết nối con cháu và bảo tồn giá trị cội nguồn cho nhiều thế hệ.",
   LANDING_FOOTER_DISCOVER_TITLE: "Khám phá",

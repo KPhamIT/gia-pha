@@ -6,19 +6,57 @@ export default function LandingBottomSection() {
   return (
     <section>
       <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
+        <div className="mb-6 overflow-hidden rounded-2xl border border-[#fc8f34]/40 bg-gradient-to-br from-[#fff8f0] via-[#faf7f2] to-[#ffdcc5]/50 px-6 py-10 text-center md:mb-8 md:px-12 md:py-12">
+          <span className="inline-flex rounded-full bg-[#ffdcc5] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#663100]">
+            {UI.LANDING_DEMO_NOTICE_BADGE}
+          </span>
+          <h2 className="mt-4 font-serif text-2xl font-semibold text-[#321716] md:text-3xl">
+            {UI.LANDING_DEMO_NOTICE_TITLE}
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#504443] md:text-base">
+            {UI.LANDING_DEMO_NOTICE_BODY}
+          </p>
+          <div className="mt-7">
+            <Link
+              href="/tao-dong-ho"
+              className="inline-flex rounded-lg bg-[#fc8f34] px-8 py-3 text-sm font-semibold text-[#663100] transition hover:bg-[#e67e22]"
+            >
+              {UI.LANDING_DEMO_NOTICE_CTA}
+            </Link>
+          </div>
+        </div>
+
         <div className="rounded-2xl border border-[#d4c3c1] bg-[#faf7f2] px-6 py-12 text-center md:px-12">
-          <h2 className="font-serif text-3xl font-semibold text-[#321716] md:text-4xl">{UI.LANDING_FINAL_CTA_TITLE}</h2>
-          <p className="mx-auto mt-4 max-w-3xl text-[#504443]">{UI.LANDING_FINAL_CTA_BODY}</p>
+          <h2 className="font-serif text-3xl font-semibold text-[#321716] md:text-4xl">
+            {UI.LANDING_FINAL_CTA_TITLE}
+          </h2>
+          <p className="mx-auto mt-4 max-w-3xl text-[#504443]">
+            {UI.LANDING_FINAL_CTA_BODY}
+          </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link href="/tao-dong-ho" className="rounded-lg bg-[#321716] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#4a2c2a]">{UI.LANDING_START_NEW_ORG_CTA}</Link>
-            <Link href="/lien-he" className="rounded-lg border border-[#321716] px-8 py-3 text-sm font-semibold text-[#321716] transition hover:bg-[#f0ede9]">{UI.LANDING_SERVICES_CTA}</Link>
+            <Link
+              href="/tao-dong-ho"
+              className="rounded-lg bg-[#321716] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#4a2c2a]"
+            >
+              {UI.LANDING_FINAL_CTA_CREATE}
+            </Link>
+            <Link
+              href="/lien-he"
+              className="rounded-lg border border-[#321716] px-8 py-3 text-sm font-semibold text-[#321716] transition hover:bg-[#f0ede9]"
+            >
+              {UI.LANDING_SERVICES_CTA}
+            </Link>
           </div>
         </div>
         <p className="mt-8 text-center text-xs leading-relaxed text-[#504443]">
           {UI.LANDING_LEGAL_HINT}{" "}
-          <Link href="/dieu-khoan-su-dung" className="underline underline-offset-2">{UI.PUBLIC_FOOTER_TERMS}</Link>
+          <Link href="/dieu-khoan-su-dung" className="underline underline-offset-2">
+            {UI.PUBLIC_FOOTER_TERMS}
+          </Link>
           {" · "}
-          <Link href="/chinh-sach-bao-mat" className="underline underline-offset-2">{UI.PUBLIC_FOOTER_PRIVACY}</Link>
+          <Link href="/chinh-sach-bao-mat" className="underline underline-offset-2">
+            {UI.PUBLIC_FOOTER_PRIVACY}
+          </Link>
         </p>
       </div>
       <footer className="mt-10 hidden w-full bg-[#321716] px-6 py-10 text-[#f3f0eb] md:block md:px-10">
