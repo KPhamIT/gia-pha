@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 
 const DELTA_MIN = 8;
 const TOP_ALWAYS_SHOW = 40;
+/** Bỏ qua vùng sát đáy — overscroll/bounce PWA làm y dao động → nav giật. */
+const BOTTOM_EDGE = 64;
 const MD_QUERY = "(min-width: 768px)";
 
 function readScrollTop(target: EventTarget | null): number | null {
@@ -17,6 +19,23 @@ function readScrollTop(target: EventTarget | null): number | null {
   }
   if (target instanceof Element) {
     return target.scrollTop;
+  }
+  return null;
+}
+
+function readMaxScroll(target: EventTarget | null): number | null {
+  if (
+    target === document ||
+    target === document.documentElement ||
+    target === document.body
+  ) {
+    return Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+  }
+  if (target instanceof Element) {
+    return Math.max(0, target.scrollHeight - target.clientHeight);
   }
   return null;
 }
@@ -72,10 +91,17 @@ export function useHideOnScrollDown(options?: Options) {
       if (!isPageScroller(event.target)) return;
 
       const y = readScrollTop(event.target);
-      if (y == null) return;
+      const maxY = readMaxScroll(event.target);
+      if (y == null || maxY == null) return;
 
       const delta = y - lastY;
       if (Math.abs(delta) < DELTA_MIN) return;
+
+      // Cuối trang / rubber-band: không đổi trạng thái ẩn-hiện.
+      if (maxY > 0 && y >= maxY - BOTTOM_EDGE) {
+        lastY = y;
+        return;
+      }
 
       if (y <= TOP_ALWAYS_SHOW) {
         setHidden(false);
