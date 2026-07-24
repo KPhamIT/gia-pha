@@ -41,6 +41,12 @@ export const MOBILE_MENU_SHORTCUTS: readonly MobileMenuLink[] = [
     tone: "bg-[#f5e6d3] text-[#5c3d1e]",
   },
   {
+    href: "/events/bien-ho",
+    label: UI.CLAN_DUTY_PAGE_TITLE,
+    icon: "calendar",
+    tone: "bg-[#efe6d8] text-[#5c3d1e]",
+  },
+  {
     href: "/bai-viet",
     label: UI.LANDING_NAV_LIBRARY,
     icon: "book",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Icon from "@/components/icons/Icon";
 import { api } from "@/lib/api";
 import type {
@@ -33,6 +34,7 @@ type CeremonyTemplatesManagerProps = {
 export default function CeremonyTemplatesManager({
   onCreateRef,
 }: CeremonyTemplatesManagerProps) {
+  const searchParams = useSearchParams();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const isDemo = useAuthStore((state) => state.isDemo);
   const canCreate = isLoggedIn && !isDemo;
@@ -74,6 +76,16 @@ export default function CeremonyTemplatesManager({
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  useEffect(() => {
+    if (loading) return;
+    const raw = searchParams.get("print");
+    if (!raw) return;
+    const id = Number(raw);
+    if (!Number.isInteger(id) || id <= 0) return;
+    const found = templates.find((item) => item.id === id);
+    if (found) setPrintTemplate(found);
+  }, [loading, searchParams, templates]);
 
   useEffect(() => {
     if (loading || sourceFilterReady) return;

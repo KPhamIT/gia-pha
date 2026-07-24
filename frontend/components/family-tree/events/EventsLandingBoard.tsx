@@ -20,6 +20,7 @@ import CeremonyDayCard from "./CeremonyDayCard";
 import EventsUpcomingList from "./EventsUpcomingList";
 import EventsDonationPromo from "./EventsDonationPromo";
 import EventsAppFundPromo from "./EventsAppFundPromo";
+import EventsClanDutyPromo from "./EventsClanDutyPromo";
 import EventsLocationCard from "./EventsLocationCard";
 import EventsWeatherCard from "./EventsWeatherCard";
 import EventCard from "./EventCard";
@@ -258,6 +259,7 @@ export default function EventsLandingBoard({
               onSelectEvent={focusEvent}
               onViewAll={scrollToAllEvents}
             />
+            <EventsClanDutyPromo />
             <EventsDonationPromo
               disabled={!donationTarget}
               onDonate={() => {

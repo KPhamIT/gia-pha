@@ -40,6 +40,8 @@ export const API_ROUTES = {
   NOTIFICATIONS_STATS: "/notifications/stats",
   DAY_NOTES: "/day-notes",
   DAY_NOTE: (date: string) => `/day-notes/${encodeURIComponent(date)}`,
+  CLAN_DUTY_YEARS: "/clan-duty/years",
+  CLAN_DUTY_YEAR: (year: number) => `/clan-duty/${year}`,
   CEREMONY_HTML: (personId: number) => `/ceremonies/${personId}/html`,
   CEREMONY_SHARE_TOKEN: (personId: number) =>
     `/ceremonies/${personId}/share-token`,
