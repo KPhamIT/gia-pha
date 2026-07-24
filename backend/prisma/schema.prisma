@@ -215,6 +215,8 @@ model Organization {
 
   events Event[]
 
+  clanDutyYears ClanDutyYear[]
+
   notificationLogs NotificationLog[]
 
   ceremonyTemplates CeremonyTemplate[]
@@ -254,6 +256,39 @@ model OrgAppFundContribution {
   @@index([organizationId, status, createdAt])
   @@index([status, createdAt])
 }
+
+/// Năm biện họ — danh sách thành viên đại diện thực hiện công việc nhà thờ / giỗ tổ.
+model ClanDutyYear {
+  id             Int      @id @default(autoincrement())
+  organizationId Int
+  year           Int
+  note           String?  @db.Text
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  entries        ClanDutyEntry[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([organizationId, year])
+  @@index([organizationId, year])
+}
+
+model ClanDutyEntry {
+  id         Int     @id @default(autoincrement())
+  dutyYearId Int
+  personId   Int
+  /// Vai trò / công việc: lau dọn, vệ sinh, chuẩn bị giỗ…
+  role       String? @db.Text
+  sortOrder  Int     @default(0)
+  note       String?
+  /// Template ids gắn với vai trò «Chuẩn bị bài cúng» (JSON number[]).
+  ceremonyTemplateIds Json?
+  dutyYear   ClanDutyYear @relation(fields: [dutyYearId], references: [id], onDelete: Cascade)
+  person     Person       @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([dutyYearId, personId])
+  @@index([dutyYearId, sortOrder])
+}
+
 model BillingOrder {
   id             Int                @id @default(autoincrement())
   organizationId Int
@@ -503,6 +538,8 @@ model Person {
   donations EventDonation[]
 
   appFundContributions OrgAppFundContribution[]
+
+  clanDutyEntries ClanDutyEntry[]
 
   notificationLogs NotificationLog[]
 

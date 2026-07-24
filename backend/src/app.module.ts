@@ -22,6 +22,7 @@ import { ContactModule } from './contact/contact.module.js';
 import { AppFundModule } from './app-fund/app-fund.module.js';
 import { WeatherModule } from './weather/weather.module.js';
 import { DayNotesModule } from './day-notes/day-notes.module.js';
+import { ClanDutyModule } from './clan-duty/clan-duty.module.js';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { DayNotesModule } from './day-notes/day-notes.module.js';
     AppFundModule,
     WeatherModule,
     DayNotesModule,
+    ClanDutyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
