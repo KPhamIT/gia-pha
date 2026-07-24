@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import AccountHeaderButton from "@/components/auth/AccountHeaderButton";
 import Icon from "@/components/icons/Icon";
 import MobileMenuButton from "@/components/navigation/MobileMenuButton";
@@ -15,7 +16,41 @@ type LandingHeaderProps = {
 const HEADER_OFFSET =
   "h-[calc(5rem+env(safe-area-inset-top))]";
 
+const NAV_LINK = "transition-colors hover:text-[#944a00]";
+const NAV_LINK_ACTIVE =
+  "border-b-2 border-[#321716] pb-1 text-[#321716]";
+
+const DESKTOP_NAV = [
+  { href: "/", label: UI.LANDING_NAV_HOME, match: (p: string) => p === "/" },
+  {
+    href: "/family-tree",
+    label: UI.LANDING_NAV_CLAN,
+    match: (p: string) => p.startsWith("/family-tree"),
+  },
+  {
+    href: "/events",
+    label: UI.LANDING_NAV_EVENTS,
+    match: (p: string) => p.startsWith("/events"),
+  },
+  {
+    href: "/ceremonies/templates",
+    label: UI.LANDING_NAV_CEREMONY,
+    match: (p: string) => p.startsWith("/ceremonies/templates"),
+  },
+  {
+    href: "/bai-viet",
+    label: UI.LANDING_NAV_LIBRARY,
+    match: (p: string) => p.startsWith("/bai-viet"),
+  },
+  {
+    href: "/dich-vu",
+    label: UI.LANDING_NAV_SERVICES,
+    match: (p: string) => p.startsWith("/dich-vu"),
+  },
+] as const;
+
 export default function LandingHeader({ brandName }: LandingHeaderProps) {
+  const pathname = usePathname();
   // Chỉ ẩn trên mobile; desktop giữ cố định để khỏi giật khi scroll.
   const hidden = useHideOnScrollDown({ mobileOnly: true });
 
@@ -38,36 +73,19 @@ export default function LandingHeader({ brandName }: LandingHeaderProps) {
               {brandName}
             </Link>
             <nav className="hidden items-center gap-6 text-sm font-semibold text-[#504443] md:flex">
-              <Link
-                href="/"
-                className="border-b-2 border-[#321716] pb-1 text-[#321716]"
-              >
-                {UI.LANDING_NAV_HOME}
-              </Link>
-              <Link
-                href="/family-tree"
-                className="transition-colors hover:text-[#944a00]"
-              >
-                {UI.LANDING_NAV_CLAN}
-              </Link>
-              <Link
-                href="/events"
-                className="transition-colors hover:text-[#944a00]"
-              >
-                {UI.LANDING_NAV_EVENTS}
-              </Link>
-              <Link
-                href="/bai-viet"
-                className="transition-colors hover:text-[#944a00]"
-              >
-                {UI.LANDING_NAV_LIBRARY}
-              </Link>
-              <Link
-                href="/dich-vu"
-                className="transition-colors hover:text-[#944a00]"
-              >
-                {UI.LANDING_NAV_SERVICES}
-              </Link>
+              {DESKTOP_NAV.map((item) => {
+                const active = item.match(pathname);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={active ? NAV_LINK_ACTIVE : NAV_LINK}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
           <div className="flex items-center gap-2 md:gap-3">

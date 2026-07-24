@@ -29,6 +29,7 @@ export const PUBLIC_STRINGS = {
   LANDING_NAV_HOME: "Trang chủ",
   LANDING_NAV_CLAN: "Gia tộc",
   LANDING_NAV_EVENTS: "Sự kiện",
+  LANDING_NAV_CEREMONY: "Mẫu bài cúng",
   LANDING_NAV_LIBRARY: "Thư viện",
   LANDING_NAV_SERVICES: "Dịch vụ",
   LANDING_NAV_SEARCH_ARIA: "Tìm kiếm",
