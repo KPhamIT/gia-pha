@@ -80,8 +80,8 @@ function toDraft(entries: ClanDutyEntry[]): DraftEntry[] {
 }
 
 function personMeta(person: {
-  generation: number | null;
-  branch: number | null;
+  generation?: number | null;
+  branch?: number | null;
 }): string | null {
   const parts = [
     person.generation != null ? UI.GENERATION_SHORT(person.generation) : null,
@@ -587,10 +587,7 @@ export default function ClanDutyPageView() {
                                       </p>
                                       {personMeta(person) ? (
                                         <p className="truncate text-xs text-slate-500">
-                                          {personMeta({
-                                            generation: person.generation ?? null,
-                                            branch: person.branch ?? null,
-                                          })}
+                                          {personMeta(person)}
                                         </p>
                                       ) : null}
                                     </div>
