@@ -7,77 +7,33 @@ import ResponsiveAppPageLayout from "@/components/layout/ResponsiveAppPageLayout
 import AuthPageLoading from "@/components/ui/AuthPageLoading";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
 import Icon from "@/components/icons/Icon";
+import BottomSheet from "@/components/ui/BottomSheet";
 import { FormField, inputClassName } from "@/components/ui/CollapsibleSection";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { useAuthStore } from "@/store/authStore";
 import { api } from "@/lib/api";
-import type {
-  ClanDutyEntry,
-  ClanDutyYear,
-  ClanDutyYearSummary,
-} from "@/lib/api/modules/clan-duty";
+import type { ClanDutyYearSummary } from "@/lib/api/modules/clan-duty";
 import type { Person } from "@/components/types/family-tree-types";
 import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
 import { getBranchLabel } from "@/lib/constants/branches";
 import { UI } from "@/lib/constants/ui-strings";
 import { notify } from "@/lib/notify";
 import { filterPersonsByName } from "@/utils/person-search";
-import DutyEntryCeremonyLinks from "@/components/clan-duty/DutyEntryCeremonyLinks";
-
-const ROLE_SEP = " · ";
-const YEAR_MIN = 1900;
-const YEAR_MAX = 2200;
-
-type DraftEntry = {
-  key: string;
-  personId: number;
-  fullName: string;
-  generation: number | null;
-  branch: number | null;
-  roles: string[];
-  note: string;
-  ceremonyLinks: { templateId: number; name: string }[];
-};
-
-function entryKey(personId: number) {
-  return `p-${personId}`;
-}
-
-function parseRoles(role: string | null | undefined): string[] {
-  if (!role?.trim()) return [];
-  return role
-    .split(ROLE_SEP)
-    .map((part) => part.trim())
-    .filter(Boolean);
-}
-
-function joinRoles(roles: string[]): string {
-  return roles.map((r) => r.trim()).filter(Boolean).join(ROLE_SEP);
-}
-
-function sameLinkIds(
-  a: { templateId: number }[],
-  b: { templateId: number }[],
-): boolean {
-  if (a.length !== b.length) return false;
-  return a.every((item, i) => item.templateId === b[i]?.templateId);
-}
-
-function toDraft(entries: ClanDutyEntry[]): DraftEntry[] {
-  return entries.map((e) => ({
-    key: entryKey(e.personId),
-    personId: e.personId,
-    fullName: e.fullName,
-    generation: e.generation,
-    branch: e.branch,
-    roles: parseRoles(e.role),
-    note: e.note ?? "",
-    ceremonyLinks: (e.ceremonyLinks ?? []).map((link) => ({
-      templateId: link.templateId,
-      name: link.name,
-    })),
-  }));
-}
+import {
+  CLAN_DUTY_YEAR_MAX,
+  CLAN_DUTY_YEAR_MIN,
+  clanDutyEntryKey,
+  isValidClanDutyYear,
+  joinClanDutyRoles,
+  sameCeremonyLinkIds,
+  toClanDutyDraft,
+  type ClanDutyDraftEntry,
+} from "@/components/clan-duty/clan-duty-draft";
+import ClanDutyYearStrip from "@/components/clan-duty/ClanDutyYearStrip";
+import ClanDutyHero from "@/components/clan-duty/ClanDutyHero";
+import ClanDutyStatsCard from "@/components/clan-duty/ClanDutyStatsCard";
+import ClanDutyPersonAvatar from "@/components/clan-duty/ClanDutyPersonAvatar";
+import DutyEntryCard from "@/components/clan-duty/DutyEntryCard";
 
 function personMeta(person: {
   generation?: number | null;
@@ -88,10 +44,6 @@ function personMeta(person: {
     person.branch != null ? getBranchLabel(person.branch) : null,
   ].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;
-}
-
-function isValidYear(value: number): boolean {
-  return Number.isInteger(value) && value >= YEAR_MIN && value <= YEAR_MAX;
 }
 
 export default function ClanDutyPageView() {
@@ -107,15 +59,16 @@ export default function ClanDutyPageView() {
   const [yearOptions, setYearOptions] = useState<ClanDutyYearSummary[]>([]);
   const [yearNote, setYearNote] = useState("");
   const [savedNote, setSavedNote] = useState("");
-  const [entries, setEntries] = useState<DraftEntry[]>([]);
-  const [savedEntries, setSavedEntries] = useState<DraftEntry[]>([]);
+  const [entries, setEntries] = useState<ClanDutyDraftEntry[]>([]);
+  const [savedEntries, setSavedEntries] = useState<ClanDutyDraftEntry[]>([]);
   const [customRoles, setCustomRoles] = useState<string[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
   const [templates, setTemplates] = useState<CeremonyTemplate[]>([]);
-  const [yearsDetail, setYearsDetail] = useState<ClanDutyYear[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
+  const [addYearOpen, setAddYearOpen] = useState(false);
 
   useEffect(() => {
     void refreshAuth();
@@ -129,9 +82,9 @@ export default function ClanDutyPageView() {
       return (
         !saved ||
         entry.personId !== saved.personId ||
-        joinRoles(entry.roles) !== joinRoles(saved.roles) ||
+        joinClanDutyRoles(entry.roles) !== joinClanDutyRoles(saved.roles) ||
         entry.note !== saved.note ||
-        !sameLinkIds(entry.ceremonyLinks, saved.ceremonyLinks)
+        !sameCeremonyLinkIds(entry.ceremonyLinks, saved.ceremonyLinks)
       );
     });
   }, [entries, savedEntries, yearNote, savedNote]);
@@ -147,6 +100,12 @@ export default function ClanDutyPageView() {
     return [...set];
   }, [customRoles, entries]);
 
+  const avatarById = useMemo(() => {
+    const map = new Map<number, string | null | undefined>();
+    for (const person of persons) map.set(person.id, person.avatar);
+    return map;
+  }, [persons]);
+
   const loadYear = useCallback(async (y: number) => {
     setLoading(true);
     try {
@@ -156,7 +115,7 @@ export default function ClanDutyPageView() {
         api.person.list(),
         api.ceremonies.listTemplates(),
       ]);
-      const draft = toDraft(duty.entries);
+      const draft = toClanDutyDraft(duty.entries);
       setEntries(draft);
       setSavedEntries(draft);
       setYearNote(duty.note ?? "");
@@ -166,16 +125,6 @@ export default function ClanDutyPageView() {
       setTemplates(templateList);
       setYear(y);
       setYearInput(String(y));
-
-      const otherYears = years
-        .map((item) => item.year)
-        .filter((itemYear) => itemYear !== y)
-        .sort((a, b) => b - a);
-      const others = await Promise.all(
-        otherYears.map((itemYear) => api.clanDuty.getYear(itemYear)),
-      );
-      const merged = [duty, ...others].sort((a, b) => b.year - a.year);
-      setYearsDetail(merged);
     } catch (error) {
       notify.error(error, UI.CLAN_DUTY_ERR_LOAD);
     } finally {
@@ -186,7 +135,6 @@ export default function ClanDutyPageView() {
   useEffect(() => {
     if (!authLoaded || !isLoggedIn) return;
     void loadYear(year);
-    // Chỉ bootstrap lần đầu / khi auth sẵn sàng — đổi năm qua openYear.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoaded, isLoggedIn, loadYear]);
 
@@ -200,7 +148,7 @@ export default function ClanDutyPageView() {
   }, [persons, excludeIds, query]);
 
   const openYear = (next: number) => {
-    if (!isValidYear(next)) {
+    if (!isValidClanDutyYear(next)) {
       notify.error(null, UI.CLAN_DUTY_YEAR_INVALID);
       return;
     }
@@ -212,6 +160,7 @@ export default function ClanDutyPageView() {
       setYearInput(String(year));
       return;
     }
+    setAddYearOpen(false);
     void loadYear(next);
   };
 
@@ -220,7 +169,7 @@ export default function ClanDutyPageView() {
     setEntries((prev) => [
       ...prev,
       {
-        key: entryKey(person.id),
+        key: clanDutyEntryKey(person.id),
         personId: person.id,
         fullName: person.fullName,
         generation: person.generation ?? null,
@@ -231,11 +180,14 @@ export default function ClanDutyPageView() {
       },
     ]);
     setQuery("");
+    setAddMemberOpen(false);
   };
 
   const updateEntry = (
     personId: number,
-    patch: Partial<Pick<DraftEntry, "roles" | "note" | "ceremonyLinks">>,
+    patch: Partial<
+      Pick<ClanDutyDraftEntry, "roles" | "note" | "ceremonyLinks">
+    >,
   ) => {
     setEntries((prev) =>
       prev.map((e) => (e.personId === personId ? { ...e, ...patch } : e)),
@@ -248,7 +200,7 @@ export default function ClanDutyPageView() {
 
   const handleSave = async () => {
     if (!requireAdmin()) return;
-    if (!isValidYear(year)) {
+    if (!isValidClanDutyYear(year)) {
       notify.error(null, UI.CLAN_DUTY_YEAR_INVALID);
       return;
     }
@@ -262,7 +214,7 @@ export default function ClanDutyPageView() {
           );
           return {
             personId: e.personId,
-            role: joinRoles(e.roles) || undefined,
+            role: joinClanDutyRoles(e.roles) || undefined,
             note: e.note.trim() || undefined,
             sortOrder: index,
             ceremonyTemplateIds: hasCeremonyRole
@@ -271,16 +223,12 @@ export default function ClanDutyPageView() {
           };
         }),
       });
-      const draft = toDraft(saved.entries);
+      const draft = toClanDutyDraft(saved.entries);
       setEntries(draft);
       setSavedEntries(draft);
       setYearNote(saved.note ?? "");
       setSavedNote(saved.note ?? "");
       setYearOptions(await api.clanDuty.listYears());
-      setYearsDetail((prev) => {
-        const rest = prev.filter((item) => item.year !== year);
-        return [saved, ...rest].sort((a, b) => b.year - a.year);
-      });
       notify.success(UI.CLAN_DUTY_SAVED);
     } catch (error) {
       notify.error(error, UI.CLAN_DUTY_ERR_SAVE);
@@ -300,7 +248,6 @@ export default function ClanDutyPageView() {
       setYearNote("");
       setSavedNote("");
       setYearOptions(await api.clanDuty.listYears());
-      setYearsDetail((prev) => prev.filter((item) => item.year !== year));
       notify.success(UI.CLAN_DUTY_DELETED);
     } catch (error) {
       notify.error(error, UI.CLAN_DUTY_ERR_DELETE);
@@ -309,16 +256,16 @@ export default function ClanDutyPageView() {
     }
   };
 
-  const yearsDescending = useMemo(() => {
-    const years = new Set(yearsDetail.map((item) => item.year));
-    years.add(year);
-    return [...years].sort((a, b) => b - a);
-  }, [yearsDetail, year]);
+  const openAddMember = () => {
+    if (!requireAdmin()) return;
+    setAddMemberOpen(true);
+  };
 
-  const detailByYear = useMemo(() => {
-    const map = new Map(yearsDetail.map((item) => [item.year, item]));
-    return map;
-  }, [yearsDetail]);
+  const openAddYear = () => {
+    if (!requireAdmin()) return;
+    setYearInput(String(currentYear));
+    setAddYearOpen(true);
+  };
 
   if (!authLoaded) {
     return <AuthPageLoading message={UI.CLAN_DUTY_LOADING} />;
@@ -346,88 +293,65 @@ export default function ClanDutyPageView() {
     );
   }
 
+  const fab = canEdit ? (
+    <button
+      type="button"
+      disabled={saving}
+      onClick={openAddMember}
+      className="fixed bottom-24 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#944a00] text-white shadow-xl transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
+      aria-label={UI.CLAN_DUTY_ADD}
+    >
+      <Icon
+        path="userPlus"
+        size={28}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        pointer={false}
+      />
+    </button>
+  ) : null;
+
   return (
     <>
-      <ResponsiveAppPageLayout title={UI.CLAN_DUTY_PAGE_TITLE} backHref="/events">
-        <div className="mx-auto max-w-3xl space-y-6 pb-6">
-          <p className="text-sm text-[#504443]">{UI.CLAN_DUTY_PAGE_SUBTITLE}</p>
+      <ResponsiveAppPageLayout
+        title={UI.CLAN_DUTY_PAGE_TITLE}
+        backHref="/events"
+        fab={fab}
+      >
+        <div className="mx-auto max-w-3xl space-y-8 pb-8">
+          <ClanDutyYearStrip
+            year={year}
+            yearOptions={yearOptions}
+            saving={saving}
+            canEdit={canEdit}
+            onSelectYear={openYear}
+            onAddYear={openAddYear}
+          />
 
-          <div className="rounded-xl border border-[#d4c3c1] bg-white p-4 shadow-sm md:p-5">
-            <FormField label={UI.CLAN_DUTY_YEAR_LABEL}>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={YEAR_MIN}
-                  max={YEAR_MAX}
-                  value={yearInput}
-                  onChange={(e) => setYearInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      openYear(Number(yearInput));
-                    }
-                  }}
-                  placeholder={UI.CLAN_DUTY_YEAR_PLACEHOLDER}
-                  disabled={saving}
-                  className={inputClassName}
-                />
-                <button
-                  type="button"
-                  disabled={saving}
-                  onClick={() => openYear(Number(yearInput))}
-                  className="shrink-0 rounded-xl bg-[#321716] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-                >
-                  {UI.CLAN_DUTY_YEAR_OPEN}
-                </button>
-              </div>
-            </FormField>
-            {yearOptions.length > 0 ? (
-              <div className="mt-3">
-                <p className="mb-2 text-xs font-medium text-[#827472]">
-                  {UI.CLAN_DUTY_YEAR_SAVED_HINT}
-                </p>
-                <div className="flex flex-col gap-2">
-                  {[...yearOptions]
-                    .sort((a, b) => b.year - a.year)
-                    .map((item) => {
-                      const active = item.year === year;
-                      return (
-                        <button
-                          key={item.year}
-                          type="button"
-                          disabled={saving}
-                          onClick={() => openYear(item.year)}
-                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${
-                            active
-                              ? "bg-[#944a00] text-white"
-                              : "bg-[#ffdcc5]/60 text-[#663100] hover:bg-[#ffdcc5]"
-                          }`}
-                        >
-                          <span>{UI.CLAN_DUTY_YEAR_TAG(item.year)}</span>
-                          <span className="text-xs opacity-80">
-                            {item.entryCount}
-                          </span>
-                        </button>
-                      );
-                    })}
-                </div>
-              </div>
-            ) : null}
+          <ClanDutyHero />
+
+          <ClanDutyStatsCard count={entries.length} />
+
+          {canEdit ? (
             <FormField label={UI.CLAN_DUTY_YEAR_NOTE}>
               <textarea
                 value={yearNote}
                 onChange={(e) => setYearNote(e.target.value)}
                 rows={2}
-                disabled={!canEdit || saving}
+                disabled={saving}
                 placeholder={UI.CLAN_DUTY_YEAR_NOTE_PLACEHOLDER}
                 className={inputClassName}
               />
             </FormField>
-          </div>
+          ) : yearNote ? (
+            <p className="rounded-xl bg-[#f6f3ee] px-4 py-3 text-sm text-[#504443]">
+              {yearNote}
+            </p>
+          ) : null}
 
-          <div className="rounded-xl border border-[#d4c3c1] bg-white p-4 shadow-sm md:p-5">
-            <h2 className="font-serif text-lg font-semibold text-[#321716]">
+          <section className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[#504443]">
               {UI.CLAN_DUTY_MEMBERS}
             </h2>
 
@@ -435,182 +359,40 @@ export default function ClanDutyPageView() {
               <div className="flex h-32 items-center justify-center">
                 <LoadingSpinner size={28} label={UI.CLAN_DUTY_LOADING} />
               </div>
+            ) : entries.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-[#d4c3c1] bg-white/60 px-4 py-8 text-center text-sm text-[#827472]">
+                {UI.CLAN_DUTY_EMPTY}
+              </p>
             ) : (
-              <div className="mt-4 space-y-6">
-                {yearsDescending.map((itemYear) => {
-                  const active = itemYear === year;
-                  const detail = detailByYear.get(itemYear);
-                  const yearEntries = active
-                    ? entries
-                    : toDraft(detail?.entries ?? []);
-
-                  return (
-                    <section
-                      key={itemYear}
-                      className={`rounded-xl border p-3 ${
-                        active
-                          ? "border-[#944a00]/40 bg-[#fff8f0]"
-                          : "border-[#d4c3c1]/70 bg-[#faf7f2]"
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        disabled={saving || active}
-                        onClick={() => openYear(itemYear)}
-                        className="mb-3 flex w-full items-center justify-between text-left"
-                      >
-                        <span
-                          className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                            active
-                              ? "bg-[#944a00] text-white"
-                              : "bg-[#ffdcc5] text-[#663100]"
-                          }`}
-                        >
-                          {UI.CLAN_DUTY_YEAR_TAG(itemYear)}
-                        </span>
-                        {!active ? (
-                          <span className="text-xs text-[#827472]">
-                            {yearEntries.length}
-                          </span>
-                        ) : null}
-                      </button>
-
-                      {yearEntries.length === 0 ? (
-                        <p className="text-sm text-[#827472]">
-                          {active
-                            ? UI.CLAN_DUTY_EMPTY
-                            : UI.CLAN_DUTY_YEAR_EMPTY_SHORT}
-                        </p>
-                      ) : active ? (
-                        <div className="space-y-3">
-                          {yearEntries.map((entry) => (
-                            <DutyEntryCard
-                              key={entry.key}
-                              entry={entry}
-                              canEdit={canEdit}
-                              saving={saving}
-                              templates={templates}
-                              roleCatalog={roleCatalog}
-                              onChange={updateEntry}
-                              onRemove={removeEntry}
-                              onAddCustomRole={(role) => {
-                                setCustomRoles((prev) =>
-                                  prev.includes(role) ? prev : [...prev, role],
-                                );
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <ul className="space-y-2">
-                          {yearEntries.map((entry) => (
-                            <li
-                              key={entry.key}
-                              className="rounded-lg border border-[#d4c3c1]/50 bg-white px-3 py-2"
-                            >
-                              <p className="text-sm font-semibold text-[#321716]">
-                                {entry.fullName}
-                              </p>
-                              {personMeta(entry) ? (
-                                <p className="text-xs text-[#827472]">
-                                  {personMeta(entry)}
-                                </p>
-                              ) : null}
-                              {entry.roles.length > 0 ? (
-                                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                                  {entry.roles.map((role) => (
-                                    <span
-                                      key={role}
-                                      className="rounded-full bg-[#ffdcc5]/70 px-2 py-0.5 text-[11px] font-semibold text-[#663100]"
-                                    >
-                                      {role}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : null}
-                              {entry.roles.includes(
-                                UI.CLAN_DUTY_ROLE_PREPARE_CEREMONY,
-                              ) && entry.ceremonyLinks.length > 0 ? (
-                                <DutyEntryCeremonyLinks
-                                  links={entry.ceremonyLinks}
-                                  templates={templates}
-                                  canEdit={false}
-                                  saving={false}
-                                  onChange={() => undefined}
-                                />
-                              ) : null}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-
-                      {active && canEdit ? (
-                        <div className="mt-4 border-t border-[#d4c3c1]/60 pt-4">
-                          <p className="mb-2 text-sm font-medium text-[#321716]">
-                            {UI.CLAN_DUTY_ADD}
-                          </p>
-                          <div className="relative">
-                            <Icon
-                              path="search"
-                              size={18}
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                              pointer={false}
-                              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                            />
-                            <input
-                              type="search"
-                              value={query}
-                              onChange={(e) => setQuery(e.target.value)}
-                              placeholder={UI.CLAN_DUTY_SEARCH}
-                              disabled={saving}
-                              className={`${inputClassName} pl-10`}
-                            />
-                          </div>
-                          {query.trim() && searchResults.length > 0 ? (
-                            <ul className="mt-2 max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200">
-                              {searchResults.map((person) => (
-                                <li key={person.id}>
-                                  <button
-                                    type="button"
-                                    disabled={saving}
-                                    onClick={() => addPerson(person)}
-                                    className="flex w-full items-center gap-3 px-3 py-2.5 text-left active:bg-amber-50"
-                                  >
-                                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-600 text-sm font-semibold text-white">
-                                      {person.fullName.charAt(0)}
-                                    </span>
-                                    <div className="min-w-0">
-                                      <p className="truncate text-sm font-medium text-slate-900">
-                                        {person.fullName}
-                                      </p>
-                                      {personMeta(person) ? (
-                                        <p className="truncate text-xs text-slate-500">
-                                          {personMeta(person)}
-                                        </p>
-                                      ) : null}
-                                    </div>
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </section>
-                  );
-                })}
+              <div className="space-y-4">
+                {entries.map((entry) => (
+                  <DutyEntryCard
+                    key={entry.key}
+                    entry={entry}
+                    avatar={avatarById.get(entry.personId)}
+                    canEdit={canEdit}
+                    saving={saving}
+                    templates={templates}
+                    roleCatalog={roleCatalog}
+                    onChange={updateEntry}
+                    onRemove={removeEntry}
+                    onAddCustomRole={(role) => {
+                      setCustomRoles((prev) =>
+                        prev.includes(role) ? prev : [...prev, role],
+                      );
+                    }}
+                  />
+                ))}
               </div>
             )}
 
             {!canEdit ? (
-              <p className="mt-4 text-xs text-[#827472]">{UI.CLAN_DUTY_NO_EDIT}</p>
+              <p className="text-xs text-[#827472]">{UI.CLAN_DUTY_NO_EDIT}</p>
             ) : null}
-          </div>
+          </section>
 
           {canEdit ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pb-16 md:pb-0">
               <button
                 type="button"
                 disabled={saving || !isDirty}
@@ -633,154 +415,104 @@ export default function ClanDutyPageView() {
           ) : null}
         </div>
       </ResponsiveAppPageLayout>
-      <AuthRequiredSheet />
-    </>
-  );
-}
 
-function DutyEntryCard({
-  entry,
-  canEdit,
-  saving,
-  templates,
-  roleCatalog,
-  onChange,
-  onRemove,
-  onAddCustomRole,
-}: {
-  entry: DraftEntry;
-  canEdit: boolean;
-  saving: boolean;
-  templates: CeremonyTemplate[];
-  roleCatalog: string[];
-  onChange: (
-    personId: number,
-    patch: Partial<Pick<DraftEntry, "roles" | "note" | "ceremonyLinks">>,
-  ) => void;
-  onRemove: (personId: number) => void;
-  onAddCustomRole: (role: string) => void;
-}) {
-  const [roleDraft, setRoleDraft] = useState("");
-  const meta = personMeta(entry);
-  const hasCeremonyRole = entry.roles.includes(
-    UI.CLAN_DUTY_ROLE_PREPARE_CEREMONY,
-  );
-
-  const toggleRole = (role: string) => {
-    const selected = entry.roles.includes(role);
-    const nextRoles = selected
-      ? entry.roles.filter((r) => r !== role)
-      : [...entry.roles, role];
-    const keepCeremony = nextRoles.includes(UI.CLAN_DUTY_ROLE_PREPARE_CEREMONY);
-    onChange(entry.personId, {
-      roles: nextRoles,
-      ceremonyLinks: keepCeremony ? entry.ceremonyLinks : [],
-    });
-  };
-
-  const addCustomRole = () => {
-    const role = roleDraft.trim();
-    if (!role) return;
-    onAddCustomRole(role);
-    if (!entry.roles.includes(role)) {
-      onChange(entry.personId, { roles: [...entry.roles, role] });
-    }
-    setRoleDraft("");
-  };
-
-  return (
-    <div className="rounded-xl border border-[#d4c3c1]/80 bg-[#faf7f2] p-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-[#321716]">
-            {entry.fullName}
-          </p>
-          {meta ? <p className="text-xs text-[#827472]">{meta}</p> : null}
-        </div>
-        {canEdit ? (
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => onRemove(entry.personId)}
-            className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-slate-500 active:bg-white"
-          >
-            {UI.CLAN_DUTY_REMOVE}
-          </button>
-        ) : null}
-      </div>
-
-      <p className="mt-3 text-xs font-medium text-[#504443]">{UI.CLAN_DUTY_ROLE}</p>
-      {canEdit ? (
-        <>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {roleCatalog.map((role) => {
-              const active = entry.roles.includes(role);
-              return (
-                <button
-                  key={role}
-                  type="button"
-                  disabled={saving}
-                  onClick={() => toggleRole(role)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                    active
-                      ? "bg-[#944a00] text-white"
-                      : "border border-[#d4c3c1] bg-white text-[#504443] hover:border-[#944a00]/50"
-                  }`}
-                >
-                  {role}
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-2 flex gap-2">
-            <input
-              type="text"
-              value={roleDraft}
-              onChange={(e) => setRoleDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addCustomRole();
-                }
-              }}
-              disabled={saving}
-              placeholder={UI.CLAN_DUTY_ROLE_PLACEHOLDER}
-              className={inputClassName}
-            />
+      {addYearOpen ? (
+        <BottomSheet onClose={() => setAddYearOpen(false)} maxWidth="md">
+          <div className="space-y-4 p-4">
+            <h3 className="font-serif text-lg font-semibold text-[#321716]">
+              {UI.CLAN_DUTY_YEAR_ADD}
+            </h3>
+            <FormField label={UI.CLAN_DUTY_YEAR_LABEL}>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={CLAN_DUTY_YEAR_MIN}
+                max={CLAN_DUTY_YEAR_MAX}
+                value={yearInput}
+                onChange={(e) => setYearInput(e.target.value)}
+                placeholder={UI.CLAN_DUTY_YEAR_PLACEHOLDER}
+                className={inputClassName}
+              />
+            </FormField>
             <button
               type="button"
-              disabled={saving || !roleDraft.trim()}
-              onClick={addCustomRole}
-              className="shrink-0 rounded-xl border border-[#d4c3c1] bg-white px-3 py-2 text-sm font-semibold text-[#663100] disabled:opacity-50"
+              disabled={saving}
+              onClick={() => openYear(Number(yearInput))}
+              className="w-full rounded-xl bg-[#321716] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
             >
-              {UI.CLAN_DUTY_ROLE_ADD}
+              {UI.CLAN_DUTY_YEAR_OPEN}
             </button>
           </div>
-        </>
-      ) : entry.roles.length > 0 ? (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {entry.roles.map((role) => (
-            <span
-              key={role}
-              className="rounded-full bg-[#ffdcc5]/80 px-3 py-1 text-xs font-semibold text-[#663100]"
-            >
-              {role}
-            </span>
-          ))}
-        </div>
+        </BottomSheet>
       ) : null}
 
-      {hasCeremonyRole ? (
-        <DutyEntryCeremonyLinks
-          links={entry.ceremonyLinks}
-          templates={templates}
-          canEdit={canEdit}
-          saving={saving}
-          onChange={(ceremonyLinks) =>
-            onChange(entry.personId, { ceremonyLinks })
-          }
-        />
+      {addMemberOpen ? (
+        <BottomSheet
+          onClose={() => {
+            setAddMemberOpen(false);
+            setQuery("");
+          }}
+          maxWidth="md"
+          variant="search"
+        >
+          <div className="flex h-full flex-col p-4">
+            <h3 className="mb-3 font-serif text-lg font-semibold text-[#321716]">
+              {UI.CLAN_DUTY_ADD}
+            </h3>
+            <div className="relative">
+              <Icon
+                path="search"
+                size={18}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                pointer={false}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={UI.CLAN_DUTY_SEARCH}
+                disabled={saving}
+                className={`${inputClassName} pl-10`}
+                autoFocus
+              />
+            </div>
+            <ul className="mt-3 min-h-0 flex-1 divide-y divide-[#e5e2dd] overflow-y-auto">
+              {searchResults.map((person) => (
+                <li key={person.id}>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => addPerson(person)}
+                    className="flex w-full items-center gap-3 px-1 py-3 text-left active:bg-[#fff8f0]"
+                  >
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-[#d4c3c1]/40">
+                      <ClanDutyPersonAvatar
+                        name={person.fullName}
+                        avatar={person.avatar}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-[#321716]">
+                        {person.fullName}
+                      </p>
+                      {personMeta(person) ? (
+                        <p className="truncate text-xs text-[#827472]">
+                          {personMeta(person)}
+                        </p>
+                      ) : null}
+                    </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </BottomSheet>
       ) : null}
-    </div>
+
+      <AuthRequiredSheet />
+    </>
   );
 }

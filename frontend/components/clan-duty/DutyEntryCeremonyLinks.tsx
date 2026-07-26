@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Icon from "@/components/icons/Icon";
 import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
 import { inputClassName } from "@/components/ui/CollapsibleSection";
 import { UI } from "@/lib/constants/ui-strings";
@@ -56,38 +57,38 @@ export default function DutyEntryCeremonyLinks({
   };
 
   return (
-    <div className="mt-3 rounded-lg border border-[#d4c3c1]/70 bg-white/70 p-2.5">
-      <p className="text-xs font-medium text-[#504443]">
+    <div className="rounded-xl border-l-4 border-[#944a00] bg-[#f6f3ee] p-3">
+      <p className="mb-2 flex items-center gap-1 text-xs font-medium text-[#944a00]">
+        <Icon
+          path="book"
+          size={16}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          pointer={false}
+        />
         {UI.CLAN_DUTY_CEREMONY_LINKS}
+        {canEdit ? ":" : null}
       </p>
-      {canEdit ? (
-        <p className="mt-0.5 text-[11px] text-[#827472]">
-          {UI.CLAN_DUTY_CEREMONY_LINKS_HINT}
-        </p>
-      ) : null}
 
       {links.length === 0 ? (
-        <p className="mt-2 text-xs text-[#827472]">{UI.CLAN_DUTY_CEREMONY_EMPTY}</p>
+        <p className="text-sm text-[#827472]">{UI.CLAN_DUTY_CEREMONY_EMPTY}</p>
       ) : (
-        <ul className="mt-2 space-y-1.5">
+        <ul className="space-y-1 pl-1">
           {links.map((link) => (
             <li
               key={link.templateId}
-              className="flex items-center justify-between gap-2 rounded-lg bg-[#faf7f2] px-2.5 py-1.5"
+              className="flex items-center justify-between gap-2 text-sm text-[#321716]"
             >
-              <div className="min-w-0">
-                <p className="truncate text-xs font-semibold text-[#321716]">
-                  {link.name}
-                </p>
-                <a
-                  href={templateHref(link.templateId)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[11px] font-medium text-[#944a00] underline-offset-2 hover:underline"
-                >
-                  {UI.CLAN_DUTY_CEREMONY_OPEN}
-                </a>
-              </div>
+              <a
+                href={templateHref(link.templateId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-w-0 items-center gap-2 hover:underline"
+              >
+                <span className="h-1 w-1 shrink-0 rounded-full bg-[#827472]" />
+                <span className="truncate">{link.name}</span>
+              </a>
               {canEdit ? (
                 <button
                   type="button"
@@ -105,6 +106,9 @@ export default function DutyEntryCeremonyLinks({
 
       {canEdit ? (
         <div className="relative mt-2">
+          <p className="mb-1 text-[11px] text-[#827472]">
+            {UI.CLAN_DUTY_CEREMONY_LINKS_HINT}
+          </p>
           <input
             type="search"
             value={query}

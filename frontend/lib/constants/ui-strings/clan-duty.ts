@@ -2,22 +2,31 @@
 export const CLAN_DUTY_ROLE_PREPARE_CEREMONY = "Chuẩn bị bài cúng";
 
 export const CLAN_DUTY_STRINGS = {
-  CLAN_DUTY_PAGE_TITLE: "Biện họ",
+  CLAN_DUTY_PAGE_TITLE: "Sự kiện Biện họ",
   CLAN_DUTY_PAGE_SUBTITLE:
     "Danh sách thành viên đại diện theo năm — lau dọn nhà thờ, vệ sinh và chuẩn bị giỗ tổ.",
   CLAN_DUTY_PROMO_TITLE: "Biện họ theo năm",
   CLAN_DUTY_PROMO_DESC:
     "Xem ai đang đại diện dòng họ để chăm sóc nhà thờ và chuẩn bị ngày giỗ tổ.",
   CLAN_DUTY_PROMO_CTA: "Xem biện họ",
+  CLAN_DUTY_TIME_SECTION: "Thời gian quản lý",
+  CLAN_DUTY_YEAR_ADD: "Thêm năm mới",
+  CLAN_DUTY_YEAR_ACTIVE: "Đang chọn",
+  CLAN_DUTY_YEAR_HISTORY: "Lịch sử",
   CLAN_DUTY_YEAR_LABEL: "Năm biện",
   CLAN_DUTY_YEAR_PLACEHOLDER: "VD: 2026",
-  CLAN_DUTY_YEAR_OPEN: "Thêm năm biện họ mới",
+  CLAN_DUTY_YEAR_OPEN: "Mở năm",
   CLAN_DUTY_YEAR_INVALID: "Năm không hợp lệ (1900–2200)",
   CLAN_DUTY_YEAR_SAVED_HINT: "Năm đã có danh sách",
   CLAN_DUTY_YEAR_NOTE: "Ghi chú năm",
   CLAN_DUTY_YEAR_NOTE_PLACEHOLDER:
     "VD: Biện họ năm nay lo lau dọn nhà thờ và chuẩn bị giỗ tổ…",
-  CLAN_DUTY_MEMBERS: "Thành viên biện họ",
+  CLAN_DUTY_HERO_EYEBROW: "Truyền thống dòng họ",
+  CLAN_DUTY_HERO_TITLE: "Giữ gìn nề nếp,\nphụng sự tổ tiên",
+  CLAN_DUTY_TEAM_LABEL: "Đội ngũ hiện tại",
+  CLAN_DUTY_TEAM_COUNT: (n: number) =>
+    n === 1 ? "1 thành viên" : `${n} thành viên`,
+  CLAN_DUTY_MEMBERS: "Danh sách biện họ",
   CLAN_DUTY_YEAR_TAG: (year: number) => `Năm ${year}`,
   CLAN_DUTY_YEAR_EMPTY_SHORT: "Chưa có thành viên",
   CLAN_DUTY_EMPTY: "Chưa có thành viên biện họ cho năm này.",
@@ -47,8 +56,10 @@ export const CLAN_DUTY_STRINGS = {
   CLAN_DUTY_CEREMONY_OPEN: "Mở bài cúng",
   CLAN_DUTY_CEREMONY_REMOVE: "Gỡ",
   CLAN_DUTY_CEREMONY_EMPTY: "Chưa gắn mẫu bài cúng nào.",
+  CLAN_DUTY_EDIT_ENTRY: "Chỉnh sửa",
+  CLAN_DUTY_DONE_EDIT: "Xong",
   CLAN_DUTY_ENTRY_NOTE: "Ghi chú",
-  CLAN_DUTY_REMOVE: "Gỡ",
+  CLAN_DUTY_REMOVE: "Gỡ khỏi danh sách",
   CLAN_DUTY_SAVE: "Lưu danh sách",
   CLAN_DUTY_SAVING: "Đang lưu…",
   CLAN_DUTY_SAVED: "Đã lưu biện họ",
