@@ -1,5 +1,6 @@
 import { UI } from "@/lib/constants/ui-strings";
 import { formatDate } from "@/utils/person-relationships";
+import { formatGenderLabel } from "@/utils/gender-label";
 import styles from "../GenealogyBook.module.css";
 import BookField from "../BookField";
 import { BOOK_PRINT_LINES } from "../book-print-lines";
@@ -13,12 +14,20 @@ const ClassicForm: PageFormComponent = ({
   readOnly,
   onChange,
   onStartEdit,
-}) => (
+}) => {
+  const showDeceased = draft.deceased === "1";
+  const locationLabel = showDeceased
+    ? UI.CURRENT_LOCATION_DECEASED
+    : UI.CURRENT_LOCATION;
+
+  return (
   <>
     <div className={`${styles.bookGrid} grid grid-cols-2 gap-x-4`}>
       <BookField
         label={UI.GENDER}
-        value={draft.gender}
+        value={
+          readOnly ? formatGenderLabel(draft.gender) : draft.gender
+        }
         onChange={(v) => onChange("gender", v)}
         readOnly={readOnly}
         onStartEdit={onStartEdit}
@@ -47,7 +56,7 @@ const ClassicForm: PageFormComponent = ({
     </div>
 
     <BookField
-      label={UI.CURRENT_LOCATION}
+      label={locationLabel}
       value={draft.currentLocation}
       onChange={(v) => onChange("currentLocation", v)}
       readOnly={readOnly}
@@ -128,6 +137,7 @@ const ClassicForm: PageFormComponent = ({
       onStartEdit={onStartEdit}
     />
   </>
-);
+  );
+};
 
 export default ClassicForm;

@@ -23,7 +23,8 @@
   --color-foreground: var(--foreground);
   --font-be-vietnam-pro: var(--font-be-vietnam-pro);
   --font-playfair-display: var(--font-playfair-display);
-  --font-noto-serif: var(--font-playfair-display);
+  /* Sổ / in: Noto Serif (không còn alias sang Playfair). */
+  --font-noto-serif: var(--font-noto-serif);
   --font-serif: var(--font-playfair-display);
 }
 
@@ -90,7 +91,8 @@ html {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
   touch-action: pan-y;
   -ms-overflow-style: none;
   scrollbar-width: none;

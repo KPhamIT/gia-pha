@@ -60,7 +60,7 @@ function InlineNumberField({
   displayAsRoman?: boolean;
 }) {
   const display = displayAsRoman
-    ? toRomanNumeral(value) || UI.BOOK_EMPTY_FIELD
+    ? toRomanNumeral(value) || ""
     : displayValue(value);
 
   return (

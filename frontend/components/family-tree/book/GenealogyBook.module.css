@@ -241,7 +241,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  font-family: var(--font-noto-serif), serif;
+  font-family: var(--font-noto-serif), "Noto Serif", "Times New Roman", serif;
   /* --page-edge-*: mép giấy → đường border; padding = edge + khoảng chữ trong khung */
   --page-edge-top: 2.5mm;
   --page-edge-right: 4mm;
@@ -501,7 +501,7 @@
   margin-top: 2mm;
   display: flex;
   justify-content: center;
-  gap: 4mm;
+  gap: 1.5mm;
   font-size: 8pt;
   color: rgb(120 53 15 / 0.6);
 }
@@ -550,6 +550,7 @@
     calc(var(--page-edge-right) + var(--page-content-gap))
     calc(var(--page-edge-bottom) + var(--page-content-gap))
     calc(var(--page-edge-left) + var(--page-content-gap)) !important;
+  font-family: var(--font-noto-serif), "Noto Serif", "Times New Roman", serif !important;
   font-size: 9.5pt;
   line-height: 1.25;
   box-sizing: border-box !important;
@@ -891,6 +892,7 @@
       calc(var(--page-edge-right) + var(--page-content-gap))
       calc(var(--page-edge-bottom) + var(--page-content-gap))
       calc(var(--page-edge-left) + var(--page-content-gap)) !important;
+    font-family: var(--font-noto-serif), "Noto Serif", "Times New Roman", serif !important;
     font-size: 9.5pt;
     line-height: 1.25;
     transform: none !important;

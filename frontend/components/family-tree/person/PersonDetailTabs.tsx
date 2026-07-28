@@ -6,6 +6,7 @@ import type {
 } from "@/components/types/family-tree-types";
 import { UI } from "@/lib/constants/ui-strings";
 import { formatDate } from "@/utils/person-relationships";
+import { formatGenderLabel } from "@/utils/gender-label";
 import { InfoRow, RelationRow } from "./PersonDetailRows";
 
 export type DetailTab = "info" | "relationships" | "biography" | "grave";
@@ -33,7 +34,7 @@ export default function PersonDetailTabBody({
   if (tab === "info") {
     return (
       <div className="divide-y divide-slate-100">
-        <InfoRow label={UI.GENDER} value={person.gender} />
+        <InfoRow label={UI.GENDER} value={formatGenderLabel(person.gender)} />
         <InfoRow
           label={UI.BIRTH_DATE}
           value={formatDate(person.birthDate) || UI.BIRTH_DATE_UNKNOWN}
@@ -48,7 +49,14 @@ export default function PersonDetailTabBody({
         />
         <InfoRow label={UI.DEATH_DATE} value={formatDate(person.deathDate)} />
         <InfoRow label={UI.BIRTH_PLACE} value={person.birthPlace} />
-        <InfoRow label={UI.CURRENT_LOCATION} value={person.currentLocation} />
+        <InfoRow
+          label={
+            person.deceased || person.deathDate
+              ? UI.CURRENT_LOCATION_DECEASED
+              : UI.CURRENT_LOCATION
+          }
+          value={person.currentLocation}
+        />
         <InfoRow label={UI.EDUCATION} value={person.education} />
         <InfoRow label={UI.OCCUPATION} value={person.occupation} />
         <InfoRow label={UI.RELIGION} value={person.religion} />

@@ -1,7 +1,7 @@
 import { UI } from "@/lib/constants/ui-strings";
 import { formatDate } from "@/utils/person-relationships";
+import { formatGenderLabel } from "@/utils/gender-label";
 import bookStyles from "../Book.module.scss";
-import { displayValue } from "../BookField";
 import { BOOK_PRINT_LINES } from "../book-print-lines";
 import RelationsBlock from "./RelationsBlock";
 import type { PageFormComponent } from "./types";
@@ -34,20 +34,20 @@ function Row({
     >
       <span className={bookStyles.elegantLabel}>{label}</span>
       <span
-        className={`${bookStyles.elegantValue} ${empty ? bookStyles.elegantValueEmpty : ""}`}
+        className={`${bookStyles.elegantValue}${empty ? ` ${bookStyles.elegantValueEmpty}` : ""}`}
       >
         {readOnly ? (
           <span
             className={`${isLong ? bookStyles.elegantValueMultiline : ""} ${onStartEdit ? "cursor-text" : ""}`}
             onClick={onStartEdit}
           >
-            {displayValue(value)}
+            {value.trim()}
           </span>
         ) : multiline ? (
           <textarea
             value={value}
             rows={lineCount ?? 2}
-            placeholder={UI.BOOK_EMPTY_FIELD}
+            placeholder=""
             onChange={(e) => onChange?.(e.target.value)}
             onFocus={onStartEdit}
           />
@@ -55,7 +55,7 @@ function Row({
           <input
             type="text"
             value={value}
-            placeholder={UI.BOOK_EMPTY_FIELD}
+            placeholder=""
             onChange={(e) => onChange?.(e.target.value)}
             onFocus={onStartEdit}
           />
@@ -86,13 +86,21 @@ const ElegantForm: PageFormComponent = ({
   readOnly,
   onChange,
   onStartEdit,
-}) => (
+}) => {
+  const showDeceased = draft.deceased === "1";
+  const locationLabel = showDeceased
+    ? UI.CURRENT_LOCATION_DECEASED
+    : UI.CURRENT_LOCATION;
+
+  return (
   <>
     <div className={bookStyles.elegantIntro}>
       <div className={bookStyles.elegantIntroFields}>
         <Row
           label={UI.GENDER}
-          value={draft.gender}
+          value={
+            readOnly ? formatGenderLabel(draft.gender) : draft.gender
+          }
           onChange={(v) => onChange("gender", v)}
           readOnly={readOnly}
           onStartEdit={onStartEdit}
@@ -137,7 +145,7 @@ const ElegantForm: PageFormComponent = ({
       onStartEdit={onStartEdit}
     />
     <Row
-      label={UI.CURRENT_LOCATION}
+      label={locationLabel}
       value={draft.currentLocation}
       onChange={(v) => onChange("currentLocation", v)}
       readOnly={readOnly}
@@ -204,6 +212,7 @@ const ElegantForm: PageFormComponent = ({
       onStartEdit={onStartEdit}
     />
   </>
-);
+  );
+};
 
 export default ElegantForm;

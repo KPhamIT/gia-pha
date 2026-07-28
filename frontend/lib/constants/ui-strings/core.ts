@@ -172,6 +172,7 @@ export const CORE_STRINGS = {
   STATUS_DECEASED: "Đã mất",
   BIRTH_PLACE: "Nơi sinh",
   CURRENT_LOCATION: "Nơi ở hiện tại",
+  CURRENT_LOCATION_DECEASED: "Nơi ở khi mất",
   EDUCATION: "Học vấn",
   OCCUPATION: "Nghề nghiệp",
   RELIGION: "Tôn giáo",

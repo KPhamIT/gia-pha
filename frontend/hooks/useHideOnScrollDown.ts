@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-const DELTA_MIN = 8;
-const TOP_ALWAYS_SHOW = 40;
-/** Bỏ qua vùng sát đáy — overscroll/bounce PWA làm y dao động → nav giật. */
-const BOTTOM_EDGE = 64;
+const DELTA_MIN = 12;
+const TOP_ALWAYS_SHOW = 48;
+/** Bỏ qua vùng sát mép — rubber-band PWA làm y dao động → chrome giật. */
+const EDGE_IGNORE = 72;
+const DIR_STREAK = 2;
 const MD_QUERY = "(min-width: 768px)";
 
 function readScrollTop(target: EventTarget | null): number | null {
@@ -73,6 +74,10 @@ export function useHideOnScrollDown(options?: Options) {
   useEffect(() => {
     let lastY = window.scrollY || 0;
     let desktop = false;
+    let pendingDir = 0;
+    let streak = 0;
+    let raf = 0;
+    let queuedTarget: EventTarget | null = null;
 
     const mq =
       mobileOnly && typeof window.matchMedia === "function"
@@ -86,31 +91,53 @@ export function useHideOnScrollDown(options?: Options) {
     syncDesktop();
     mq?.addEventListener("change", syncDesktop);
 
-    const onScroll = (event: Event) => {
+    const applyScroll = (target: EventTarget | null) => {
       if (desktop) return;
-      if (!isPageScroller(event.target)) return;
+      if (!isPageScroller(target)) return;
 
-      const y = readScrollTop(event.target);
-      const maxY = readMaxScroll(event.target);
+      const y = readScrollTop(target);
+      const maxY = readMaxScroll(target);
       if (y == null || maxY == null) return;
 
       const delta = y - lastY;
       if (Math.abs(delta) < DELTA_MIN) return;
 
-      // Cuối trang / rubber-band: không đổi trạng thái ẩn-hiện.
-      if (maxY > 0 && y >= maxY - BOTTOM_EDGE) {
+      // Mép trên/dưới + rubber-band: không đổi ẩn-hiện.
+      if (y <= TOP_ALWAYS_SHOW) {
+        pendingDir = 0;
+        streak = 0;
+        lastY = y;
+        setHidden(false);
+        return;
+      }
+      if (y < EDGE_IGNORE || (maxY > 0 && y >= maxY - EDGE_IGNORE)) {
+        pendingDir = 0;
+        streak = 0;
         lastY = y;
         return;
       }
 
-      if (y <= TOP_ALWAYS_SHOW) {
-        setHidden(false);
-      } else if (delta > 0) {
-        setHidden(true);
-      } else {
-        setHidden(false);
+      const dir = delta > 0 ? 1 : -1;
+      if (dir === pendingDir) streak += 1;
+      else {
+        pendingDir = dir;
+        streak = 1;
       }
       lastY = y;
+      if (streak < DIR_STREAK) return;
+
+      streak = 0;
+      setHidden(dir > 0);
+    };
+
+    const onScroll = (event: Event) => {
+      queuedTarget = event.target;
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        applyScroll(queuedTarget);
+        queuedTarget = null;
+      });
     };
 
     document.addEventListener("scroll", onScroll, {
@@ -120,6 +147,7 @@ export function useHideOnScrollDown(options?: Options) {
     return () => {
       mq?.removeEventListener("change", syncDesktop);
       document.removeEventListener("scroll", onScroll, true);
+      if (raf) window.cancelAnimationFrame(raf);
     };
   }, [mobileOnly]);
 

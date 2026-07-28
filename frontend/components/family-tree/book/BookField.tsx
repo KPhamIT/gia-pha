@@ -1,10 +1,9 @@
 "use client";
 
-import { UI } from "@/lib/constants/ui-strings";
 import styles from "./GenealogyBook.module.css";
 
 export function displayValue(value: string): string {
-  return value.trim() || UI.BOOK_EMPTY_FIELD;
+  return value.trim();
 }
 
 /**
@@ -59,7 +58,7 @@ export default function BookField({
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           onFocus={handleFocus}
-          placeholder={UI.BOOK_EMPTY_FIELD}
+          placeholder=""
           rows={lineCount ?? 3}
           data-print-lines={lineCount}
           className={`${styles.bookFieldMultiline} ${className} resize-none`}
@@ -70,7 +69,7 @@ export default function BookField({
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           onFocus={handleFocus}
-          placeholder={UI.BOOK_EMPTY_FIELD}
+          placeholder=""
           className={className}
         />
       )}

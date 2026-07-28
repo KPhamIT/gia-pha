@@ -67,6 +67,9 @@ export function useGenealogyPrint(
       root?.setAttribute("data-print-root", "true");
       await nextFrame();
       await loadCalligraphyFont(coverFontId);
+      if (typeof document !== "undefined" && "fonts" in document) {
+        await document.fonts.ready;
+      }
 
       if (printAll) {
         resetGenealogyPrintFit(root);

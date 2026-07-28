@@ -251,30 +251,32 @@ $book-paper-bg: #fffef9;
 
 .elegantField {
   display: grid;
-  grid-template-columns: var(--elegant-label-w, 34mm) minmax(0, 1fr);
-  column-gap: 0.5rem;
-  align-items: baseline;
-  padding: 1.1mm 0;
+  grid-template-columns: var(--elegant-label-w, 24mm) minmax(0, 1fr);
+  column-gap: 0.25rem;
+  align-items: end;
+  padding: 1.6mm 0 0.15mm;
   border-bottom: 1px dotted channel($gold, 0.4);
-  line-height: 1.5;
+  line-height: 1.2;
 }
 
 .elegantLabel {
   font-size: 7pt;
   font-weight: 600;
+  line-height: 1.2;
   color: channel($burgundy-deep, 0.8);
 }
 
 .elegantValue {
   min-width: 0;
   font-size: 8.5pt;
-  line-height: 1.5;
+  line-height: 1.2;
   color: $text-dark;
 
   input,
   textarea {
     @include transparent-input;
     font: inherit;
+    line-height: inherit;
     color: inherit;
     resize: none;
   }
@@ -309,7 +311,7 @@ $book-paper-bg: #fffef9;
 
 .elegantFieldLong {
   align-items: flex-start;
-  padding: 1.4mm 0;
+  padding: 1.4mm 0 0.15mm;
   @include elegant-long-min-heights;
 }
 
@@ -827,18 +829,19 @@ $book-paper-bg: #fffef9;
   }
 
   .elegantField {
-    padding: 1.1mm 0 !important;
-    line-height: 1.5 !important;
+    align-items: end !important;
+    padding: 1.6mm 0 0.15mm !important;
+    line-height: 1.2 !important;
   }
 
   .elegantLabel {
     font-size: 7pt !important;
-    line-height: 1.5 !important;
+    line-height: 1.2 !important;
   }
 
   .elegantValue {
     font-size: 8.5pt !important;
-    line-height: 1.5 !important;
+    line-height: 1.2 !important;
   }
 
   .elegantRelations {
@@ -847,7 +850,7 @@ $book-paper-bg: #fffef9;
 
   .elegantFieldLong {
     align-items: flex-start !important;
-    padding: 1.4mm 0 !important;
+    padding: 1.4mm 0 0.15mm !important;
     @include elegant-print-long-lines;
   }
 
@@ -873,20 +876,21 @@ $book-paper-bg: #fffef9;
   }
 
   .elegantField {
-    padding: 1.1mm 0 !important;
-    line-height: 1.5 !important;
+    align-items: end !important;
+    padding: 1.6mm 0 0.15mm !important;
+    line-height: 1.2 !important;
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
   .elegantLabel {
     font-size: 7pt !important;
-    line-height: 1.5 !important;
+    line-height: 1.2 !important;
   }
 
   .elegantValue {
     font-size: 8.5pt !important;
-    line-height: 1.5 !important;
+    line-height: 1.2 !important;
   }
 
   .elegantRelations {
@@ -895,7 +899,7 @@ $book-paper-bg: #fffef9;
 
   .elegantFieldLong {
     align-items: flex-start !important;
-    padding: 1.4mm 0 !important;
+    padding: 1.4mm 0 0.15mm !important;
     @include elegant-print-long-lines;
   }
 
