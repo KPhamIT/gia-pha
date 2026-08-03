@@ -193,6 +193,8 @@ function FamilyTreePageContent() {
                     setLayoutConfig,
                     onClose: sheets.closeNodeStyleSheet,
                     onOpenDetail: sheets.openPersonDetail,
+                    onAddChild: sheets.openAddChildFor,
+                    canEditTree: canUseFeature("editTree"),
                     onSaveSettings: handleSaveSettings,
                     canSaveSettings: canUseFeature("settings"),
                   }

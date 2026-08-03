@@ -230,6 +230,17 @@ export function usePersonSheets({
     closeSearch: useCallback(() => setShowSearch(false), []),
     openEdit: useCallback(() => setViewMode("edit"), []),
     openAddChild: useCallback(() => setViewMode("addChild"), []),
+    openAddChildFor: useCallback(
+      (person: Person) => {
+        if (!requireFeature("editTree")) return;
+        setNodeStylePerson(null);
+        setSelectedNode(person);
+        setSelectedPersonId(person.id);
+        setFocusNodeId(person.id);
+        setViewMode("addChild");
+      },
+      [requireFeature],
+    ),
     openDeleteConfirm: useCallback(() => setViewMode("deleteConfirm"), []),
     openAddPerson: useCallback(() => setViewMode("addPerson"), []),
     closeAddPerson: useCallback(() => setViewMode(null), []),

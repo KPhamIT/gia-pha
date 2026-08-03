@@ -138,30 +138,6 @@ function bloodlinePersonIds(
 
 
 
-/** Married-in spouses with no parent/child link on this tree. */
-
-function marriedInOnlyIds(
-
-  placements: ReturnType<typeof buildSpousePlacements>,
-
-  bloodline: Set<number>,
-
-): Set<number> {
-
-  return new Set(
-
-    placements
-
-      .map((p) => p.satelliteId)
-
-      .filter((id) => !bloodline.has(id)),
-
-  );
-
-}
-
-
-
 /** Build positioned react-flow nodes + edges from raw family tree data. */
 
 export function buildFamilyTreeGraph(
@@ -202,17 +178,11 @@ export function buildFamilyTreeGraph(
 
   const showSpouses = config.showSpouses !== false;
 
-  const skipSpouseIds = showSpouses
+  /** Satellite spouses never run tidy-tree (avoids dual-parent re-layout). */
+  const skipSpouseIds = spouseSatelliteIds(spousePlacements);
 
-    ? spouseSatelliteIds(spousePlacements)
-
-    : new Set<number>();
-
-  const hiddenIds = showSpouses
-
-    ? new Set<number>()
-
-    : marriedInOnlyIds(spousePlacements, bloodline);
+  /** When spouses are off, hide satellites entirely (not just pure married-in). */
+  const hiddenIds = showSpouses ? new Set<number>() : skipSpouseIds;
 
   const layoutPersons = persons.filter((p) => !hiddenIds.has(p.id));
 

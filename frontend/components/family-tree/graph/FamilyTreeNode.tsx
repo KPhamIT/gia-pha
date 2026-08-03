@@ -1,6 +1,10 @@
 import { Handle, Position } from "@xyflow/react";
 import { memo } from "react";
-import type { NodeFontWeight, NodeTextCase, NodeTextDirection } from "@/components/types/family-tree-types";
+import type {
+  NodeFontWeight,
+  NodeTextCase,
+  NodeTextDirection,
+} from "@/components/types/family-tree-types";
 import { NODE_HEIGHT, NODE_WIDTH } from "@/components/family-tree/graph/layout";
 import {
   formatNodeDisplayName,

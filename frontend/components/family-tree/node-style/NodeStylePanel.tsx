@@ -24,6 +24,9 @@ export type NodeStylePanelProps = {
   setLayoutConfig: React.Dispatch<React.SetStateAction<LayoutConfig>>;
   onClose: () => void;
   onOpenDetail: (person: Person) => void;
+  /** Thêm con cho người đang chọn (quyền `editTree`). */
+  onAddChild?: (person: Person) => void;
+  canEditTree?: boolean;
   onSaveSettings?: () => void;
   canSaveSettings?: boolean;
 };
@@ -73,6 +76,8 @@ export default function NodeStylePanel({
   setLayoutConfig,
   onClose,
   onOpenDetail,
+  onAddChild,
+  canEditTree = false,
   onSaveSettings,
   canSaveSettings = false,
 }: NodeStylePanelProps) {
@@ -142,6 +147,12 @@ export default function NodeStylePanel({
     onOpenDetail(person);
   };
 
+  const handleAddChild = () => {
+    if (!canEditTree || !onAddChild) return;
+    onClose();
+    onAddChild(person);
+  };
+
   return (
     <div className="rounded-2xl border border-neutral-200/90 bg-white px-2 pb-2.5 pt-2 shadow-xl ring-1 ring-black/5">
       <div className="flex items-center gap-1.5">
@@ -168,6 +179,13 @@ export default function NodeStylePanel({
           active={applyToLevel}
           disabled={!canApplyLevel}
         />
+        {canEditTree && onAddChild ? (
+          <SheetAction
+            icon="userPlus"
+            label={UI.ADD_CHILD}
+            onClick={handleAddChild}
+          />
+        ) : null}
         <SheetAction
           icon="edit"
           label={UI.NODE_STYLE_OPEN_DETAIL}
