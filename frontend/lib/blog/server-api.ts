@@ -13,13 +13,23 @@ function apiBase(): string {
   );
 }
 
+/**
+ * Đổi giá trị này khi cập nhật hàng loạt bài trong DB (script) để bỏ cache dữ liệu
+ * của Vercel ngay — cache lưu theo URL và giữ qua các lần deploy.
+ */
+const BLOG_CACHE_VERSION = "2026-10-10";
+
+function withCacheVersion(path: string): string {
+  return `${path}${path.includes("?") ? "&" : "?"}cv=${BLOG_CACHE_VERSION}`;
+}
+
 async function fetchJson<T>(
   path: string,
   options?: { revalidate?: number | false },
 ): Promise<T | null> {
   try {
     const revalidate = options?.revalidate ?? 3600;
-    const res = await fetch(`${apiBase()}${path}`, {
+    const res = await fetch(`${apiBase()}${withCacheVersion(path)}`, {
       ...(revalidate === false
         ? { cache: "no-store" as const }
         : { next: { revalidate } }),
