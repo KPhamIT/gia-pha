@@ -1,7 +1,7 @@
 import { AC } from "@/components/auth/account-theme";
 import type { GuideSection } from "@/lib/constants/ui-strings/guide";
 import { BT } from "@/lib/constants/ui-theme";
-import GuideImagePlaceholder from "./GuideImagePlaceholder";
+import GuideStepImage from "./GuideStepImage";
 import GuideRichText from "./GuideRichText";
 
 type GuideSectionBlockProps = {
@@ -62,8 +62,9 @@ export default function GuideSectionBlock({
                 />
               ))}
             </div>
-            {step.imageCaption ? (
-              <GuideImagePlaceholder
+            {step.image ? (
+              <GuideStepImage
+                image={step.image}
                 caption={step.imageCaption}
                 variant={variant}
               />

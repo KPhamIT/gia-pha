@@ -23,6 +23,7 @@ const howToSchema = generateHowToSchema({
     section.steps.map((step) => ({
       name: step.title,
       text: step.paragraphs.join(" "),
+      image: step.image?.src,
     })),
   ),
 });

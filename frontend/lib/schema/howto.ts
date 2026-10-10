@@ -1,8 +1,10 @@
-import { SITE } from "@/config/site";
+import { SITE, buildAbsoluteUrl } from "@/config/site";
 
 type HowToStep = {
   name: string;
   text: string;
+  /** Đường dẫn ảnh minh họa (tương đối hoặc tuyệt đối). */
+  image?: string;
 };
 
 type HowToInput = {
@@ -23,6 +25,7 @@ export function generateHowToSchema(input: HowToInput) {
       position: index + 1,
       name: step.name,
       text: step.text,
+      ...(step.image ? { image: buildAbsoluteUrl(step.image) } : {}),
     })),
   };
 }

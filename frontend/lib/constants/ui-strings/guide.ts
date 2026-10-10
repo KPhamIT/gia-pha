@@ -1,3 +1,5 @@
+import { GUIDE_IMAGES, type GuideImage } from "../guide-images";
+
 /** User guide page — marketing / end-user help (Facebook, onboarding). */
 export const GUIDE_STRINGS = {
   GUIDE_PAGE_EYEBROW: "Trợ giúp",
@@ -5,7 +7,6 @@ export const GUIDE_STRINGS = {
   GUIDE_PAGE_SUBTITLE:
     "Tra cứu gia phả dòng họ trên điện thoại và máy tính — xem sổ, cây phả hệ, sự kiện, ngày giỗ.",
   GUIDE_TOC_TITLE: "Mục lục",
-  GUIDE_IMAGE_PLACEHOLDER: "Chèn ảnh minh họa tại đây",
   GUIDE_CTA: "Vào sổ gia phả",
   GUIDE_CTA_HINT:
     "Cần liên kết từ ban quản trị dòng họ hoặc đăng nhập tài khoản được cấp.",
@@ -17,6 +18,8 @@ export type GuideStep = {
   title: string;
   paragraphs: readonly string[];
   imageCaption?: string;
+  /** Ảnh chụp màn hình; bước không có ảnh thì không hiện khung minh họa. */
+  image?: GuideImage;
 };
 
 export type GuideSection = {
@@ -40,7 +43,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Không bắt buộc cài app — dùng trực tiếp trên Chrome, Safari, trình duyệt điện thoại.",
           "Sau lần đầu mở liên kết, thiết bị sẽ nhớ dòng họ của bạn; lần sau chỉ cần vào địa chỉ website.",
         ],
-        imageCaption: "Màn hình chào mừng / trang sổ gia phả lần đầu mở.",
+        imageCaption: "Trang bìa sổ gia phả — màn hình đầu tiên khi mở liên kết dòng họ.",
+        image: GUIDE_IMAGES.cover,
       },
       {
         title: "Bạn có thể làm gì?",
@@ -99,7 +103,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Mỗi trang là hồ sơ một thành viên: họ tên, đời, nhánh, ngày sinh, tiểu sử, mộ phần…",
           "Trang bìa và lời mở đầu giới thiệu dòng họ — do ban biên tập soạn.",
         ],
-        imageCaption: "Một trang thông tin trong sổ gia phả.",
+        imageCaption: "Một trang hồ sơ thành viên trong sổ: đời, nhánh, ngày sinh, ngày mất, vợ/chồng, con.",
+        image: GUIDE_IMAGES.bookPerson,
       },
       {
         title: "Tìm người trong sổ",
@@ -115,7 +120,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "**In trang này** — in đúng trang đang xem (hữu ích khi in bài về một người).",
           "**In toàn bộ sổ** — chuẩn bị bản in nhiều trang (nên dùng máy tính hoặc gửi file PDF qua máy in).",
         ],
-        imageCaption: "Nút in trang / in toàn bộ trên thanh sổ.",
+        imageCaption: "Tùy chỉnh kiểu trình bày trước khi in: nền trang, khung viền, số trang, in một mặt hay hai mặt.",
+        image: GUIDE_IMAGES.bookLayout,
       },
       {
         title: "Mở cây gia phả từ sổ",
@@ -137,7 +143,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Kéo để di chuyển, chụm hai ngón để phóng to / thu nhỏ (trên điện thoại).",
           "Chạm vào **thẻ tên** một người để mở chi tiết: tiểu sử, quan hệ, mộ phần…",
         ],
-        imageCaption: "Cây gia phả với vài thế hệ.",
+        imageCaption: "Cây gia phả nhiều thế hệ — mỗi hàng ngang là một đời, vợ chồng đứng cạnh nhau.",
+        image: GUIDE_IMAGES.tree,
       },
       {
         title: "Lọc theo nhánh và đời",
@@ -145,7 +152,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Thanh **Bộ lọc** phía trên: chọn nhánh hoặc giới hạn số đời hiển thị.",
           "Giúp cây gọn hơn khi dòng họ đông người.",
         ],
-        imageCaption: "Bộ lọc nhánh / đời trên cây.",
+        imageCaption: "Bộ lọc trên cây: chọn nhánh (Đại Tôn, Trung Tôn, Tiểu Tôn) và số đời hiển thị.",
+        image: GUIDE_IMAGES.treeFilter,
       },
       {
         title: "Tìm người trên cây",
@@ -161,7 +169,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Người có quyền có thể xuất ảnh cây để in banner, đăng Facebook dòng họ.",
           "Chọn vùng hiển thị, tùy chỉnh trong hộp thoại xuất ảnh.",
         ],
-        imageCaption: "Hộp thoại xuất ảnh cây gia phả.",
+        imageCaption: "Hộp thoại xuất ảnh: cuốn thư, rồng chầu, câu đối, màu nền, khung viền và thẻ thành viên.",
+        image: GUIDE_IMAGES.treeExport,
       },
     ],
   },
@@ -175,7 +184,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Từ cây hoặc sổ, mở hồ sơ một người để xem: thông tin cơ bản, gia đình (cha, mẹ, vợ/chồng, con), tiểu sử, thành tích, mộ phần.",
           "Tab **Quan hệ** liệt kê người thân có thể bấm để chuyển nhanh.",
         ],
-        imageCaption: "Sheet chi tiết một thành viên.",
+        imageCaption: "Phần tiểu sử, nghĩa trang và địa chỉ mộ trong hồ sơ thành viên.",
+        image: GUIDE_IMAGES.personBio,
       },
       {
         title: "Chỉnh sửa (cần quyền)",
@@ -199,7 +209,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Menu **+** → **Sự kiện**.",
           "Mỗi sự kiện có tên, ngày, mô tả — loại **Thông tin** hoặc **Có thu tiền đóng góp**.",
         ],
-        imageCaption: "Danh sách sự kiện dòng họ.",
+        imageCaption: "Trang Sự kiện: lịch âm – dương, sự kiện sắp diễn ra và ngày giỗ sắp tới.",
+        image: GUIDE_IMAGES.events,
       },
       {
         title: "Theo dõi đóng góp",
@@ -207,7 +218,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Với sự kiện thu tiền: xem ai đã nộp, ai chưa, tổng đã thu.",
           "Ban quản trị cập nhật trạng thái; thành viên tra cứu minh bạch.",
         ],
-        imageCaption: "Bảng đóng góp theo từng người.",
+        imageCaption: "Đóng góp chia theo từng gia đình: đã nộp, chưa nộp, tổng đã thu.",
+        image: GUIDE_IMAGES.contribution,
       },
       {
         title: "Sổ công đức",
@@ -215,7 +227,17 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Ghi nhận tiền hoặc hiện vật công đức cho dòng họ (người trong hoặc ngoài gia phả).",
           "Lưu trữ lâu dài, in hoặc chia sẻ khi cần.",
         ],
-        imageCaption: "Danh sách công đức của một sự kiện.",
+        imageCaption: "Sổ công đức ghi cả tiền và hiện vật, kể cả người ngoài họ.",
+        image: GUIDE_IMAGES.merit,
+      },
+      {
+        title: "Xem biện họ theo năm",
+        paragraphs: [
+          "Trên trang **Sự kiện**, chọn **Xem biện họ** để biết năm nay ai đại diện dòng họ chăm lo nhà thờ và chuẩn bị giỗ tổ.",
+          "Mỗi người có vai trò riêng (trưởng ban biện lễ, lo lễ vật, thủ quỹ…) kèm ghi chú của năm.",
+        ],
+        imageCaption: "Danh sách biện họ năm 2026 với vai trò từng người.",
+        image: GUIDE_IMAGES.clanDuty,
       },
     ],
   },
@@ -229,7 +251,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Menu **+** → **Ngày giỗ sắp tới** (hoặc mục tương ứng trong Tài khoản).",
           "Danh sách các ngày giỗ trong vài ngày tới theo âm lịch đã nhập trên hồ sơ.",
         ],
-        imageCaption: "Trang ngày giỗ sắp tới.",
+        imageCaption: "Danh sách ngày giỗ sắp tới theo âm lịch, kèm nút xem bài cúng và chia sẻ.",
+        image: GUIDE_IMAGES.upcoming,
       },
       {
         title: "Mở bài cúng & in",
@@ -268,7 +291,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Chọn đúng tên bạn trên cây → **Lưu liên kết**.",
           "Giúp app hiển thị đúng nhánh và cá nhân hóa trải nghiệm.",
         ],
-        imageCaption: "Chọn thành viên để liên kết tài khoản.",
+        imageCaption: "Trang Tài khoản: tài khoản đã liên kết với một thành viên cụ thể trong cây.",
+        image: GUIDE_IMAGES.account,
       },
       {
         title: "Quản trị viên dòng họ",
@@ -276,7 +300,8 @@ export const GUIDE_SECTIONS: readonly GuideSection[] = [
           "Admin có thêm mục quản lý user, chia sẻ **liên kết xem gia phả** cho cả dòng họ.",
           "Gửi link qua Facebook / Zalo để mọi người cùng tra cứu.",
         ],
-        imageCaption: "Mục sao chép liên kết chia sẻ trong Tài khoản admin.",
+        imageCaption: "Trang quản lý người dùng của dòng họ (dành cho quản trị viên): tài khoản, phân quyền, thông tin sổ.",
+        image: GUIDE_IMAGES.orgUsers,
       },
     ],
   },
