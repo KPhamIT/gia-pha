@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateCeremonyTemplateDto {
@@ -18,6 +19,11 @@ export class CreateCeremonyTemplateDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  printTitle?: string;
 
   @IsOptional()
   @IsString()
@@ -69,6 +75,11 @@ export class UpdateCeremonyTemplateDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  printTitle?: string;
 
   @IsOptional()
   @IsString()

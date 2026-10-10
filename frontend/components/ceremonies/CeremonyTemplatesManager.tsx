@@ -145,6 +145,7 @@ export default function CeremonyTemplatesManager({
       template,
       initial: {
         name: template.name,
+        printTitle: template.printTitle ?? "",
         content: template.content,
         isDefault: template.isDefault,
       },
@@ -155,6 +156,7 @@ export default function CeremonyTemplatesManager({
       template: null,
       initial: {
         name: template.name + UI.CEREMONY_TEMPLATE_COPY_SUFFIX,
+        printTitle: template.printTitle ?? "",
         content: template.content,
         isDefault: false,
       },

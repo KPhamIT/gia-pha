@@ -14,7 +14,10 @@ import {
   buildPlaceholderCeremonyVars,
   renderCeremonyTemplate,
 } from './ceremony-template.js';
-import { normalizeCeremonyHtml } from './ceremony-html.js';
+import {
+  normalizeCeremonyHtml,
+  resolveCeremonyPrintTitle,
+} from './ceremony-html.js';
 import { CeremonyTemplatesService } from './ceremony-templates.service.js';
 import {
   createCeremonyShareToken,
@@ -61,12 +64,11 @@ export class CeremoniesService {
       where: { userId: user.id },
       select: { fullName: true, currentLocation: true, birthPlace: true },
     });
-    const vars = buildPlaceholderCeremonyVars(
-      organization.name,
-      worshipper,
-    );
+    const vars = buildPlaceholderCeremonyVars(organization.name, worshipper);
     const rendered = renderCeremonyTemplate(template.content, vars);
-    const html = normalizeCeremonyHtml(rendered);
+    const html = normalizeCeremonyHtml(rendered, {
+      title: resolveCeremonyPrintTitle(template),
+    });
 
     return {
       personId: null,
@@ -97,14 +99,16 @@ export class CeremoniesService {
     templateId?: number,
   ) {
     const person = await this.loadPersonOrThrow(personId);
-    const templateContent = await this.resolveTemplateContent(
+    const template = await this.resolveTemplate(
       person.organizationId,
       user,
       templateId,
     );
     const vars = buildCeremonyVars(person, worshipper);
-    const rendered = renderCeremonyTemplate(templateContent, vars);
-    const html = normalizeCeremonyHtml(rendered);
+    const rendered = renderCeremonyTemplate(template.content, vars);
+    const html = normalizeCeremonyHtml(rendered, {
+      title: resolveCeremonyPrintTitle(template),
+    });
 
     return {
       personId: person.id,
@@ -145,11 +149,11 @@ export class CeremoniesService {
     return person;
   }
 
-  private async resolveTemplateContent(
+  private async resolveTemplate(
     organizationId: number,
     user: User | undefined,
     templateId?: number,
-  ) {
+  ): Promise<{ content: string; name?: string; printTitle?: string | null }> {
     if (templateId != null) {
       if (!user)
         throw new ForbiddenException('Template selection requires login');
@@ -158,11 +162,12 @@ export class CeremoniesService {
         template,
         organizationId,
       );
-      return template.content;
+      return template;
     }
     return (
-      (await this.ceremonyTemplates.resolveTemplateContent(organizationId)) ??
-      DEFAULT_CEREMONY_TEMPLATE
+      (await this.ceremonyTemplates.resolveDefaultTemplate(organizationId)) ?? {
+        content: DEFAULT_CEREMONY_TEMPLATE,
+      }
     );
   }
 

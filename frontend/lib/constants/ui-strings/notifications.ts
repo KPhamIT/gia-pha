@@ -93,6 +93,9 @@ export const NOTIFICATION_STRINGS = {
   CEREMONY_TEMPLATE_CREATE: "Tạo mẫu",
   CEREMONY_TEMPLATE_EDIT: "Sửa mẫu",
   CEREMONY_TEMPLATE_NAME: "Tên mẫu",
+  CEREMONY_TEMPLATE_PRINT_TITLE: "Tiêu đề khi in",
+  CEREMONY_TEMPLATE_PRINT_TITLE_PLACEHOLDER:
+    "VD: Văn khấn ngày giỗ — in đậm, viết hoa ở đầu bài",
   CEREMONY_TEMPLATE_CONTENT: "Nội dung bài cúng",
   CEREMONY_TEMPLATE_CONTENT_HINT:
     "Nhập nội dung bài cúng — giữ Enter để xuống dòng. Chạm Chèn biến (điện thoại) hoặc chọn biến ở cột phải (máy tính) để chèn tên, ngày giỗ…",

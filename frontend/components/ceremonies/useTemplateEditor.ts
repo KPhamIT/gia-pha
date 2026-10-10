@@ -43,6 +43,7 @@ export function useTemplateEditor(
 
   const dirty =
     form.name !== initial.name ||
+    form.printTitle !== initial.printTitle ||
     form.content !== initial.content ||
     form.isDefault !== initial.isDefault;
 

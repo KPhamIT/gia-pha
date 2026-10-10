@@ -6,6 +6,10 @@
 /** Đổi tên thương hiệu tại đây — toàn app dùng `BRAND_NAME` / `SITE.brandName`. */
 export const BRAND_NAME = "Cội Nguồn";
 
+/** Khẩu hiệu thương hiệu (chân trang bản in, bìa sổ…). */
+export const BRAND_SLOGAN =
+  "Gìn giữ cội nguồn – kết nối hiện tại – trao truyền giá trị cho mai sau";
+
 /** Chữ thương hiệu trên nền sáng. */
 export const BRAND_TEXT_CLASS = "text-[#fc8f34]";
 

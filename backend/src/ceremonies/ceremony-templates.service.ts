@@ -71,6 +71,7 @@ export class CeremonyTemplatesService {
         data: {
           organizationId,
           name: dto.name.trim(),
+          printTitle: dto.printTitle?.trim() || null,
           content: dto.content,
           isDefault: isSystemTemplate ? false : isDefault,
           isSystemTemplate,
@@ -110,6 +111,10 @@ export class CeremonyTemplatesService {
         where: { id },
         data: {
           name: dto.name?.trim(),
+          printTitle:
+            dto.printTitle === undefined
+              ? undefined
+              : dto.printTitle.trim() || null,
           content: dto.content,
           isDefault: dto.isDefault,
           intro: dto.intro,
@@ -166,7 +171,9 @@ export class CeremonyTemplatesService {
         },
       });
       if (remaining === 0) {
-        throw new BadRequestException('Cannot delete the only ceremony template');
+        throw new BadRequestException(
+          'Cannot delete the only ceremony template',
+        );
       }
     }
 
@@ -191,28 +198,29 @@ export class CeremonyTemplatesService {
     return { id };
   }
 
-  async resolveTemplateContent(organizationId: number): Promise<string | null> {
-    const template = await this.prisma.ceremonyTemplate.findFirst({
-      where: { organizationId, isDefault: true, isSystemTemplate: false },
-    });
-    if (template) return template.content;
-
-    const fallback = await this.prisma.ceremonyTemplate.findFirst({
-      where: { organizationId, isSystemTemplate: false },
-      orderBy: { id: 'asc' },
-    });
-    if (fallback) return fallback.content;
-
-    const systemDefault = await this.prisma.ceremonyTemplate.findFirst({
-      where: { isSystemTemplate: true, isDefault: true },
-    });
-    if (systemDefault) return systemDefault.content;
-
-    const systemFallback = await this.prisma.ceremonyTemplate.findFirst({
-      where: { isSystemTemplate: true },
-      orderBy: { id: 'asc' },
-    });
-    return systemFallback?.content ?? null;
+  /** Mẫu mặc định của tổ chức, rồi mẫu đầu tiên, rồi mẫu hệ thống. */
+  async resolveDefaultTemplate(organizationId: number) {
+    const select = { content: true, name: true, printTitle: true } as const;
+    return (
+      (await this.prisma.ceremonyTemplate.findFirst({
+        where: { organizationId, isDefault: true, isSystemTemplate: false },
+        select,
+      })) ??
+      (await this.prisma.ceremonyTemplate.findFirst({
+        where: { organizationId, isSystemTemplate: false },
+        orderBy: { id: 'asc' },
+        select,
+      })) ??
+      (await this.prisma.ceremonyTemplate.findFirst({
+        where: { isSystemTemplate: true, isDefault: true },
+        select,
+      })) ??
+      (await this.prisma.ceremonyTemplate.findFirst({
+        where: { isSystemTemplate: true },
+        orderBy: { id: 'asc' },
+        select,
+      }))
+    );
   }
 
   assertTemplateUsableForOrganization(
@@ -235,7 +243,9 @@ export class CeremonyTemplatesService {
         select: { id: true },
       });
       if (!org) {
-        throw new BadRequestException('No organization available for templates');
+        throw new BadRequestException(
+          'No organization available for templates',
+        );
       }
       return org.id;
     }

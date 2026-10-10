@@ -344,6 +344,9 @@ model CeremonyTemplate {
 
   name String
 
+  /// Tiêu đề in đậm, viết hoa, căn giữa ở đầu bài cúng khi xem / in.
+  printTitle String?
+
   /// HTML với biến {{person.full_name}}, {{organization.name}}, ...
   content String @db.Text
 

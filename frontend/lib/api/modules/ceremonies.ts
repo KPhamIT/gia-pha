@@ -12,6 +12,8 @@ export type CeremonyTemplate = {
   id: number;
   organizationId: number;
   name: string;
+  /** Tiêu đề in đậm, viết hoa ở đầu bài cúng. */
+  printTitle?: string | null;
   content: string;
   intro?: string | null;
   meaning?: string | null;
@@ -39,6 +41,7 @@ export type CeremonyTemplateVariable = {
 
 export type CreateCeremonyTemplateInput = {
   name: string;
+  printTitle?: string;
   content: string;
   isDefault?: boolean;
   intro?: string;

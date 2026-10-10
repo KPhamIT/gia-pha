@@ -118,6 +118,20 @@ export default function TemplateEditorSheet({
               autoFocus
             />
           </label>
+          <label className="flex min-w-[min(100%,14rem)] flex-1 items-center gap-3 text-sm">
+            <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-stone-500">
+              {UI.CEREMONY_TEMPLATE_PRINT_TITLE}
+            </span>
+            <input
+              className={`${inputClassName} min-w-0 flex-1`}
+              value={form.printTitle}
+              maxLength={160}
+              placeholder={UI.CEREMONY_TEMPLATE_PRINT_TITLE_PLACEHOLDER}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, printTitle: e.target.value }))
+              }
+            />
+          </label>
           <label className="flex shrink-0 items-center gap-2 text-sm text-stone-700">
             <input
               type="checkbox"

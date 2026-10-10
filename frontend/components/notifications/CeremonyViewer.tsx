@@ -11,6 +11,10 @@ import CeremonyFontSizeControls from "@/components/ceremonies/CeremonyFontSizeCo
 import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
 import { HERITAGE_LAYOUT } from "@/lib/constants/heritage-theme";
 import { applyCeremonyFontScale } from "@/lib/ceremony/apply-ceremony-font-scale";
+import {
+  applyCeremonyPrintBackground,
+  preloadCeremonyPrintBackground,
+} from "@/lib/ceremony/apply-ceremony-print-background";
 import { useCeremonyFontSize } from "@/hooks/useCeremonyFontSize";
 import { useScrollIdleReveal } from "@/hooks/useScrollIdleReveal";
 
@@ -64,6 +68,7 @@ export default function CeremonyViewer({
 
   const applyFontAndMeasure = useCallback(() => {
     applyCeremonyFontScale(iframeRef.current, fontSize.scale);
+    applyCeremonyPrintBackground(iframeRef.current);
     syncIframeHeight();
   }, [fontSize.scale, syncIframeHeight]);
 
@@ -106,9 +111,10 @@ export default function CeremonyViewer({
     applyFontAndMeasure();
   }, [html, fontSize.scale, applyFontAndMeasure]);
 
-  const handlePrint = useCallback(() => {
+  const handlePrint = useCallback(async () => {
     const doc = iframeRef.current?.contentDocument;
     if (!doc) return;
+    await preloadCeremonyPrintBackground();
     doc.defaultView?.focus();
     doc.defaultView?.print();
   }, []);

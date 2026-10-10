@@ -1,7 +1,12 @@
 import type { CeremonyTemplate } from "@/lib/api/modules/ceremonies";
 import { UI } from "@/lib/constants/ui-strings";
 
-export const EMPTY_FORM = { name: "", content: "", isDefault: false };
+export const EMPTY_FORM = {
+  name: "",
+  printTitle: "",
+  content: "",
+  isDefault: false,
+};
 export type FormState = typeof EMPTY_FORM;
 
 /** Either edit an existing template or create one from a prefilled draft. */
