@@ -14,6 +14,7 @@ import { BILLING_STRINGS } from "./ui-strings/billing";
 import { PAGINATION_STRINGS } from "./ui-strings/pagination";
 import { NOTES_STRINGS } from "./ui-strings/notes";
 import { CLAN_DUTY_STRINGS } from "./ui-strings/clan-duty";
+import { VAN_KHAN_STRINGS } from "./ui-strings/van-khan";
 
 /**
  * App-wide Vietnamese UI strings, merged from per-domain modules under
@@ -35,6 +36,7 @@ export const UI = {
   ...PAGINATION_STRINGS,
   ...NOTES_STRINGS,
   ...CLAN_DUTY_STRINGS,
+  ...VAN_KHAN_STRINGS,
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

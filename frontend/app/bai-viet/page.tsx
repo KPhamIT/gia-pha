@@ -17,7 +17,7 @@ export const metadata: Metadata = createMetadata({
   title: UI.BLOG_LIST_TITLE,
   description: UI.BLOG_LIST_SUBTITLE,
   path: "/bai-viet",
-  keywords: ["gia phả", "dòng họ", "SEO", "kiến thức gia phả"],
+  keywords: ["gia phả", "dòng họ", "kiến thức gia phả", "văn hóa dòng họ"],
   pageType: "collection",
 });
 
@@ -27,7 +27,6 @@ const VALID_CATEGORIES = new Set<BlogCategory>([
   "CULTURE",
   "FAMILY_TREE",
   "ONLINE",
-  "SEO",
 ]);
 
 type BlogListPageProps = {

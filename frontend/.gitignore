@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ảnh gốc Stitch cho thumbnail (chỉ dùng để build lại, không commit)
+scripts/thumbnails/raw/

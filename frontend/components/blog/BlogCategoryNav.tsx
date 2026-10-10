@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BLOG_CATEGORIES } from "@/lib/constants/ui-strings/blog";
+import { BLOG_PUBLIC_CATEGORIES } from "@/lib/constants/ui-strings/blog";
 import { blogCategoryLabel } from "@/lib/blog/format";
 import type { BlogCategory } from "@/lib/blog/types";
 import { UI } from "@/lib/constants/ui-strings";
@@ -17,7 +17,7 @@ export default function BlogCategoryNav({ active }: BlogCategoryNavProps) {
       <CategoryChip href="/bai-viet" active={!active}>
         {UI.BLOG_ALL_CATEGORIES}
       </CategoryChip>
-      {BLOG_CATEGORIES.map((category) => (
+      {BLOG_PUBLIC_CATEGORIES.map((category) => (
         <CategoryChip
           key={category}
           href={`/bai-viet?category=${category}`}

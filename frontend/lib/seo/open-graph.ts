@@ -15,8 +15,8 @@ function resolveImage(image?: string | SeoImage) {
   if (!image) {
     return {
       url: getDefaultOgImageUrl(),
-      width: 512,
-      height: 512,
+      width: SITE.defaultOgImageWidth,
+      height: SITE.defaultOgImageHeight,
       alt: SITE.siteName,
     };
   }

@@ -12,6 +12,8 @@ import {
 import { UI } from "@/lib/constants/ui-strings";
 import { createMetadata } from "@/lib/seo";
 import { breadcrumbsFromPath } from "@/lib/schema/breadcrumb";
+import ContentThumbnail from "@/components/thumbnails/ContentThumbnail";
+import { thumbnailOgImage } from "@/lib/thumbnails";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -56,6 +58,9 @@ export async function generateMetadata({
     publishedAt: post.publishedAt,
     updatedAt: post.updatedAt,
     pageType: "article",
+    image: thumbnailOgImage("bai-viet", post.slug, post.title),
+    // Nhóm SEO là ghi chú nội bộ — không cho Google index.
+    noIndex: post.category === "SEO",
   });
 }
 
@@ -91,6 +96,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <article>
         <BlogArticleHero post={post} breadcrumbs={breadcrumbs} />
         <div className="bg-[#fcf9f4] px-4 py-8 md:-mt-6 md:rounded-t-[3rem] md:px-10 md:pb-16 md:pt-12 md:shadow-2xl">
+          <div className="mx-auto mb-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-[#d4c3c1]/60 shadow-sm">
+            <ContentThumbnail
+              kind="bai-viet"
+              slug={post.slug}
+              alt={post.title}
+              priority
+              sizes="(min-width: 768px) 768px, 100vw"
+            />
+          </div>
           <BlogArticle post={post} relatedPosts={relatedPosts} />
         </div>
       </article>

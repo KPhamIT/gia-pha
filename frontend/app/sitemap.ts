@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { fetchBlogSlugs } from "@/lib/blog/server-api";
+import { BLOG_MERGED_SLUGS } from "@/lib/blog/redirects";
+import { fetchPublicCeremonies } from "@/lib/van-khan/server-api";
 import { getSiteUrl } from "@/config/site";
 
 /** Public marketing & content pages only — no auth/app routes. */
@@ -12,8 +14,8 @@ const STATIC_PAGES: {
   { path: "/huong-dan", changeFrequency: "monthly", priority: 0.9 },
   { path: "/cai-dat", changeFrequency: "monthly", priority: 0.85 },
   { path: "/bai-viet", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/van-khan", changeFrequency: "monthly", priority: 0.85 },
   { path: "/tao-dong-ho", changeFrequency: "monthly", priority: 0.85 },
-  { path: "/join", changeFrequency: "monthly", priority: 0.85 },
   { path: "/gioi-thieu", changeFrequency: "monthly", priority: 0.8 },
   { path: "/dich-vu", changeFrequency: "monthly", priority: 0.8 },
   { path: "/lien-he", changeFrequency: "monthly", priority: 0.7 },
@@ -24,25 +26,36 @@ const STATIC_PAGES: {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
-  const now = new Date();
   // Fresh slugs for sitemap (keyword posts + updates); list pages keep longer ISR.
-  const blogSlugs = (await fetchBlogSlugs({ revalidate: 300 })) ?? [];
+  const [blogSlugs, ceremonies] = await Promise.all([
+    fetchBlogSlugs({ revalidate: 300 }).then((items) => items ?? []),
+    fetchPublicCeremonies(3600).then((items) => items ?? []),
+  ]);
 
+  // Không gán lastModified = thời điểm build: Google bỏ qua lastmod nếu luôn thay đổi giả.
   const staticEntries: MetadataRoute.Sitemap = STATIC_PAGES.map(
     ({ path, changeFrequency, priority }) => ({
       url: `${base}${path}`,
-      lastModified: now,
       changeFrequency,
       priority,
     }),
   );
 
-  const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((entry) => ({
-    url: `${base}/bai-viet/${entry.slug}`,
-    lastModified: new Date(entry.updatedAt),
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
+  const blogEntries: MetadataRoute.Sitemap = blogSlugs
+    .filter((entry) => !(entry.slug in BLOG_MERGED_SLUGS))
+    .map((entry) => ({
+      url: `${base}/bai-viet/${entry.slug}`,
+      lastModified: new Date(entry.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
+
+  const ceremonyEntries: MetadataRoute.Sitemap = ceremonies.map((item) => ({
+    url: `${base}/van-khan/${item.slug}`,
+    lastModified: new Date(item.updatedAt),
+    changeFrequency: "yearly" as const,
+    priority: 0.75,
   }));
 
-  return [...staticEntries, ...blogEntries];
+  return [...staticEntries, ...blogEntries, ...ceremonyEntries];
 }

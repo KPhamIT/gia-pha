@@ -51,6 +51,7 @@ export default function LandingSiteFooter() {
             { href: "/book", label: UI.PUBLIC_FOOTER_BOOK },
             { href: "/family-tree", label: UI.LANDING_NAV_CLAN },
             { href: "/bai-viet", label: UI.LANDING_FOOTER_NEWS },
+            { href: "/van-khan", label: UI.PUBLIC_FOOTER_VAN_KHAN },
           ]}
         />
         <FooterLinks

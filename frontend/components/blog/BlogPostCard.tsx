@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BlogPostSummary } from "@/lib/blog/types";
 import { blogCategoryLabel, formatBlogDate } from "@/lib/blog/format";
 import { UI } from "@/lib/constants/ui-strings";
+import ContentThumbnail from "@/components/thumbnails/ContentThumbnail";
 
 type BlogPostCardProps = {
   post: BlogPostSummary;
@@ -9,7 +10,11 @@ type BlogPostCardProps = {
 
 export default function BlogPostCard({ post }: BlogPostCardProps) {
   return (
-    <article className="flex flex-col justify-between rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-xl">
+    <article className="flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-xl">
+      <Link href={`/bai-viet/${post.slug}`} tabIndex={-1} aria-hidden>
+        <ContentThumbnail kind="bai-viet" slug={post.slug} alt={post.title} />
+      </Link>
+      <div className="flex flex-1 flex-col justify-between p-6">
       <div>
         <div className="mb-3 flex items-center gap-2 text-xs text-gray-500">
           <span className="font-bold uppercase text-[#4a2c2a]/60">
@@ -50,6 +55,7 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
             →
           </span>
         </Link>
+      </div>
       </div>
     </article>
   );

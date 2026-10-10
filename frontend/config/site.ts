@@ -57,7 +57,10 @@ export const SITE = {
   ] as const,
   /** Highest-resolution brand logo for schema.org (512×512 PNG route). */
   logoPath: "/icons/pwa-512",
-  defaultOgImagePath: "/icons/pwa-512",
+  /** Ảnh chia sẻ 1200×630 (Facebook, Zalo, Twitter). */
+  defaultOgImagePath: "/images/og-default.jpg",
+  defaultOgImageWidth: 1200,
+  defaultOgImageHeight: 630,
   faviconPath: "/favicon.ico",
   faviconSvgPath: "/favicon.svg",
   appleIconPath: "/apple-icon",

@@ -10,6 +10,7 @@ export const metadata: Metadata = createMetadata({
   path: "/join",
   keywords: ["tham gia dòng họ", "liên kết gia phả", "Cội Nguồn"],
   pageType: "website",
+  noIndex: true,
 });
 
 export default function JoinLandingPage() {

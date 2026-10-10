@@ -78,10 +78,10 @@ lib/seo/json-ld.ts → generatePageJsonLd()
        ↓
 lib/schema/index.ts → generateSchemaGraph()
        ↓
-components/seo/SeoSchemas.tsx → JsonLd (next/script)
+components/seo/SeoSchemas.tsx → JsonLd (<script> render ở server)
 ```
 
-Một `<Script type="application/ld+json">` duy nhất mỗi page, gom nhiều schema trong `@graph` khi cần.
+Một `<script type="application/ld+json">` duy nhất mỗi page (render trong HTML server — Googlebot đọc được không cần JS), gom nhiều schema trong `@graph` khi cần.
 
 ### Mapping loại trang → schema
 
@@ -160,11 +160,13 @@ Tự động thêm `FAQPage` schema.
 | `app/sitemap.ts` | Trang marketing + blog; mỗi entry có `lastModified`, `changeFrequency`, `priority` |
 | `app/robots.ts` | Allow `/`, disallow app/auth routes; `host` + `sitemap` URL |
 
-Không đưa `/login`, `/join`, `/book`, `/family-tree` vào sitemap.
+Không đưa `/login`, `/join`, `/book`, `/family-tree` vào sitemap. `/join` có `noIndex`.
+
+Bài blog đã gộp/gỡ: map slug cũ → slug mới ở `lib/blog/redirects.ts` (redirect vĩnh viễn trong `next.config.ts`, đồng thời loại khỏi sitemap). Bài nhóm `SEO` là ghi chú nội bộ: ẩn khỏi danh mục công khai và `noIndex`.
 
 ## OG Image mặc định
 
-- Config: `SITE.defaultOgImagePath` → `/icons/pwa-512` (512×512 PNG)
+- Config: `SITE.defaultOgImagePath` → `/images/og-default.jpg` (1200×630)
 - Mọi trang dùng ảnh này trừ khi truyền `image` riêng trong `createMetadata()`
 
 ## Best practices

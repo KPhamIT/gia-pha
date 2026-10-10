@@ -64,3 +64,8 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
   "ONLINE",
   "SEO",
 ];
+
+/** Danh mục hiện trên trang blog công khai (SEO là ghi chú nội bộ, không public). */
+export const BLOG_PUBLIC_CATEGORIES: BlogCategory[] = BLOG_CATEGORIES.filter(
+  (category) => category !== "SEO",
+);

@@ -12,6 +12,7 @@ export const PUBLIC_STRINGS = {
   PUBLIC_FOOTER_HOME: "Trang chủ",
   PUBLIC_FOOTER_GUIDE: "Hướng dẫn",
   PUBLIC_FOOTER_BLOG: "Kiến thức gia phả",
+  PUBLIC_FOOTER_VAN_KHAN: "Văn khấn",
   PUBLIC_FOOTER_ABOUT: "Giới thiệu",
   PUBLIC_FOOTER_CONTACT: "Liên hệ",
   PUBLIC_FOOTER_PRIVACY: "Chính sách bảo mật",
@@ -122,10 +123,11 @@ export const PUBLIC_STRINGS = {
   LANDING_SERVICES_CTA: "Liên hệ tư vấn",
   LANDING_LEGAL_HINT:
     "Bằng việc sử dụng dịch vụ, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật.",
+  LANDING_HERO_IMAGE_ALT: "Cây đa cổ thụ bên nhà thờ họ ở làng quê Việt Nam",
   LANDING_STATS_ITEMS: [
-    { value: "10,000+", label: "Dòng họ tham gia" },
-    { value: "500k+", label: "Thành viên ghi danh" },
-    { value: "100%", label: "Bảo mật dữ liệu" },
+    { value: "Âm lịch", label: "Nhắc ngày giỗ tự động" },
+    { value: "PDF", label: "Xuất sổ gia phả để in" },
+    { value: "Mọi thiết bị", label: "Điện thoại, máy tính bảng, máy tính" },
     { value: "Vĩnh viễn", label: "Lưu trữ truyền đời" },
   ],
   LANDING_BENTO_TREE_TITLE: "Phả đồ tương tác thông minh",

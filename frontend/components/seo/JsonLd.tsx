@@ -1,8 +1,3 @@
-"use client";
-
-import Script from "next/script";
-import { useId } from "react";
-
 type JsonLdProps = {
   data: Record<string, unknown> | Record<string, unknown>[];
   id?: string;
@@ -18,18 +13,18 @@ function toGraphPayload(
   return { "@context": "https://schema.org", "@graph": items };
 }
 
-/** Renders JSON-LD via next/script (single graph per mount). */
-export default function JsonLd({ data, id }: JsonLdProps) {
-  const autoId = useId();
-  const scriptId = id ?? `json-ld${autoId.replace(/:/g, "")}`;
-  const payload = toGraphPayload(data);
+/** Escape `<` để chuỗi JSON không đóng thẻ script sớm. */
+function serializeJsonLd(payload: Record<string, unknown>): string {
+  return JSON.stringify(payload).replace(/</g, "\\u003c");
+}
 
+/** Renders JSON-LD trong HTML server (Googlebot đọc được ngay, không cần JS). */
+export default function JsonLd({ data, id }: JsonLdProps) {
   return (
-    <Script
-      id={scriptId}
+    <script
+      id={id}
       type="application/ld+json"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(toGraphPayload(data)) }}
     />
   );
 }

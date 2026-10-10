@@ -1,0 +1,297 @@
+{
+  "_rules": "Ảnh Stitch KHÔNG chữ, chủ thể ở 55% bên phải, 40% bên trái là nền kem trống để chèn hook. Mọi vật thể tách rời, không chồng lên nhau, mỗi vật đều có lý do tồn tại. Sáng, đơn giản. Hook phối hợp với tiêu đề để gây tò mò.",
+  "blog": [
+    {
+      "slug": "gia-pha-3-doi-5-doi-la-gi-cach-ghi-dung-the-he",
+      "hook": "Bạn là\nđời thứ mấy?",
+      "subject": "five small vintage wooden photo frames arranged in a neat vertical column with clear gaps between them, each frame holding a sepia portrait of a different generation (great-great-grandfather at top down to a young child at bottom)"
+    },
+    {
+      "slug": "the-he-chi-nhanh-trong-gia-pha-dong-ho-giai-thich-de-hieu",
+      "hook": "Chi, phái\nnhánh là gì?",
+      "subject": "one single young tree with a straight trunk splitting into exactly three thick main branches, each branch carrying leaves of a distinct color (green, gold, red), clean white pot, nothing else"
+    },
+    {
+      "slug": "mau-so-do-pha-he-word-va-excel-cho-dong-ho",
+      "hook": "Mẫu Excel\nmiễn phí",
+      "subject": "an open laptop showing a clean green spreadsheet grid, and next to it (separated by space) a single printed sheet of paper with a simple family tree diagram of connected boxes"
+    },
+    {
+      "slug": "cach-tra-cuu-pha-he-va-nguon-goc-ho-toc-tren-mang",
+      "hook": "Họ mình\ngốc ở đâu?",
+      "subject": "an old hand-bound Vietnamese genealogy book with a faded red cover lying closed, and a brass magnifying glass placed beside it with a clear gap"
+    },
+    {
+      "slug": "cach-ve-so-do-cay-gia-dinh-chuan-va-khoa-hoc",
+      "hook": "Vẽ đúng\nlần đầu",
+      "subject": "a clean sheet of cream paper showing a neat hand-drawn family tree of empty rectangles joined by straight lines, with a sharpened pencil and an eraser lying separately beside the paper"
+    },
+    {
+      "slug": "gia-pha-la-gi-y-nghia-cua-gia-pha-doi-voi-moi-dong-ho",
+      "hook": "Cuốn sổ quý\nnhất nhà",
+      "subject": "one thick traditional genealogy book with a deep red lacquer cover and gold corner ornaments, standing upright on a small wooden stand, softly lit"
+    },
+    {
+      "slug": "cach-thu-thap-thong-tin-de-viet-gia-pha-chinh-xac",
+      "hook": "Hỏi ông bà\nđiều gì?",
+      "subject": "three separate objects in a row on a wooden table: an elderly person's reading glasses, a smartphone showing a voice recorder screen, and an open notebook with a pen"
+    },
+    {
+      "slug": "ngay-gio-to-dong-ho-co-y-nghia-gi",
+      "hook": "Giỗ tính\nngày nào?",
+      "subject": "a bronze incense bowl with three lit incense sticks on the left, and separately on the right a Vietnamese tear-off lunar calendar block with a big red date page"
+    },
+    {
+      "slug": "cach-to-chuc-hop-ho-hieu-qua-va-y-nghia",
+      "hook": "Họp họ\nêm thấm",
+      "subject": "a long polished wooden meeting table seen from the end with neatly arranged empty wooden chairs, a teapot set and a single ledger book placed in the middle, bright ancestral hall"
+    },
+    {
+      "slug": "ghi-chep-tieu-su-to-tien-trong-gia-pha-mau-va-goi-y",
+      "hook": "Viết gì\nvề cụ?",
+      "subject": "a small framed sepia portrait of an anonymous elderly Vietnamese grandmother wearing a traditional black headscarf (khan van), and separately beside it a blank sheet of aged paper with a fountain pen lying on it"
+    },
+    {
+      "slug": "quy-tac-dat-ten-the-he-trong-cac-dong-ho-viet-nam",
+      "hook": "Nghe tên\nbiết đời",
+      "subject": "four small identical wooden name plaques standing in a straight row with equal spacing, each slightly taller than the previous like steps, blank plaques with no writing"
+    },
+    {
+      "slug": "phu-nu-trong-gia-pha-dong-ho-cach-ghi-nhan-dung-truyen-thong",
+      "hook": "Con gái\ncó được ghi?",
+      "subject": "a framed portrait of a young Vietnamese woman in a traditional ao dai on the left, and separately on the right an open old genealogy book with one visibly empty page"
+    },
+    {
+      "slug": "nha-tho-ho-la-gi-vai-tro-cua-nha-tho-ho-trong-dong-toc",
+      "hook": "Bên trong\ncó gì?",
+      "subject": "the front of a small traditional Vietnamese ancestral temple with a curved tiled roof and wooden doors slightly open, bright clear morning, empty courtyard"
+    },
+    {
+      "slug": "cach-xung-ho-trong-ho-hang-theo-vai-ve",
+      "hook": "Gọi chú\nhay gọi anh?",
+      "subject": "two people standing apart facing each other: a young boy on the left and a slightly older-looking young man on the right, both in simple modern Vietnamese clothes, a large empty space between them"
+    },
+    {
+      "slug": "truong-ho-la-ai-vai-tro-va-cach-chon-truong-ho",
+      "hook": "Ai ngồi\nghế này?",
+      "subject": "one single empty traditional Vietnamese carved dark-wood armchair standing alone on a plain seamless cream studio background, facing the viewer, nothing else in the scene"
+    },
+    {
+      "slug": "cach-viet-loi-tua-gia-pha-kem-mau",
+      "hook": "Trang đầu\nkhó nhất",
+      "subject": "an open blank book with cream pages lying flat, and separately beside it a calligraphy brush resting on a small ink stone"
+    },
+    {
+      "slug": "toc-uoc-quy-uoc-dong-ho-noi-dung-va-mau",
+      "hook": "Luật riêng\ncủa dòng họ",
+      "subject": "a single rolled parchment scroll tied with a red silk ribbon lying on a wooden table, and a small wooden seal stamp placed apart from it"
+    },
+    {
+      "slug": "in-pha-do-cay-gia-pha-kho-lon-treo-nha-tho-ho",
+      "hook": "In khổ A0\ntreo tường",
+      "subject": "a large framed poster of a red and gold family tree chart hanging alone on a plain cream wall above a simple wooden altar table"
+    },
+    {
+      "slug": "quan-ly-quy-ho-va-so-cong-duc-minh-bach",
+      "hook": "Tiền họ\nai giữ?",
+      "subject": "three separate objects spaced apart on a table: a neat stack of red envelopes, an open ledger book with ruled columns, and a simple calculator"
+    },
+    {
+      "slug": "chia-se-gia-pha-cho-ho-hang-va-phan-quyen",
+      "hook": "Ai được\nsửa gia phả?",
+      "subject": "a smartphone standing upright showing a simple family tree on screen, and separately next to it a single brass key and a small padlock"
+    },
+    {
+      "slug": "tet-thanh-minh-tao-mo-va-ghi-chep-mo-phan",
+      "hook": "Đừng để\nmất mộ tổ",
+      "subject": "a clean, well-kept simple stone grave in a green field with a bunch of fresh yellow chrysanthemums placed in front and a bamboo broom leaning apart, soft spring morning light"
+    },
+    {
+      "slug": "thuat-ngu-gia-pha-pha-do-pha-he-ten-huy-khao-ty",
+      "hook": "Hiển khảo\nnghĩa là gì?",
+      "subject": "an old thick dictionary lying closed and a round magnifying glass placed separately beside it, clean wooden surface"
+    },
+    {
+      "slug": "cau-doi-hoanh-phi-nha-tho-ho-y-nghia-va-cach-chon",
+      "hook": "Treo bên nào\nmới đúng?",
+      "subject": "two tall vertical red lacquered couplet boards with gold borders standing side by side with a clear gap between them, blank boards with no characters, plain cream wall"
+    },
+    {
+      "slug": "dat-huong-hoa-nha-tho-ho-va-gia-pha-goc-nhin-phap-luat",
+      "hook": "Đất này\ncủa ai?",
+      "subject": "three separate objects on a desk: a small wooden model of a traditional house, a wooden judge gavel, and a folded old land paper document"
+    },
+    {
+      "slug": "cai-tang-boc-mo-phong-tuc-va-ghi-chep-vao-gia-pha",
+      "hook": "Bốc mộ\ncần biết gì?",
+      "subject": "a traditional glazed ceramic burial urn standing on a folded red cloth, and a small shovel lying separately on the ground beside it, calm daylight"
+    },
+    {
+      "slug": "le-mung-tho-trong-dong-ho-moc-tuoi-va-cach-to-chuc",
+      "hook": "Mừng thọ\ntuổi nào?",
+      "subject": "a smiling elderly Vietnamese grandmother and grandfather sitting side by side, and on a small table in front of them a plate of pink peach-shaped longevity buns"
+    },
+    {
+      "slug": "cac-ngay-le-cua-gia-dinh-dong-ho-trong-nam-theo-am-lich",
+      "hook": "12 dịp cúng\ncả năm",
+      "subject": "three separate festive items in a row with clear gaps: a square banh chung, a round mooncake, and a small red paper lantern"
+    },
+    {
+      "slug": "cac-dong-ho-pho-bien-nhat-viet-nam-va-nguon-goc",
+      "hook": "4/10 người\nhọ Nguyễn",
+      "subject": "a large clean flat pie chart made of paper with one very big red slice taking about 40 percent and several small slices in muted colors, no labels"
+    },
+    {
+      "slug": "noi-gia-pha-khi-hai-chi-tim-lai-nhau",
+      "hook": "Thất lạc\ntrăm năm",
+      "subject": "two halves of an old torn paper showing parts of a family tree, placed apart with a small gap as if about to be joined back together"
+    },
+    {
+      "slug": "5-buoc-tao-va-in-gia-pha-dong-ho-coi-nguon",
+      "hook": "5 bước\ncó gia phả",
+      "subject": "an open laptop showing a family tree on screen, and separately beside it a freshly printed bound genealogy booklet with a red cover"
+    },
+    {
+      "slug": "gia-pha-dong-toc-la-gi-vai-tro-cua-gia-pha-dong-toc-ngay-nay",
+      "hook": "Dòng tộc\nlà gì?",
+      "subject": "a large old clan genealogy book on the left and, separated by space, a small miniature model of a Vietnamese ancestral temple on the right"
+    },
+    {
+      "slug": "gia-pha-dong-ho-khai-niem-cau-truc-va-cach-xay-dung",
+      "hook": "Gốc rễ\ncủa dòng họ",
+      "subject": "a single tree shown with its full root system visible underground in a cross-section, roots and branches both clearly drawn, clean background"
+    },
+    {
+      "slug": "phan-mem-gia-pha-nen-chon-phan-mem-gia-pha-nao-cho-dong-ho",
+      "hook": "Phần mềm\nnào tốt?",
+      "subject": "three devices standing apart in a row: a smartphone, a tablet and a laptop, each showing a simple family tree on screen"
+    },
+    {
+      "slug": "gia-pha-online-la-gi-huong-dan-dung-gia-pha-online-hieu-qua",
+      "hook": "Cả dòng họ\ntrong máy",
+      "subject": "one hand holding a smartphone that shows a colorful family tree on screen, plain bright background"
+    },
+    {
+      "slug": "website-gia-pha-tieu-chi-chon-website-gia-pha-cho-dong-ho",
+      "hook": "Đừng chọn\nsai web",
+      "subject": "an open laptop showing a website with a family tree, and separately beside it a paper checklist with three tick boxes"
+    },
+    {
+      "slug": "so-gia-pha-truyen-thong-va-so-gia-pha-dien-tu-so-sanh-chi-tiet",
+      "hook": "Sổ giấy\nhay điện tử?",
+      "subject": "an old paper genealogy book and a modern tablet showing a family tree, placed side by side with a clear gap, same size, facing the viewer"
+    }
+  ],
+  "vanKhan": [
+    {
+      "slug": "bai-cung-cung-ngay-gio-mau-1",
+      "hook": "Bài khấn\nngày giỗ",
+      "subject": "a Vietnamese ancestral altar with a bronze incense bowl, three lit incense sticks, a plate of fruit and a vase of yellow chrysanthemums, each item spaced apart"
+    },
+    {
+      "slug": "bai-cung-tho-cong-ngay-gio",
+      "hook": "Khấn\nThổ Công",
+      "subject": "a small Vietnamese earth god altar (ban tho tho cong) on the floor with an incense bowl and a small plate of fruit, items spaced apart"
+    },
+    {
+      "slug": "bai-cung-tho-cong-ram-thang-7",
+      "hook": "Thổ Công\nrằm tháng 7",
+      "subject": "a small Vietnamese earth god altar with an incense bowl, and separately a pink lotus flower in a small bowl of water; a soft pale full moon painted faintly high on the cream wall (no sky box, no rectangle)"
+    },
+    {
+      "slug": "bai-cung-van-khan-ngay-mong-mot-va-ngay-ram-hang-thang",
+      "hook": "Mùng 1\nngày Rằm",
+      "subject": "a thin crescent moon and a full moon side by side in a light sky, and below them a single bronze incense bowl with incense sticks"
+    },
+    {
+      "slug": "bai-cung-tet-ha-nguyen-tet-com-moi",
+      "hook": "Dâng cơm\ngạo mới",
+      "subject": "a white bowl of steaming fresh rice on the left of the subject area and, clearly apart with empty space between them, a small golden sheaf of ripe rice stalks lying flat; the two objects must not touch or overlap"
+    },
+    {
+      "slug": "bai-cung-tet-doan-ngo",
+      "hook": "Mùng 5\ntháng 5",
+      "subject": "a small bowl of fermented sticky rice wine (com ruou) and separately a plate of fresh lychees and plums, spaced apart"
+    },
+    {
+      "slug": "bai-cung-tet-han-thuc-ngay-mong-3-thang-3",
+      "hook": "Bánh trôi\nmùng 3/3",
+      "subject": "a white plate of small round banh troi (glutinous rice balls) and separately a small bowl of banh chay in syrup"
+    },
+    {
+      "slug": "bai-cung-tiet-thanh-minh-tu-mong-5-den-mong-10-thang-ba",
+      "hook": "Tảo mộ\nThanh minh",
+      "subject": "a small tidy traditional Vietnamese tomb built of grey stone with a blank stone headstone (absolutely no inscription, no letters), fresh yellow chrysanthemums and three incense sticks in front, green spring grass, soft morning light"
+    },
+    {
+      "slug": "bai-cung-le-dang-sao-giai-han-vao-ngay-tet-nguyen-tieu",
+      "hook": "Dâng sao\nđầu năm",
+      "subject": "a row of small lit candles arranged on a red cloth with equal spacing, and a single incense bowl apart from them"
+    },
+    {
+      "slug": "bai-cung-le-nguyen-tieu-le-thuong-nguyen",
+      "hook": "Rằm\ntháng Giêng",
+      "subject": "a single red paper lantern hanging, and separately below it a small offering plate of fruit on a table; a soft pale full moon painted faintly high on the cream wall (no sky box, no rectangle)"
+    },
+    {
+      "slug": "bai-cung-le-tan-gia",
+      "hook": "Về nhà mới\nkhấn sao?",
+      "subject": "a shiny new house key on a red ribbon and separately a small offering tray with fruit and an incense bowl"
+    },
+    {
+      "slug": "bai-cung-le-nhap-trach-le-don-vao-nha-moi-co-the-la-nha-tu-xay-cat-hoacngoi-nha",
+      "hook": "Nhập trạch\nnhà mới",
+      "subject": "an open front door of a bright new home and in front of it, apart, a bronze incense burner and a small rice jar"
+    },
+    {
+      "slug": "bai-cung-le-cung-mu-day-cu-day-thang-day-nam",
+      "hook": "Đầy tháng\ncho bé",
+      "subject": "an empty wooden baby cradle with a soft blanket and separately three small offering plates arranged in a row"
+    },
+    {
+      "slug": "bai-cung-cung-ngay-gio-mau-2",
+      "hook": "Bài khấn giỗ\nmẫu 2",
+      "subject": "a framed black and white portrait on an ancestral altar with incense and white flowers placed apart from the frame"
+    },
+    {
+      "slug": "bai-cung-tet-trung-thu",
+      "hook": "Cúng Rằm\nTrung thu",
+      "subject": "two round mooncakes on a plate, a cup of tea and a star-shaped paper lantern, each item separated"
+    },
+    {
+      "slug": "bai-cung-tet-trung-nguyen-ngay-ram-thang-7",
+      "hook": "Rằm\ntháng Bảy",
+      "subject": "a pink lotus flower in a small bowl of water and separately an incense bowl with incense sticks, calm evening light"
+    },
+    {
+      "slug": "bai-cung-van-khan-le-hoi-hoan-dia-mach",
+      "hook": "Hồi hoàn\nđịa mạch",
+      "subject": "a small mound of fresh soil with a green sprout, and separately a small incense bowl, after construction, clean yard"
+    },
+    {
+      "slug": "bai-cung-van-khan-le-khai-truong-cua-hang",
+      "hook": "Khai trương\nhồng phát",
+      "subject": "a shop entrance with a red ribbon across the door and separately a small offering tray with fruit and incense"
+    },
+    {
+      "slug": "bai-cung-van-khan-le-dong-tho",
+      "hook": "Trước khi\nđộng thổ",
+      "subject": "a new shovel standing in fresh soil with a red cloth tied on the handle, and separately a small offering tray on a table"
+    },
+    {
+      "slug": "bai-cung-van-khan-khi-cuoi-ga",
+      "hook": "Khấn lễ\ncưới hỏi",
+      "subject": "a traditional Vietnamese wedding tray of betel leaves and areca nuts, and separately two red round gift boxes"
+    },
+    {
+      "slug": "bai-cung-van-khan-le-ta-nam-moi",
+      "hook": "Tạ lễ\nđầu năm",
+      "subject": "a branch of yellow apricot blossoms in a vase and separately a small offering plate with incense, bright spring light"
+    },
+    {
+      "slug": "bai-cung-gio-to-thang-7",
+      "hook": "Giỗ Tổ\ndòng họ",
+      "subject": "a traditional ancestral temple altar with a large bronze incense burner in the center and two candles placed apart on each side"
+    }
+  ]
+}

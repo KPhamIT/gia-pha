@@ -10,7 +10,7 @@ export default function LandingHeroSection() {
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/landing/hero-mobile.webp"
-            alt=""
+            alt={UI.LANDING_HERO_IMAGE_ALT}
             fill
             priority
             sizes="100vw"
@@ -61,10 +61,11 @@ export default function LandingHeroSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#1c1c19]/65 via-[#1c1c19]/22 to-transparent" />
         <div className="relative mx-auto w-full max-w-6xl px-6 py-20 text-white">
           <div className="max-w-2xl">
-            <h1 className="mt-4 font-serif text-6xl font-bold leading-tight">
+            {/* Chỉ một <h1> mỗi trang — bản mobile giữ h1 (Google index mobile-first). */}
+            <p className="mt-4 font-serif text-6xl font-bold leading-tight">
               {UI.LANDING_HERO_TITLE_LINE1} <br />
               {UI.LANDING_HERO_TITLE_LINE2}
-            </h1>
+            </p>
             <p className="mt-5 text-lg leading-relaxed text-[#e5e2dd]">
               {UI.LANDING_HERO_SUBTITLE}
             </p>
