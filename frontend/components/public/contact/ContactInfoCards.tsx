@@ -68,8 +68,9 @@ export default function ContactInfoCards() {
           href={SOCIAL_LINKS.facebook}
           target="_blank"
           rel="noopener"
-          className="block transition-colors hover:text-[#944a00]"
+          className="inline-flex items-center gap-2 transition-colors hover:text-[#944a00]"
         >
+          <ContactIcon name="facebook" size={18} className="text-[#1877f2]" />
           {UI.PUBLIC_FOOTER_FACEBOOK}
         </a>
         <p className="mt-1 text-xs font-medium tracking-wide text-[#504443]">

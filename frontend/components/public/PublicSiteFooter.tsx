@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SOCIAL_LINKS } from "@/config/site";
 import { UI } from "@/lib/constants/ui-strings";
+import ContactIcon from "@/components/public/contact/ContactIcon";
 
 const FOOTER_LINKS = [
   { href: "/", label: UI.PUBLIC_FOOTER_HOME },
@@ -37,8 +38,9 @@ export default function PublicSiteFooter() {
           href={SOCIAL_LINKS.facebook}
           target="_blank"
           rel="noopener"
-          className="underline-offset-2 hover:text-[#321716] hover:underline"
+          className="inline-flex items-center gap-1 underline-offset-2 hover:text-[#321716] hover:underline"
         >
+          <ContactIcon name="facebook" size={14} className="text-[#1877f2]" />
           {UI.PUBLIC_FOOTER_FACEBOOK}
         </a>
       </nav>
