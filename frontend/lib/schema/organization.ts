@@ -12,7 +12,7 @@ export function generateOrganizationSchema() {
     name: SITE.brandName,
     url: buildAbsoluteUrl("/"),
     description: SITE.description,
-    sameAs: Object.values(SOCIAL_LINKS),
+    sameAs: [SOCIAL_LINKS.facebook],
     logo: {
       "@type": "ImageObject",
       url: getSiteLogoUrl(),

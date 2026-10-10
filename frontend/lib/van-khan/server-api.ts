@@ -4,6 +4,8 @@ export type PublicCeremonySummary = {
   id: number;
   slug: string;
   name: string;
+  /** Tiêu đề in (gọn, trang trọng) — có thể trống. */
+  printTitle?: string | null;
   intro: string | null;
   meaning: string | null;
   preparation: string | null;

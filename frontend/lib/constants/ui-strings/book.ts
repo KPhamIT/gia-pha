@@ -24,10 +24,10 @@ export const BOOK_STRINGS = {
 
   // Book cover & preface
   BOOK_COVER_DEFAULT_TITLE: "GIA PHẢ",
-  BOOK_COVER_DEFAULT_SUBTITLE: "Dòng họ Việt Nam",
-  BOOK_COVER_SUBTITLE_PREFIX: "Dòng họ",
+  BOOK_COVER_DEFAULT_SUBTITLE: "Dòng Họ Việt Nam",
+  BOOK_COVER_SUBTITLE_PREFIX: "Dòng Họ",
   BOOK_COVER_SUBTITLE_NAME_PLACEHOLDER: "Tên dòng họ",
-  BOOK_COVER_DEFAULT_LINEAGE: "Phụng lập gia phả – Lưu truyền hậu thế",
+  BOOK_COVER_DEFAULT_LINEAGE: "Phụng lập Gia Phả – Lưu truyền hậu thế",
   BOOK_COVER_TITLE_PLACEHOLDER: "Nhập tên dòng họ",
   BOOK_COVER_SUBTITLE_PLACEHOLDER: "Nhập tên dòng họ",
   BOOK_COVER_LINEAGE_PLACEHOLDER: "Nhập lời đề từ",

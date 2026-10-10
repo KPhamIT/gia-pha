@@ -44,6 +44,8 @@ export function getSiteUrl(): string {
  */
 export const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/profile.php?id=61591386834668",
+  /** Mở chat Messenger với fanpage (nút đặt mua sách). */
+  messenger: "https://m.me/61591386834668",
 } as const;
 
 export const SITE = {

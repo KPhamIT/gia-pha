@@ -8,6 +8,7 @@ import {
 const PUBLIC_FIELDS = {
   id: true,
   name: true,
+  printTitle: true,
   content: true,
   intro: true,
   meaning: true,

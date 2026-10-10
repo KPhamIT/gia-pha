@@ -1,5 +1,7 @@
 "use client";
 
+import { DEFAULT_COVER_BADGE } from "./cover-studio-types";
+import { formatCoverSubtitle } from "@/components/family-tree/book/book-cover-subtitle";
 import type { CoverFrontContent } from "./cover-studio-settings";
 import type { CoverPaletteId } from "./cover-templates";
 import CoverCenserArt from "./CoverCenserArt";
@@ -18,9 +20,7 @@ export default function HeritageFrontFace({
   fontFamily,
   content,
 }: HeritageFrontFaceProps) {
-  const subtitle = content.subtitle.trim()
-    ? `Dòng họ ${content.subtitle.trim()}`
-    : "Dòng họ";
+  const subtitle = formatCoverSubtitle(content.subtitle);
 
   return (
     <div className={`${styles.face} ${coverThemeClass("scroll", paletteId)}`}>
@@ -33,7 +33,7 @@ export default function HeritageFrontFace({
         <span className={`${styles.heritageFiligree} ${styles.filigreeBR}`} />
 
         <div className={styles.heritageStack}>
-          <span className={styles.badge}>家 譜</span>
+          <span className={styles.badge}>{content.badge || DEFAULT_COVER_BADGE}</span>
           <h1 className={styles.heritageTitle} style={{ fontFamily }}>
             {content.title.trim() || "GIA PHẢ"}
           </h1>

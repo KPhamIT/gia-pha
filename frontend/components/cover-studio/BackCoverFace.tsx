@@ -1,5 +1,6 @@
 "use client";
 
+import { DEFAULT_COVER_BADGE } from "./cover-studio-types";
 import type { CoverBackContent } from "./cover-studio-settings";
 import type { CoverPaletteId, CoverStyleId } from "./cover-templates";
 import CoverOrnateFrame from "./CoverOrnateFrame";
@@ -24,7 +25,7 @@ export default function BackCoverFace({
     <div className={`${styles.face} ${coverThemeClass(styleId, paletteId)}`}>
       <CoverOrnateFrame />
       <div className={styles.inner}>
-        <span className={styles.badge}>家 譜</span>
+        <span className={styles.badge}>{content.badge || DEFAULT_COVER_BADGE}</span>
         <h1 className={styles.title} style={{ fontFamily }}>
           {content.title.trim() || "GIA PHẢ"}
         </h1>

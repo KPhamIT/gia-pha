@@ -1,5 +1,7 @@
 "use client";
 
+import { DEFAULT_COVER_BADGE, DEFAULT_COVER_SEAL } from "./cover-studio-types";
+import { formatCoverSubtitle } from "@/components/family-tree/book/book-cover-subtitle";
 import type { CoverFrontContent } from "./cover-studio-settings";
 import type { CoverPaletteId } from "./cover-templates";
 import CoverOrnateFrame from "./CoverOrnateFrame";
@@ -72,9 +74,7 @@ export default function CenteredFrontFace({
   fontFamily,
   content,
 }: CenteredFrontFaceProps) {
-  const subtitle = content.subtitle.trim()
-    ? `Dòng họ ${content.subtitle.trim()}`
-    : "Dòng họ";
+  const subtitle = formatCoverSubtitle(content.subtitle);
 
   return (
     <div className={`${styles.face} ${coverThemeClass("ornate", paletteId)}`}>
@@ -82,7 +82,7 @@ export default function CenteredFrontFace({
       <VerticalYear value={content.establishedYear} fontFamily={fontFamily} />
       <VerticalAddress value={content.clanAddress} fontFamily={fontFamily} />
       <div className={styles.inner}>
-        <span className={styles.badge}>家 譜</span>
+        <span className={styles.badge}>{content.badge || DEFAULT_COVER_BADGE}</span>
         <h1 className={styles.title} style={{ fontFamily }}>
           {content.title.trim() || "GIA PHẢ"}
         </h1>
@@ -91,7 +91,7 @@ export default function CenteredFrontFace({
           {subtitle}
         </p>
         <div className={styles.seal} style={{ fontFamily }}>
-          譜
+          {content.sealChar || DEFAULT_COVER_SEAL}
         </div>
         <p className={styles.lineage}>{content.lineage}</p>
       </div>

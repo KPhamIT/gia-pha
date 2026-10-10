@@ -1,4 +1,5 @@
 import { UI } from "@/lib/constants/ui-strings";
+import { formatCoverSubtitle } from "@/components/family-tree/book/book-cover-subtitle";
 import { DEFAULT_CALLIGRAPHY_FONT_ID } from "@/components/family-tree/book/calligraphy-fonts";
 import type { OrgBookContext } from "@/lib/settings/default-user-settings";
 import {
@@ -21,10 +22,19 @@ export type CoverFrontContent = {
   lineage: string;
   establishedYear: string;
   clanAddress: string;
+  /** Chữ Hán nhỏ trên tiêu đề (mặc định 家 譜 — gia phả). */
+  badge?: string;
+  /** Chữ Hán trong ô ấn (mặc định 譜). */
+  sealChar?: string;
 };
+
+export const DEFAULT_COVER_BADGE = "家 譜";
+export const DEFAULT_COVER_SEAL = "譜";
 
 export type CoverBackContent = {
   title: string;
+  /** Chữ Hán nhỏ trên tiêu đề (mặc định 家 譜). */
+  badge?: string;
   body: string;
   sealChar: string;
   footer: string;
@@ -77,7 +87,7 @@ export function defaultBackContent(
     title: UI.BOOK_COVER_DEFAULT_TITLE,
     body: "Gìn giữ cội nguồn – kết nối hiện tại – trao truyền giá trị cho mai sau.",
     sealChar: "譜",
-    footer: `Dòng họ ${clan}`,
+    footer: formatCoverSubtitle(clan),
   };
 }
 

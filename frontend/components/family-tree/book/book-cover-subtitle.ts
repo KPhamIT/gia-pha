@@ -1,10 +1,15 @@
 import type { OrgBookContext } from "@/lib/settings/default-user-settings";
 
-export const COVER_SUBTITLE_PREFIX = "Dòng họ";
+export const COVER_SUBTITLE_PREFIX = "Dòng Họ";
 
-/** Hiển thị đầy đủ: "Dòng họ" + tên. */
+/** Bỏ "Dòng họ" / "Họ" ở đầu tên (vd. tên tổ chức "Họ Nguyễn") để không lặp chữ "họ". */
+function stripClanPrefix(clanName: string): string {
+  return clanName.trim().replace(/^(dòng\s+)?họ\s+/iu, "").trim();
+}
+
+/** Hiển thị đầy đủ: "Dòng Họ" + tên. */
 export function formatCoverSubtitle(clanName: string): string {
-  const name = clanName.trim();
+  const name = stripClanPrefix(clanName);
   return name ? `${COVER_SUBTITLE_PREFIX} ${name}` : COVER_SUBTITLE_PREFIX;
 }
 
@@ -14,12 +19,10 @@ export function parseCoverSubtitleClanName(
   orgName?: string | null,
 ): string {
   const trimmed = stored.trim();
-  const withSpace = `${COVER_SUBTITLE_PREFIX} `;
   if (!trimmed) return (orgName ?? "").trim();
-  if (trimmed.startsWith(withSpace)) {
-    return trimmed.slice(withSpace.length).trim();
-  }
-  if (trimmed === COVER_SUBTITLE_PREFIX) return (orgName ?? "").trim();
+  // Bản cũ có thể lưu "Dòng họ …" (chữ h thường) — so khớp không phân biệt hoa thường.
+  const match = /^dòng\s+họ(?:\s+(.*))?$/iu.exec(trimmed);
+  if (match) return (match[1] ?? "").trim() || (orgName ?? "").trim();
   return trimmed;
 }
 

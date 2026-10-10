@@ -66,6 +66,7 @@ export const MOBILE_MENU_PRIMARY: readonly MobileMenuLink[] = [
     icon: "calendar",
   },
   { href: "/bai-viet", label: UI.LANDING_NAV_LIBRARY, icon: "book" },
+  { href: "/sach", label: UI.LANDING_NAV_SHOP, icon: "book" },
 ] as const;
 
 /** Mục hiện khi bấm Xem thêm. */

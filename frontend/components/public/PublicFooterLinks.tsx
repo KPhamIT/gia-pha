@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/huong-dan", label: UI.PUBLIC_FOOTER_GUIDE },
   { href: "/bai-viet", label: UI.PUBLIC_FOOTER_BLOG },
   { href: "/van-khan", label: UI.PUBLIC_FOOTER_VAN_KHAN },
+  { href: "/sach", label: UI.LANDING_NAV_SHOP },
   { href: "/lien-he", label: UI.PUBLIC_FOOTER_CONTACT },
   { href: "/chinh-sach-bao-mat", label: UI.PUBLIC_FOOTER_PRIVACY },
   { href: "/dieu-khoan-su-dung", label: UI.PUBLIC_FOOTER_TERMS },

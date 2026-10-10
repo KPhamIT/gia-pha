@@ -1,0 +1,336 @@
+/* Popup trưng bày (mẫu bìa, trang sách): mặt 3D nghiêng theo chuột, lật bìa, ánh sáng lướt, bụi vàng. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 3.75rem 1rem 1rem;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgb(120 52 24 / 0.55), transparent 60%),
+    rgb(14 6 4 / 0.9);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  animation: backdropIn 420ms ease-out both;
+}
+
+.closing {
+  animation: backdropOut 380ms ease-in both;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to { opacity: 1; }
+}
+
+@keyframes backdropOut {
+  to { opacity: 0; backdrop-filter: blur(0); }
+}
+
+/* Vầng sáng vàng phía sau sách */
+.halo {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: min(90vw, 760px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgb(232 182 92 / 0.32), rgb(232 182 92 / 0.08) 38%, transparent 64%);
+  filter: blur(6px);
+  pointer-events: none;
+  animation: haloPulse 4.5s ease-in-out infinite;
+}
+
+@keyframes haloPulse {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.96); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* Bụi vàng bay lên */
+.dust {
+  position: absolute;
+  bottom: -12px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe7a8, #e0a83e 55%, transparent 70%);
+  box-shadow: 0 0 10px rgb(255 214 120 / 0.8);
+  opacity: 0;
+  pointer-events: none;
+  animation: dustRise var(--dur) linear var(--delay) infinite;
+}
+
+@keyframes dustRise {
+  0% { opacity: 0; transform: translate3d(0, 0, 0); }
+  12% { opacity: 0.9; }
+  80% { opacity: 0.55; }
+  100% { opacity: 0; transform: translate3d(var(--drift), -105vh, 0); }
+}
+
+.stage {
+  position: relative;
+  perspective: 1800px;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+/* Khối di chuyển (FLIP mở/đóng + trượt khi đổi mẫu) */
+.mover {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.enterNext { animation: enterNext 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.enterPrev { animation: enterPrev 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@keyframes enterNext {
+  from { opacity: 0; transform: translateX(90px) rotateY(-38deg) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes enterPrev {
+  from { opacity: 0; transform: translateX(-90px) rotateY(38deg) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Khối nghiêng theo chuột + lật bìa */
+.book {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(calc(var(--ry, 0deg) + var(--flip, 0deg)));
+  transition: transform 900ms cubic-bezier(0.25, 0.9, 0.3, 1.15);
+}
+
+.book.tracking {
+  transition: transform 120ms ease-out;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 3px 8px 8px 3px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow:
+    0 30px 60px -12px rgb(0 0 0 / 0.65),
+    0 18px 36px -18px rgb(0 0 0 / 0.7);
+}
+
+/* Trang giấy rời: bo góc đều, bóng mềm hơn bìa cứng */
+.sheet {
+  border-radius: 4px;
+  box-shadow:
+    0 26px 50px -14px rgb(0 0 0 / 0.6),
+    0 2px 0 rgb(255 255 255 / 0.4) inset;
+}
+
+.back {
+  transform: rotateY(180deg);
+  border-radius: 8px 3px 3px 8px;
+}
+
+/* Gáy sách: bóng tối + vệt sáng gần mép trái */
+.spine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgb(0 0 0 / 0.45) 0,
+    rgb(255 255 255 / 0.18) 1.6%,
+    rgb(0 0 0 / 0.22) 3.2%,
+    transparent 7%
+  );
+}
+
+.back .spine {
+  transform: scaleX(-1);
+}
+
+/* Ánh sáng theo con trỏ */
+.glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  background: radial-gradient(
+    circle at var(--gx, 30%) var(--gy, 20%),
+    rgb(255 244 214 / 0.75),
+    rgb(255 244 214 / 0.18) 28%,
+    transparent 55%
+  );
+  opacity: var(--glare, 0.55);
+  transition: opacity 300ms;
+}
+
+/* Vệt sáng quét qua khi vừa mở */
+.sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgb(255 248 225 / 0.55) 48%,
+    rgb(255 255 255 / 0.85) 50%,
+    rgb(255 248 225 / 0.55) 52%,
+    transparent 62%
+  );
+  background-size: 260% 100%;
+  background-position: 160% 0;
+  animation: sheen 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.55s both;
+}
+
+@keyframes sheen {
+  to { background-position: -60% 0; }
+}
+
+/* Mép giấy bên phải (độ dày sách) */
+.pages {
+  position: absolute;
+  top: 1.2%;
+  bottom: 1.2%;
+  right: -7px;
+  width: 9px;
+  border-radius: 0 3px 3px 0;
+  background: repeating-linear-gradient(90deg, #f7efdd 0 1px, #d8c8a8 1px 2px);
+  box-shadow: inset -2px 0 3px rgb(0 0 0 / 0.25);
+  transform: translateZ(-4px);
+}
+
+/* Bóng sàn */
+.floor {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -26px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(0 0 0 / 0.55), transparent 70%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.caption {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  color: #f8ecd8;
+  text-align: center;
+  animation: captionIn 600ms ease-out 250ms both;
+}
+
+@keyframes captionIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+.title {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: linear-gradient(90deg, #f6d68e, #fff3d0, #e2b45a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.description {
+  max-width: 34rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgb(248 236 216 / 0.82);
+}
+
+.segment {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(246 214 142 / 0.35);
+}
+
+.segment button {
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: #f8ecd8;
+  transition: background 200ms, color 200ms;
+}
+
+.segment button[aria-pressed="true"] {
+  background: linear-gradient(135deg, #f6d68e, #c99236);
+  color: #3a1d0e;
+  font-weight: 600;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: rgb(248 236 216 / 0.6);
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  color: #fff3d0;
+  background: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(246 214 142 / 0.35);
+  transition: background 200ms, transform 200ms;
+}
+
+.iconButton:hover {
+  background: rgb(246 214 142 / 0.25);
+  transform: scale(1.08);
+}
+
+.close {
+  position: absolute;
+  top: max(1rem, env(safe-area-inset-top));
+  right: 1rem;
+  z-index: 2;
+}
+
+.nav {
+  position: absolute;
+  top: 45%;
+  z-index: 2;
+  transform: translateY(-50%);
+}
+
+.prev { left: max(0.75rem, 3vw); }
+.next { right: max(0.75rem, 3vw); }
+
+.counter {
+  position: absolute;
+  top: max(1.4rem, calc(env(safe-area-inset-top) + 0.4rem));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: rgb(248 236 216 / 0.7);
+}
+
+@media (max-width: 640px) {
+  .nav { top: auto; bottom: 1rem; transform: none; }
+  .title { font-size: 1.25rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop, .closing, .enterNext, .enterPrev, .sheen, .caption, .halo, .dust {
+    animation: none !important;
+  }
+  .dust { display: none; }
+  .book { transition: none; }
+}

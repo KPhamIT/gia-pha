@@ -10,6 +10,7 @@ const FOOTER_LINKS = [
   { href: "/chinh-sach-bao-mat", label: UI.PUBLIC_FOOTER_PRIVACY },
   { href: "/dieu-khoan-su-dung", label: UI.PUBLIC_FOOTER_TERMS },
   { href: "/book", label: UI.PUBLIC_FOOTER_BOOK },
+  { href: "/sach", label: UI.LANDING_NAV_SHOP },
 ] as const;
 
 export default function PublicSiteFooter() {
