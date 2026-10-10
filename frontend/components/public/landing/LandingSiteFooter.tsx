@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { BRAND_TEXT_ON_DARK_CLASS, SITE, SOCIAL_LINKS } from "@/config/site";
+import { BRAND_TEXT_ON_DARK_CLASS, SITE } from "@/config/site";
 import { UI } from "@/lib/constants/ui-strings";
-import ContactIcon from "@/components/public/contact/ContactIcon";
+import FacebookLink from "@/components/public/FacebookLink";
 
 type FooterLink = { href: string; label: string };
 
@@ -73,15 +73,7 @@ export default function LandingSiteFooter() {
             <p>{UI.LANDING_FOOTER_CONTACT_EMAIL}</p>
             <p>{UI.LANDING_FOOTER_CONTACT_PHONE}</p>
             <p>{UI.LANDING_FOOTER_CONTACT_ADDRESS}</p>
-            <a
-              href={SOCIAL_LINKS.facebook}
-              target="_blank"
-              rel="noopener"
-              className="inline-flex items-center gap-2 transition hover:text-white"
-            >
-              <ContactIcon name="facebook" size={18} />
-              {UI.PUBLIC_FOOTER_FACEBOOK}
-            </a>
+            <FacebookLink size={36} className="mt-1" />
           </div>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { SOCIAL_LINKS } from "@/config/site";
 import { getPublicContactDisplay } from "@/lib/constants/contact-info";
 import { UI } from "@/lib/constants/ui-strings";
 import ContactIcon from "./ContactIcon";
+import FacebookLink from "../FacebookLink";
 
 const CARD_CLASS =
   "rounded-xl border border-[#d4c3c1] bg-white p-8 shadow-sm transition-shadow hover:shadow-md";
@@ -64,15 +64,7 @@ export default function ContactInfoCards() {
       </ContactCard>
 
       <ContactCard icon={<ContactIcon name="facebook" />} title={UI.CONTACT_CARD_FACEBOOK_TITLE}>
-        <a
-          href={SOCIAL_LINKS.facebook}
-          target="_blank"
-          rel="noopener"
-          className="inline-flex items-center gap-2 transition-colors hover:text-[#944a00]"
-        >
-          <ContactIcon name="facebook" size={18} className="text-[#1877f2]" />
-          {UI.PUBLIC_FOOTER_FACEBOOK}
-        </a>
+        <FacebookLink size={40} />
         <p className="mt-1 text-xs font-medium tracking-wide text-[#504443]">
           {UI.CONTACT_CARD_FACEBOOK_NOTE}
         </p>
