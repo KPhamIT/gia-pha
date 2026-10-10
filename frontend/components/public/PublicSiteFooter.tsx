@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SOCIAL_LINKS } from "@/config/site";
 import { UI } from "@/lib/constants/ui-strings";
 
 const FOOTER_LINKS = [
@@ -32,6 +33,14 @@ export default function PublicSiteFooter() {
             {link.label}
           </Link>
         ))}
+        <a
+          href={SOCIAL_LINKS.facebook}
+          target="_blank"
+          rel="noopener"
+          className="underline-offset-2 hover:text-[#321716] hover:underline"
+        >
+          {UI.PUBLIC_FOOTER_FACEBOOK}
+        </a>
       </nav>
       <p className="mt-4 text-center text-xs opacity-80">
         {UI.PUBLIC_FOOTER_COPYRIGHT(year)}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SOCIAL_LINKS } from "@/config/site";
 import { getPublicContactDisplay } from "@/lib/constants/contact-info";
 import { UI } from "@/lib/constants/ui-strings";
 import ContactIcon from "./ContactIcon";
@@ -60,6 +61,20 @@ export default function ContactInfoCards() {
         >
           {contact.email}
         </a>
+      </ContactCard>
+
+      <ContactCard icon={<ContactIcon name="facebook" />} title={UI.CONTACT_CARD_FACEBOOK_TITLE}>
+        <a
+          href={SOCIAL_LINKS.facebook}
+          target="_blank"
+          rel="noopener"
+          className="block transition-colors hover:text-[#944a00]"
+        >
+          {UI.PUBLIC_FOOTER_FACEBOOK}
+        </a>
+        <p className="mt-1 text-xs font-medium tracking-wide text-[#504443]">
+          {UI.CONTACT_CARD_FACEBOOK_NOTE}
+        </p>
       </ContactCard>
 
       <ContactCard icon={<ContactIcon name="schedule" />} title={UI.CONTACT_CARD_HOURS_TITLE}>

@@ -17,6 +17,9 @@ export const PUBLIC_STRINGS = {
   PUBLIC_FOOTER_CONTACT: "Liên hệ",
   PUBLIC_FOOTER_PRIVACY: "Chính sách bảo mật",
   PUBLIC_FOOTER_TERMS: "Điều khoản sử dụng",
+  PUBLIC_FOOTER_FACEBOOK: "Fanpage Facebook",
+  CONTACT_CARD_FACEBOOK_TITLE: "Fanpage",
+  CONTACT_CARD_FACEBOOK_NOTE: "Nhắn tin, theo dõi bài cúng và mẹo gia phả mới",
   PUBLIC_FOOTER_BOOK: "Vào sổ gia phả",
   PUBLIC_FOOTER_COPYRIGHT: (year: number) =>
     `© ${year} Cội Nguồn — Gia phả điện tử. Mọi quyền được bảo lưu.`,

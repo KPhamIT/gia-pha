@@ -1,4 +1,9 @@
-import { buildAbsoluteUrl, getSiteLogoUrl, SITE } from "@/config/site";
+import {
+  buildAbsoluteUrl,
+  getSiteLogoUrl,
+  SITE,
+  SOCIAL_LINKS,
+} from "@/config/site";
 
 export function generateOrganizationSchema() {
   return {
@@ -6,6 +11,8 @@ export function generateOrganizationSchema() {
     "@id": `${buildAbsoluteUrl("/")}#organization`,
     name: SITE.brandName,
     url: buildAbsoluteUrl("/"),
+    description: SITE.description,
+    sameAs: Object.values(SOCIAL_LINKS),
     logo: {
       "@type": "ImageObject",
       url: getSiteLogoUrl(),

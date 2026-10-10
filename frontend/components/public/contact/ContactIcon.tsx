@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
 
-type ContactIconName = "location" | "phone" | "mail" | "schedule" | "send";
+type ContactIconName =
+  | "location"
+  | "phone"
+  | "mail"
+  | "schedule"
+  | "send"
+  | "facebook";
 
 const ICONS: Record<ContactIconName, ReactNode> = {
   location: (
@@ -25,6 +31,12 @@ const ICONS: Record<ContactIconName, ReactNode> = {
     <path
       fill="currentColor"
       d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"
+    />
+  ),
+  facebook: (
+    <path
+      fill="currentColor"
+      d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"
     />
   ),
   send: (

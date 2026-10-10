@@ -38,6 +38,14 @@ export function getSiteUrl(): string {
   return DEFAULT_SITE_URL;
 }
 
+/**
+ * Mạng xã hội chính thức — hiện ở chân trang, trang Liên hệ và `sameAs`
+ * (schema Organization) để Google nối website với fanpage.
+ */
+export const SOCIAL_LINKS = {
+  facebook: "https://www.facebook.com/profile.php?id=61591386834668",
+} as const;
+
 export const SITE = {
   brandName: BRAND_NAME,
   siteName: `${BRAND_NAME} - Gia phả điện tử`,
