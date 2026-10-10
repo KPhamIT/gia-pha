@@ -190,6 +190,7 @@ const { canUseFeature, requireFeature, requireAdmin } = useFeatureAccess();
 |---------|---------|
 | `TreeFab` — từng action | `editTree`, `search`, `book`, `events`, `export`, `tree` |
 | Person sheets (sửa/xóa/thêm) | `editTree` |
+| `PersonExcelSheet` — nhập/xuất Excel (`GET /person/excel/template`, `POST /person/excel/import`) | `editTree` |
 | `GenealogyBookViewer` — sửa trang/kiểu | `editBook` |
 | `EventsManager` + contribution/donation | `editEvents` |
 | `FamilyTreeSettings` — Lưu | `settings` |

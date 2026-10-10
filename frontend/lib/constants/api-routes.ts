@@ -21,6 +21,8 @@ export const API_ROUTES = {
   PERSON_LIST: "/person",
   PERSON_ROOT_TREE: "/person/root/tree",
   PERSON_DETAILS: "/person/details",
+  PERSON_EXCEL_TEMPLATE: "/person/excel/template",
+  PERSON_EXCEL_IMPORT: "/person/excel/import",
   PERSON: (id: number) => `/person/${id}`,
   PERSON_TREE: (id: number) => `/person/${id}/tree`,
   PERSON_DETAIL: (id: number) => `/person/${id}/detail`,

@@ -4,11 +4,13 @@ import { OrganizationModule } from '../organization/organization.module.js';
 import { StandardFeaturesModule } from '../standard-features/standard-features.module.js';
 import { PersonService } from './person.service.js';
 import { PersonController } from './person.controller.js';
+import { PersonExcelController } from './excel/person-excel.controller.js';
+import { PersonExcelService } from './excel/person-excel.service.js';
 
 @Module({
   imports: [PrismaModule, OrganizationModule, StandardFeaturesModule],
-  controllers: [PersonController],
-  providers: [PersonService],
+  controllers: [PersonExcelController, PersonController],
+  providers: [PersonService, PersonExcelService],
   exports: [PersonService],
 })
 export class PersonModule {}

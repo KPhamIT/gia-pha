@@ -28,6 +28,29 @@ type CreatePersonDto = {
 
 export type { CreatePersonDto };
 
+export type PersonImportIssue = { row: number; message: string };
+
+export type PersonImportResult = {
+  applied: boolean;
+  summary: {
+    totalRows: number;
+    create: number;
+    update: number;
+    unchanged: number;
+    parentLinks: number;
+    parentReplaced: number;
+    spouseLinks: number;
+  };
+  errors: PersonImportIssue[];
+  warnings: PersonImportIssue[];
+  errorCount: number;
+  warningCount: number;
+};
+
+function orgParams(organizationId?: number | null) {
+  return organizationId != null ? { organizationId } : {};
+}
+
 export const person = {
   list: () =>
     axiosClient.get<Person[]>(API_ROUTES.PERSON_LIST).then((r) => r.data),
@@ -59,4 +82,32 @@ export const person = {
     axiosClient
       .get<FamilyTreeData>(API_ROUTES.PERSON_ROOT_TREE)
       .then((r) => r.data),
+  /** File .xlsx: dữ liệu hiện tại của dòng họ, hoặc mẫu trống (`blank`). */
+  downloadExcel: (options: { blank: boolean; organizationId?: number | null }) =>
+    axiosClient
+      .get<Blob>(API_ROUTES.PERSON_EXCEL_TEMPLATE, {
+        params: {
+          ...orgParams(options.organizationId),
+          ...(options.blank ? { blank: 1 } : {}),
+        },
+        responseType: "blob",
+      })
+      .then((r) => r.data),
+  /** `dryRun` = chỉ kiểm tra, không ghi. */
+  importExcel: (
+    file: File,
+    options: { dryRun: boolean; organizationId?: number | null },
+  ) => {
+    const form = new FormData();
+    form.append("file", file);
+    return axiosClient
+      .post<PersonImportResult>(API_ROUTES.PERSON_EXCEL_IMPORT, form, {
+        params: {
+          ...orgParams(options.organizationId),
+          dryRun: options.dryRun ? 1 : 0,
+        },
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((r) => r.data);
+  },
 };

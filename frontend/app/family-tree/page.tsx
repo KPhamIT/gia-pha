@@ -26,6 +26,11 @@ import { usePersonSheets } from "./usePersonSheets";
 import FamilyTreeSheets from "./FamilyTreeSheets";
 import TreeTopBar from "./TreeTopBar";
 
+const PersonExcelSheet = dynamic(
+  () => import("@/components/family-tree/excel/PersonExcelSheet"),
+  { ssr: false },
+);
+
 const FamilyTreeGraph = dynamic(
   () => import("@/components/family-tree/graph/FamilyTreeGraph"),
   {
@@ -88,6 +93,7 @@ function FamilyTreePageContent() {
 
   const [showSettings, setShowSettings] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [showExcel, setShowExcel] = useState(false);
   const [exportPositionOverrides, setExportPositionOverrides] = useState<
     NodePositionOverrides | undefined
   >();
@@ -220,7 +226,17 @@ function FamilyTreePageContent() {
             onSearch: sheets.openSearch,
             onCenterTree: () => setCenterTreeKey((k) => k + 1),
             onOpenExport: handleOpenExport,
+            onOpenExcel: () => setShowExcel(true),
           }}
+        />
+      ) : null}
+
+      {showExcel ? (
+        <PersonExcelSheet
+          organizationId={organizationId}
+          onClose={() => setShowExcel(false)}
+          assertCanEdit={() => requireFeature("editTree")}
+          onImported={reload}
         />
       ) : null}
 

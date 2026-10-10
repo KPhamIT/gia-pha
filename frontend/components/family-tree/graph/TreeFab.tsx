@@ -26,6 +26,7 @@ type TreeFabProps = {
   onOpenTree: () => void;
   onOpenEvents: () => void;
   onOpenExport: () => void;
+  onOpenExcel: () => void;
   onOpenCeremonyTemplates?: () => void;
   onOpenUsers?: () => void;
   onOpenNotifications: () => void;
@@ -46,6 +47,7 @@ export default function TreeFab({
   onOpenTree,
   onOpenEvents,
   onOpenExport,
+  onOpenExcel,
   onOpenCeremonyTemplates,
   onOpenUsers,
   onOpenNotifications,
@@ -62,6 +64,7 @@ export default function TreeFab({
     tree: onOpenTree,
     events: onOpenEvents,
     export: onOpenExport,
+    excel: onOpenExcel,
     ceremonyTemplates: () => onOpenCeremonyTemplates?.(),
     users: () => onOpenUsers?.(),
     notifications: onOpenNotifications,

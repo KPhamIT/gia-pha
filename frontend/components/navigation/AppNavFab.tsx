@@ -11,6 +11,7 @@ export type TreeLocalActions = {
   onSearch: () => void;
   onCenterTree: () => void;
   onOpenExport: () => void;
+  onOpenExcel: () => void;
 };
 
 type AppNavFabProps = {
@@ -40,6 +41,7 @@ export default function AppNavFab({ treeActions }: AppNavFabProps) {
       onOpenTree={nav.openTree}
       onOpenEvents={nav.openEvents}
       onOpenExport={treeActions?.onOpenExport ?? noop}
+      onOpenExcel={treeActions?.onOpenExcel ?? noop}
       onOpenCeremonyTemplates={nav.openCeremonyTemplates}
       onOpenUsers={nav.openUsers}
       onOpenNotifications={nav.openNotifications}

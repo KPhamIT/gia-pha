@@ -10,6 +10,7 @@ export type FabAction =
   | "tree"
   | "events"
   | "export"
+  | "excel"
   | "ceremonyTemplates"
   | "users"
   | "notifications"
@@ -69,20 +70,9 @@ const FAB_ITEM_DEFS: FabItemDef[] = [
     contexts: ["tree", "book", "general"],
     hideWhenPath: "/events",
   },
-  {
-    id: "export",
-    label: UI.BTN_EXPORT,
-    icon: "image",
-    feature: "tree",
-    contexts: ["tree"],
-  },
-  {
-    id: "center",
-    label: UI.BTN_CENTER,
-    icon: "center",
-    feature: "tree",
-    contexts: ["tree"],
-  },
+  { id: "export", label: UI.BTN_EXPORT, icon: "image", feature: "tree", contexts: ["tree"] },
+  { id: "excel", label: UI.EXCEL_FAB, icon: "list", feature: "editTree", contexts: ["tree"] },
+  { id: "center", label: UI.BTN_CENTER, icon: "center", feature: "tree", contexts: ["tree"] },
   {
     id: "ceremonyTemplates",
     label: UI.CEREMONY_TEMPLATES_OPEN,
