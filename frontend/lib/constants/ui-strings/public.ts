@@ -35,7 +35,6 @@ export const PUBLIC_STRINGS = {
   LANDING_NAV_EVENTS: "Sự kiện",
   LANDING_NAV_CEREMONY: "Mẫu bài cúng",
   LANDING_NAV_LIBRARY: "Tin tức",
-  LANDING_NAV_SHOP: "Sách in",
   LANDING_NAV_SERVICES: "Dịch vụ",
   LANDING_NAV_SEARCH_ARIA: "Tìm kiếm",
   LANDING_CTA_GUIDE: "Xem hướng dẫn",

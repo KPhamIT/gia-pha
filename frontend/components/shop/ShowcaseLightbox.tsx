@@ -23,9 +23,11 @@ const SWIPE_PX = 50;
 
 /** Bề rộng mặt hiển thị sao cho vừa màn hình, chừa chỗ cho chú thích. */
 function faceWidth(ratio: number): number {
-  const byWidth = window.innerWidth * 0.74;
+  // Ảnh ngang (phả đồ) được rộng hơn ảnh dọc (bìa, trang sách).
+  const landscape = ratio < 1;
+  const byWidth = window.innerWidth * (landscape ? 0.9 : 0.74);
   const byHeight = (window.innerHeight - 320) / ratio;
-  return Math.round(Math.max(190, Math.min(byWidth, byHeight, 460)));
+  return Math.round(Math.max(190, Math.min(byWidth, byHeight, landscape ? 1100 : 460)));
 }
 
 /** Popup trưng bày: mặt 3D nghiêng theo chuột, lật mặt sau, đổi mục, bay ra / về ô nhỏ. */
@@ -63,6 +65,7 @@ export default function ShowcaseLightbox({
 
   const go = useCallback(
     (step: 1 | -1) => {
+      if (total <= 1) return;
       setNavDir(step === 1 ? "next" : "prev");
       setSide("front");
       onIndexChange((index + step + total) % total);

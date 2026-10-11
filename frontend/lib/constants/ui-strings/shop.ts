@@ -1,13 +1,14 @@
 /** Trang bán sách in (/sach) — đặt mua qua Messenger fanpage. */
 export const SHOP_STRINGS = {
-  SHOP_TITLE: "Sách gia phả & Văn khấn in sẵn",
+  SHOP_TITLE: "Dịch vụ in sổ gia phả, phả đồ & sách văn khấn",
   SHOP_META_DESC:
-    "Đặt in sổ gia phả dòng họ với bìa cổ điển, trang thành viên trang trọng, và sách văn khấn cổ truyền. Nhắn fanpage Cội Nguồn để được tư vấn và báo giá.",
+    "In sổ gia phả dòng họ với bìa cổ điển, in phả đồ khổ lớn treo nhà thờ họ, sách văn khấn cổ truyền và nhập liệu gia phả hộ. Nhắn fanpage Cội Nguồn để được tư vấn và báo giá.",
   SHOP_LEAD:
-    "Biến gia phả số của dòng họ thành cuốn sổ cầm trên tay, và một cuốn văn khấn trang trọng để đặt cạnh bàn thờ. Nhắn fanpage để được tư vấn, báo giá và xem bản in thử trước khi in.",
-  SHOP_BREADCRUMB: "Sách in",
+    "Biến gia phả số của dòng họ thành cuốn sổ cầm trên tay, tấm phả đồ treo nhà thờ họ và cuốn văn khấn đặt cạnh bàn thờ — hoặc để Cội Nguồn nhập liệu giúp. Nhắn fanpage để được tư vấn, báo giá và xem bản in thử.",
+  SHOP_BREADCRUMB: "Dịch vụ",
   SHOP_JUMP_BOOK: "Sổ gia phả in",
   SHOP_JUMP_PRAYER: "Sách văn khấn",
+  SHOP_JUMP_SERVICES: "Dịch vụ thêm",
 
   SHOP_BUY: "Đặt mua qua Messenger",
   SHOP_BUY_HINT: "Mở cuộc trò chuyện với fanpage Cội Nguồn",
@@ -99,6 +100,46 @@ export const SHOP_STRINGS = {
   SHOP_PRAYER_COVER_DIALOG: "Xem mẫu bìa sách văn khấn",
   SHOP_PRAYER_COVER_IMG_ALT: "Bìa sách văn khấn cổ truyền",
   SHOP_PRAYER_LIST_TITLE: (n: number) => `${n} bài văn khấn trong sách`,
+
+  SHOP_SERVICES_TITLE: "Dịch vụ thêm",
+  SHOP_SERVICES_HINT:
+    "Không có thời gian? Cội Nguồn làm giúp từ khâu nhập dữ liệu đến in phả đồ treo nhà thờ họ.",
+  SHOP_SERVICES: [
+    {
+      key: "in-pha-do",
+      title: "In phả đồ khổ lớn",
+      description:
+        "Phả đồ cả dòng họ trên một tấm lớn để treo nhà thờ họ, có cuốn thư, câu đối, rồng chầu — xuất từ chính cây gia phả của bạn trên Cội Nguồn.",
+      features: [
+        "Khổ A1, A0 hoặc theo kích thước tường nhà thờ họ",
+        "Tên dòng họ trên cuốn thư, câu đối hai bên tự chọn",
+        "Xem bản thiết kế trước khi in",
+      ],
+      price: "Báo giá theo khổ và chất liệu in — nhắn fanpage",
+      image: { src: "/images/shop/pha-do-in-kho-lon.webp", width: 2000, height: 1409 },
+      imageAlt: "Phả đồ nhiều đời của dòng họ in khổ lớn",
+    },
+    {
+      key: "nhap-lieu-ho",
+      title: "Nhập liệu gia phả hộ",
+      description:
+        "Gửi sổ gia phả chép tay, ảnh chụp hoặc file Word/Excel — Cội Nguồn nhập toàn bộ lên cây gia phả, dòng họ chỉ việc soát lại.",
+      features: [
+        "Nhận sổ chép tay, ảnh chụp, file Word hoặc Excel",
+        "Dựng đủ quan hệ cha mẹ, vợ chồng, đời, chi và ngày giỗ",
+        "Gửi bảng Excel để dòng họ duyệt trước khi đưa lên cây",
+      ],
+      price: "Báo giá theo số người — nhắn fanpage",
+      image: null,
+      imageAlt: "",
+    },
+  ],
+  SHOP_SERVICE_ORDER: "Hỏi dịch vụ này",
+  SHOP_SERVICE_OPEN: (name: string) => `Xem lớn mẫu ${name}`,
+  SHOP_SERVICE_VIEW_HINT: "Rê chuột để nghiêng xem chi tiết · Esc để đóng",
+  SHOP_SERVICE_VIEW_HINT_TOUCH: "Chạm ra ngoài ảnh để đóng",
+  SHOP_SERVICE_IMPORT_FROM: "Sổ chép tay · ảnh · Excel",
+  SHOP_SERVICE_IMPORT_TO: "Cây gia phả",
 
   SHOP_STEPS_TITLE: "Đặt sách thế nào?",
   SHOP_STEPS: [

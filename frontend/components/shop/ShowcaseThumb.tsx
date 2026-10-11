@@ -9,17 +9,29 @@ type Props = {
   hidden: boolean;
   onOpen: () => void;
   children: ReactNode;
+  /** Phủ kín khung cha (ảnh trong thẻ dịch vụ) thay vì ô nổi có bóng. */
+  fill?: boolean;
 };
 
 /** Ô xem trước bấm được: nhấc lên + nghiêng nhẹ, vệt sáng lướt, chữ "Bấm để xem". */
-export default function ShowcaseThumb({ buttonRef, ariaLabel, hidden, onOpen, children }: Props) {
+export default function ShowcaseThumb({
+  buttonRef,
+  ariaLabel,
+  hidden,
+  onOpen,
+  children,
+  fill = false,
+}: Props) {
+  const frame = fill
+    ? "h-full w-full cursor-zoom-in"
+    : "rounded-md shadow-[0_8px_20px_rgba(50,23,22,0.28)] ring-1 ring-black/10 [transform:perspective(900px)] hover:-translate-y-1.5 hover:shadow-[0_18px_34px_rgba(50,23,22,0.4)] hover:[transform:perspective(900px)_rotateY(-8deg)]";
   return (
     <button
       ref={buttonRef}
       type="button"
       onClick={onOpen}
       aria-label={ariaLabel}
-      className="group relative block overflow-hidden rounded-md shadow-[0_8px_20px_rgba(50,23,22,0.28)] ring-1 ring-black/10 transition duration-300 ease-out [transform:perspective(900px)] hover:-translate-y-1.5 hover:shadow-[0_18px_34px_rgba(50,23,22,0.4)] hover:[transform:perspective(900px)_rotateY(-8deg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c99236]"
+      className={`group relative block overflow-hidden transition duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c99236] ${frame}`}
       // Ẩn ô gốc khi popup đang mở để mục "bay" ra từ đúng chỗ.
       style={{ visibility: hidden ? "hidden" : undefined }}
     >

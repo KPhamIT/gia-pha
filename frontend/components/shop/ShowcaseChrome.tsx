@@ -33,7 +33,14 @@ type Props = {
 };
 
 /** Nền trang trí (vầng sáng, bụi vàng) và các nút đóng / chuyển mục của popup. */
-export default function ShowcaseChrome({ index, total, closeRef, onClose, onPrev, onNext }: Props) {
+export default function ShowcaseChrome({
+  index,
+  total,
+  closeRef,
+  onClose,
+  onPrev,
+  onNext,
+}: Props) {
   return (
     <>
       <div className={styles.halo} aria-hidden />
@@ -54,7 +61,11 @@ export default function ShowcaseChrome({ index, total, closeRef, onClose, onPrev
         />
       ))}
 
-      <span className={styles.counter}>{UI.SHOP_COVER_COUNTER(index + 1, total)}</span>
+      {total > 1 ? (
+        <span className={styles.counter}>
+          {UI.SHOP_COVER_COUNTER(index + 1, total)}
+        </span>
+      ) : null}
       <button
         ref={closeRef}
         type="button"
@@ -66,26 +77,30 @@ export default function ShowcaseChrome({ index, total, closeRef, onClose, onPrev
           <path {...STROKE} d="M6 6l12 12M18 6 6 18" />
         </svg>
       </button>
-      <button
-        type="button"
-        className={`${styles.iconButton} ${styles.nav} ${styles.prev}`}
-        onClick={onPrev}
-        aria-label={UI.SHOP_COVER_PREV}
-      >
-        <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden>
-          <path {...STROKE} d="m15 5-7 7 7 7" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        className={`${styles.iconButton} ${styles.nav} ${styles.next}`}
-        onClick={onNext}
-        aria-label={UI.SHOP_COVER_NEXT}
-      >
-        <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden>
-          <path {...STROKE} d="m9 5 7 7-7 7" />
-        </svg>
-      </button>
+      {total > 1 ? (
+        <>
+          <button
+            type="button"
+            className={`${styles.iconButton} ${styles.nav} ${styles.prev}`}
+            onClick={onPrev}
+            aria-label={UI.SHOP_COVER_PREV}
+          >
+            <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden>
+              <path {...STROKE} d="m15 5-7 7 7 7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            className={`${styles.iconButton} ${styles.nav} ${styles.next}`}
+            onClick={onNext}
+            aria-label={UI.SHOP_COVER_NEXT}
+          >
+            <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden>
+              <path {...STROKE} d="m9 5 7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      ) : null}
     </>
   );
 }
@@ -102,13 +117,23 @@ export function ShowcaseCaption({ item, side, texts, onFlip }: CaptionProps) {
   return (
     <div className={styles.caption}>
       <p className={styles.title}>{item.label}</p>
-      {item.description ? <p className={styles.description}>{item.description}</p> : null}
+      {item.description ? (
+        <p className={styles.description}>{item.description}</p>
+      ) : null}
       {item.renderBack ? (
         <div className={styles.segment}>
-          <button type="button" aria-pressed={side === "front"} onClick={() => onFlip("front")}>
+          <button
+            type="button"
+            aria-pressed={side === "front"}
+            onClick={() => onFlip("front")}
+          >
             {UI.SHOP_COVER_FRONT}
           </button>
-          <button type="button" aria-pressed={side === "back"} onClick={() => onFlip("back")}>
+          <button
+            type="button"
+            aria-pressed={side === "back"}
+            onClick={() => onFlip("back")}
+          >
             {UI.SHOP_COVER_BACK}
           </button>
         </div>

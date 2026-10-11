@@ -4,11 +4,17 @@ import type { ReactNode } from "react";
 import ResponsiveAppPageLayout from "@/components/layout/ResponsiveAppPageLayout";
 import { UI } from "@/lib/constants/ui-strings";
 
-/** Shell trang bán sách — cùng khung với trang văn khấn / bài viết. */
-export default function ShopPageView({ children }: { children: ReactNode }) {
+/** Shell trang công khai (sách in, công cụ…) — cùng khung với trang văn khấn / bài viết. */
+export default function ShopPageView({
+  children,
+  title = UI.SHOP_BREADCRUMB,
+}: {
+  children: ReactNode;
+  title?: string;
+}) {
   return (
     <ResponsiveAppPageLayout
-      title={UI.SHOP_BREADCRUMB}
+      title={title}
       backHref="/"
       mobileTitleAsHeading={false}
       contentClassName="w-full pb-32 pt-0 md:pb-0 md:pt-0"

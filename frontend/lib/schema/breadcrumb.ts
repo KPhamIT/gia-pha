@@ -19,7 +19,7 @@ const PATH_SEGMENT_LABELS: Record<string, string> = {
   "cai-dat": "Cài đặt ứng dụng",
   "bai-viet": "Kiến thức gia phả",
   "van-khan": "Văn khấn",
-  sach: "Sách in",
+  "xung-ho": "Xưng hô họ hàng",
   "gioi-thieu": "Giới thiệu",
   "dich-vu": "Dịch vụ",
   "lien-he": "Liên hệ",

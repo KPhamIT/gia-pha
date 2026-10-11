@@ -8,11 +8,15 @@ const nextConfig: NextConfig = {
     staticGenerationMinPagesPerWorker: 50,
   },
   async redirects() {
-    return Object.entries(BLOG_MERGED_SLUGS).map(([from, to]) => ({
-      source: `/bai-viet/${from}`,
-      destination: `/bai-viet/${to}`,
-      permanent: true,
-    }));
+    return [
+      ...Object.entries(BLOG_MERGED_SLUGS).map(([from, to]) => ({
+        source: `/bai-viet/${from}`,
+        destination: `/bai-viet/${to}`,
+        permanent: true,
+      })),
+      // Trang bán sách đã gộp vào trang Dịch vụ.
+      { source: "/sach", destination: "/dich-vu", permanent: true },
+    ];
   },
 };
 
