@@ -18,7 +18,15 @@ import { VAN_KHAN_STRINGS } from "./ui-strings/van-khan";
 import { EXCEL_STRINGS } from "./ui-strings/excel";
 import { SHOP_STRINGS } from "./ui-strings/shop";
 import { KINSHIP_STRINGS } from "./ui-strings/kinship";
+import { DAT_TEN_STRINGS } from "./ui-strings/dat-ten";
+import { DAT_TEN_GUIDE_STRINGS } from "./ui-strings/dat-ten-guide";
+import { PHONG_THUY_STRINGS } from "./ui-strings/phong-thuy";
+import { SINH_CON_STRINGS } from "./ui-strings/sinh-con";
+import { SINH_CON_GUIDE_STRINGS } from "./ui-strings/sinh-con-guide";
 import { TOOLS_STRINGS } from "./ui-strings/tools";
+import { TOOLS_GUIDE_STRINGS } from "./ui-strings/tools-guide";
+import { VI_TRI_STRINGS } from "./ui-strings/vi-tri";
+import { XEM_NGAY_STRINGS } from "./ui-strings/xem-ngay";
 import { XEM_TUOI_STRINGS } from "./ui-strings/xem-tuoi";
 import { XEM_TUOI_GUIDE_STRINGS } from "./ui-strings/xem-tuoi-guide";
 import { XEM_TUOI_IMPACT_STRINGS } from "./ui-strings/xem-tuoi-impact";
@@ -48,6 +56,14 @@ export const UI = {
   ...SHOP_STRINGS,
   ...KINSHIP_STRINGS,
   ...TOOLS_STRINGS,
+  ...TOOLS_GUIDE_STRINGS,
+  ...PHONG_THUY_STRINGS,
+  ...VI_TRI_STRINGS,
+  ...XEM_NGAY_STRINGS,
+  ...SINH_CON_STRINGS,
+  ...SINH_CON_GUIDE_STRINGS,
+  ...DAT_TEN_STRINGS,
+  ...DAT_TEN_GUIDE_STRINGS,
   ...XEM_TUOI_STRINGS,
   ...XEM_TUOI_GUIDE_STRINGS,
   ...XEM_TUOI_IMPACT_STRINGS,

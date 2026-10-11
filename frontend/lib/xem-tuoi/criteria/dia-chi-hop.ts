@@ -2,7 +2,7 @@ import { UI } from "@/lib/constants/ui-strings";
 import { CHI } from "../can-chi";
 import type { Criterion } from "./types";
 
-const TAM_HOP = [
+export const TAM_HOP = [
   [8, 0, 4], // Thân Tý Thìn
   [2, 6, 10], // Dần Ngọ Tuất
   [11, 3, 7], // Hợi Mão Mùi
@@ -10,7 +10,7 @@ const TAM_HOP = [
 ];
 
 /** Lục hợp: Tý–Sửu, Dần–Hợi, Mão–Tuất, Thìn–Dậu, Tỵ–Thân, Ngọ–Mùi. */
-const LUC_HOP: Record<number, number> = {
+export const LUC_HOP: Record<number, number> = {
   0: 1,
   1: 0,
   2: 11,
@@ -35,7 +35,9 @@ export const diaChiHop: Criterion = {
   maxScore: 1,
   note: UI.XT_THAI_TUE_NOTE,
   evaluate: ({ birthChi, yearChi }) => {
-    const tamHop = birthChi !== yearChi && TAM_HOP.some((g) => g.includes(birthChi) && g.includes(yearChi));
+    const tamHop =
+      birthChi !== yearChi &&
+      TAM_HOP.some((g) => g.includes(birthChi) && g.includes(yearChi));
     const lucHop = LUC_HOP[birthChi] === yearChi;
     const kind = tamHop ? "tam-hop" : lucHop ? "luc-hop" : "khong";
     return {

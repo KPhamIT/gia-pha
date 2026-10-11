@@ -1,29 +1,32 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CRITERIA, type Gender } from "@/lib/xem-tuoi/criteria";
+import { CRITERIA } from "@/lib/xem-tuoi/criteria";
 import { analyzeBuild } from "@/lib/xem-tuoi/lam-nha";
 import { canChi } from "@/lib/xem-tuoi/can-chi";
+import { useOwnerProfile } from "@/lib/tools/owner-profile";
 import { UI } from "@/lib/constants/ui-strings";
+import OwnerFields, { toolSelectClass } from "@/components/tools/OwnerFields";
 import AnalysisCards from "./AnalysisCards";
 import BorrowAgeList from "./BorrowAgeList";
 import TenYearTable from "./TenYearTable";
 import VerdictBanner from "./VerdictBanner";
 
 const THIS_YEAR = new Date().getFullYear();
-const BIRTH_YEARS = Array.from({ length: 81 }, (_, i) => THIS_YEAR - 15 - i);
 const BUILD_YEARS = Array.from({ length: 11 }, (_, i) => THIS_YEAR + i);
-
-const selectClass =
-  "w-full rounded-xl border border-[#d4c3c1] bg-white px-3 py-2.5 text-[#321716] focus:border-[#c99236] focus:outline-none focus:ring-2 focus:ring-[#c99236]/30";
 
 /** Xem tuổi làm nhà: chọn năm sinh + năm làm, ra phân tích đầy đủ. */
 export default function BuildAgeTool() {
-  const [birthYear, setBirthYear] = useState(1985);
+  const [owner, setOwner] = useOwnerProfile();
+  const { birthYear, gender } = owner;
   const [buildYear, setBuildYear] = useState(THIS_YEAR);
-  const [gender, setGender] = useState<Gender>("male");
-  const [enabled, setEnabled] = useState<Set<string>>(() => new Set(CRITERIA.map((c) => c.key)));
-  const criteria = useMemo(() => CRITERIA.filter((c) => enabled.has(c.key)), [enabled]);
+  const [enabled, setEnabled] = useState<Set<string>>(
+    () => new Set(CRITERIA.map((c) => c.key)),
+  );
+  const criteria = useMemo(
+    () => CRITERIA.filter((c) => enabled.has(c.key)),
+    [enabled],
+  );
   const toggleCriterion = (key: string) =>
     setEnabled((prev) => {
       const next = new Set(prev);
@@ -53,25 +56,13 @@ export default function BuildAgeTool() {
   return (
     <div className="space-y-8">
       <div className="grid gap-4 rounded-2xl border border-[#e7ddd2] bg-white p-5 shadow-sm sm:grid-cols-3 md:p-6">
+        <OwnerFields owner={owner} onChange={setOwner} />
         <label className="block text-sm">
-          <span className="font-semibold text-[#321716]">{UI.XT_BIRTH_YEAR}</span>
+          <span className="font-semibold text-[#321716]">
+            {UI.XT_BUILD_YEAR}
+          </span>
           <select
-            className={`${selectClass} mt-1.5`}
-            value={birthYear}
-            onChange={(e) => setBirthYear(Number(e.target.value))}
-          >
-            {BIRTH_YEARS.map((y) => (
-              <option key={y} value={y}>
-                {y} — {canChi(y)}
-              </option>
-            ))}
-          </select>
-          <span className="mt-1.5 block text-xs text-[#827472]">{UI.XT_BIRTH_HINT}</span>
-        </label>
-        <label className="block text-sm">
-          <span className="font-semibold text-[#321716]">{UI.XT_BUILD_YEAR}</span>
-          <select
-            className={`${selectClass} mt-1.5`}
+            className={toolSelectClass}
             value={buildYear}
             onChange={(e) => setBuildYear(Number(e.target.value))}
           >
@@ -82,21 +73,12 @@ export default function BuildAgeTool() {
             ))}
           </select>
         </label>
-        <label className="block text-sm">
-          <span className="font-semibold text-[#321716]">{UI.XT_GENDER}</span>
-          <select
-            className={`${selectClass} mt-1.5`}
-            value={gender}
-            onChange={(e) => setGender(e.target.value as Gender)}
-          >
-            <option value="male">{UI.XT_GENDER_OPTIONS.male}</option>
-            <option value="female">{UI.XT_GENDER_OPTIONS.female}</option>
-          </select>
-          <span className="mt-1.5 block text-xs text-[#827472]">{UI.XT_GENDER_HINT}</span>
-        </label>
       </div>
 
-      <VerdictBanner analysis={analysis} applied={UI.XT_APPLIED(criteria.length, CRITERIA.length)} />
+      <VerdictBanner
+        analysis={analysis}
+        applied={UI.XT_APPLIED(criteria.length, CRITERIA.length)}
+      />
       <AnalysisCards
         analysis={analysis}
         enabled={enabled}
@@ -112,7 +94,11 @@ export default function BuildAgeTool() {
         selectedYear={buildYear}
         onSelect={setBuildYear}
       />
-      <BorrowAgeList buildYear={buildYear} ownerBirthYear={birthYear} criteria={criteria} />
+      <BorrowAgeList
+        buildYear={buildYear}
+        ownerBirthYear={birthYear}
+        criteria={criteria}
+      />
     </div>
   );
 }

@@ -6,7 +6,10 @@ type ToolKey = (typeof UI.TOOLS_LIST)[number]["key"];
 /** Thanh tab chuyển giữa các công cụ — mỗi tab là một trang riêng (tốt cho SEO). */
 export default function ToolTabs({ active }: { active?: ToolKey }) {
   return (
-    <nav aria-label={UI.TOOLS_NAV} className="border-b border-[#e7ddd2] bg-[#fcf9f4] px-4 md:px-10">
+    <nav
+      aria-label={UI.TOOLS_NAV}
+      className="border-b border-[#e7ddd2] bg-[#fcf9f4] px-4 md:px-10"
+    >
       <ul className="-mb-px flex gap-1 overflow-x-auto">
         {UI.TOOLS_LIST.map((tool) => {
           const current = tool.key === active;

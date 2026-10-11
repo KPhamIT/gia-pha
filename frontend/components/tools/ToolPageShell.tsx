@@ -14,7 +14,13 @@ type Props = {
 };
 
 /** Khung chung các trang công cụ: tiêu đề, tab công cụ, nội dung. */
-export default function ToolPageShell({ title, lead, breadcrumbs, active, children }: Props) {
+export default function ToolPageShell({
+  title,
+  lead,
+  breadcrumbs,
+  active,
+  children,
+}: Props) {
   return (
     <ShopPageView title={UI.TOOLS_NAV}>
       <VanKhanHero title={title} lead={lead} breadcrumbs={breadcrumbs} />
