@@ -12,6 +12,7 @@ import { useOwnerProfile } from "@/lib/tools/owner-profile";
 import { UI } from "@/lib/constants/ui-strings";
 import OwnerFields from "@/components/tools/OwnerFields";
 import FacingSelect from "./FacingSelect";
+import FengShuiObjects from "./FengShuiObjects";
 import FloorPlan from "./FloorPlan";
 import RoomAdvice from "./RoomAdvice";
 import RoomSummary from "./RoomSummary";
@@ -77,6 +78,8 @@ export default function RoomTool() {
       </section>
 
       <RoomSummary cung={cung} active={roomKey} onPick={setRoomKey} />
+
+      <FengShuiObjects cells={cells} />
     </div>
   );
 }

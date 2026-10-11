@@ -25,6 +25,7 @@ import { SINH_CON_STRINGS } from "./ui-strings/sinh-con";
 import { SINH_CON_GUIDE_STRINGS } from "./ui-strings/sinh-con-guide";
 import { TOOLS_STRINGS } from "./ui-strings/tools";
 import { TOOLS_GUIDE_STRINGS } from "./ui-strings/tools-guide";
+import { VAT_PHAM_STRINGS } from "./ui-strings/vat-pham";
 import { VI_TRI_STRINGS } from "./ui-strings/vi-tri";
 import { XEM_NGAY_STRINGS } from "./ui-strings/xem-ngay";
 import { XEM_TUOI_STRINGS } from "./ui-strings/xem-tuoi";
@@ -59,6 +60,7 @@ export const UI = {
   ...TOOLS_GUIDE_STRINGS,
   ...PHONG_THUY_STRINGS,
   ...VI_TRI_STRINGS,
+  ...VAT_PHAM_STRINGS,
   ...XEM_NGAY_STRINGS,
   ...SINH_CON_STRINGS,
   ...SINH_CON_GUIDE_STRINGS,
