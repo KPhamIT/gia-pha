@@ -53,7 +53,7 @@ export default function LandingSiteFooter() {
             { href: "/family-tree", label: UI.LANDING_NAV_CLAN },
             { href: "/bai-viet", label: UI.LANDING_FOOTER_NEWS },
             { href: "/van-khan", label: UI.PUBLIC_FOOTER_VAN_KHAN },
-            { href: "/xung-ho", label: UI.KIN_NAV },
+            { href: "/cong-cu", label: UI.TOOLS_NAV },
           ]}
         />
         <FooterLinks

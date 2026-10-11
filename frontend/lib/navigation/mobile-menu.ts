@@ -70,6 +70,7 @@ export const MOBILE_MENU_PRIMARY: readonly MobileMenuLink[] = [
 
 /** Mục hiện khi bấm Xem thêm. */
 export const MOBILE_MENU_MORE: readonly MobileMenuLink[] = [
+  { href: "/cong-cu", label: UI.TOOLS_NAV, icon: "list" },
   { href: "/dich-vu", label: UI.LANDING_NAV_SERVICES, icon: "layers" },
   { href: "/huong-dan", label: UI.PUBLIC_FOOTER_GUIDE, icon: "book" },
   { href: "/gioi-thieu", label: UI.PUBLIC_FOOTER_ABOUT, icon: "image" },

@@ -11,7 +11,7 @@ const FOOTER_LINKS = [
   { href: "/dieu-khoan-su-dung", label: UI.PUBLIC_FOOTER_TERMS },
   { href: "/book", label: UI.PUBLIC_FOOTER_BOOK },
   { href: "/dich-vu", label: UI.LANDING_NAV_SERVICES },
-  { href: "/xung-ho", label: UI.KIN_NAV },
+  { href: "/cong-cu", label: UI.TOOLS_NAV },
 ] as const;
 
 export default function PublicSiteFooter() {

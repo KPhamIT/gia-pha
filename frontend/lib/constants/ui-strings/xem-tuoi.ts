@@ -1,0 +1,127 @@
+/** Công cụ Xem tuổi làm nhà (/cong-cu/xem-tuoi-lam-nha). */
+export const XEM_TUOI_STRINGS = {
+  XT_TITLE: "Xem tuổi làm nhà — phân tích Kim Lâu, Hoang Ốc, Tam Tai",
+  XT_META_DESC:
+    "Nhập năm sinh, năm định làm nhà và giới tính để chấm điểm theo Kim Lâu, Hoang Ốc, Tam Tai, Thái Tuế, ngũ hành, thiên can, địa chi, sao chiếu mệnh, vận hạn; xem năm đẹp trong 10 năm tới và các tuổi mượn làm nhà.",
+  XT_LEAD:
+    "Chấm điểm theo 9 tiêu chí phong tục: Kim Lâu, Hoang Ốc, Tam Tai, Thái Tuế, ngũ hành nạp âm, thiên can, địa chi, sao chiếu mệnh và vận hạn — kèm bảng 10 năm tới và gợi ý mượn tuổi.",
+  XT_BIRTH_YEAR: "Năm sinh âm lịch của gia chủ",
+  XT_BIRTH_HINT: "Sinh trước Tết âm lịch (khoảng tháng 1–2 dương lịch) thì lấy năm trước.",
+  XT_BUILD_YEAR: "Năm định làm nhà",
+  XT_GENDER: "Giới tính gia chủ",
+  XT_GENDER_OPTIONS: { male: "Nam", female: "Nữ" },
+  XT_GENDER_HINT: "Dùng để tra sao chiếu mệnh và vận hạn.",
+  XT_GENDER_BASED: (gender: "male" | "female") => `Tra theo tuổi mụ và giới tính (${gender === "male" ? "nam" : "nữ"}).`,
+  XT_SECTION_THIEN_CAN: "Thiên can",
+  XT_THIEN_CAN: {
+    hop: "Can năm hợp can tuổi — thuận lợi.",
+    binh: "Can năm và can tuổi bình thường, không hợp không xung.",
+    xung: "Can năm xung can tuổi — nên cẩn trọng.",
+  },
+  XT_THIEN_CAN_LINE: (person: string, year: string) =>
+    `Can tuổi: ${person} · Can năm: ${year}. Hợp: Giáp–Kỷ, Ất–Canh, Bính–Tân, Đinh–Nhâm, Mậu–Quý. Xung: Giáp–Canh, Ất–Tân, Bính–Nhâm, Đinh–Quý.`,
+  XT_SECTION_DIA_CHI: "Địa chi hợp",
+  XT_DIA_CHI: {
+    "tam-hop": "Năm tam hợp với tuổi — được trợ lực.",
+    "luc-hop": "Năm lục hợp với tuổi — được trợ lực.",
+    khong: "Năm không tam hợp, không lục hợp với tuổi.",
+  },
+  XT_DIA_CHI_LINE: (person: string, year: string) =>
+    `Chi tuổi: ${person} · Chi năm: ${year}. Phần xung, trùng đã xét ở tiêu chí Thái Tuế.`,
+  XT_SECTION_SAO: "Sao chiếu mệnh",
+  XT_SAO: (name: string, status: "good" | "neutral" | "bad") =>
+    `Sao ${name} — ${status === "good" ? "sao tốt" : status === "bad" ? "sao xấu, nên cẩn trọng" : "sao trung bình"}.`,
+  XT_SECTION_HAN: "Vận hạn",
+  XT_HAN: (name: string, status: "good" | "neutral" | "bad") =>
+    `Hạn ${name} — ${status === "bad" ? "hạn nặng, nên cẩn trọng" : "hạn nhẹ"}.`,
+  XT_HAN_NONE: "Tuổi này chưa có trong bảng vận hạn.",
+  XT_AGE: (age: number) => `Tuổi mụ ${age}`,
+  XT_DETAIL_TITLE: "Phân tích từng tiêu chí",
+  XT_DETAIL_HINT: (on: number, total: number) =>
+    `Đang tính ${on}/${total} tiêu chí. Không muốn xét tiêu chí nào thì bấm “Bỏ tiêu chí” ở tiêu đề mục đó — điểm tự tính lại trên thang 10.`,
+  XT_REMOVE: "Bỏ tiêu chí",
+  XT_REMOVE_TITLE: (name: string) => `Không tính ${name} vào tổng điểm`,
+  XT_REMOVE_LAST: "Cần giữ ít nhất một tiêu chí",
+  XT_REMOVED: "Đã bỏ — không tính vào điểm",
+  XT_RESTORE: "Tính lại",
+  XT_RESTORE_ALL: "Tính lại tất cả",
+  XT_APPLIED: (on: number, total: number) => `Tính theo ${on}/${total} tiêu chí`,
+  XT_SCORE: (score: number, scale: number) => `${score.toLocaleString("vi-VN")} / ${scale} điểm`,
+  XT_SCORE_LABEL: "Tổng điểm",
+  XT_VERDICT: {
+    dat: "Hợp tuổi làm nhà",
+    "chua-dat": "Chưa hợp tuổi làm nhà",
+  },
+  XT_VERDICT_BODY: {
+    dat: "Đạt từ 5 điểm trở lên — năm này gia chủ có thể đứng tên làm nhà. Nếu vẫn phạm hạn nào bên dưới, nên chọn ngày giờ kỹ hoặc làm lễ giải hạn.",
+    "chua-dat": "Dưới 5 điểm — theo phong tục nên mượn tuổi người hợp đứng ra làm lễ động thổ, hoặc dời sang năm có điểm cao hơn.",
+  },
+  XT_FAILED: (names: string) => `Phạm: ${names}`,
+  XT_NONE_FAILED: "Không phạm tiêu chí nào.",
+  XT_STATUS: { good: "Tốt", neutral: "Trung bình", bad: "Phạm" },
+  XT_POINTS: (score: number, max: number) => `${score.toLocaleString("vi-VN")}/${max} điểm`,
+  XT_SECTION_KIM_LAU: "Kim Lâu",
+  XT_KIM_LAU: {
+    khong: "Không phạm Kim Lâu.",
+    than: "Phạm Kim Lâu Thân — dân gian cho rằng ảnh hưởng đến bản thân gia chủ.",
+    the: "Phạm Kim Lâu Thê — dân gian cho rằng ảnh hưởng đến vợ.",
+    tu: "Phạm Kim Lâu Tử — dân gian cho rằng ảnh hưởng đến con cái.",
+    "luc-suc": "Phạm Kim Lâu Lục Súc — dân gian cho rằng ảnh hưởng đến vật nuôi, làm ăn.",
+  },
+  XT_KIM_LAU_HOW: (age: number) => `Tuổi mụ ${age} chia 9 dư ${age % 9}. Dư 1, 3, 6, 8 là phạm.`,
+  XT_SECTION_HOANG_OC: "Hoang Ốc",
+  XT_HOANG_OC_MEANING: [
+    "Mọi việc hanh thông, nhà cửa yên ổn.",
+    "Thuận lợi, làm ăn khấm khá.",
+    "Dễ gặp ốm đau, bệnh tật.",
+    "Tài lộc tăng tiến, gia đạo hưng vượng.",
+    "Dễ có chuyện buồn, ly tán.",
+    "Việc khó thành, nhà dễ hoang vắng.",
+  ],
+  XT_HOANG_OC_HOW:
+    "10 tuổi ở Nhất Cát, mỗi chục tuổi tiến một cung; tuổi lẻ đếm tiếp từ cung của hàng chục. Ba cung xấu: Tam Địa Sát, Ngũ Thọ Tử, Lục Hoang Ốc.",
+  XT_HOANG_OC_YOUNG: "Dưới 10 tuổi không xét Hoang Ốc.",
+  XT_SECTION_TAM_TAI: "Tam Tai",
+  XT_TAM_TAI_YES: (year: string) => `Năm ${year} là năm Tam Tai của tuổi này — dân gian kiêng khởi công việc lớn.`,
+  XT_TAM_TAI_NO: "Không phải năm Tam Tai.",
+  XT_TAM_TAI_HOW: (years: string) => `Tuổi này gặp Tam Tai vào các năm ${years} (ba năm liên tiếp, 12 năm lặp lại).`,
+  XT_SECTION_THAI_TUE: "Thái Tuế",
+  XT_THAI_TUE: {
+    khong: "Không trùng, không xung Thái Tuế.",
+    trung: "Năm tuổi (trùng Thái Tuế) — nhiều nơi kiêng làm việc lớn, nên cẩn trọng.",
+    xung: "Xung Thái Tuế — năm đối xung với tuổi, nên chọn ngày giờ kỹ hoặc mượn tuổi.",
+  },
+  XT_THAI_TUE_NOTE: "Tiêu chí phụ — trọng số thấp, tham khảo thêm.",
+  XT_SECTION_NGU_HANH: "Ngũ hành nạp âm",
+  XT_NGU_HANH_LINE: (person: string, year: string) => `Mệnh tuổi: ${person} · Mệnh năm: ${year}`,
+  XT_NGU_HANH: {
+    "nam-sinh-menh": "Năm sinh mệnh — rất tốt, được trợ lực.",
+    "binh-hoa": "Cùng hành — bình hòa, ổn định.",
+    "menh-sinh-nam": "Mệnh sinh năm — hao tổn công sức nhưng chấp nhận được.",
+    "menh-khac-nam": "Mệnh khắc năm — vất vả hơn nhưng làm chủ được.",
+    "nam-khac-menh": "Năm khắc mệnh — không thuận, nên cân nhắc.",
+  },
+  XT_TABLE_TITLE: "10 năm tới của tuổi này",
+  XT_TABLE_YEAR: "Năm",
+  XT_TABLE_AGE: "Tuổi mụ",
+  XT_TABLE_SCORE: "Điểm",
+  XT_BORROW_TITLE: (year: number, canChi: string) => `Tuổi đẹp làm nhà năm ${year} (${canChi}) — để mượn tuổi`,
+  XT_BORROW_BODY:
+    "Các tuổi dưới đây (xét theo nam giới) không phạm tiêu chí nào trong năm này và không tứ hành xung với tuổi gia chủ. Khi gia chủ bị phạm, có thể nhờ người thân hoặc người quen hợp tuổi đứng ra làm lễ động thổ thay.",
+  XT_BORROW_NONE: "Năm này không có tuổi nào trong khoảng 20–75 tuổi đạt tất cả tiêu chí.",
+  XT_RELATED_TITLE: "Văn khấn khi làm nhà",
+  XT_RELATED: [
+    { href: "/van-khan/bai-cung-van-khan-le-dong-tho", label: "Văn khấn lễ động thổ" },
+    { href: "/van-khan/bai-cung-le-tan-gia", label: "Văn khấn lễ tân gia" },
+    {
+      href: "/van-khan/bai-cung-le-nhap-trach-le-don-vao-nha-moi-co-the-la-nha-tu-xay-cat-hoacngoi-nha",
+      label: "Văn khấn lễ nhập trạch",
+    },
+  ],
+  XT_DISCLAIMER:
+    "Kết quả tính theo các phép xem tuổi phổ biến trong dân gian, chỉ để tham khảo. Mỗi vùng, mỗi thầy có thể xem khác nhau.",
+  XT_SCORING_TITLE: "Cách chấm điểm",
+  XT_SCORING_BODY: (scale: number, pass: number) =>
+    `Mỗi tiêu chí có điểm tối đa riêng. Tổng điểm đạt được quy về thang ${scale}: từ ${pass} điểm trở lên là hợp tuổi làm nhà, dưới ${pass} điểm nên mượn tuổi hoặc chọn năm khác.`,
+  XT_MAX_POINTS: (n: number) => `tối đa ${n}`,
+} as const;

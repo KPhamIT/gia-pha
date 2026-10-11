@@ -43,6 +43,11 @@ const DESKTOP_NAV = [
     match: (p: string) => p.startsWith("/bai-viet"),
   },
   {
+    href: "/cong-cu",
+    label: UI.TOOLS_NAV,
+    match: (p: string) => p.startsWith("/cong-cu"),
+  },
+  {
     href: "/dich-vu",
     label: UI.LANDING_NAV_SERVICES,
     match: (p: string) => p.startsWith("/dich-vu"),

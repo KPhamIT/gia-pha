@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import KinshipCalculator from "@/components/kinship/KinshipCalculator";
 import SeoSchemas from "@/components/seo/SeoSchemas";
-import ShopPageView from "@/components/shop/ShopPageView";
-import VanKhanHero from "@/components/van-khan/VanKhanHero";
+import ToolPageShell from "@/components/tools/ToolPageShell";
 import { UI } from "@/lib/constants/ui-strings";
 import { breadcrumbsFromPath } from "@/lib/schema/breadcrumb";
 import { createMetadata } from "@/lib/seo";
 
-const PATH = "/xung-ho";
+const PATH = "/cong-cu/xung-ho";
 
 export const metadata: Metadata = createMetadata({
   title: UI.KIN_TITLE,
@@ -28,7 +27,12 @@ export default function KinshipPage() {
   const faq = UI.KIN_FAQ.map((item) => ({ ...item }));
 
   return (
-    <ShopPageView title={UI.KIN_NAV}>
+    <ToolPageShell
+      title={UI.KIN_TITLE}
+      lead={UI.KIN_LEAD}
+      breadcrumbs={breadcrumbs}
+      active="xung-ho"
+    >
       <SeoSchemas
         path={PATH}
         title={UI.KIN_TITLE}
@@ -36,9 +40,6 @@ export default function KinshipPage() {
         breadcrumbs={breadcrumbs}
         faq={faq}
       />
-      <VanKhanHero title={UI.KIN_TITLE} lead={UI.KIN_LEAD} breadcrumbs={breadcrumbs} />
-
-      <div className="bg-[#fcf9f4] px-4 py-8 md:px-10 md:py-12">
         <div className="mx-auto max-w-3xl">
           <KinshipCalculator />
 
@@ -77,7 +78,6 @@ export default function KinshipPage() {
             </Link>
           </section>
         </div>
-      </div>
-    </ShopPageView>
+    </ToolPageShell>
   );
 }

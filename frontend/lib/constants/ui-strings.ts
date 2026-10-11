@@ -18,6 +18,10 @@ import { VAN_KHAN_STRINGS } from "./ui-strings/van-khan";
 import { EXCEL_STRINGS } from "./ui-strings/excel";
 import { SHOP_STRINGS } from "./ui-strings/shop";
 import { KINSHIP_STRINGS } from "./ui-strings/kinship";
+import { TOOLS_STRINGS } from "./ui-strings/tools";
+import { XEM_TUOI_STRINGS } from "./ui-strings/xem-tuoi";
+import { XEM_TUOI_GUIDE_STRINGS } from "./ui-strings/xem-tuoi-guide";
+import { XEM_TUOI_IMPACT_STRINGS } from "./ui-strings/xem-tuoi-impact";
 
 /**
  * App-wide Vietnamese UI strings, merged from per-domain modules under
@@ -43,6 +47,10 @@ export const UI = {
   ...EXCEL_STRINGS,
   ...SHOP_STRINGS,
   ...KINSHIP_STRINGS,
+  ...TOOLS_STRINGS,
+  ...XEM_TUOI_STRINGS,
+  ...XEM_TUOI_GUIDE_STRINGS,
+  ...XEM_TUOI_IMPACT_STRINGS,
 } as const;
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {

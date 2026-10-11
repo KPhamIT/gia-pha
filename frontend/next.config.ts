@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
       })),
       // Trang bán sách đã gộp vào trang Dịch vụ.
       { source: "/sach", destination: "/dich-vu", permanent: true },
+      // Công cụ xưng hô chuyển vào trang Công cụ.
+      { source: "/xung-ho", destination: "/cong-cu/xung-ho", permanent: true },
     ];
   },
 };
