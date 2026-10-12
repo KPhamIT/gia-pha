@@ -14,12 +14,12 @@ const FRAME_ID = "ceremony-print-frame";
  * `@page` không có lề để nền tràn sát mép giấy; lề chữ là padding của body,
  * lặp lại trên mỗi trang nhờ `box-decoration-break: clone`.
  */
-const MARGIN_TOP_MM = 20;
-const MARGIN_BOTTOM_MM = 25;
-const MARGIN_LEFT_MM = 25;
-const MARGIN_RIGHT_MM = 20;
+export const MARGIN_TOP_MM = 20;
+export const MARGIN_BOTTOM_MM = 25;
+export const MARGIN_LEFT_MM = 25;
+export const MARGIN_RIGHT_MM = 20;
 
-const GOLD = "#b8893b";
+export const GOLD = "#b8893b";
 
 function printBackgroundUrl(): string {
   const { url } = getPageBackground(DEFAULT_PAGE_BACKGROUND_ID);

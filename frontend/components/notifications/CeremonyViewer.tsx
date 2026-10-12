@@ -8,6 +8,8 @@ import { BT } from "@/lib/constants/ui-theme";
 import IconRoundButton from "@/components/ui/IconRoundButton";
 import CeremonyHeritageActionBar from "@/components/ceremonies/CeremonyHeritageActionBar";
 import CeremonyFontSizeControls from "@/components/ceremonies/CeremonyFontSizeControls";
+import CeremonyA4Pages from "@/components/ceremonies/CeremonyA4Pages";
+import { useA4PageView } from "@/components/ceremonies/useA4PageView";
 import ShareCeremonyActions from "@/components/ceremonies/ShareCeremonyActions";
 import { HERITAGE_LAYOUT } from "@/lib/constants/heritage-theme";
 import { applyCeremonyFontScale } from "@/lib/ceremony/apply-ceremony-font-scale";
@@ -59,6 +61,8 @@ export default function CeremonyViewer({
   const hasPerson = personId != null || shareToken != null;
   const fontSize = useCeremonyFontSize();
   const isHeritage = variant === "heritage";
+  // Heritage trên màn hình rộng: các tờ A4 giống hệt bản in.
+  const paged = useA4PageView() && isHeritage;
   const { scrollRef, visible: barVisible, handleScroll } =
     useScrollIdleReveal();
 
@@ -158,10 +162,21 @@ export default function CeremonyViewer({
         <article
           ref={scrollRef}
           onScroll={handleScroll}
-          className={HERITAGE_LAYOUT.scrollBody}
+          className={paged ? HERITAGE_LAYOUT.pagedScrollBody : HERITAGE_LAYOUT.scrollBody}
           data-purpose="prayer-body"
         >
-          <div className={HERITAGE_LAYOUT.prayerContent}>{iframeEl}</div>
+          {/* Dạng tờ A4: bản gốc ẩn đi nhưng vẫn dùng để in (giữ nguyên vị trí để không tải lại). */}
+          <div
+            aria-hidden={paged || undefined}
+            className={
+              paged
+                ? "pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+                : HERITAGE_LAYOUT.prayerContent
+            }
+          >
+            {iframeEl}
+          </div>
+          {paged ? <CeremonyA4Pages html={html} fontScale={fontSize.scale} /> : null}
         </article>
         <div className={HERITAGE_LAYOUT.floatingBar}>
           <div

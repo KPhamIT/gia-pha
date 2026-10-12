@@ -13,6 +13,7 @@ import type { EditTarget } from "./ceremony-template-shared";
 import { useTemplateEditor } from "./useTemplateEditor";
 import VariablePicker from "./VariablePicker";
 import CeremonyHeritageShell from "./CeremonyHeritageShell";
+import A4PaperEditor from "./A4PaperEditor";
 
 type EditorTab = "edit" | "preview";
 
@@ -78,6 +79,11 @@ export default function TemplateEditorSheet({
     : UI.CEREMONY_TEMPLATE_CREATE;
 
   const showVariables = variables.length > 0;
+  // Cùng quy tắc với backend `resolveCeremonyPrintTitle`.
+  const printTitle =
+    form.printTitle.trim() ||
+    form.name.replace(/\s*\([^)]*\)?\s*$/, "").trim() ||
+    null;
 
   const handleInsertVariable = (key: string) => {
     insertVariable(key);
@@ -149,14 +155,14 @@ export default function TemplateEditorSheet({
       {tab === "edit" ? (
         <div className={HERITAGE_LAYOUT.editorBody}>
           <div className={HERITAGE_LAYOUT.editorMain}>
-            <textarea
-              ref={contentRef}
-              className={`${HERITAGE_LAYOUT.editorTextarea}${showVariables ? " pb-14 lg:pb-3" : ""}`}
+            <A4PaperEditor
+              textareaRef={contentRef}
               value={form.content}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, content: e.target.value }))
+              onChange={(content) =>
+                setForm((prev) => ({ ...prev, content }))
               }
-              spellCheck={false}
+              title={printTitle}
+              bottomInset={showVariables}
             />
             {unknownCount > 0 ? (
               <p className="mt-2 flex shrink-0 items-center gap-1.5 text-xs text-red-600">

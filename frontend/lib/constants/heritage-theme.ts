@@ -22,6 +22,9 @@ export const HERITAGE_LAYOUT = {
   contextBar: "shrink-0 border-b border-stone-200 bg-stone-100 px-6 py-2 md:px-8",
   scrollBody:
     "min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-8 pb-36 md:px-10 md:py-10 lg:px-16",
+  /** Xem trước dạng tờ A4: nền xám quanh giấy. */
+  pagedScrollBody:
+    "min-h-0 flex-1 overflow-y-auto overscroll-contain bg-stone-300/60 py-6 pb-36",
   viewerRoot:
     "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden",
   prayerContent:
