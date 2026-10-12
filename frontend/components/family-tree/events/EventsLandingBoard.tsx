@@ -58,7 +58,6 @@ export default function EventsLandingBoard({
   const allEventsRef = useRef<HTMLDivElement>(null);
   const featuredSectionRef = useRef<HTMLDivElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showAllEvents, setShowAllEvents] = useState(false);
   const [focusEventId, setFocusEventId] = useState<number | null>(null);
   const { ceremonies, isLoggedIn } = useUpcomingCeremonies();
 
@@ -117,10 +116,7 @@ export default function EventsLandingBoard({
   );
 
   const scrollToAllEvents = () => {
-    setShowAllEvents(true);
-    requestAnimationFrame(() => {
-      allEventsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    allEventsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const focusEvent = (event: FamilyEvent) => {
@@ -248,6 +244,27 @@ export default function EventsLandingBoard({
                 </div>
               )}
             </section>
+
+            {/* Toàn bộ sự kiện hiện luôn, lấp cột trái cạnh thanh bên. */}
+            <section ref={allEventsRef} className="scroll-mt-24 space-y-4">
+              <h2 className="font-serif text-xl font-semibold text-[#321716] md:text-2xl">
+                {UI.EVENTS_PAGE_TITLE}
+              </h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {events.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    canEdit={canEdit}
+                    variant="landing"
+                    onEdit={() => onEdit(event)}
+                    onDelete={() => onDelete(event)}
+                    onViewContribution={() => onViewContribution(event)}
+                    onViewDonation={() => onViewDonation(event)}
+                  />
+                ))}
+              </div>
+            </section>
           </div>
 
           <aside className="space-y-6 lg:col-span-4">
@@ -278,27 +295,7 @@ export default function EventsLandingBoard({
         </div>
       )}
 
-      {showAllEvents && events.length > 0 ? (
-        <section ref={allEventsRef} className="mt-10">
-          <h2 className="mb-4 font-serif text-2xl font-semibold text-[#321716]">
-            {UI.EVENTS_PAGE_TITLE}
-          </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                canEdit={canEdit}
-                variant="landing"
-                onEdit={() => onEdit(event)}
-                onDelete={() => onDelete(event)}
-                onViewContribution={() => onViewContribution(event)}
-                onViewDonation={() => onViewDonation(event)}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
+
     </div>
   );
 }
