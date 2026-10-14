@@ -7,3 +7,6 @@ build/
 
 # Tài liệu / secrets chỉ dùng máy local (không push)
 docs/private/
+
+# Video quảng cáo (Remotion) — chỉ dùng local
+make-video/

@@ -9,6 +9,7 @@ import { generateBreadcrumbSchema } from "./breadcrumb";
 import { generateCollectionSchema } from "./collection";
 import { generateContactPageSchema } from "./contact";
 import { generateHowToSchema } from "./howto";
+import { generateVideoSchema } from "./video";
 
 export type SchemaType =
   | "organization"
@@ -114,6 +115,7 @@ export {
   generateCollectionSchema,
   generateContactPageSchema,
   generateHowToSchema,
+  generateVideoSchema,
 };
 
 export { breadcrumbsFromPath } from "./breadcrumb";

@@ -79,6 +79,12 @@ export const PUBLIC_STRINGS = {
     "Đăng ký tên dòng họ — bạn trở thành quản trị viên và chia sẻ liên kết cho con cháu.",
   ],
   LANDING_START_NEW_ORG_CTA: "Đăng ký dòng họ mới",
+  LANDING_VIDEO_EYEBROW: "Video hướng dẫn · 1 phút 42 giây",
+  LANDING_VIDEO_TITLE: "Tạo gia phả từ file Excel",
+  LANDING_VIDEO_DESC:
+    "Có sẵn danh sách người trong họ? Điền vào file Excel mẫu, tải lên một lần — Cội Nguồn dựng cả cây gia phả cho bạn.",
+  LANDING_VIDEO_STEPS: ["Tạo dòng họ", "Tải file Excel mẫu", "Điền thông tin theo mẫu", "Tải lên & xem cây gia phả"],
+  LANDING_VIDEO_PLAY: "Phát video",
   LANDING_FEATURES_TITLE: "Chức năng chính ✨",
   LANDING_FEATURE_BOOK_TITLE: "Sổ gia phả",
   LANDING_FEATURE_BOOK_DESC:

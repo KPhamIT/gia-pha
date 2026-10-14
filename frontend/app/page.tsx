@@ -7,6 +7,7 @@ import LandingHeroSection from "@/components/public/landing/LandingHeroSection";
 import LandingTodayCarousel from "@/components/public/landing/LandingTodayCarousel";
 import LandingStartSection from "@/components/public/landing/LandingStartSection";
 import LandingStatsSection from "@/components/public/landing/LandingStatsSection";
+import LandingVideoGuideSection from "@/components/public/landing/LandingVideoGuideSection";
 import SeoSchemas from "@/components/seo/SeoSchemas";
 import { SITE } from "@/config/site";
 import { createMetadata } from "@/lib/seo";
@@ -50,6 +51,7 @@ export default function LandingPage() {
             registerHref={REGISTER_START.href}
             registerCta={REGISTER_START.cta}
           />
+          <LandingVideoGuideSection />
           <LandingBentoSection />
           <LandingBottomSection />
         </main>
