@@ -15,14 +15,22 @@ const STATUS_TONE: Record<CheckStatus, string> = {
   bad: "bg-red-100 text-red-800",
 };
 
-/** Chi tiết một ngày: âm lịch, can chi, kết luận, từng tiêu chí và giờ hoàng đạo. */
+/**
+ * Chi tiết một ngày: âm lịch, can chi, kết luận, từng tiêu chí và giờ hoàng đạo.
+ * `avoidChi`: chi tuổi cần tránh — bỏ giờ hoàng đạo xung với các tuổi này.
+ */
 export default function DayDetail({
   evaluation,
+  avoidChi = [],
 }: {
   evaluation: DayEvaluation;
+  avoidChi?: readonly number[];
 }) {
   const { info, outcomes, verdict } = evaluation;
-  const goodHours = hoursOfDay(info.dayChi).filter((h) => h.than.good);
+  const goodHours = hoursOfDay(info.dayChi).filter(
+    (h, i) =>
+      h.than.good && !avoidChi.some((chi) => (i - chi + 12) % 12 === 6),
+  );
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">

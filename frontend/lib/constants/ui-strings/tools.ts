@@ -3,7 +3,7 @@ export const TOOLS_STRINGS = {
   TOOLS_NAV: "Công cụ",
   TOOLS_TITLE: "Công cụ gia phả & phong tục",
   TOOLS_META_DESC:
-    "Công cụ miễn phí cho gia đình và dòng họ: xưng hô họ hàng, xem hướng nhà hợp tuổi, xem tuổi làm nhà, xem ngày giờ tốt, bố trí bếp, phòng ngủ, nhà vệ sinh, xem tuổi sinh con, đặt tên con.",
+    "Công cụ miễn phí cho gia đình và dòng họ: xưng hô họ hàng, xem hướng nhà hợp tuổi, xem tuổi làm nhà, xem ngày giờ tốt, xem ngày cưới hỏi, bố trí bếp, phòng ngủ, nhà vệ sinh, xem màu sơn nhà, màu gạch, xem tuổi sinh con, đặt tên con.",
   TOOLS_LEAD:
     "Những công cụ nhỏ giúp việc nhà, việc họ: gọi đúng vai vế người thân, chọn hướng nhà, năm làm nhà, ngày giờ tốt và cách bố trí phòng hợp tuổi.",
   /** Năm sinh + giới tính nhập ở tab nào cũng được nhớ cho các tab khác. */
@@ -36,10 +36,22 @@ export const TOOLS_STRINGS = {
       body: "Lịch âm Việt Nam tô màu ngày tốt xấu theo hoàng đạo, 12 trực, ngày kỵ, xung tuổi; kèm giờ hoàng đạo từng ngày.",
     },
     {
+      key: "xem-ngay-cuoi",
+      href: "/cong-cu/xem-ngay-cuoi",
+      title: "Xem ngày cưới hỏi",
+      body: "Lấy tuổi cô dâu làm gốc: Kim Lâu, tháng đại lợi, Chu đường; tránh Sát chủ, Thụ tử, Tam Nương, ngày xung tuổi hai bạn; kèm giờ đón dâu.",
+    },
+    {
       key: "xem-vi-tri-phong",
       href: "/cong-cu/xem-vi-tri-phong",
       title: "Xem vị trí phòng",
       body: "Sơ đồ mặt bằng 9 ô chỉ góc nên đặt bếp, phòng ngủ, nhà vệ sinh, bàn thờ, phòng làm việc theo tuổi gia chủ.",
+    },
+    {
+      key: "xem-mau-son-nha",
+      href: "/cong-cu/xem-mau-son-nha",
+      title: "Xem màu sơn, màu gạch",
+      body: "Màu sơn nhà, gạch lát nền, gạch ốp bếp và nhà vệ sinh hợp mệnh theo ngũ hành: màu tương sinh, bản mệnh, màu nên tránh; gợi ý màu mặt tiền theo hướng nhà.",
     },
     {
       key: "xem-tuoi-sinh-con",

@@ -10,12 +10,16 @@ const TAM_TAI: { group: number[]; years: number[] }[] = [
   { group: [5, 9, 1], years: [11, 0, 1] }, // Tỵ Dậu Sửu → Hợi Tý Sửu
 ];
 
+/** Ba chi năm Tam Tai của một tuổi. */
+export const tamTaiYears = (birthChi: number) =>
+  TAM_TAI.find((t) => t.group.includes(birthChi))!.years;
+
 export const tamTai: Criterion = {
   key: "tam-tai",
   label: UI.XT_SECTION_TAM_TAI,
   maxScore: 2,
   evaluate: ({ birthChi, yearChi, yearCanChi }) => {
-    const years = TAM_TAI.find((t) => t.group.includes(birthChi))!.years;
+    const years = tamTaiYears(birthChi);
     const bad = years.includes(yearChi);
     return {
       status: bad ? "bad" : "good",

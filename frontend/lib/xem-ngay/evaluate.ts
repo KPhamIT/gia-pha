@@ -46,13 +46,21 @@ export type DayEvaluation = {
   verdict: DayVerdict;
 };
 
-type Outcome = { check: DayCheck; result: CheckResult };
+/** Kết quả một tiêu chí — chỉ cần nhãn và loại, để công cụ khác (xem ngày cưới) dùng lại. */
+export type Outcome = {
+  check: Pick<DayCheck, "key" | "label" | "kind">;
+  result: CheckResult;
+};
 
-/** Gộp kết quả: phạm tiêu chí lọc → xấu; còn lại cộng điểm các tiêu chí chấm. */
-function verdictOf(outcomes: Outcome[]): DayVerdict {
+/**
+ * Gộp kết quả: phạm tiêu chí lọc (hoặc kết quả `severe`) → xấu; còn lại cộng điểm
+ * các tiêu chí chấm, đạt `goodMin` điểm là ngày tốt.
+ */
+export function verdictOf(outcomes: Outcome[], goodMin = 2): DayVerdict {
   if (
     outcomes.some(
-      ({ check, result }) => check.kind === "filter" && result.status === "bad",
+      ({ check, result }) =>
+        result.status === "bad" && (check.kind === "filter" || result.severe),
     )
   )
     return "xau";
@@ -63,8 +71,8 @@ function verdictOf(outcomes: Outcome[]): DayVerdict {
         s + (result.status === "good" ? 1 : result.status === "bad" ? -1 : 0),
       0,
     );
-  if (score >= 2) return "tot";
-  if (score === 1) return "kha";
+  if (score >= goodMin) return "tot";
+  if (score >= 1) return "kha";
   return score === 0 ? "binh" : "xau";
 }
 

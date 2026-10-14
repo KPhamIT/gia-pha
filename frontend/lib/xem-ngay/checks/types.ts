@@ -27,6 +27,8 @@ export type CheckStatus = "good" | "neutral" | "bad";
 export type CheckResult = {
   status: CheckStatus;
   summary: string;
+  /** Phạm nặng: loại ngày dù tiêu chí thuộc loại chấm điểm. */
+  severe?: boolean;
 };
 
 export type DayCheck = {
