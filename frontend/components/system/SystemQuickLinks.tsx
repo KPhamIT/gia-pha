@@ -22,6 +22,11 @@ export default function SystemQuickLinks() {
           icon="list"
           label={UI.BILLING_ADMIN_OPEN}
         />
+        <MenuRow
+          href="/system/in-sach"
+          icon="print"
+          label={UI.PRINT_BOOKS_OPEN}
+        />
       </div>
     </section>
   );

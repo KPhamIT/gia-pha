@@ -138,7 +138,7 @@ export function ShowcaseCaption({ item, side, texts, onFlip }: CaptionProps) {
           </button>
         </div>
       ) : null}
-      <BuyButton productRef={item.orderRef} label={texts.order} />
+      {item.orderRef ? <BuyButton productRef={item.orderRef} label={texts.order} /> : null}
       <p className={styles.hint}>
         <span className="hidden md:inline">{texts.hint}</span>
         <span className="md:hidden">{texts.hintTouch}</span>

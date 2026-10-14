@@ -1,0 +1,65 @@
+/* Công cụ in sách (/system/in-sach). Mỗi lần in chỉ gắn một khối [data-print-root] vào <body>. */
+
+.offscreen {
+  position: fixed;
+  left: -300vw;
+  top: 0;
+  pointer-events: none;
+}
+
+.coverPrintRoot {
+  /* chỉ hiện khi in */
+}
+
+.a4Preview {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 10px 24px rgb(50 23 22 / 0.18);
+  background: #fffef9;
+}
+
+.a4PreviewInner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 210mm;
+  height: 297mm;
+  transform-origin: top left;
+  /* Ô xem trước nằm trong <button> (căn giữa chữ) — giữ căn trái như trang thật. */
+  text-align: left;
+}
+
+@media print {
+  :global(html),
+  :global(body) {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  :global(body > *:not([data-print-root="true"])) {
+    display: none !important;
+  }
+
+  .coverPrintRoot {
+    position: static !important;
+    left: auto !important;
+  }
+
+  .coverPrintRoot,
+  .coverPrintRoot * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .coverPrintPage {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .coverPrintPage:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

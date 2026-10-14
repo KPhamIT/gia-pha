@@ -39,6 +39,22 @@ export type CeremonyTemplateVariable = {
   label: string;
 };
 
+/** Bài khấn trong công cụ in sách (SYSTEM) — kèm người tạo, không có nội dung. */
+export type PrintBookTemplate = {
+  id: number;
+  name: string;
+  printTitle: string | null;
+  title: string;
+  isSystemTemplate: boolean;
+  /** Đủ nội dung để in (không phải mẫu "coming soon"). */
+  publishable: boolean;
+  updatedAt: string;
+  organization: { id: number; name: string } | null;
+  createdBy: { id: number; username: string | null; email: string | null } | null;
+};
+
+export type PrintBookPage = { id: number; title: string; html: string };
+
 export type CreateCeremonyTemplateInput = {
   name: string;
   printTitle?: string;
@@ -113,6 +129,18 @@ export const ceremonies = {
   setDefaultTemplate: (id: number) =>
     axiosClient
       .patch<CeremonyTemplate>(API_ROUTES.CEREMONY_TEMPLATE_DEFAULT(id))
+      .then((r) => r.data),
+
+  /** SYSTEM: mọi bài khấn để chọn vào sách in. */
+  listPrintBookTemplates: () =>
+    axiosClient
+      .get<PrintBookTemplate[]>(API_ROUTES.CEREMONY_ADMIN_TEMPLATES)
+      .then((r) => r.data),
+
+  /** SYSTEM: HTML từng bài theo thứ tự, đã điền tên dòng họ, chỗ trống để dòng chấm. */
+  renderPrintBook: (ids: number[], clanName: string) =>
+    axiosClient
+      .post<PrintBookPage[]>(API_ROUTES.CEREMONY_ADMIN_PRINT_BOOK, { ids, clanName })
       .then((r) => r.data),
 
   deleteTemplate: (id: number) =>

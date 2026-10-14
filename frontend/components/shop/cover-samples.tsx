@@ -37,42 +37,61 @@ export const A4_RATIO = 297 / 210;
 /** Sổ gia phả hay sách văn khấn — cùng mẫu bìa, chỉ khác chữ. */
 export type CoverVariant = "giaPha" | "vanKhan";
 
-const GIA_PHA_FRONT: CoverFrontContent = {
-  ...defaultFrontContent(null),
-  title: UI.SHOP_COVER_SAMPLE_TITLE,
-  subtitle: UI.SHOP_COVER_SAMPLE_CLAN,
-  establishedYear: UI.SHOP_COVER_SAMPLE_YEAR,
-  clanAddress: UI.SHOP_COVER_SAMPLE_ADDRESS,
+/** Thông tin dòng họ in lên bìa. */
+export type CoverClanInfo = {
+  clanName: string;
+  establishedYear?: string;
+  clanAddress?: string;
 };
 
-const GIA_PHA_BACK: CoverBackContent = {
-  ...defaultBackContent(null),
-  title: UI.SHOP_COVER_SAMPLE_TITLE,
-  footer: formatCoverSubtitle(UI.SHOP_COVER_SAMPLE_CLAN),
-};
+export type CoverContent = { front: CoverFrontContent; back: CoverBackContent };
 
 /** Văn khấn: chữ Hán 祭 文 (tế văn) thay cho 家 譜 (gia phả). */
 const VAN_KHAN_BADGE = "祭 文";
 const VAN_KHAN_SEAL = "祭";
 
-const CONTENT: Record<CoverVariant, { front: CoverFrontContent; back: CoverBackContent }> = {
-  giaPha: { front: GIA_PHA_FRONT, back: GIA_PHA_BACK },
-  vanKhan: {
+/** Nội dung hai mặt bìa cho một dòng họ (dùng cho trang bán sách và công cụ in sách). */
+export function buildCoverContent(variant: CoverVariant, info: CoverClanInfo): CoverContent {
+  const front: CoverFrontContent = {
+    ...defaultFrontContent(null),
+    title: UI.SHOP_COVER_SAMPLE_TITLE,
+    subtitle: info.clanName,
+    establishedYear: info.establishedYear ?? "",
+    clanAddress: info.clanAddress ?? "",
+  };
+  const back: CoverBackContent = {
+    ...defaultBackContent(null),
+    title: UI.SHOP_COVER_SAMPLE_TITLE,
+    footer: formatCoverSubtitle(info.clanName),
+  };
+  if (variant === "giaPha") return { front, back };
+  return {
     front: {
-      ...GIA_PHA_FRONT,
+      ...front,
       title: UI.SHOP_PRAYER_COVER_TITLE,
       lineage: UI.SHOP_PRAYER_COVER_LINEAGE,
       badge: VAN_KHAN_BADGE,
       sealChar: VAN_KHAN_SEAL,
     },
     back: {
-      ...GIA_PHA_BACK,
+      ...back,
       title: UI.SHOP_PRAYER_COVER_TITLE,
       body: UI.SHOP_PRAYER_COVER_BACK_BODY,
       badge: VAN_KHAN_BADGE,
       sealChar: VAN_KHAN_SEAL,
     },
-  },
+  };
+}
+
+const SAMPLE_CLAN: CoverClanInfo = {
+  clanName: UI.SHOP_COVER_SAMPLE_CLAN,
+  establishedYear: UI.SHOP_COVER_SAMPLE_YEAR,
+  clanAddress: UI.SHOP_COVER_SAMPLE_ADDRESS,
+};
+
+const CONTENT: Record<CoverVariant, CoverContent> = {
+  giaPha: buildCoverContent("giaPha", SAMPLE_CLAN),
+  vanKhan: buildCoverContent("vanKhan", SAMPLE_CLAN),
 };
 
 export function coverLabel({ styleId, paletteId }: CoverSample): string {
@@ -90,6 +109,8 @@ type ScaledCoverProps = CoverSample & {
   side?: "front" | "back";
   variant?: CoverVariant;
   fontFamily: string;
+  /** Nội dung riêng (vd. tên dòng họ của khách); mặc định dùng nội dung mẫu. */
+  content?: CoverContent;
 };
 
 /** Một mặt bìa A4 thật (component Cover Studio) thu nhỏ về `width` px. */
@@ -100,8 +121,9 @@ export function ScaledCover({
   side = "front",
   variant = "giaPha",
   fontFamily,
+  content: customContent,
 }: ScaledCoverProps) {
-  const content = CONTENT[variant];
+  const content = customContent ?? CONTENT[variant];
   return (
     <div style={{ width, height: width * A4_RATIO, overflow: "hidden" }}>
       <div style={{ transform: `scale(${width / A4_WIDTH_PX})`, transformOrigin: "top left" }}>

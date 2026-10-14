@@ -9,6 +9,11 @@ import styles from "./GenealogyBook.module.css";
 
 type Update = (field: keyof BookPageDraft, value: string) => void;
 
+/** Ô Nhánh / Đời chưa có giá trị: chừa một đoạn kẻ chấm để viết tay khi in. */
+function BlankInline() {
+  return <span className="inline-block w-[22mm] border-b border-dotted border-current opacity-60" aria-hidden />;
+}
+
 function InlineBranchField({
   value,
   readOnly,
@@ -22,9 +27,7 @@ function InlineBranchField({
     <span className="inline-flex items-center gap-1">
       {UI.BOOK_BRANCH}
       {readOnly ? (
-        <span>
-          {value ? getBranchLabel(Number(value)) : displayValue(value)}
-        </span>
+        value ? <span>{getBranchLabel(Number(value))}</span> : <BlankInline />
       ) : (
         <select
           value={value}
@@ -67,7 +70,7 @@ function InlineNumberField({
     <span className="inline-flex items-center gap-1">
       {label}
       {readOnly ? (
-        <span>{display}</span>
+        display ? <span>{display}</span> : <BlankInline />
       ) : (
         <input
           type="text"

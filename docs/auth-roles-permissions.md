@@ -148,6 +148,7 @@ API:
 
 - `POST/DELETE /organizations`
 - `GET/PATCH /standard-features/defaults`
+- `GET /ceremonies/admin/templates`, `POST /ceremonies/admin/print-book` (công cụ in sách `/system/in-sach`)
 
 ---
 

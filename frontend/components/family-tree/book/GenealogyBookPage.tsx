@@ -37,7 +37,11 @@ type GenealogyBookPageProps = {
   showPageNumbers?: boolean;
   clanFooterLabel?: string;
   readOnly?: boolean;
+  /** Trang hồ sơ trống để viết tay: vẫn hiện các dòng Cha / Mẹ / Vợ chồng / Con. */
+  blank?: boolean;
 };
+
+const BLANK_RELATIONS = { father: null, mother: null, spouses: [], children: [] };
 
 export default function GenealogyBookPage({
   pageNumber,
@@ -52,10 +56,13 @@ export default function GenealogyBookPage({
   showPageNumbers = true,
   clanFooterLabel = "",
   readOnly = true,
+  blank = false,
 }: GenealogyBookPageProps) {
   const relations = detail
     ? extractPersonRelationships(detail.person.id, detail.relationships)
-    : null;
+    : blank
+      ? BLANK_RELATIONS
+      : null;
   const Border = getBorderStyle(borderStyleId).Component;
   const Form = getFormStyle(formStyleId).Component;
   const hasBg = Boolean(getPageBackground(pageBackgroundId).url);
