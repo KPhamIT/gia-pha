@@ -23,7 +23,10 @@ import {
 import {
   ensureCalligraphyFontLoaded,
   getCalligraphyFontDef,
+  loadCalligraphyFont,
 } from "@/components/family-tree/book/calligraphy-font-loader";
+import { getCalligraphyFont } from "@/components/family-tree/book/calligraphy-fonts";
+import { balanceCouplets } from "@/lib/family-tree/export-couplet-balance";
 import {
   EXPORT_NORMAL_FONT_ID,
   getExportTextFontEmbed,
@@ -42,6 +45,7 @@ import {
 import type { SystemAsset } from "@/lib/family-tree/export-system-assets";
 import {
   defaultTreeExportSettings,
+  hasSavedTreeExportSettings,
   loadTreeExportSettings,
   normalizeTreeExportSettings,
   saveTreeExportSettings,
@@ -53,6 +57,13 @@ import {
 import type { CoupletKey, ImageKey } from "./tree-export-control-bits";
 import { isCoupletId } from "./tree-export-svg-utils";
 import { useExportAssets } from "./useExportAssets";
+import { useExportClanTitle } from "./useExportClanTitle";
+import { getTreeBorderStyle } from "@/lib/family-tree/svg-border";
+import { exportLayoutConfig } from "@/lib/family-tree/export-layout-config";
+import {
+  applyTreeExportTheme,
+  getTreeExportTheme,
+} from "@/lib/family-tree/tree-export-themes";
 
 type Args = {
   treeData: FamilyTreeData;
@@ -72,9 +83,12 @@ export function useTreeExport({
   const { requireAdmin } = useFeatureAccess();
   const svgRef = useRef<SVGSVGElement | null>(null);
   const lastFitKeyRef = useRef<string | null>(null);
-  const [settings, setSettings] = useState<TreeExportSettings>(
-    loadTreeExportSettings,
-  );
+  const [settings, setSettings] = useState<TreeExportSettings>(() => {
+    const loaded = loadTreeExportSettings();
+    // Người dùng mới: áp trọn kiểu mặc định (viền, câu đối, lề) thay vì chỉ màu mặc định.
+    const theme = hasSavedTreeExportSettings() ? null : getTreeExportTheme(loaded.themeId);
+    return theme ? applyTreeExportTheme(theme, loaded) : loaded;
+  });
   const layerUrls = useMemo(
     () =>
       settings.layers
@@ -132,7 +146,8 @@ export function useTreeExport({
 
   useEffect(() => {
     ensureCalligraphyFontLoaded(settings.coupletFontId);
-  }, [settings.coupletFontId]);
+    if (settings.title.fontId) ensureCalligraphyFontLoaded(settings.title.fontId);
+  }, [settings.coupletFontId, settings.title.fontId]);
 
   useEffect(() => {
     for (const layer of settings.layers) {
@@ -143,10 +158,32 @@ export function useTreeExport({
   }, [settings.layers]);
 
   const model = useMemo(
-    () => buildExportModel(treeData, layoutConfig, nodePositionOverrides),
-    [treeData, layoutConfig, nodePositionOverrides],
+    () =>
+      buildExportModel(
+        treeData,
+        exportLayoutConfig(layoutConfig, settings),
+        nodePositionOverrides,
+        settings.themeId
+          ? {
+              nodeBgColor: settings.featuredBgColor,
+              nodeTextColor: settings.featuredTextColor,
+            }
+          : undefined,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      treeData,
+      layoutConfig,
+      nodePositionOverrides,
+      settings.nodeBgColor,
+      settings.nodeTextColor,
+      settings.featuredBgColor,
+      settings.featuredTextColor,
+      settings.themeId,
+    ],
   );
-  const edgeColor = layoutConfig.edgeColor ?? DEFAULT_EDGE_COLOR;
+  const edgeColor =
+    settings.edgeColor ?? layoutConfig.edgeColor ?? DEFAULT_EDGE_COLOR;
   const geometry = useMemo(
     () =>
       computeExportGeometry(
@@ -156,14 +193,26 @@ export function useTreeExport({
       ),
     [model.bounds, settings.headerHeight, model.rootCenterX],
   );
+  // Đo chữ câu đối cần font thư pháp đã tải — tính lại khi font sẵn sàng.
+  const [coupletFontReady, setCoupletFontReady] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void loadCalligraphyFont(settings.coupletFontId).then(() => {
+      if (alive) setCoupletFontReady(settings.coupletFontId);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [settings.coupletFontId]);
   const layout = useMemo(
     () =>
-      resolveExportLayout(
-        settings,
-        geometry.headerRect,
+      balanceCouplets(
+        resolveExportLayout(settings, geometry.headerRect, geometry.borderRect),
         geometry.borderRect,
+        getCalligraphyFont(settings.coupletFontId).cssValue,
       ),
-    [settings, geometry.headerRect, geometry.borderRect],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [settings, geometry.headerRect, geometry.borderRect, coupletFontReady],
   );
 
   const selectedLayer = useMemo(
@@ -177,15 +226,35 @@ export function useTreeExport({
     [],
   );
 
+  const borderBand = Math.max(
+    getTreeBorderStyle(settings.borderStyleId).band ?? 0,
+    settings.treeBottomInset ?? 0,
+  );
   const fitKey = useMemo(
-    () => exportFitKey(model, settings.headerHeight),
-    [model.bounds, model.rootCenterX, settings.headerHeight],
+    () =>
+      exportFitKey(model, settings.headerHeight, settings.treeSideInset, borderBand),
+    [model.bounds, model.rootCenterX, settings.headerHeight, settings.treeSideInset, borderBand],
   );
 
   const autoFit = useMemo(
-    () => computeAutoTreeFit(model, geometry, settings.headerHeight),
-    [model, geometry, settings.headerHeight],
+    () =>
+      computeAutoTreeFit(
+        model,
+        geometry,
+        settings.headerHeight,
+        settings.treeSideInset,
+        borderBand,
+      ),
+    [model, geometry, settings.headerHeight, settings.treeSideInset, borderBand],
   );
+  const clanTitle = useExportClanTitle(settings, treeData, layout, geometry);
+
+  const applyTheme = useCallback((themeId: string) => {
+    const theme = getTreeExportTheme(themeId);
+    if (!theme) return;
+    setSelectedId(null);
+    setSettings((prev) => applyTreeExportTheme(theme, prev));
+  }, []);
 
   const treeTransform = useMemo(
     () =>
@@ -389,7 +458,10 @@ export function useTreeExport({
 
   const handleReset = useCallback(() => {
     if (window.confirm(UI.EXPORT_RESET_CONFIRM)) {
-      setSettings(defaultTreeExportSettings());
+      const fallback = getTreeExportTheme(defaultTreeExportSettings().themeId);
+      setSettings((prev) =>
+        fallback ? applyTreeExportTheme(fallback, prev) : defaultTreeExportSettings(),
+      );
       setSelectedId(null);
       setContextMenu(null);
     }
@@ -452,9 +524,10 @@ export function useTreeExport({
 
     const embedFonts = new Map<string, string>();
 
-    if (isCalligraphyFontId(settings.coupletFontId)) {
-      const coupletDef = getCalligraphyFontDef(settings.coupletFontId);
-      embedFonts.set(coupletDef.family, coupletDef.file);
+    for (const fontId of [settings.coupletFontId, settings.title.fontId]) {
+      if (!isCalligraphyFontId(fontId)) continue;
+      const def = getCalligraphyFontDef(fontId);
+      embedFonts.set(def.family, def.file);
     }
 
     for (const layer of settings.layers) {
@@ -504,6 +577,7 @@ export function useTreeExport({
     settings.headerHeight,
     requireAdmin,
     settings.coupletFontId,
+    settings.title.fontId,
     settings.layers,
   ]);
 
@@ -511,6 +585,8 @@ export function useTreeExport({
     svgRef,
     treeTransform,
     edgeColor,
+    clanTitle,
+    applyTheme,
     model,
     geometry,
     layout,

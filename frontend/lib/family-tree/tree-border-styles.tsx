@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { IMPERIAL_BORDER_STYLE } from "./imperial-border";
 
 /** A rectangle in SVG user-space coordinates. */
 export type BorderRect = {
@@ -14,6 +15,7 @@ export type TreeBorderStyle = {
   label: string;
   /** Render the border decoration for the given rect + colour. */
   render: (rect: BorderRect, color: string) => ReactNode;
+  band?: number; // bề dày dải viền vẽ vào trong khung — nội dung phải chừa ra
 };
 
 /** Four L-shaped corner flourishes inset by `pad` from the frame corners. */
@@ -92,6 +94,7 @@ function inset(rect: BorderRect, by: number): BorderRect {
 }
 
 export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
+  IMPERIAL_BORDER_STYLE,
   {
     id: "classic",
     label: "Cổ điển",
@@ -148,7 +151,8 @@ export const TREE_BORDER_STYLES: TreeBorderStyle[] = [
 export const DEFAULT_TREE_BORDER_ID = "classic";
 
 export function getTreeBorderStyle(id: string): TreeBorderStyle {
-  return TREE_BORDER_STYLES.find((s) => s.id === id) ?? TREE_BORDER_STYLES[0];
+  const byId = (want: string) => TREE_BORDER_STYLES.find((s) => s.id === want);
+  return byId(id) ?? byId(DEFAULT_TREE_BORDER_ID)!;
 }
 
 export function isTreeBorderId(id: string): boolean {

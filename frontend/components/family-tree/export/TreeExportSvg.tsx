@@ -23,6 +23,10 @@ import { useExportSvgDrag } from "./useExportSvgDrag";
 import type { useExportTreeTransform } from "./useExportTreeTransform";
 import ExportPersonNode from "./ExportPersonNode";
 import ExportDecorationLayers from "./ExportDecorationLayers";
+import ExportClanTitle from "./ExportClanTitle";
+import ExportNodeDefs, { exportNodePaint } from "./ExportNodeDefs";
+import { isSolidFeatured } from "@/lib/family-tree/export-featured-nodes";
+import type { Rect } from "@/lib/family-tree/export-tree-geometry";
 
 export type { DraggableId } from "./tree-export-svg-utils";
 
@@ -35,6 +39,8 @@ type TreeExportSvgProps = {
   settings: TreeExportSettings;
   layerImageHrefs: Record<string, string>;
   edgeColor?: string;
+  /** Chữ "GIA PHẢ / HỌ …" theo dòng họ. */
+  clanTitle?: { titleRects: Rect[]; titleLines: string[] };
   interactive?: boolean;
   selectedId?: DraggableId | null;
   onSelect?: (id: DraggableId | null) => void;
@@ -73,6 +79,7 @@ export default function TreeExportSvg({
   settings,
   layerImageHrefs,
   edgeColor = DEFAULT_EDGE_COLOR,
+  clanTitle,
   interactive = false,
   selectedId = null,
   onSelect,
@@ -167,17 +174,26 @@ export default function TreeExportSvg({
             strokeWidth={1.5}
           />
         ))}
+        <ExportNodeDefs settings={settings} />
         {model.nodes.map((n) => (
           <ExportPersonNode
             key={n.id}
             node={n}
             nodeCard={nodeCard}
             nodeBorderColor={nodeBorderColor}
+            {...exportNodePaint(settings, isSolidFeatured(n.featuredRank))}
           />
         ))}
       </g>
 
       <ExportDecorationLayers {...group} segment="above-tree" />
+      {clanTitle ? (
+        <ExportClanTitle
+          rects={clanTitle.titleRects}
+          lines={clanTitle.titleLines}
+          title={settings.title}
+        />
+      ) : null}
       <ExportDecorationLayers {...group} segment="above-text" />
       <ExportDecorationLayers {...group} segment="selection" />
     </svg>

@@ -26,7 +26,8 @@ export const EXPORT_A0_HEIGHT_MM = 841;
 /** Vùng header ≈ 12% chiều cao A0 — đủ chỗ cho cuốn thư, rồng, câu đối. */
 export const EXPORT_HEADER_HEIGHT_DEFAULT = Math.round(EXPORT_A0_HEIGHT * 0.12);
 export const EXPORT_HEADER_HEIGHT_MIN = Math.round(EXPORT_A0_HEIGHT * 0.06);
-export const EXPORT_HEADER_HEIGHT_MAX = Math.round(EXPORT_A0_HEIGHT * 0.22);
+/** Đủ cao cho khung nền có dải cuốn thư lớn ở đầu trang. */
+export const EXPORT_HEADER_HEIGHT_MAX = Math.round(EXPORT_A0_HEIGHT * 0.3);
 
 /** Chiều cao vùng in bên trong khung viền. */
 export const EXPORT_BORDER_HEIGHT = EXPORT_A0_HEIGHT - EXPORT_OUTER_MARGIN * 2;
@@ -85,18 +86,6 @@ export function defaultCoupletFontSize(
 
 export function exportCoupletColumnHeight(frameHeight = EXPORT_BORDER_HEIGHT): number {
   return frameHeight * COUPLET_COLUMN_HEIGHT_RATIO;
-}
-
-function centeredCoupletStartY(
-  text: string,
-  fontSize: number,
-  frame: Rect,
-): number {
-  const count = Math.max(coupletSyllables(text).length, 1);
-  const lineGap = fontSize * COUPLET_LINE_FACTOR;
-  const blockHeight = count * lineGap + fontSize * 0.4;
-  const top = frame.y + (frame.height - blockHeight) / 2;
-  return top + fontSize;
 }
 
 /** Cỡ chữ mặc định cho lớp text tự do trên export A0. */
@@ -231,18 +220,13 @@ export function resolveExportLayout(
       defaultCoupletFontSize(settings.coupletLeft.text, coupletColumnHeight),
       defaultCoupletFontSize(settings.coupletRight.text, coupletColumnHeight),
     );
-  const leftAutoY = centeredCoupletStartY(
-    settings.coupletLeft.text,
-    coupletFont,
-    frame,
-  );
-  const rightAutoY = centeredCoupletStartY(
-    settings.coupletRight.text,
-    coupletFont,
-    frame,
-  );
-  const leftAutoX = frame.x + frame.width * 0.08;
-  const rightAutoX = frame.x + frame.width * 0.92;
+  // Ngay dưới header, sát hai mép khung (nửa bề ngang cột ≈ 1.4 × cỡ chữ).
+  const coupletAutoY = header.y + header.height + coupletFont * 1.5;
+  const leftAutoY = coupletAutoY;
+  const rightAutoY = coupletAutoY;
+  const coupletInset = coupletFont * 1.6;
+  const leftAutoX = frame.x + coupletInset;
+  const rightAutoX = frame.x + frame.width - coupletInset;
 
   return {
     scroll: {

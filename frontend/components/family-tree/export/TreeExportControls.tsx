@@ -13,6 +13,7 @@ import type { CoupletKey, ImageKey } from "./tree-export-control-bits";
 import ExportLayerPanel from "./ExportLayerPanel";
 import TreeExportGeneralFields from "./TreeExportGeneralFields";
 import TreeExportStyleFields from "./TreeExportStyleFields";
+import TreeExportThemePicker from "./TreeExportThemePicker";
 
 type TreeExportControlsProps = {
   settings: TreeExportSettings;
@@ -32,6 +33,9 @@ type TreeExportControlsProps = {
   onBringLayerForward: () => void;
   onSendLayerBackward: () => void;
   onApplyPreset: (presetId: string | null) => void;
+  /** Tên dòng họ đang hiện trên tiêu đề (đã tự suy ra nếu chưa nhập). */
+  resolvedClanName: string;
+  onApplyTheme: (themeId: string) => void;
   onReset: () => void;
   onClose: () => void;
   onExport: () => void;
@@ -56,6 +60,8 @@ export default function TreeExportControls({
   onBringLayerForward,
   onSendLayerBackward,
   onApplyPreset,
+  resolvedClanName,
+  onApplyTheme,
   onReset,
   onClose,
   onExport,
@@ -108,28 +114,46 @@ export default function TreeExportControls({
               {UI.EXPORT_HINT}
             </p>
 
-            <ExportLayerPanel
-              layers={settings.layers}
-              layer={selectedLayer}
-              onSelectLayer={onSelectLayer}
-              onPatch={onPatchLayer}
-              onDelete={onDeleteLayer}
-              onBringForward={onBringLayerForward}
-              onSendBackward={onSendLayerBackward}
+            <TreeExportThemePicker
+              themeId={settings.themeId}
+              clanName={settings.clanName}
+              resolvedClanName={resolvedClanName}
+              onApplyTheme={onApplyTheme}
+              onClanNameChange={(clanName) => onPatch({ clanName })}
             />
 
-            <TreeExportGeneralFields
-              settings={settings}
-              presets={presets}
-              activePresetId={activePresetId}
-              onPatch={onPatch}
-              onApplyPreset={onApplyPreset}
-            />
-            <TreeExportStyleFields
-              settings={settings}
-              onPatch={onPatch}
-              onPatchCouplet={onPatchCouplet}
-            />
+            {/* Chọn lớp trên khung → tự mở để chỉnh lớp đó. */}
+            <details
+              key={selectedLayer ? "layer" : "none"}
+              open={Boolean(selectedLayer)}
+              className="mb-2 rounded-lg border border-slate-200 px-3 py-1"
+            >
+              <summary className="cursor-pointer py-1.5 text-xs font-semibold text-slate-600">
+                {UI.EXPORT_ADVANCED}
+              </summary>
+              <ExportLayerPanel
+                layers={settings.layers}
+                layer={selectedLayer}
+                onSelectLayer={onSelectLayer}
+                onPatch={onPatchLayer}
+                onDelete={onDeleteLayer}
+                onBringForward={onBringLayerForward}
+                onSendBackward={onSendLayerBackward}
+              />
+
+              <TreeExportGeneralFields
+                settings={settings}
+                presets={presets}
+                activePresetId={activePresetId}
+                onPatch={onPatch}
+                onApplyPreset={onApplyPreset}
+              />
+              <TreeExportStyleFields
+                settings={settings}
+                onPatch={onPatch}
+                onPatchCouplet={onPatchCouplet}
+              />
+            </details>
 
             <button
               type="button"

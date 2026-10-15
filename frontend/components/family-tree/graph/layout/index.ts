@@ -26,6 +26,8 @@ import {
 
   normalizeParentChildEdges,
 
+  withoutSatelliteParentEdges,
+
 } from "./edges";
 
 import { buildGenerationMap, computeLevels } from "./levels";
@@ -280,7 +282,12 @@ export function buildFamilyTreeGraph(
     childMap,
     parentMap,
   );
-  const edges = buildFlowEdges(layoutRelationships, visibleSpousePairs);
+  const edges = buildFlowEdges(
+    showSpouses
+      ? withoutSatelliteParentEdges(layoutRelationships, visiblePlacements)
+      : layoutRelationships,
+    visibleSpousePairs,
+  );
 
   return { nodes, edges };
 }

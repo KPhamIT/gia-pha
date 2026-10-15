@@ -10,6 +10,12 @@ import {
   type ResolvedNodeAppearance,
 } from "@/lib/family-tree/node-appearance";
 import type { NodePositionOverrides } from "./node-position-overrides";
+import {
+  computeFeaturedRanks,
+  withFeaturedNodeStyles,
+  type FeaturedColors,
+  type FeaturedRank,
+} from "./export-featured-nodes";
 
 export type Rect = { x: number; y: number; width: number; height: number };
 
@@ -20,6 +26,8 @@ export type ExportNode = {
   fullName: string;
   birthDate: string | null;
   isRoot: boolean;
+  /** Thủy tổ / đời 2 — vẽ khung ngang lớn. */
+  featuredRank: FeaturedRank | null;
   appearance: ResolvedNodeAppearance;
 };
 
@@ -154,8 +162,19 @@ export function buildExportModel(
   treeData: FamilyTreeData,
   layoutConfig: FamilyTreeLayoutConfig = {},
   positionOverrides?: NodePositionOverrides,
+  featuredColors?: FeaturedColors,
 ): ExportModel {
-  const { nodes, edges } = buildFamilyTreeGraph(treeData, layoutConfig);
+  const featuredRanks = computeFeaturedRanks(treeData);
+  const { nodes, edges } = buildFamilyTreeGraph(
+    treeData,
+    withFeaturedNodeStyles(
+      layoutConfig,
+      featuredRanks,
+      featuredColors,
+      new Map(treeData.persons.map((p) => [p.id, p.fullName])),
+    ),
+  );
+
   const defaultWidth = layoutConfig.nodeWidth ?? NODE_WIDTH;
   const defaultHeight = layoutConfig.nodeHeight ?? NODE_HEIGHT;
 
@@ -170,6 +189,7 @@ export function buildExportModel(
       fullName: data.fullName ?? "",
       birthDate: data.birthDate ?? null,
       isRoot: Boolean(data.isRoot),
+      featuredRank: featuredRanks.get(id) ?? null,
       appearance: appearanceFromFlowData(data),
     };
   });

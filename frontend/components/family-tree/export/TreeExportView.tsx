@@ -50,6 +50,8 @@ export default function TreeExportView({
     svgRef,
     treeTransform,
     edgeColor,
+    clanTitle,
+    applyTheme,
     model,
     geometry,
     layout,
@@ -127,6 +129,7 @@ export default function TreeExportView({
             settings={settings}
             layerImageHrefs={layerImageHrefs}
             edgeColor={edgeColor}
+            clanTitle={clanTitle}
             interactive
             selectedId={selectedId}
             onSelect={setSelectedId}
@@ -165,6 +168,8 @@ export default function TreeExportView({
         onBringLayerForward={bringSelectedForward}
         onSendLayerBackward={sendSelectedBackward}
         onApplyPreset={handleApplyPreset}
+        resolvedClanName={clanTitle.clanName}
+        onApplyTheme={applyTheme}
         onReset={handleReset}
         onClose={onClose}
         onExport={handleExport}

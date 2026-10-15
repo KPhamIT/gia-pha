@@ -34,9 +34,16 @@ export function clampPreviewZoom(zoom: number): number {
   return sanitizeZoom(zoom);
 }
 
-export function exportFitKey(model: ExportModel, headerHeight: number): string {
+export function exportFitKey(
+  model: ExportModel,
+  headerHeight: number,
+  sideInset = 0,
+  bottomInset = 0,
+): string {
   const b = model.bounds;
   return [
+    Math.round(sideInset),
+    Math.round(bottomInset),
     Math.round(b.x),
     Math.round(b.y),
     Math.round(b.width),
@@ -90,16 +97,19 @@ export function unionExportNodeBounds(nodes: ExportNode[]): Rect {
 export function getExportTreeArea(
   geometry: ExportGeometry,
   headerHeight: number,
+  sideInset = 0,
+  bottomInset = 0,
 ): Rect {
   const inner0 = EXPORT_OUTER_MARGIN + EXPORT_PADDING;
   const contentWidth = geometry.canvasWidth - inner0 * 2;
   const treeAreaTop = inner0 + headerHeight;
-  const pad = EXPORT_PADDING;
+  const pad = EXPORT_PADDING + Math.max(0, sideInset);
   return {
     x: inner0 + pad,
-    y: treeAreaTop + pad,
+    y: treeAreaTop + EXPORT_PADDING,
     width: contentWidth - 2 * pad,
-    height: geometry.canvasHeight - treeAreaTop - inner0 - 2 * pad,
+    height:
+      geometry.canvasHeight - treeAreaTop - inner0 - 2 * EXPORT_PADDING - bottomInset,
   };
 }
 
@@ -174,8 +184,10 @@ export function computeAutoTreeFit(
   model: ExportModel,
   geometry: ExportGeometry,
   headerHeight: number,
+  sideInset = 0,
+  bottomInset = 0,
 ): TreeTransform {
-  const target = getExportTreeArea(geometry, headerHeight);
+  const target = getExportTreeArea(geometry, headerHeight, sideInset, bottomInset);
   if (target.width <= 0 || target.height <= 0) {
     return { treeOffsetX: 0, treeOffsetY: 0, treeScale: 1 };
   }

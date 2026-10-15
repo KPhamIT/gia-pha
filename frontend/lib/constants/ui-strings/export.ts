@@ -10,6 +10,13 @@ export const EXPORT_STRINGS = {
     "Chỉ quản trị viên mới có thể tải ảnh. Bạn vẫn có thể xem và chỉnh bố cục trên màn hình.",
   EXPORT_PREPARING: "Đang chuẩn bị ảnh...",
   EXPORT_LOADING_ASSETS: "Đang tải hình trang trí...",
+  EXPORT_SECTION_THEME: "Kiểu gia phả",
+  EXPORT_THEME_HINT:
+    "Chọn một kiểu — khung, cuốn thư, câu đối, màu thẻ đều đổi theo cho cân đối.",
+  EXPORT_CLAN_NAME: "Tên dòng họ trên tiêu đề",
+  EXPORT_CLAN_NAME_HINT: "Để trống để tự lấy theo dòng họ của bạn.",
+  EXPORT_CLAN_NAME_SHOWING: "Đang hiện",
+  EXPORT_ADVANCED: "Tùy chỉnh chi tiết",
   EXPORT_SECTION_GENERAL: "Chung",
   EXPORT_PRESET: "Mẫu nhanh",
   EXPORT_PRESET_CUSTOM: "Tùy chỉnh",

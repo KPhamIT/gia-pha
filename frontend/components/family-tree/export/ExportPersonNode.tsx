@@ -9,11 +9,16 @@ import {
   formatExportNodeName,
 } from "@/lib/family-tree/export-person-node-text";
 import { formatBirthDate } from "./tree-export-svg-utils";
+import ExportFeaturedNode from "./ExportFeaturedNode";
 
 type Props = {
   node: ExportModel["nodes"][number];
   nodeCard: NodeCardStyle;
   nodeBorderColor: string;
+  /** Nền thẻ thay màu đặc (vd. url(#gradient)) — chỉ thẻ thường. */
+  fillOverride?: string;
+  /** Bộ lọc bóng đổ, vd. url(#shadow). */
+  filter?: string;
 };
 
 function ExportNodeName({
@@ -56,7 +61,20 @@ export default function ExportPersonNode({
   node,
   nodeCard,
   nodeBorderColor,
+  fillOverride,
+  filter,
 }: Props) {
+  if (node.featuredRank != null) {
+    return (
+      <ExportFeaturedNode
+        node={node}
+        nodeCard={nodeCard}
+        nodeBorderColor={nodeBorderColor}
+        filter={filter}
+        fillOverride={fillOverride}
+      />
+    );
+  }
   const { appearance } = node;
   const {
     nodeWidth,
@@ -86,11 +104,11 @@ export default function ExportPersonNode({
       : firstBaseline + lines.length * lineGap + 4;
 
   return (
-    <g transform={`translate(${node.x} ${node.y})`}>
+    <g transform={`translate(${node.x} ${node.y})`} filter={filter}>
       {nodeCard.render(
         nodeWidth,
         nodeHeight,
-        nodeBgColor,
+        fillOverride ?? nodeBgColor,
         nodeBorderColor,
         node.isRoot ? 2.5 : 1.5,
       )}

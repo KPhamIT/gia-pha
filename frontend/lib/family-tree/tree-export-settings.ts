@@ -6,6 +6,9 @@ import {
 } from "./export-decoration-layers";
 import {
   DRAGON_ASPECT,
+  EXPORT_A0_WIDTH,
+  EXPORT_OUTER_MARGIN,
+  EXPORT_PADDING,
   defaultExportBorderRect,
   defaultExportHeaderRect,
   EXPORT_HEADER_HEIGHT_DEFAULT,
@@ -40,7 +43,48 @@ export type ExportCoupletCfg = ExportBox & {
  * Presentation settings for exporting the family tree as a print-ready SVG.
  * Persisted per device in localStorage (no backend field exists).
  */
+/**
+ * Chữ "GIA PHẢ / HỌ …" vẽ động theo dòng họ của người dùng.
+ * - scroll: đặt lên dải đỏ của mọi lớp ảnh cuốn thư.
+ * - frame: đặt vào ô `rect` (tỉ lệ 0–1 của khung in) — dải cuốn thư có sẵn trong ảnh khung nền.
+ * - header: chữ đứng riêng, giữa vùng đầu trang.
+ */
+export type ExportTitleCfg = {
+  mode: "none" | "scroll" | "frame" | "header";
+  rect: { x: number; y: number; width: number; height: number } | null;
+  /** false khi ảnh khung đã in sẵn chữ "GIA PHẢ" — chỉ vẽ dòng "HỌ …". */
+  showGiaPha: boolean;
+  color: string;
+  /** Viền chữ cho dễ đọc trên nền rực; rỗng = không viền. */
+  strokeColor: string;
+  /** Id font thư pháp; rỗng = serif đậm. */
+  fontId: string;
+  /**
+   * Độ cong vồng lên theo mép trên dải cuốn thư: bán kính cung (qua mép trên ô chữ)
+   * tính theo bề ngang ô chữ; 0 = chữ thẳng. Các dòng chạy trên cung đồng tâm.
+   */
+  arc: number;
+};
+
 export type TreeExportSettings = {
+  /** Kiểu gia phả đang áp dụng (null = tự chỉnh). */
+  themeId: string | null;
+  /** Tên dòng họ trên tiêu đề, vd "Phạm"; rỗng = tự lấy theo tổ chức / thành viên. */
+  clanName: string;
+  title: ExportTitleCfg;
+  /** Màu khung lớn của thủy tổ và đời thứ hai. */
+  featuredBgColor: string;
+  featuredTextColor: string;
+  /** Màu đường nối; null = theo cài đặt cây. */
+  edgeColor: string | null;
+  /** Lề thêm hai bên vùng cây (đơn vị SVG) — tránh hoa văn hai bên khung nền. */
+  treeSideInset: number;
+  /** Màu dưới của nền thẻ (chuyển dọc từ nodeBgColor); null = nền đặc. */
+  nodeBgGradient: string | null;
+  /** Bóng đổ mềm dưới thẻ — tách thẻ khỏi nền trang sáng. */
+  nodeShadow: boolean;
+  /** Lề dưới vùng cây (SVG units) — viền dày nằm trong ảnh khung nền. */
+  treeBottomInset: number;
   backgroundColor: string;
   borderStyleId: string;
   borderColor: string;
@@ -85,23 +129,63 @@ export const TREE_EXPORT_PRESETS_KEY = "treeExportPresets";
 const GOLD = "#7c2d12";
 const COUPLET_COLOR = "#7f1d1d";
 
-const autoImage = (): ExportImageCfg => ({
-  x: null,
-  y: null,
-  width: null,
-  height: null,
-  visible: true,
-});
+/**
+ * Đầu trang mặc định (kiểu "Cung đình"): cuốn thư 36% bề ngang để tiêu đề là chữ
+ * lớn nhất trang (lớn hơn ô thủy tổ); rồng cân giữa cuốn thư, nằm trong viền.
+ */
+const HEADER_CONTENT_W = EXPORT_A0_WIDTH - (EXPORT_OUTER_MARGIN + EXPORT_PADDING) * 2;
+const SCROLL_WIDTH = Math.round(HEADER_CONTENT_W * 0.36);
+// Dưới dải viền "Cung đình hồi văn" (60 + 700) và chỉ vàng trong.
+const SCROLL_TOP = 1000;
+const DRAGON_SIZE = 5600;
+export const SCROLL_HEADER_HEIGHT = 7400;
+
+/**
+ * Cuốn thư + rồng + chiều cao đầu trang khi cuốn thư bắt đầu ở `top`
+ * (khung nền có viền dày thì hạ cuốn thư xuống dưới viền).
+ */
+export function scrollHeaderAt(top: number) {
+  const dragonTop = Math.round(top + SCROLL_WIDTH / SCROLL_ASPECT / 2 - DRAGON_SIZE / 2);
+  return {
+    headerHeight: SCROLL_HEADER_HEIGHT + (top - SCROLL_TOP),
+    scroll: sizedImage(top, SCROLL_WIDTH),
+    dragonLeft: sizedImage(dragonTop, DRAGON_SIZE),
+    dragonRight: sizedImage(dragonTop, DRAGON_SIZE),
+  };
+}
+
+function sizedImage(y: number, width: number): ExportImageCfg {
+  return { x: null, y, width, height: null, visible: true };
+}
+
+export const DEFAULT_EXPORT_TITLE: ExportTitleCfg = {
+  mode: "scroll",
+  rect: null,
+  showGiaPha: true,
+  color: "#ffe14d",
+  strokeColor: "#7a0f0f",
+  fontId: "",
+  // Đo từ mép trên dải đỏ của ảnh cuonthu.png (bán kính ≈ 461px / ô chữ rộng 300px).
+  arc: 1.54,
+};
 
 export function defaultTreeExportSettings(): TreeExportSettings {
   return {
+    // Người dùng mới vào thẳng kiểu "Cung đình đỏ vàng" (xem tree-export-themes).
+    themeId: "cung-dinh",
+    clanName: "",
+    title: { ...DEFAULT_EXPORT_TITLE },
+    featuredBgColor: "#9b1c1c",
+    featuredTextColor: "#fde68a",
+    edgeColor: "#b45309",
+    treeSideInset: 3700,
+    nodeBgGradient: "#f3d79a",
+    nodeShadow: true,
+    treeBottomInset: 0,
     backgroundColor: "#f7f0dd",
     borderStyleId: "classic",
     borderColor: GOLD,
-    headerHeight: EXPORT_HEADER_HEIGHT_DEFAULT,
-    scroll: autoImage(),
-    dragonLeft: autoImage(),
-    dragonRight: autoImage(),
+    ...scrollHeaderAt(SCROLL_TOP),
     coupletLeft: {
       x: null,
       y: null,
@@ -121,9 +205,9 @@ export function defaultTreeExportSettings(): TreeExportSettings {
     coupletFontId: "thanhcong",
     coupletColor: COUPLET_COLOR,
     coupletFontSize: null,
-    nodeBgColor: "#f20202",
-    nodeTextColor: "#ffdd00",
-    nodeBorderColor: "#ffea00",
+    nodeBgColor: "#fffaf0",
+    nodeTextColor: "#7f1d1d",
+    nodeBorderColor: "#b45309",
     nodeBorderStyleId: "ornate",
     nodeFontSize: 20,
     layers: [],
@@ -312,9 +396,13 @@ function migrateLegacyCoupletLayout(
   settings: TreeExportSettings,
 ): TreeExportSettings {
   const resetIfLegacy = (cfg: ExportCoupletCfg): ExportCoupletCfg => {
+    // Toạ độ kéo thả thời khổ nhỏ có cả x lẫn y < 6000. Chỉ x nhỏ là câu đối trái
+    // hợp lệ trên A0 (kiểu gia phả đặt x, để y tự động) — không được reset.
     const legacy =
-      (cfg.x != null && cfg.x < LEGACY_COUPLET_COORD_MAX) ||
-      (cfg.y != null && cfg.y < LEGACY_COUPLET_COORD_MAX);
+      cfg.x != null &&
+      cfg.y != null &&
+      cfg.x < LEGACY_COUPLET_COORD_MAX &&
+      cfg.y < LEGACY_COUPLET_COORD_MAX;
     if (!legacy) return cfg;
     return { ...cfg, x: null, y: null };
   };
@@ -383,9 +471,18 @@ export function normalizeTreeExportSettings(
     dragonRight: normalizeImage(partial?.dragonRight, base.dragonRight),
     coupletLeft: normalizeCouplet(partial?.coupletLeft, base.coupletLeft),
     coupletRight: normalizeCouplet(partial?.coupletRight, base.coupletRight),
+    title: { ...base.title, ...(partial?.title ?? {}) },
     layers: [],
   };
   merged.layers = normalizeLayers(partial, merged);
+  // Bản lưu cũ (trước khi có kiểu gia phả): giữ màu thẻ theo cây, không ép kiểu.
+  if (partial && !("themeId" in partial)) {
+    merged.themeId = null;
+    merged.edgeColor = partial.edgeColor ?? null;
+    merged.treeSideInset = partial.treeSideInset ?? 0;
+    merged.nodeBgGradient = partial.nodeBgGradient ?? null;
+    merged.nodeShadow = partial.nodeShadow ?? false;
+  }
   if (!isTreeBorderId(merged.borderStyleId))
     merged.borderStyleId = base.borderStyleId;
   if (!isNodeCardId(merged.nodeBorderStyleId))
@@ -397,6 +494,16 @@ export function normalizeTreeExportSettings(
   const headerMigrated = migrateLegacyHeaderImageCfg(migrated);
   const layersMigrated = migrateLegacyHeaderLayers(headerMigrated);
   return migrateLegacyCoupletLayout(layersMigrated);
+}
+
+/** Đã có cài đặt xuất ảnh lưu trên máy chưa (người dùng mới → áp kiểu mặc định). */
+export function hasSavedTreeExportSettings(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(STORAGE_KEYS.TREE_EXPORT_SETTINGS) != null;
+  } catch {
+    return false;
+  }
 }
 
 export function loadTreeExportSettings(): TreeExportSettings {
