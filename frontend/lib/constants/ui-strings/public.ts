@@ -85,6 +85,11 @@ export const PUBLIC_STRINGS = {
     "Có sẵn danh sách người trong họ? Điền vào file Excel mẫu, tải lên một lần — Cội Nguồn dựng cả cây gia phả cho bạn.",
   LANDING_VIDEO_STEPS: ["Tạo dòng họ", "Tải file Excel mẫu", "Điền thông tin theo mẫu", "Tải lên & xem cây gia phả"],
   LANDING_VIDEO_PLAY: "Phát video",
+  LANDING_VIDEO_A0_EYEBROW: "Video hướng dẫn · 1 phút 42 giây",
+  LANDING_VIDEO_A0_TITLE: "Gia phả đẹp như tranh, chỉ cần 1 cú bấm",
+  LANDING_VIDEO_A0_DESC:
+    "Có danh sách người trong họ? Cội Nguồn trình bày thành bức gia phả khổ A0 đẹp như tranh treo nhà thờ họ — tên dòng họ tự đổi theo họ của bạn.",
+  LANDING_VIDEO_A0_STEPS: ["Chọn 1 trong 7 kiểu gia phả", "Khung, cuốn thư, rồng chầu, câu đối sắp sẵn", "Tải về 1 file", "Mang ra tiệm in khổ lớn"],
   LANDING_FEATURES_TITLE: "Chức năng chính ✨",
   LANDING_FEATURE_BOOK_TITLE: "Sổ gia phả",
   LANDING_FEATURE_BOOK_DESC:
