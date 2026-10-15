@@ -1,4 +1,5 @@
-import { coupletSyllables, type Rect, type ResolvedLayout } from "./export-tree-geometry";
+import { coupletSyllables, type ResolvedLayout } from "./export-tree-geometry";
+import type { Rect } from "./export-tree-model";
 
 let measureCanvas: HTMLCanvasElement | null = null;
 

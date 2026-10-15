@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { getCalligraphyFont } from "@/components/family-tree/book/calligraphy-fonts";
-import type { Rect } from "@/lib/family-tree/export-tree-geometry";
+import type { Rect } from "@/lib/family-tree/export-tree-model";
 import type { ExportTitleCfg } from "@/lib/family-tree/tree-export-settings";
 import { EXPORT_NODE_SERIF } from "@/lib/family-tree/export-person-node-text";
 

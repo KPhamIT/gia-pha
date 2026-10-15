@@ -26,7 +26,7 @@ import ExportDecorationLayers from "./ExportDecorationLayers";
 import ExportClanTitle from "./ExportClanTitle";
 import ExportNodeDefs, { exportNodePaint } from "./ExportNodeDefs";
 import { isSolidFeatured } from "@/lib/family-tree/export-featured-nodes";
-import type { Rect } from "@/lib/family-tree/export-tree-geometry";
+import type { Rect } from "@/lib/family-tree/export-tree-model";
 
 export type { DraggableId } from "./tree-export-svg-utils";
 

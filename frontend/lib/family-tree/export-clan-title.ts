@@ -3,9 +3,9 @@ import type { ExportDecorationLayer } from "./export-decoration-layers";
 import {
   EXPORT_IMAGE_SOURCES,
   resolveHeaderImageLayer,
-  type Rect,
   type ResolvedLayout,
 } from "./export-tree-geometry";
+import type { Rect } from "./export-tree-model";
 import type { ExportTitleCfg } from "./tree-export-settings";
 
 /** Vùng chữ trên dải đỏ của ảnh cuốn thư (tỉ lệ theo khung ảnh). */
