@@ -17,7 +17,7 @@ function apiBase(): string {
  * Đổi giá trị này khi cập nhật hàng loạt bài trong DB (script) để bỏ cache dữ liệu
  * của Vercel ngay — cache lưu theo URL và giữ qua các lần deploy.
  */
-const BLOG_CACHE_VERSION = "2026-10-10";
+const BLOG_CACHE_VERSION = "2026-11-16";
 
 function withCacheVersion(path: string): string {
   return `${path}${path.includes("?") ? "&" : "?"}cv=${BLOG_CACHE_VERSION}`;
