@@ -15,6 +15,7 @@ const STATIC_PAGES: {
   { path: "/cai-dat", changeFrequency: "monthly", priority: 0.85 },
   { path: "/bai-viet", changeFrequency: "weekly", priority: 0.9 },
   { path: "/van-khan", changeFrequency: "monthly", priority: 0.85 },
+  { path: "/sach-gia-pha-trong", changeFrequency: "monthly", priority: 0.85 },
   { path: "/cong-cu", changeFrequency: "monthly", priority: 0.8 },
   { path: "/cong-cu/xung-ho", changeFrequency: "monthly", priority: 0.8 },
   { path: "/cong-cu/xem-huong-nha", changeFrequency: "monthly", priority: 0.8 },

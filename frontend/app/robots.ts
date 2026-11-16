@@ -19,6 +19,8 @@ export default function robots(): MetadataRoute.Robots {
         "/family-tree",
         "/account",
         "/ceremonies/",
+        "/sach-gia-pha-trong/don/",
+        "/sach-gia-pha-trong/xac-nhan/",
       ],
     },
     host: siteUrl,

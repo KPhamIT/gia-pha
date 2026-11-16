@@ -659,3 +659,34 @@ model Relationship {
 
   createdAt DateTime @default(now())
 }
+
+enum BlankBookOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+/// Đơn mua file sổ gia phả trống cá nhân hoá (khách vãng lai, chuyển khoản QR, chủ web xác nhận qua link email).
+model BlankBookOrder {
+  id               Int                  @id @default(autoincrement())
+  /// Mã đơn = nội dung chuyển khoản (SG-XXXXXX).
+  code             String               @unique
+  /// Token bí mật trong URL trang đơn của khách.
+  accessToken      String               @unique
+  /// SHA-256 của token xác nhận gửi trong email chủ web; xoá khi đã dùng (1 lần).
+  confirmTokenHash String?              @unique
+  status           BlankBookOrderStatus @default(PENDING)
+  clanName         String
+  establishedYear  String?
+  clanAddress      String?
+  pageCount        Int
+  coverIndex       Int                  @default(0)
+  amountVnd        Int
+  contactEmail     String?
+  contactPhone     String?
+  paidAt           DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([status, createdAt])
+}

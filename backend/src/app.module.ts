@@ -23,6 +23,7 @@ import { AppFundModule } from './app-fund/app-fund.module.js';
 import { WeatherModule } from './weather/weather.module.js';
 import { DayNotesModule } from './day-notes/day-notes.module.js';
 import { ClanDutyModule } from './clan-duty/clan-duty.module.js';
+import { BlankBookModule } from './blank-book/blank-book.module.js';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ClanDutyModule } from './clan-duty/clan-duty.module.js';
     WeatherModule,
     DayNotesModule,
     ClanDutyModule,
+    BlankBookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

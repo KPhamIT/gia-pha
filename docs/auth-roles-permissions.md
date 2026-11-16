@@ -150,6 +150,10 @@ API:
 - `GET/PATCH /standard-features/defaults`
 - `GET /ceremonies/admin/templates`, `POST /ceremonies/admin/print-book` (công cụ in sách `/system/in-sach`)
 
+### Endpoint công khai dựa trên token bí mật (không JWT)
+
+- `/blank-book/*` — dịch vụ bán file sổ gia phả trống (`/sach-gia-pha-trong`). Khách xem đơn bằng `accessToken` trong URL; chủ web xác nhận đã nhận tiền bằng token trong email (lưu SHA-256, dùng 1 lần, `GET` chỉ xem, `POST` mới đổi trạng thái).
+
 ---
 
 ## 5. Frontend — một cách kiểm tra duy nhất

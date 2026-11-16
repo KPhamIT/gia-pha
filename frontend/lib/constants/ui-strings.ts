@@ -18,6 +18,7 @@ import { VAN_KHAN_STRINGS } from "./ui-strings/van-khan";
 import { EXCEL_STRINGS } from "./ui-strings/excel";
 import { SHOP_STRINGS } from "./ui-strings/shop";
 import { PRINT_BOOKS_STRINGS } from "./ui-strings/print-books";
+import { BLANK_BOOK_STRINGS } from "./ui-strings/blank-book";
 import { KINSHIP_STRINGS } from "./ui-strings/kinship";
 import { DAT_TEN_STRINGS } from "./ui-strings/dat-ten";
 import { DAT_TEN_GUIDE_STRINGS } from "./ui-strings/dat-ten-guide";
@@ -61,6 +62,7 @@ export const UI = {
   ...EXCEL_STRINGS,
   ...SHOP_STRINGS,
   ...PRINT_BOOKS_STRINGS,
+  ...BLANK_BOOK_STRINGS,
   ...KINSHIP_STRINGS,
   ...TOOLS_STRINGS,
   ...TOOLS_GUIDE_STRINGS,

@@ -78,6 +78,10 @@ export const API_ROUTES = {
   BILLING_ORDER_BY_CODE: (code: string) =>
     `/billing/orders/by-code/${encodeURIComponent(code)}`,
   CONTACT: "/contact",
+  BLANK_BOOK_CONFIG: "/blank-book/config",
+  BLANK_BOOK_ORDERS: "/blank-book/orders",
+  BLANK_BOOK_ORDER: (accessToken: string) => `/blank-book/orders/${encodeURIComponent(accessToken)}`,
+  BLANK_BOOK_CONFIRM: (token: string) => `/blank-book/confirm/${encodeURIComponent(token)}`,
   ORGANIZATION_SUBSCRIPTION: (id: number) => `/organizations/${id}/subscription`,
   ORGANIZATION_EXPORT_ELIGIBILITY: (id: number) =>
     `/organizations/${id}/export-download-eligibility`,

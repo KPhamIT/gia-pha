@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BLANK_BOOK_PATH } from "@/components/blank-book/blank-book-paths";
 import SeoSchemas from "@/components/seo/SeoSchemas";
 import CoverGallery from "@/components/shop/CoverGallery";
 import LiveCoverImage from "@/components/shop/LiveCoverImage";
@@ -86,6 +87,17 @@ export default async function ServicesPage() {
           </h3>
           <p className="mb-8 mt-1 text-sm text-[#504443]">{UI.SHOP_PAGES_HINT}</p>
           <PageGallery />
+
+          <Link
+            href={BLANK_BOOK_PATH}
+            className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e7c9a4] bg-[#fdf1e2] p-5 hover:border-[#944a00]"
+          >
+            <span>
+              <span className="block font-serif text-lg font-semibold text-[#321716]">{UI.BLANK_BOOK_CTA_TITLE}</span>
+              <span className="mt-1 block text-sm text-[#504443]">{UI.BLANK_BOOK_CTA_DESC}</span>
+            </span>
+            <span className="rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white">{UI.BLANK_BOOK_CTA_BUTTON}</span>
+          </Link>
         </ShopProduct>
 
         <ShopProduct

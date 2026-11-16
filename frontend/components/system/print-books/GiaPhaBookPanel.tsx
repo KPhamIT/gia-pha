@@ -1,23 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { flushSync } from "react-dom";
+import { useMemo, useState } from "react";
 import { AC } from "@/components/auth/account-theme";
 import { formatCoverSubtitle } from "@/components/family-tree/book/book-cover-subtitle";
 import { defaultBookSettings, type BookSettings } from "@/components/family-tree/book/book-settings";
-import { loadCalligraphyFont } from "@/components/family-tree/book/calligraphy-font-loader";
 import { PAGE_BORDER_STYLES } from "@/components/family-tree/book/page-border-styles";
 import { PAGE_FORM_STYLES } from "@/components/family-tree/book/page-form-styles";
 import { COVER_SAMPLES, buildCoverContent, type CoverClanInfo } from "@/components/shop/cover-samples";
 import { UI } from "@/lib/constants/ui-strings";
-import { fitGenealogyPagesForPrint, resetGenealogyPrintFit } from "@/utils/fit-genealogy-print";
 import BlankBookPrintStack from "./BlankBookPages";
+import { blankBookSettings } from "./blank-book-settings";
 import CoverPicker from "./CoverPicker";
 import CoverPrintSheets from "./CoverPrintSheets";
 import { giaPhaPreviewItems } from "./gia-pha-preview-items";
 import PreviewGallery from "./PreviewGallery";
-import { nextFrame, waitForFonts } from "./print-helpers";
 import { COVER_BLEED_MM, useCoverPrint } from "./useCoverPrint";
+import { useInnerPrint } from "./useInnerPrint";
 
 const MAX_PAGES = 500;
 const PREVIEW_W = 190;
@@ -30,44 +28,18 @@ export default function GiaPhaBookPanel({ clan, fontFamily, fontId, onMissingCla
   const [pageCount, setPageCount] = useState(50);
   const [borderStyleId, setBorderStyleId] = useState(defaultBookSettings().borderStyleId);
   const [formStyleId, setFormStyleId] = useState(defaultBookSettings().formStyleId);
-  const [printingInner, setPrintingInner] = useState(false);
   const cover = useCoverPrint(fontId);
+  const inner = useInnerPrint(fontId);
 
   const sample = COVER_SAMPLES[coverIndex];
   const content = useMemo(() => buildCoverContent("giaPha", clan), [clan]);
   const footer = formatCoverSubtitle(clan.clanName);
   const settings: BookSettings = useMemo(
-    () => ({
-      ...defaultBookSettings(),
-      borderStyleId,
-      formStyleId,
-      coverFontId: fontId,
-      prefaceBody: UI.PRINT_BOOKS_PREFACE_BODY(clan.clanName || "…………"),
-      prefaceSignature: "",
-      showPageNumbers: false,
-    }),
+    () => blankBookSettings(clan.clanName, fontId, { borderStyleId, formStyleId }),
     [borderStyleId, formStyleId, fontId, clan.clanName],
   );
 
-  useEffect(() => {
-    if (!printingInner) return;
-    const done = () => setPrintingInner(false);
-    window.addEventListener("afterprint", done);
-    return () => window.removeEventListener("afterprint", done);
-  }, [printingInner]);
-
-  const printInner = useCallback(async () => {
-    if (!clan.clanName) return onMissingClan();
-    await loadCalligraphyFont(fontId);
-    flushSync(() => setPrintingInner(true));
-    await nextFrame();
-    await waitForFonts();
-    const root = document.querySelector<HTMLElement>("[data-print-root='true'] [data-print-all-stack]");
-    resetGenealogyPrintFit(root);
-    fitGenealogyPagesForPrint(root, "[data-genealogy-paper]");
-    await nextFrame();
-    window.print();
-  }, [clan.clanName, fontId, onMissingClan]);
+  const printInner = () => (clan.clanName ? void inner.print() : onMissingClan());
 
   const pages = Math.min(MAX_PAGES, Math.max(1, pageCount || 1));
   const previewItems = giaPhaPreviewItems({ sample, content, fontFamily, settings, footer, pages });
@@ -123,7 +95,7 @@ export default function GiaPhaBookPanel({ clan, fontFamily, fontId, onMissingCla
             <button type="button" onClick={printCover} className="rounded-xl bg-[#944a00] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#7a3d00]">
               {UI.PRINT_BOOKS_PRINT_COVER}
             </button>
-            <button type="button" onClick={() => void printInner()} className="rounded-xl bg-[#321716] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#4a2c2a]">
+            <button type="button" onClick={printInner} className="rounded-xl bg-[#321716] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#4a2c2a]">
               {UI.PRINT_BOOKS_PRINT_INNER}
             </button>
           </div>
@@ -139,7 +111,7 @@ export default function GiaPhaBookPanel({ clan, fontFamily, fontId, onMissingCla
       </aside>
 
       {cover.printing ? <CoverPrintSheets sample={sample} content={content} fontFamily={fontFamily} bleedMm={COVER_BLEED_MM} /> : null}
-      {printingInner ? <BlankBookPrintStack settings={settings} pageCount={pages} clanFooterLabel={footer} /> : null}
+      {inner.printing ? <BlankBookPrintStack settings={settings} pageCount={pages} clanFooterLabel={footer} /> : null}
     </div>
   );
 }

@@ -17,6 +17,7 @@ import { appFund } from "./modules/app-fund";
 import { weather } from "./modules/weather";
 import { dayNotes } from "./modules/day-notes";
 import { clanDuty } from "./modules/clan-duty";
+import { blankBook } from "./modules/blank-book";
 
 export const api = {
   auth,
@@ -38,5 +39,6 @@ export const api = {
   weather,
   dayNotes,
   clanDuty,
+  blankBook,
 };
 export type ApiType = typeof api;
