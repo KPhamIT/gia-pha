@@ -9,7 +9,8 @@ export type BlankBookPayment = {
 };
 
 export type BlankBookConfig = {
-  baseVnd: number;
+  /** Giá của đơn nhỏ nhất (đúng `minPages` trang). */
+  minPriceVnd: number;
   perPageVnd: number;
   minPages: number;
   maxPages: number;
@@ -69,7 +70,10 @@ export const blankBook = {
     axiosClient.post<BlankBookConfirmView>(API_ROUTES.BLANK_BOOK_CONFIRM(token)).then((r) => r.data),
 };
 
-/** Giá = phí cố định + đơn giá × số trang (khớp backend). */
-export function blankBookPrice(config: Pick<BlankBookConfig, "baseVnd" | "perPageVnd">, pages: number): number {
-  return config.baseVnd + config.perPageVnd * pages;
+/** Giá = giá đơn nhỏ nhất + đơn giá × số trang vượt tối thiểu (khớp backend). */
+export function blankBookPrice(
+  config: Pick<BlankBookConfig, "minPriceVnd" | "perPageVnd" | "minPages">,
+  pages: number,
+): number {
+  return config.minPriceVnd + config.perPageVnd * Math.max(0, pages - config.minPages);
 }

@@ -127,7 +127,7 @@ export default function BlankBookOrderForm() {
             {config ? (
               <p className={`pb-2 text-sm ${AC.label}`}>
                 {UI.BLANK_BOOK_PAGES_RANGE(config.minPages, config.maxPages)}{" "}
-                {UI.BLANK_BOOK_PRICE_FORMULA(formatVnd(config.baseVnd), formatVnd(config.perPageVnd))}
+                {UI.BLANK_BOOK_PRICE_FORMULA(formatVnd(config.minPriceVnd), config.minPages, formatVnd(config.perPageVnd))}
               </p>
             ) : null}
           </div>

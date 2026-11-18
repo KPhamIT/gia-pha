@@ -1,7 +1,8 @@
 import type { ConfigService } from '@nestjs/config';
 
 export type BlankBookPricing = {
-  baseVnd: number;
+  /** Giá của đơn nhỏ nhất (đúng `minPages` trang). */
+  minPriceVnd: number;
   perPageVnd: number;
   minPages: number;
   maxPages: number;
@@ -13,7 +14,7 @@ function intEnv(config: ConfigService, key: string, fallback: number): number {
   return Number.isFinite(raw) && raw >= 0 ? raw : fallback;
 }
 
-/** Giá sổ gia phả trống = phí cố định + đơn giá × số trang (chỉnh qua env). */
+/** Giá sổ gia phả trống = giá đơn nhỏ nhất + đơn giá × số trang vượt tối thiểu (chỉnh qua env). */
 export function readBlankBookPricing(config: ConfigService): BlankBookPricing {
   const minPages = Math.max(1, intEnv(config, 'BLANK_BOOK_MIN_PAGES', 20));
   const maxPages = Math.max(
@@ -21,7 +22,7 @@ export function readBlankBookPricing(config: ConfigService): BlankBookPricing {
     intEnv(config, 'BLANK_BOOK_MAX_PAGES', 300),
   );
   return {
-    baseVnd: intEnv(config, 'BLANK_BOOK_BASE_VND', 30000),
+    minPriceVnd: intEnv(config, 'BLANK_BOOK_MIN_PRICE_VND', 39900),
     perPageVnd: intEnv(config, 'BLANK_BOOK_PER_PAGE_VND', 200),
     minPages,
     maxPages,
@@ -33,5 +34,6 @@ export function blankBookPrice(
   pricing: BlankBookPricing,
   pages: number,
 ): number {
-  return pricing.baseVnd + pricing.perPageVnd * pages;
+  const extraPages = Math.max(0, pages - pricing.minPages);
+  return pricing.minPriceVnd + pricing.perPageVnd * extraPages;
 }

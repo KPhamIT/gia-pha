@@ -16,7 +16,8 @@ export const BLANK_BOOK_STRINGS = {
   BLANK_BOOK_STEP_CONTACT: "4. Nhận file qua",
   BLANK_BOOK_PAGES_LABEL: "Số trang hồ sơ trống",
   BLANK_BOOK_PAGES_RANGE: (min: number, max: number) => `Từ ${min} đến ${max} trang.`,
-  BLANK_BOOK_PRICE_FORMULA: (base: string, perPage: string) => `${base} + ${perPage}/trang`,
+  BLANK_BOOK_PRICE_FORMULA: (minPrice: string, minPages: number, perPage: string) =>
+    `${minPrice} cho ${minPages} trang, thêm ${perPage}/trang.`,
   BLANK_BOOK_TOTAL: "Thành tiền",
   BLANK_BOOK_EMAIL: "Email nhận link tải",
   BLANK_BOOK_PHONE: "Số điện thoại / Zalo",
