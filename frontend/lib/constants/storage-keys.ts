@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   COVER_STUDIO_DESIGNS: "family-tree-cover-studio-designs",
   USER_BRANCH: "family-tree-user-branch",
   BRANCH_WELCOME_DONE: "family-tree-branch-welcome-done",
+  FIRST_VISIT_SEEN: "coinguon-first-visit-seen",
   TREE_EXPORT_SETTINGS: "family-tree-export-settings",
   CEREMONY_FONT_SCALE_INDEX: "family-tree-ceremony-font-scale-index",
 } as const;

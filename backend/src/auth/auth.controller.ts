@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
   Post,
   Query,
@@ -14,6 +15,8 @@ import { AuthService } from './auth.service.js';
 import { FacebookLoginDto } from './dto/facebook-login.dto.js';
 import { PasswordLoginDto } from './dto/password-login.dto.js';
 import { LinkPersonDto } from './dto/link-person.dto.js';
+import { ResendVerificationDto } from './dto/resend-verification.dto.js';
+import { EmailVerificationService } from './email-verification.service.js';
 import {
   ZALO_OAUTH_COOKIE,
   ZALO_OAUTH_COOKIE_MAX_AGE_MS,
@@ -30,11 +33,29 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly zaloOAuthService: ZaloOAuthService,
+    private readonly emailVerification: EmailVerificationService,
   ) {}
 
   @Post('login')
   loginWithPassword(@Body() body: PasswordLoginDto) {
     return this.authService.loginWithPassword(body.username, body.password);
+  }
+
+  /** Chỉ xem thông tin — không kích hoạt (an toàn với trình quét link của hộp thư). */
+  @Get('verify-email/:token')
+  getEmailVerification(@Param('token') token: string) {
+    return this.emailVerification.getForVerify(token);
+  }
+
+  /** Kích hoạt tài khoản (token dùng một lần) và trả JWT để đăng nhập luôn. */
+  @Post('verify-email/:token')
+  verifyEmail(@Param('token') token: string) {
+    return this.emailVerification.verify(token);
+  }
+
+  @Post('resend-verification')
+  resendVerification(@Body() body: ResendVerificationDto) {
+    return this.emailVerification.resend(body.login);
   }
 
   @Post('facebook')

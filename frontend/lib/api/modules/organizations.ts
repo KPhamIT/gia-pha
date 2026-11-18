@@ -1,8 +1,5 @@
 import axiosClient from "@/lib/axiosClient";
-import type {
-  AuthResponse,
-  Organization,
-} from "@/components/types/family-tree-types";
+import type { Organization } from "@/components/types/family-tree-types";
 import { API_ROUTES } from "@/lib/constants/api-routes";
 
 export type OrganizationAccessLink = {
@@ -61,10 +58,13 @@ export const organizations = {
     name: string;
     username: string;
     password: string;
-    email?: string;
+    email: string;
   }) =>
     axiosClient
-      .post<AuthResponse>(API_ROUTES.ORGANIZATION_REGISTER_WITH_ADMIN, input)
+      .post<{ pendingVerification: true; email: string; mailSent: boolean }>(
+        API_ROUTES.ORGANIZATION_REGISTER_WITH_ADMIN,
+        input,
+      )
       .then((r) => r.data),
   update: (id: number, body: UpdateOrganizationInput) =>
     axiosClient

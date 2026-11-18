@@ -1,7 +1,6 @@
 import {
   IsEmail,
   IsNotEmpty,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -23,7 +22,7 @@ export class RegisterOrganizationWithAdminDto {
   @MaxLength(128)
   password: string;
 
-  @IsOptional()
-  @IsEmail()
-  email?: string;
+  @IsEmail({}, { message: 'Email không hợp lệ' })
+  @MaxLength(254)
+  email: string;
 }

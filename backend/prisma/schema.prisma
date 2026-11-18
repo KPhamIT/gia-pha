@@ -78,6 +78,13 @@ model User {
 
   isActive Boolean @default(true)
 
+  /// Xác nhận email khi đăng ký tài khoản local. Tài khoản cũ (token null) không bị chặn.
+  emailVerifiedAt      DateTime?
+  /// SHA-256 của token gửi trong email; còn giá trị = đang chờ xác nhận (chặn đăng nhập).
+  emailVerifyTokenHash String?   @unique
+  emailVerifyExpiresAt DateTime?
+  emailVerifySentAt    DateTime?
+
   /// Tài khoản demo công khai (chỉ xem; bị chặn mọi thao tác ghi).
   isDemo Boolean @default(false)
 

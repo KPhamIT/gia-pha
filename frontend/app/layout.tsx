@@ -7,6 +7,7 @@ import { themeInitScript } from "@/utils/theme";
 import AnalyticsScripts from "@/components/analytics/AnalyticsScripts";
 import AppToaster from "@/components/ui/AppToaster";
 import GlobalMobileChrome from "@/components/navigation/GlobalMobileChrome";
+import FirstVisitWelcome from "@/components/public/FirstVisitWelcome";
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -54,6 +55,7 @@ export default function RootLayout({
         </Script>
         {children}
         <GlobalMobileChrome />
+        <FirstVisitWelcome />
         <AppToaster />
         <AnalyticsScripts />
       </body>

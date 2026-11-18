@@ -15,6 +15,10 @@ import { assertPersonOrgAccess } from './person-org-access.js';
 import { canMutate } from './org-access.js';
 import { StandardFeaturesService } from '../standard-features/standard-features.service.js';
 import type { ZaloProfile } from './zalo-oauth.service.js';
+import {
+  emailNotVerifiedError,
+  isEmailVerificationPending,
+} from './email-verification.helpers.js';
 
 interface FacebookProfile {
   id: string;
@@ -68,7 +72,10 @@ export class AuthService {
     const normalized = username.trim();
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [{ username: normalized }, { email: normalized }],
+        OR: [
+          { username: normalized },
+          { email: { equals: normalized, mode: 'insensitive' } },
+        ],
         provider: 'local',
         isActive: true,
       },
@@ -81,6 +88,9 @@ export class AuthService {
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Invalid username or password');
+    }
+    if (isEmailVerificationPending(user)) {
+      throw emailNotVerifiedError();
     }
 
     return this.buildAuthResponse(user);

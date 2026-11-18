@@ -203,7 +203,7 @@ export const ACCOUNT_STRINGS = {
   ORG_REGISTER_ADMIN_USERNAME_PLACEHOLDER: "Ví dụ: truongho.pham",
   ORG_REGISTER_ADMIN_PASSWORD: "Mật khẩu",
   ORG_REGISTER_ADMIN_PASSWORD_CONFIRM: "Nhập lại mật khẩu",
-  ORG_REGISTER_ADMIN_EMAIL: "Email (tuỳ chọn)",
+  ORG_REGISTER_ADMIN_EMAIL: "Email (để xác nhận tài khoản)",
   ORG_REGISTER_PASSWORD_MISMATCH: "Mật khẩu nhập lại không khớp",
   ORG_REGISTER_NAME_LABEL: "Tên dòng họ / họ tộc",
   ORG_REGISTER_NAME_PLACEHOLDER: "Ví dụ: Họ Phạm — Chi Tây",

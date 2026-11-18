@@ -4,6 +4,9 @@ export const API_ROUTES = {
   AUTH_FACEBOOK: "/auth/facebook",
   AUTH_LINK_PERSON: "/auth/me/person",
   AUTH_ZALO: "/auth/zalo",
+  AUTH_VERIFY_EMAIL: (token: string) =>
+    `/auth/verify-email/${encodeURIComponent(token)}`,
+  AUTH_RESEND_VERIFICATION: "/auth/resend-verification",
   ORGANIZATIONS: "/organizations",
   ORGANIZATION_DEMO: "/organizations/demo",
   ORGANIZATION_REGISTER: "/organizations/register",

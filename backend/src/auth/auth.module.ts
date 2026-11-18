@@ -7,12 +7,15 @@ import { AuthService } from './auth.service.js';
 import { JwtStrategy } from './jwt.strategy.js';
 import { ZaloOAuthService } from './zalo-oauth.service.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
+import { MailModule } from '../mail/mail.module.js';
+import { EmailVerificationService } from './email-verification.service.js';
 import { StandardFeaturesModule } from '../standard-features/standard-features.module.js';
 
 @Module({
   imports: [
     ConfigModule,
     PrismaModule,
+    MailModule,
     StandardFeaturesModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -25,7 +28,12 @@ import { StandardFeaturesModule } from '../standard-features/standard-features.m
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, ZaloOAuthService],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    EmailVerificationService,
+    JwtStrategy,
+    ZaloOAuthService,
+  ],
+  exports: [AuthService, EmailVerificationService],
 })
 export class AuthModule {}

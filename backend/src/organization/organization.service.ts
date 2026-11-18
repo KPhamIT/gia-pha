@@ -22,6 +22,7 @@ import {
 } from './org-access-token.js';
 import { createRootPersonForOrg } from './create-root-person.js';
 import { AuthService } from '../auth/auth.service.js';
+import { EmailVerificationService } from '../auth/email-verification.service.js';
 import { OrgRegistrationMailService } from '../mail/org-registration-mail.service.js';
 import { geocodeClanAddress } from './geocode-clan-address.js';
 
@@ -69,6 +70,7 @@ export class OrganizationService {
     private readonly config: ConfigService,
     private readonly authService: AuthService,
     private readonly orgRegistrationMail: OrgRegistrationMailService,
+    private readonly emailVerification: EmailVerificationService,
   ) {}
 
   async listForUser(user: User) {
@@ -137,14 +139,18 @@ export class OrganizationService {
     };
   }
 
-  /** Public signup: new org + local admin account, returns JWT to sign in immediately. */
+  /**
+   * Public signup: new org + local admin account chờ xác nhận email.
+   * Không trả JWT — đăng nhập được sau khi bấm link xác nhận trong email.
+   */
   async registerWithAdmin(dto: RegisterOrganizationWithAdminDto) {
     const name = dto.name.trim();
     const username = dto.username.trim();
+    const email = dto.email.trim().toLowerCase();
     await this.assertUsernameAvailable(username);
+    await this.assertEmailAvailable(email);
 
     const passwordHash = await AuthService.hashPassword(dto.password);
-    const email = dto.email?.trim() || null;
 
     const registeredAt = new Date();
     const { org, user } = await this.prisma.$transaction(async (tx) => {
@@ -174,7 +180,20 @@ export class OrganizationService {
       registeredAt,
     });
 
-    return this.authService.buildAuthResponse(user);
+    const mailSent = await this.emailVerification.issue(user.id);
+    return { pendingVerification: true as const, email, mailSent };
+  }
+
+  private async assertEmailAvailable(email: string) {
+    const existing = await this.prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
+      select: { id: true },
+    });
+    if (existing) {
+      throw new BadRequestException(
+        'Email này đã được dùng cho một tài khoản khác. Hãy đăng nhập hoặc dùng email khác.',
+      );
+    }
   }
 
   async update(id: number, user: User, dto: UpdateOrganizationDto) {

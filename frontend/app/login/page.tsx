@@ -1,56 +1,25 @@
 "use client";
 
-import { Suspense, useCallback, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import IconRoundButton from "@/components/ui/IconRoundButton";
+import { useSearchParams } from "next/navigation";
 import { BT } from "@/lib/constants/ui-theme";
 import { UI } from "@/lib/constants/ui-strings";
-import { loginWithZalo, setToken } from "@/lib/auth/session";
-import { rebindPushAfterLogin } from "@/lib/notifications/push-binding";
+import { loginWithZalo } from "@/lib/auth/session";
 import { isZaloLoginEnabled } from "@/lib/auth/facebook-sdk";
-import { api } from "@/lib/api";
-import { useAuthStore } from "@/store/authStore";
 import AppNavFab from "@/components/navigation/AppNavFab";
 import ContactInfoPanel from "@/components/auth/ContactInfoPanel";
 import PublicFooterLinks from "@/components/public/PublicFooterLinks";
 import FacebookLoginButton from "@/components/auth/FacebookLoginButton";
-import { inputClassName } from "@/components/ui/CollapsibleSection";
+import PasswordLoginForm from "@/components/auth/PasswordLoginForm";
 import LoadingSpinner from "@/components/icons/LoadingSpinner";
-import { getErrorMessage } from "@/utils/errors";
 import { getSafeNextPath } from "@/lib/auth/safe-redirect";
 
 function LoginContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const refreshAuth = useAuthStore((state) => state.refresh);
   const urlError = searchParams.get("error");
   const nextPath = getSafeNextPath(searchParams.get("next"));
   const showZaloLogin = isZaloLoginEnabled();
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(urlError);
-
-  const handlePasswordLogin = useCallback(
-    async (event: React.FormEvent) => {
-      event.preventDefault();
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await api.auth.login(username.trim(), password);
-        setToken(result.accessToken);
-        await refreshAuth();
-        await rebindPushAfterLogin();
-        router.replace(nextPath);
-      } catch (err) {
-        setError(getErrorMessage(err, UI.LOGIN_ERROR_DEFAULT));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [nextPath, password, refreshAuth, router, username],
-  );
 
   return (
     <div
@@ -64,57 +33,7 @@ function LoginContent() {
           {UI.LOGIN_SUBTITLE}
         </p>
 
-        {error ? (
-          <p className={`mt-4 ${BT.errorBgLight}`} role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        <form
-          className="mt-6 space-y-3"
-          onSubmit={(e) => void handlePasswordLogin(e)}
-        >
-          <label className="block">
-            <span
-              className={`mb-1 block text-sm font-medium ${BT.mutedOnLight}`}
-            >
-              {UI.LOGIN_USERNAME}
-            </span>
-            <input
-              className={inputClassName}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-              required
-            />
-          </label>
-          <label className="block">
-            <span
-              className={`mb-1 block text-sm font-medium ${BT.mutedOnLight}`}
-            >
-              {UI.LOGIN_PASSWORD}
-            </span>
-            <input
-              type="password"
-              className={inputClassName}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-            />
-          </label>
-          <div className="flex justify-center pt-2">
-            <IconRoundButton
-              type="submit"
-              icon="lock"
-              variant="primary"
-              iconSize={18}
-              loading={loading}
-              label={UI.BTN_LOGIN}
-              compact={false}
-            />
-          </div>
-        </form>
+        <PasswordLoginForm nextPath={nextPath} initialError={urlError} />
 
         <p
           className={`my-4 text-center text-xs uppercase tracking-wide ${BT.mutedOnLight}`}

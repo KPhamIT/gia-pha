@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module.js';
+import { AccountMailService } from './account-mail.service.js';
 import { AppFundMailService } from './app-fund-mail.service.js';
 import { BillingMailService } from './billing-mail.service.js';
 import { BlankBookMailService } from './blank-book-mail.service.js';
@@ -11,6 +12,7 @@ import { ResendMailService } from './resend-mail.service.js';
   imports: [PrismaModule],
   providers: [
     ResendMailService,
+    AccountMailService,
     OrgRegistrationMailService,
     BillingMailService,
     AppFundMailService,
@@ -19,6 +21,7 @@ import { ResendMailService } from './resend-mail.service.js';
   ],
   exports: [
     ResendMailService,
+    AccountMailService,
     OrgRegistrationMailService,
     BillingMailService,
     AppFundMailService,
