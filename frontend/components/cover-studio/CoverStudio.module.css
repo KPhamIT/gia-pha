@@ -437,12 +437,17 @@
 }
 
 @media print {
-  :global(body) {
+  /*
+   * Chỉ áp khi trang có khối in của Cover Studio. Ở bản build prod, CSS module này có thể
+   * bị gộp chung chunk với trang khác (vd. /sach-gia-pha-trong/don) — luật `body *` không
+   * giới hạn sẽ ẩn mọi khối in khác, file PDF ra trắng.
+   */
+  :global(body:has([data-cover-studio-print])) {
     margin: 0 !important;
     background: #fff !important;
   }
 
-  :global(body *) {
+  :global(body:has([data-cover-studio-print]) *) {
     visibility: hidden !important;
   }
 

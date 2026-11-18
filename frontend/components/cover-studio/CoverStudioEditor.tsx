@@ -97,7 +97,7 @@ export default function CoverStudioEditor({
       </section>
 
       {printMode ? (
-        <div className={styles.printRoot} aria-hidden>
+        <div className={styles.printRoot} data-cover-studio-print aria-hidden>
           {(printMode === "front" || printMode === "both") && (
             <div className={styles.printPage}>
               <CoverSheet
