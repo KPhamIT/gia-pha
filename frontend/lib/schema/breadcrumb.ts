@@ -36,6 +36,7 @@ const PATH_SEGMENT_LABELS: Record<string, string> = {
   "dieu-khoan-su-dung": "Điều khoản sử dụng",
   "bang-gia": "Bảng giá",
   "thanh-toan": "Thanh toán",
+  "nhac-ngay-gio": "Nhắc ngày giỗ",
 };
 
 /** Build breadcrumbs from URL path; optional `lastLabel` overrides the final segment. */

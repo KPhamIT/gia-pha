@@ -152,6 +152,7 @@ API:
 
 ### Endpoint công khai dựa trên token bí mật (không JWT)
 
+- `/gio-reminders` — khách đăng ký email nhắc ngày giỗ (`/nhac-ngay-gio`), quản lý / tắt bằng `manageToken` trong email (`GET` xem, `POST .../unsubscribe` mới tắt); `POST /gio-reminders/cron` dùng `CronGuard`.
 - `/blank-book/*` — dịch vụ bán file sổ gia phả trống (`/sach-gia-pha-trong`). Khách xem đơn bằng `accessToken` trong URL; chủ web xác nhận đã nhận tiền bằng token trong email (lưu SHA-256, dùng 1 lần, `GET` chỉ xem, `POST` mới đổi trạng thái).
 
 ---

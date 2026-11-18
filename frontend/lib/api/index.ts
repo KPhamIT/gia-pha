@@ -18,6 +18,7 @@ import { weather } from "./modules/weather";
 import { dayNotes } from "./modules/day-notes";
 import { clanDuty } from "./modules/clan-duty";
 import { blankBook } from "./modules/blank-book";
+import { gioReminders } from "./modules/gio-reminders";
 
 export const api = {
   auth,
@@ -40,5 +41,6 @@ export const api = {
   dayNotes,
   clanDuty,
   blankBook,
+  gioReminders,
 };
 export type ApiType = typeof api;

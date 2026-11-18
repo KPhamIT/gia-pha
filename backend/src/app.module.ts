@@ -24,6 +24,7 @@ import { WeatherModule } from './weather/weather.module.js';
 import { DayNotesModule } from './day-notes/day-notes.module.js';
 import { ClanDutyModule } from './clan-duty/clan-duty.module.js';
 import { BlankBookModule } from './blank-book/blank-book.module.js';
+import { GioReminderModule } from './gio-reminder/gio-reminder.module.js';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { BlankBookModule } from './blank-book/blank-book.module.js';
     DayNotesModule,
     ClanDutyModule,
     BlankBookModule,
+    GioReminderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

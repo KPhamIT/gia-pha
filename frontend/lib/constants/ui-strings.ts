@@ -19,6 +19,8 @@ import { EXCEL_STRINGS } from "./ui-strings/excel";
 import { SHOP_STRINGS } from "./ui-strings/shop";
 import { PRINT_BOOKS_STRINGS } from "./ui-strings/print-books";
 import { BLANK_BOOK_STRINGS } from "./ui-strings/blank-book";
+import { GIO_REMINDER_STRINGS } from "./ui-strings/gio-reminder";
+import { TOOL_SIGNUP_STRINGS } from "./ui-strings/tool-signup";
 import { EMAIL_VERIFY_STRINGS } from "./ui-strings/email-verify";
 import { KINSHIP_STRINGS } from "./ui-strings/kinship";
 import { DAT_TEN_STRINGS } from "./ui-strings/dat-ten";
@@ -64,6 +66,8 @@ export const UI = {
   ...SHOP_STRINGS,
   ...PRINT_BOOKS_STRINGS,
   ...BLANK_BOOK_STRINGS,
+  ...GIO_REMINDER_STRINGS,
+  ...TOOL_SIGNUP_STRINGS,
   ...EMAIL_VERIFY_STRINGS,
   ...KINSHIP_STRINGS,
   ...TOOLS_STRINGS,

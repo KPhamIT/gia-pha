@@ -4,6 +4,7 @@ import { AccountMailService } from './account-mail.service.js';
 import { AppFundMailService } from './app-fund-mail.service.js';
 import { BillingMailService } from './billing-mail.service.js';
 import { BlankBookMailService } from './blank-book-mail.service.js';
+import { GioReminderMailService } from './gio-reminder-mail.service.js';
 import { ContactMailService } from './contact-mail.service.js';
 import { OrgRegistrationMailService } from './org-registration-mail.service.js';
 import { ResendMailService } from './resend-mail.service.js';
@@ -18,6 +19,7 @@ import { ResendMailService } from './resend-mail.service.js';
     AppFundMailService,
     ContactMailService,
     BlankBookMailService,
+    GioReminderMailService,
   ],
   exports: [
     ResendMailService,
@@ -27,6 +29,7 @@ import { ResendMailService } from './resend-mail.service.js';
     AppFundMailService,
     ContactMailService,
     BlankBookMailService,
+    GioReminderMailService,
   ],
 })
 export class MailModule {}

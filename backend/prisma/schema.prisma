@@ -697,3 +697,22 @@ model BlankBookOrder {
 
   @@index([status, createdAt])
 }
+
+/// Khách vãng lai đăng ký nhận email nhắc ngày giỗ (không cần tài khoản) — lối vào nhẹ trước khi lập gia phả.
+model GioReminder {
+  id            Int      @id @default(autoincrement())
+  deceasedName  String
+  lunarMonth    Int
+  lunarDay      Int
+  email         String
+  /// Token bí mật trong link huỷ nhận nhắc.
+  manageToken   String   @unique
+  active        Boolean  @default(true)
+  /// Lần gửi gần nhất: "YYYY-MM-DD:<số ngày còn lại>" — tránh gửi trùng khi cron chạy lại.
+  lastSentKey   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([active, lunarMonth, lunarDay])
+  @@index([email])
+}

@@ -19,6 +19,7 @@ export default function robots(): MetadataRoute.Robots {
         "/family-tree",
         "/account",
         "/ceremonies/",
+        "/nhac-ngay-gio/quan-ly/",
         "/sach-gia-pha-trong/don/",
         "/sach-gia-pha-trong/xac-nhan/",
       ],

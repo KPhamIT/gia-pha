@@ -81,6 +81,9 @@ export const API_ROUTES = {
   BILLING_ORDER_BY_CODE: (code: string) =>
     `/billing/orders/by-code/${encodeURIComponent(code)}`,
   CONTACT: "/contact",
+  GIO_REMINDERS: "/gio-reminders",
+  GIO_REMINDER_MANAGE: (token: string) => `/gio-reminders/manage/${encodeURIComponent(token)}`,
+  GIO_REMINDER_UNSUBSCRIBE: (token: string) => `/gio-reminders/manage/${encodeURIComponent(token)}/unsubscribe`,
   BLANK_BOOK_CONFIG: "/blank-book/config",
   BLANK_BOOK_ORDERS: "/blank-book/orders",
   BLANK_BOOK_ORDER: (accessToken: string) => `/blank-book/orders/${encodeURIComponent(accessToken)}`,
