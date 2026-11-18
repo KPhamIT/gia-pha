@@ -22,7 +22,7 @@ export function readBlankBookPricing(config: ConfigService): BlankBookPricing {
   );
   return {
     baseVnd: intEnv(config, 'BLANK_BOOK_BASE_VND', 30000),
-    perPageVnd: intEnv(config, 'BLANK_BOOK_PER_PAGE_VND', 500),
+    perPageVnd: intEnv(config, 'BLANK_BOOK_PER_PAGE_VND', 200),
     minPages,
     maxPages,
     defaultPages: Math.min(maxPages, Math.max(minPages, 100)),
