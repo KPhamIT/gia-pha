@@ -10,12 +10,12 @@ import { COVER_SAMPLES, buildCoverContent } from "@/components/shop/cover-sample
 import BlankBookPrintStack from "@/components/system/print-books/BlankBookPages";
 import { blankBookSettings } from "@/components/system/print-books/blank-book-settings";
 import CoverPrintSheets from "@/components/system/print-books/CoverPrintSheets";
-import { COVER_BLEED_MM, useCoverPrint } from "@/components/system/print-books/useCoverPrint";
-import { useInnerPrint } from "@/components/system/print-books/useInnerPrint";
+import { COVER_BLEED_MM } from "@/components/system/print-books/useCoverPrint";
 import { api } from "@/lib/api";
 import type { BlankBookOrder } from "@/lib/api/modules/blank-book";
 import { UI } from "@/lib/constants/ui-strings";
 import BlankBookPaymentPanel from "./BlankBookPaymentPanel";
+import { useBlankBookPrint } from "./useBlankBookPrint";
 
 const FONT_ID = DEFAULT_CALLIGRAPHY_FONT_ID;
 const POLL_MS = 8000;
@@ -79,8 +79,7 @@ function OrderSummary({ order }: { order: BlankBookOrder }) {
 
 function DownloadPanel({ order }: { order: BlankBookOrder }) {
   const fontFamily = getCalligraphyFont(FONT_ID).cssValue;
-  const cover = useCoverPrint(FONT_ID);
-  const inner = useInnerPrint(FONT_ID);
+  const printer = useBlankBookPrint(FONT_ID);
   const sample = COVER_SAMPLES[order.coverIndex] ?? COVER_SAMPLES[0];
   const content = useMemo(
     () =>
@@ -103,23 +102,25 @@ function DownloadPanel({ order }: { order: BlankBookOrder }) {
       <div className="mt-4 flex flex-wrap gap-3">
         <button
           type="button"
-          onClick={() => void cover.print()}
-          className="rounded-xl bg-[#944a00] px-5 py-3 text-sm font-semibold text-white hover:bg-[#7a3d00]"
+          onClick={() => void printer.print("cover")}
+          disabled={printer.busy}
+          className="rounded-xl bg-[#944a00] px-5 py-3 text-sm font-semibold text-white hover:bg-[#7a3d00] disabled:opacity-60"
         >
           {UI.BLANK_BOOK_DOWNLOAD_COVER}
         </button>
         <button
           type="button"
-          onClick={() => void inner.print()}
-          className="rounded-xl bg-[#321716] px-5 py-3 text-sm font-semibold text-white hover:bg-[#4a2c2a]"
+          onClick={() => void printer.print("inner")}
+          disabled={printer.busy}
+          className="rounded-xl bg-[#321716] px-5 py-3 text-sm font-semibold text-white hover:bg-[#4a2c2a] disabled:opacity-60"
         >
           {UI.BLANK_BOOK_DOWNLOAD_INNER(order.pageCount)}
         </button>
       </div>
       <p className={`mt-3 text-xs ${AC.label}`}>{UI.BLANK_BOOK_DOWNLOAD_HINT}</p>
 
-      {cover.printing ? <CoverPrintSheets sample={sample} content={content} fontFamily={fontFamily} bleedMm={COVER_BLEED_MM} /> : null}
-      {inner.printing ? (
+      {printer.mode === "cover" ? <CoverPrintSheets sample={sample} content={content} fontFamily={fontFamily} bleedMm={COVER_BLEED_MM} /> : null}
+      {printer.mode === "inner" ? (
         <BlankBookPrintStack settings={settings} pageCount={order.pageCount} clanFooterLabel={formatCoverSubtitle(order.clanName)} />
       ) : null}
     </section>
