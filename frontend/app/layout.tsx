@@ -8,6 +8,7 @@ import AnalyticsScripts from "@/components/analytics/AnalyticsScripts";
 import AppToaster from "@/components/ui/AppToaster";
 import GlobalMobileChrome from "@/components/navigation/GlobalMobileChrome";
 import FirstVisitWelcome from "@/components/public/FirstVisitWelcome";
+import VietnameseFormValidation from "@/components/ui/VietnameseFormValidation";
 
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
@@ -57,6 +58,7 @@ export default function RootLayout({
         <GlobalMobileChrome />
         <FirstVisitWelcome />
         <AppToaster />
+        <VietnameseFormValidation />
         <AnalyticsScripts />
       </body>
     </html>

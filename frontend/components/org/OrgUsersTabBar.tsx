@@ -20,7 +20,7 @@ export default function OrgUsersTabBar<T extends string>({
     <div
       className="mb-6 flex flex-wrap gap-2 border-b border-[#d4c3c1] pb-4"
       role="tablist"
-      aria-label="Org admin sections"
+      aria-label="Mục quản trị dòng họ"
     >
       {tabs.map((tab) => {
         const isActive = tab.id === active;
