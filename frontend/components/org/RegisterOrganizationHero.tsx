@@ -13,7 +13,7 @@ export default function RegisterOrganizationHero() {
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">
           {UI.ORG_REGISTER_HINT}
         </p>
-        <ol className="mt-6 max-w-xl list-decimal space-y-2 pl-5 text-sm leading-relaxed text-white/75 md:text-base">
+        <ol className="mt-6 hidden max-w-xl list-decimal md:block space-y-2 pl-5 text-sm leading-relaxed text-white/75 md:text-base">
           {UI.ORG_REGISTER_STEPS.map((step) => (
             <li key={step}>{step}</li>
           ))}

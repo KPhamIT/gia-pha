@@ -145,10 +145,16 @@ export class OrganizationService {
    */
   async registerWithAdmin(dto: RegisterOrganizationWithAdminDto) {
     const name = dto.name.trim();
-    const username = dto.username.trim();
     const email = dto.email.trim().toLowerCase();
-    await this.assertUsernameAvailable(username);
     await this.assertEmailAvailable(email);
+    const requested = dto.username?.trim();
+    let username: string;
+    if (requested) {
+      await this.assertUsernameAvailable(requested);
+      username = requested;
+    } else {
+      username = await this.usernameFromEmail(email);
+    }
 
     const passwordHash = await AuthService.hashPassword(dto.password);
 
@@ -558,6 +564,29 @@ export class OrganizationService {
 
   private accessSecret(): string {
     return this.config.get<string>('JWT_SECRET', 'change-me');
+  }
+
+  /** Tên đăng nhập nội bộ tạo từ phần trước @ của email, thêm số nếu trùng. */
+  private async usernameFromEmail(email: string): Promise<string> {
+    const base =
+      email
+        .split('@')[0]
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-zA-Z0-9._-]/g, '')
+        .toLowerCase()
+        .slice(0, 40) || 'thanhvien';
+    for (let i = 0; i < 50; i += 1) {
+      const candidate = i === 0 ? base : `${base}${i + 1}`;
+      const taken = await this.prisma.user.findFirst({
+        where: {
+          OR: [{ username: candidate }, { providerId: `local:${candidate}` }],
+        },
+        select: { id: true },
+      });
+      if (!taken) return candidate;
+    }
+    return `${base}${Date.now().toString(36)}`;
   }
 
   private async assertUsernameAvailable(username: string): Promise<void> {

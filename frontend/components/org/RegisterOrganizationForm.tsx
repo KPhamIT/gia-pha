@@ -75,7 +75,7 @@ export default function RegisterOrganizationForm() {
   }
 
   if (!isLoggedIn || isDemo) {
-    return <RegisterGuestForm isLoggedIn={isLoggedIn} isDemo={isDemo} />;
+    return <RegisterGuestForm isLoggedIn={isLoggedIn && !isDemo} />;
   }
 
   return (

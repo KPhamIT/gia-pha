@@ -56,7 +56,7 @@ export const organizations = {
       .then((r) => r.data),
   registerWithAdmin: (input: {
     name: string;
-    username: string;
+    username?: string;
     password: string;
     email: string;
   }) =>

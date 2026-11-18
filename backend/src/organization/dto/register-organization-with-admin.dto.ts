@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -12,10 +13,11 @@ export class RegisterOrganizationWithAdminDto {
   @MaxLength(120)
   name: string;
 
+  /** Không bắt buộc — bỏ trống thì tạo từ email (khách đăng nhập bằng email). */
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(64)
-  username: string;
+  username?: string;
 
   @IsString()
   @MinLength(6)
